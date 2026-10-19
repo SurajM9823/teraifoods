@@ -4302,3 +4302,16 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   text-decoration: underline !important;
 }
 
+/* ==========================================================================
+   Mobile Responsive Optimizations
+   Hide the 4 feature items (Payment only online, New stocks and sales,
+   Quality assurance, Delivery from 1 hour) and adjacent divider on mobile only.
+   ========================================================================== */
+@media (max-width: 767.98px) {
+  .elementor-element.elementor-element-bf0a5c8,
+  .elementor-element.elementor-element-5e387b8 {
+    display: none !important;
+  }
+}
+
+

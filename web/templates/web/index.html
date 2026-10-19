@@ -994,7 +994,7 @@ body.home header.site-header.sticky-header .categories-menu .categories-toggle {
 						<i class="klb-icon-user-cut"></i>
 					</div><!-- action-icon -->
 					<div class="action-text">
-													<span>Sign In</span>
+													<span>{% if user.is_authenticated %}My account{% else %}Sign In{% endif %}</span>
 							<p>Account</p>
 											</div><!-- action-text -->
 				</a>
@@ -1157,7 +1157,7 @@ body.home header.site-header.sticky-header .categories-menu .categories-toggle {
 				</div>
 					</div>
 				</div>
-		<div class="elementor-element elementor-element-bf0a5c8 e-flex e-con-boxed e-con e-parent" data-id="bf0a5c8" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-bf0a5c8 e-flex e-con-boxed e-con e-parent d-none d-md-flex" data-id="bf0a5c8" data-element_type="container" data-e-type="container">
 					<div class="e-con-inner">
 		<div class="elementor-element elementor-element-6adcfd6 e-con-full e-flex e-con e-child" data-id="6adcfd6" data-element_type="container" data-e-type="container">
 				<div class="elementor-element elementor-element-daf625f elementor-widget elementor-widget-grogin-icon-box" data-id="daf625f" data-element_type="widget" data-e-type="widget" data-widget_type="grogin-icon-box.default">
@@ -1188,7 +1188,7 @@ body.home header.site-header.sticky-header .categories-menu .categories-toggle {
 				</div>
 					</div>
 				</div>
-		<div class="elementor-element elementor-element-5e387b8 e-flex e-con-boxed e-con e-parent" data-id="5e387b8" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-5e387b8 e-flex e-con-boxed e-con e-parent d-none d-md-flex" data-id="5e387b8" data-element_type="container" data-e-type="container">
 					<div class="e-con-inner">
 				<div class="elementor-element elementor-element-634e33d elementor-widget-divider--view-line elementor-widget elementor-widget-divider" data-id="634e33d" data-element_type="widget" data-e-type="widget" data-widget_type="divider.default">
 				<div class="elementor-widget-container">
@@ -1674,65 +1674,7 @@ for (let j = 0; j < urlFields.length; j++) {
 			<div class="cart-side-overlay"></div>
 				<a href="#" class="scrollToTop" aria-label="Scroll to top button"></a>
 		<div id="klbwl_wishlist" class="klbwl-popup"></div>	
-	<div class="klb-modal-root authentication-modal site-drawer">
-		<div class="klb-modal-inner">
-							<div class="authentication-modal-banner min-1024 ">
-					<a href="{% url 'customer-profile' %}">
-						<img src="{% static 'web/' %}images/about-image-01.jpg" alt="Terai Food – Fresh Grocery &amp; Organic Food Store">
-					</a>
-				</div><!-- authentication-modal-banner -->
-						<div class="klb-authentication-modal">
-				<div class="klb-modal-header">
-					<h4 class="entry-title">Log in</h4>
-					<div class="site-close">
-						<i class="klb-icon-x"></i>
-					</div><!-- site-close -->        
-				</div><!-- klb-modal-header -->
-				<div class="klb-authentication-form tab-style">
-					<div id="klb-authentication" class="klb-authentication-inner">
-						<div class="klb-login-form">
-							<div class="woocommerce-notices-wrapper"></div>							<form class="woocommerce-form woocommerce-form-login login" method="post">
-
-								
-								<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-									<label for="username">Username or email address&nbsp;<span class="required">*</span></label>
-									<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="username" autocomplete="username" value="">								</p>
-								<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-									<label for="password">Password&nbsp;<span class="required">*</span></label>
-									<input class="woocommerce-Input woocommerce-Input--text input-text" type="password" name="password" id="password" autocomplete="current-password">
-								</p>
-
-																
-								<p class="form-row">
-									<label class="woocommerce-form__label woocommerce-form__label-for-checkbox woocommerce-form-login__rememberme">
-										<input class="woocommerce-form__input woocommerce-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever"> <span>Remember me</span>
-									</label>
-									
-									<input type="hidden" id="woocommerce-login-nonce" name="woocommerce-login-nonce" value="6ca3b7bb15"><input type="hidden" name="_wp_http_referer" value="/">									<button type="submit" class="woocommerce-button button primary woocommerce-form-login__submit" name="login" value="Log in">Log in</button>
-								</p>
-
-								<div class="lost-password">
-									<p class="woocommerce-LostPassword lost_password">
-										<a href="#lost-password">Lost your password?</a>
-									</p>
-								</div>
-
-								<div class="klb-social-login"><p class="social-divider"><span>Or login with</span></p><a class="klb-social-login-btn klb-btn-google" href="#" rel="nofollow noopener">Google</a><a class="klb-social-login-btn klb-btn-facebook" href="#" rel="nofollow noopener">Facebook</a></div>
-							</form>
-
-							
-							<p class="privacy-text">By continuing, you accept the Website Regulations , Regulations for the sale of alcoholic beverages and the <a class="privacy-policy-link" href="#privacy" rel="privacy-policy">Privacy Policy</a></p>
-
-						</div><!-- klb-login-form -->
-					</div><!-- klb-authentication-inner -->
-				</div><!-- klb-authentication-form -->
-				<div class="klb-authentication-tab">
-					<p>You dont have an account yet? <a href="{% url 'account_signup' %}">Register Now</a></p>
-				</div><!-- klb-authentication-tab -->
-			</div><!-- klb-authentication-modal -->
-		</div><!-- klb-modal-inner -->
-		<div class="site-drawer-overlay"></div>
-	</div><!-- klb-theme-modal -->
+	
 
 	<div id="location-selector" class="site-modal modal-location strech d-flex align-items-center justify-content-center">
 		<div class="site-modal-overlay strech position-absolute"></div>
@@ -1925,7 +1867,7 @@ var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false
 </script>
 <script id="elementor-frontend-js" src="{% static 'web/' %}js/frontend.min.js" ></script>
 <script id="mc4wp-forms-api-js" defer="" src="{% static 'web/' %}js/forms.js" ></script>
-<script id="klb-login-popup-js" src="{% static 'web/' %}js/login-popup.js" ></script>
+<script id="klb-login-popup-js" src="{% static 'web/' %}js/login-popup.js?v=server-auth-1" ></script>
 <script data-wp-strategy="defer" defer="" id="wc-jquery-cookie-js" src="{% static 'web/' %}js/jquery.cookie.min.js" ></script>
 <script id="klb-location-filter-js-extra" >
 var locationfilter = {"popup":"0"};
@@ -1935,6 +1877,6 @@ var locationfilter = {"popup":"0"};
 <script id="grogin-core-custom-scripts-js" src="{% static 'web/' %}js/custom-scripts.js" ></script>
 <script src="{% static 'web/' %}js/leaflet.js"></script>
 <script src="{% static 'web/' %}js/uk-address-map.js"></script>
-<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+<script src="{% static 'web/' %}js/terai-interactive.js?v=server-auth-1"></script>
 
 </body></html>

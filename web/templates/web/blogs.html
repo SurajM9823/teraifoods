@@ -730,7 +730,7 @@
 										<i class="klb-icon-user-cut"></i>
 									</div>
 									<div class="action-text">
-										<span>Sign In</span>
+										<span>{% if user.is_authenticated %}My account{% else %}Sign In{% endif %}</span>
 										<p>Account</p>
 									</div>
 								</a>
@@ -1310,7 +1310,7 @@
 
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=server-auth-1"></script>
 </body>
 </html>
 

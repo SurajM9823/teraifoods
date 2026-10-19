@@ -9,7 +9,7 @@ import json
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.test import SimpleTestCase
-from django.urls import reverse
+from django.urls import reverse, resolve
 
 from web.selectors import list_pages
 
@@ -33,6 +33,10 @@ class PageTests(SimpleTestCase):
         for page in list_pages():
             with self.subTest(page=page.path):
                 response = self.client.get(reverse(f"web:{page.key}"))
+                if page.key == "manage-profile":
+                    self.assertEqual(response.status_code, 302)
+                    self.assertTrue(response.url.startswith('/accounts/login/'))
+                    continue
                 self.assertEqual(response.status_code, 200)
                 html = response.content.decode()
                 self.assertIn("<!doctype html", html.lower())
@@ -53,7 +57,8 @@ class PageTests(SimpleTestCase):
         for page in list_pages():
             with self.subTest(page=page.key):
                 response = self.client.get('/' + page.legacy_path + '?q=rice&page=2')
-                self.assertRedirects(response, '/' + page.path + '?q=rice&page=2', status_code=301)
+                self.assertRedirects(response, '/' + page.path + '?q=rice&page=2', status_code=301,
+                                     fetch_redirect_response=page.key != 'manage-profile')
 
     def test_canonical_urls_do_not_use_html(self):
         for page in list_pages():
@@ -81,7 +86,10 @@ class PageTests(SimpleTestCase):
                     continue
                 self.assertNotIn('.html', url.path, (page.path, match[1]))
                 resolved = posixpath.normpath(posixpath.join('/' + posixpath.dirname(page.path), url.path))
-                self.assertIn(resolved.rstrip('/'), {route.rstrip('/') for route in routes}, (page.path, match[1]))
+                if resolved.startswith('/accounts/'):
+                    self.assertIsNotNone(resolve(resolved))
+                else:
+                    self.assertIn(resolved.rstrip('/'), {route.rstrip('/') for route in routes}, (page.path, match[1]))
 
     def test_underscore_templates_survive(self):
         self.assertContains(self.client.get("/"), "{{{ data.variation.price_html }}}")
@@ -90,7 +98,8 @@ class PageTests(SimpleTestCase):
         response = self.client.get(reverse("web:page-directory"))
         self.assertEqual(response.status_code, 200)
         for page in response.json()["pages"]:
-            self.assertEqual(self.client.get(page["url"]).status_code, 200)
+            self.assertEqual(self.client.get(page["url"]).status_code,
+                             302 if page['url'] == '/manage-profile/' else 200)
         self.assertEqual(len(response.json()["pages"]), len(list_pages()))
 
     def test_unknown_pages_are_not_arbitrary_templates(self):
@@ -113,6 +122,8 @@ class PageTests(SimpleTestCase):
         # Current approved styles include the owner's later Shop edits and About redirect.
         baseline = json.loads((settings.BASE_DIR / 'web/tests/fixtures/inline_styles.json').read_text())
         for page in list_pages():
+            if page.key == 'manage-profile':
+                continue  # Replaced demo profile with a protected account page.
             html = self.client.get('/' + page.path).content.decode()
             styles = re.findall(r'<style\b[^>]*>([\s\S]*?)</style>', html)
             normalized = [re.sub(r'(?:/static/web/|(?:\.\./)+|\./)(?=(?:images|fonts|css|js)/)', '', style).replace('\r\n', '\n') for style in styles]
