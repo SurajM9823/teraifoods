@@ -4716,59 +4716,262 @@ svg rect[fill="#634c9f"] {
 }
 
 /* ==========================================================================
-   New Arrivals - Mobile Only Compact Card & Horizontal Peek (2.25 items)
+   New Arrivals - Mobile Only: Tiny Header Font, Horizontal Free-Scroll & 
+   Action Buttons (Add to Cart, Wishlist, Compare) at Top Horizontally Icon-Only
    Desktop view remains strictly unaffected
    ========================================================================== */
-@media (max-width: 767px) {
-  /* Scope strictly to New Arrivals product carousel widget */
-  .elementor-element-2bdf9e6 .site-slider {
-    padding-bottom: 6px !important;
+/* On desktop, hide mobile top cart button */
+.mobile-top-cart-btn {
+  display: none !important;
+}
+
+@media (max-width: 767.98px) {
+  /* 1. New Arrivals Header Font - Smaller / Tiny on Mobile */
+  .elementor-element-4b2256e .entry-title,
+  .elementor-element-4b2256e h3.entry-title {
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
   }
-  .elementor-element-2bdf9e6 .slick-slide {
-    padding: 0 4px !important;
-    box-sizing: border-box !important;
+  .elementor-element-4b2256e .btn-more {
+    font-size: 11px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    padding: 0 8px !important;
   }
-  .elementor-element-2bdf9e6 .slick-list {
-    overflow: hidden !important;
+  .elementor-element-4b2256e .btn-more span {
+    font-size: 11px !important;
+  }
+
+  /* 2. New Arrivals Horizontal Free-Scroll (matching packages / "Only This Week" slider below) */
+  .elementor-element-d6f7202,
+  .elementor-element-d6f7202 > .e-con-inner,
+  .elementor-element-d6f7202 .elementor-element-4a352b8,
+  .elementor-element-d6f7202 .elementor-element-2bdf9e6,
+  .elementor-element-d6f7202 .elementor-widget-container,
+  .elementor-element-d6f7202 .site-module,
+  .elementor-element-d6f7202 .site-module-body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: visible !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
+
+  .elementor-element-d6f7202 .site-slider,
+  .elementor-element-d6f7202 .site-slider.slick-initialized .slick-list,
+  .elementor-element-d6f7202 .site-slider.slick-initialized .slick-track {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 10px !important;
+    padding: 2px 16px 8px 16px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    transform: none !important;
+  }
+
+  .elementor-element-d6f7202 .site-slider::-webkit-scrollbar,
+  .elementor-element-d6f7202 .slick-list::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Individual New Arrivals Card in free-scroll carousel */
+  .elementor-element-d6f7202 .slider-item {
+    flex: 0 0 160px !important;
+    width: 160px !important;
+    min-width: 160px !important;
+    max-width: 160px !important;
+    scroll-snap-align: start !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    float: none !important;
+  }
+
+  .elementor-element-d6f7202 .slick-arrow,
+  .elementor-element-d6f7202 .slick-dots {
+    display: none !important;
+  }
+
   /* Reduced card padding and compact borders */
-  .elementor-element-2bdf9e6 .product-wrapper {
+  .elementor-element-2bdf9e6 .product-wrapper,
+  .elementor-element-d6f7202 .product-wrapper {
     padding: 8px 6px !important;
     border-radius: 8px !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
   }
-  /* Reduced image height and contained display */
-  .elementor-element-2bdf9e6 .product-thumbnail img {
-    max-height: 110px !important;
+
+  /* Product thumbnail image height and display */
+  .elementor-element-2bdf9e6 .product-thumbnail img,
+  .elementor-element-d6f7202 .product-thumbnail img {
+    max-height: 105px !important;
     width: auto !important;
     max-width: 100% !important;
     margin: 0 auto !important;
     object-fit: contain !important;
   }
-  .elementor-element-2bdf9e6 .thumbnail-wrapper {
-    min-height: unset !important;
+  .elementor-element-2bdf9e6 .thumbnail-wrapper,
+  .elementor-element-d6f7202 .thumbnail-wrapper {
+    position: relative !important;
+    min-height: 105px !important;
     margin-bottom: 6px !important;
   }
-  /* Badges compact size */
-  .elementor-element-2bdf9e6 .product-badges .badge {
+
+  /* Badges compact size at top-left */
+  .elementor-element-2bdf9e6 .product-badges,
+  .elementor-element-d6f7202 .product-badges {
+    top: 4px !important;
+    left: 4px !important;
+    z-index: 2 !important;
+  }
+  .elementor-element-2bdf9e6 .product-badges .badge,
+  .elementor-element-d6f7202 .product-badges .badge {
     font-size: 8.5px !important;
     padding: 2px 4px !important;
     line-height: 1.2 !important;
   }
-  .elementor-element-2bdf9e6 .product-badges .badge svg {
+  .elementor-element-2bdf9e6 .product-badges .badge svg,
+  .elementor-element-d6f7202 .product-badges .badge svg {
     width: 9px !important;
     height: 9px !important;
   }
-  /* Action buttons (wishlist, quickview) compact */
-  .elementor-element-2bdf9e6 .thumbnail-buttons a,
-  .elementor-element-2bdf9e6 .thumbnail-buttons .quickview-button {
-    width: 26px !important;
-    height: 26px !important;
-    line-height: 26px !important;
-    font-size: 10px !important;
+
+  /* 3. Action Buttons (Wishlist, Compare, Add to Cart) - Keep Horizontally at Top with Proper Icon Only */
+  .elementor-element-2bdf9e6 .thumbnail-buttons,
+  .elementor-element-d6f7202 .thumbnail-buttons {
+    position: absolute !important;
+    top: 4px !important;
+    right: 4px !important;
+    left: auto !important;
+    bottom: auto !important;
+    display: flex !important;
+    flex-direction: row !important; /* HORIZONTAL ROW */
+    align-items: center !important;
+    gap: 4px !important;
+    z-index: 5 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-  /* Concise / compact title font */
-  .elementor-element-2bdf9e6 .product-title {
+
+  .elementor-element-2bdf9e6 .thumbnail-buttons > *,
+  .elementor-element-d6f7202 .thumbnail-buttons > * {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+    transition: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+
+  /* Circular action button base: No text label overflow, clean icon-only pill */
+  .elementor-element-2bdf9e6 .thumbnail-buttons a,
+  .elementor-element-d6f7202 .thumbnail-buttons a,
+  .elementor-element-2bdf9e6 .thumbnail-buttons .quickview-button,
+  .elementor-element-d6f7202 .thumbnail-buttons .quickview-button {
+    width: 25px !important;
+    height: 25px !important;
+    min-width: 25px !important;
+    min-height: 25px !important;
+    border-radius: 50% !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0 !important; /* CRITICAL: Hides text labels ("Add to wishlist", "Compare") */
+    line-height: 1 !important;
+    text-indent: 0 !important;
+    color: #475569 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    text-decoration: none !important;
+  }
+
+  /* Add to Cart Top Button: proper cart icon only */
+  .elementor-element-2bdf9e6 .thumbnail-buttons .mobile-top-cart-btn,
+  .elementor-element-d6f7202 .thumbnail-buttons .mobile-top-cart-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    order: 1 !important;
+  }
+  .elementor-element-2bdf9e6 .thumbnail-buttons a.mobile-top-cart-btn,
+  .elementor-element-d6f7202 .thumbnail-buttons a.mobile-top-cart-btn,
+  .elementor-element-2bdf9e6 .thumbnail-buttons .mobile-top-cart-btn a,
+  .elementor-element-d6f7202 .thumbnail-buttons .mobile-top-cart-btn a {
+    background-color: #1547A8 !important;
+    border-color: #1547A8 !important;
+    color: #ffffff !important;
+  }
+  .elementor-element-2bdf9e6 .thumbnail-buttons .mobile-top-cart-btn i,
+  .elementor-element-d6f7202 .thumbnail-buttons .mobile-top-cart-btn i {
+    font-size: 11px !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    margin: 0 !important;
+  }
+
+  /* Wishlist Button: proper heart icon only */
+  .elementor-element-2bdf9e6 .thumbnail-buttons .wishlist-button,
+  .elementor-element-d6f7202 .thumbnail-buttons .wishlist-button {
+    order: 2 !important;
+  }
+  .elementor-element-2bdf9e6 .thumbnail-buttons .wishlist-button a::before,
+  .elementor-element-d6f7202 .thumbnail-buttons .wishlist-button a::before {
+    font-family: "klbtheme" !important;
+    content: "\eb35" !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    color: #64748b !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Compare Button: proper compare icon only */
+  .elementor-element-2bdf9e6 .thumbnail-buttons a.klbcp-btn,
+  .elementor-element-d6f7202 .thumbnail-buttons a.klbcp-btn {
+    order: 3 !important;
+  }
+  .elementor-element-2bdf9e6 .thumbnail-buttons a.klbcp-btn::before,
+  .elementor-element-d6f7202 .thumbnail-buttons a.klbcp-btn::before {
+    font-family: "klbtheme" !important;
+    content: "\e839" !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    color: #64748b !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    border: none !important;
+  }
+
+  /* Hide quickview on mobile */
+  .elementor-element-2bdf9e6 .thumbnail-buttons .quick-view-button,
+  .elementor-element-d6f7202 .thumbnail-buttons .quick-view-button {
+    display: none !important;
+  }
+
+  /* Product Title styling */
+  .elementor-element-2bdf9e6 .product-title,
+  .elementor-element-d6f7202 .product-title {
     font-size: 11.5px !important;
     line-height: 1.25 !important;
     font-weight: 600 !important;
@@ -4781,54 +4984,40 @@ svg rect[fill="#634c9f"] {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
-  .elementor-element-2bdf9e6 .product-title a {
+  .elementor-element-2bdf9e6 .product-title a,
+  .elementor-element-d6f7202 .product-title a {
     font-size: 11.5px !important;
     line-height: 1.25 !important;
   }
-  /* Compact rating */
-  .elementor-element-2bdf9e6 .product-rating {
+
+  /* Rating */
+  .elementor-element-2bdf9e6 .product-rating,
+  .elementor-element-d6f7202 .product-rating {
     margin-bottom: 3px !important;
     transform: scale(0.8);
     transform-origin: left center;
   }
-  /* Compact price */
-  .elementor-element-2bdf9e6 .product-price-wrapper {
+
+  /* Price */
+  .elementor-element-2bdf9e6 .product-price-wrapper,
+  .elementor-element-d6f7202 .product-price-wrapper {
     font-size: 12px !important;
     gap: 2px !important;
   }
-  .elementor-element-2bdf9e6 .product-price-wrapper .price {
+  .elementor-element-2bdf9e6 .product-price-wrapper .price,
+  .elementor-element-d6f7202 .product-price-wrapper .price {
     font-size: 12px !important;
     line-height: 1.2 !important;
   }
-  .elementor-element-2bdf9e6 .product-price-wrapper del {
+  .elementor-element-2bdf9e6 .product-price-wrapper del,
+  .elementor-element-d6f7202 .product-price-wrapper del {
     font-size: 10.5px !important;
   }
-  /* Compact cart button & quantity controls */
-  .elementor-element-2bdf9e6 .product-cart {
-    margin-top: 6px !important;
-    gap: 4px !important;
-  }
-  .elementor-element-2bdf9e6 .product-cart .button {
-    font-size: 10.5px !important;
-    height: 26px !important;
-    line-height: 26px !important;
-    padding: 0 6px !important;
-    border-radius: 5px !important;
-    white-space: nowrap !important;
-  }
-  .elementor-element-2bdf9e6 .product-cart .quantity {
-    height: 26px !important;
-  }
-  .elementor-element-2bdf9e6 .product-cart .quantity .quantity-button {
-    width: 22px !important;
-    height: 24px !important;
-    line-height: 24px !important;
-    font-size: 10px !important;
-  }
-  .elementor-element-2bdf9e6 .product-cart .quantity input.qty {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 10.5px !important;
+
+  /* 4. Bottom Product Cart - Hidden on mobile in New Arrivals since action buttons are at top */
+  .elementor-element-2bdf9e6 .product-cart,
+  .elementor-element-d6f7202 .product-cart {
+    display: none !important;
   }
 }
 
@@ -4856,17 +5045,25 @@ svg rect[fill="#634c9f"] {
   --padding-right: 0px;
 }
 
-.for-you-header-container {
-  margin-top: 24px !important;
-  margin-bottom: 2px !important;
-}
+@media (min-width: 768px) {
+  .for-you-header-container {
+    margin-top: 24px !important;
+    margin-bottom: 2px !important;
+  }
 
-.for-you-grid-container {
-  margin-top: 0 !important;
-  margin-bottom: 24px !important;
+  .for-you-grid-container {
+    margin-top: 0 !important;
+    margin-bottom: 24px !important;
+  }
 }
 
 .for-you-header-container > .e-con-inner,
+.for-you-grid-container > .e-con-inner {
+  width: 100% !important;
+  max-width: var(--container-max-width, 1440px) !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
 .for-you-grid-container > .e-con-inner {
   width: 100% !important;
   max-width: var(--container-max-width, 1440px) !important;
