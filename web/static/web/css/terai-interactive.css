@@ -5731,8 +5731,117 @@ a.button.is-loading::after,
 .site-categories a.is-navigating,
 .cat-nav-link.is-navigating {
   position: relative !important;
-  opacity: 0.7 !important;
+  opacity: 0.8 !important;
   transition: opacity 0.15s ease !important;
+}
+
+/* ==========================================================================
+   Mobile Bottom Bar / Button Bar Icon Spinner Loader
+   ========================================================================== */
+.site-mobile-navbar ul li a i,
+.klb-mobile-bottom ul li a i {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: transform 0.2s ease !important;
+}
+
+.site-mobile-navbar ul li.is-loading a i::before,
+.site-mobile-navbar ul li.is-navigating a i::before,
+.site-mobile-navbar ul li a.is-loading i::before,
+.site-mobile-navbar ul li a.is-navigating i::before,
+.klb-mobile-bottom ul li.is-loading a i::before,
+.klb-mobile-bottom ul li.is-navigating a i::before,
+.klb-mobile-bottom ul li a.is-loading i::before,
+.klb-mobile-bottom ul li a.is-navigating i::before {
+  opacity: 0 !important;
+  transform: scale(0.4) !important;
+  transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+.site-mobile-navbar ul li.is-loading a i::after,
+.site-mobile-navbar ul li.is-navigating a i::after,
+.site-mobile-navbar ul li a.is-loading i::after,
+.site-mobile-navbar ul li a.is-navigating i::after,
+.klb-mobile-bottom ul li.is-loading a i::after,
+.klb-mobile-bottom ul li.is-navigating a i::after,
+.klb-mobile-bottom ul li a.is-loading i::after,
+.klb-mobile-bottom ul li a.is-navigating i::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin-top: -10px !important;
+  margin-left: -10px !important;
+  border: 2.5px solid rgba(21, 71, 168, 0.22) !important;
+  border-top-color: #1547A8 !important;
+  border-radius: 50% !important;
+  animation: terai-spin 0.55s linear infinite !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  z-index: 10 !important;
+}
+
+.site-mobile-navbar ul li.is-loading a .menu-text,
+.site-mobile-navbar ul li.is-navigating a .menu-text,
+.site-mobile-navbar ul li a.is-loading .menu-text,
+.site-mobile-navbar ul li a.is-navigating .menu-text,
+.klb-mobile-bottom ul li.is-loading a .menu-text,
+.klb-mobile-bottom ul li.is-navigating a .menu-text,
+.klb-mobile-bottom ul li a.is-loading .menu-text,
+.klb-mobile-bottom ul li a.is-navigating .menu-text {
+  color: #1547A8 !important;
+  transition: color 0.15s ease !important;
+}
+
+/* Quick Buttons & Action Icon Spinner Feedback */
+.quick-button.is-loading .action-icon i,
+.quick-button.is-navigating .action-icon i,
+.action-link.is-loading .action-icon i,
+.action-link.is-navigating .action-icon i,
+.mobile-top-cart-btn a.is-loading i,
+.quick-view-button a.is-loading i,
+.pdp-icon-btn.is-loading i {
+  position: relative !important;
+}
+
+.quick-button.is-loading .action-icon i::before,
+.quick-button.is-navigating .action-icon i::before,
+.action-link.is-loading .action-icon i::before,
+.action-link.is-navigating .action-icon i::before,
+.mobile-top-cart-btn a.is-loading i::before,
+.quick-view-button a.is-loading i::before,
+.pdp-icon-btn.is-loading i::before {
+  opacity: 0 !important;
+  transform: scale(0.4) !important;
+  transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+.quick-button.is-loading .action-icon i::after,
+.quick-button.is-navigating .action-icon i::after,
+.action-link.is-loading .action-icon i::after,
+.action-link.is-navigating .action-icon i::after,
+.mobile-top-cart-btn a.is-loading i::after,
+.quick-view-button a.is-loading i::after,
+.pdp-icon-btn.is-loading i::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: -9px !important;
+  margin-left: -9px !important;
+  border: 2px solid rgba(21, 71, 168, 0.22) !important;
+  border-top-color: #1547A8 !important;
+  border-radius: 50% !important;
+  animation: terai-spin 0.55s linear infinite !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  z-index: 10 !important;
 }
 
 /* 5. Smooth spinner keyframes */
@@ -5740,4 +5849,5 @@ a.button.is-loading::after,
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
 

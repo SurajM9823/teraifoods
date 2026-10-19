@@ -3168,7 +3168,67 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     document.addEventListener('click', (e) => {
       if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
 
-      // 1. Buttons (CTAs, forms, actions)
+      // 0. Mobile Bottom Navbar / Button Bar Items
+      const bottomBarLi = e.target.closest('.site-mobile-navbar li, .klb-mobile-bottom li');
+      if (bottomBarLi) {
+        const bottomNav = bottomBarLi.closest('ul');
+        if (bottomNav) {
+          bottomNav.querySelectorAll('li, a').forEach(el => el.classList.remove('is-loading', 'is-navigating'));
+        }
+        bottomBarLi.classList.add('is-loading', 'is-navigating');
+        const bottomLink = bottomBarLi.querySelector('a');
+        if (bottomLink) bottomLink.classList.add('is-loading', 'is-navigating');
+
+        startProgress();
+
+        const isDrawer = bottomBarLi.querySelector('.menu-drawer-toggle') || 
+                         bottomBarLi.classList.contains('menu-drawer-toggle') || 
+                         (bottomLink && bottomLink.classList.contains('menu-drawer-toggle'));
+
+        if (isDrawer) {
+          setTimeout(() => {
+            bottomBarLi.classList.remove('is-loading', 'is-navigating');
+            if (bottomLink) bottomLink.classList.remove('is-loading', 'is-navigating');
+            stopProgress();
+          }, 650);
+        } else {
+          setTimeout(() => {
+            bottomBarLi.classList.remove('is-loading', 'is-navigating');
+            if (bottomLink) bottomLink.classList.remove('is-loading', 'is-navigating');
+          }, 4500);
+        }
+        return;
+      }
+
+      // Reset bottom bar if drawer or modal close is clicked
+      if (e.target.closest('.site-drawer-close, .modal-close, .site-overlay, .site-drawer-overlay, .cart-side-close')) {
+        document.querySelectorAll('.site-mobile-navbar .is-loading, .site-mobile-navbar .is-navigating, .klb-mobile-bottom .is-loading, .klb-mobile-bottom .is-navigating').forEach(el => {
+          el.classList.remove('is-loading', 'is-navigating');
+        });
+      }
+
+      // 1. Header Quick Buttons & Icon Actions
+      const quickBtn = e.target.closest('.quick-button, .mobile-top-cart-btn, .quick-view-button');
+      if (quickBtn) {
+        quickBtn.classList.add('is-loading', 'is-navigating');
+        const qLink = quickBtn.querySelector('a');
+        if (qLink) qLink.classList.add('is-loading', 'is-navigating');
+        const isDrawer = quickBtn.querySelector('.menu-drawer-toggle') || quickBtn.classList.contains('menu-drawer-toggle') || quickBtn.classList.contains('wishlist-button');
+        if (isDrawer) {
+          setTimeout(() => {
+            quickBtn.classList.remove('is-loading', 'is-navigating');
+            if (qLink) qLink.classList.remove('is-loading', 'is-navigating');
+          }, 600);
+        } else {
+          startProgress();
+          setTimeout(() => {
+            quickBtn.classList.remove('is-loading', 'is-navigating');
+            if (qLink) qLink.classList.remove('is-loading', 'is-navigating');
+          }, 4000);
+        }
+      }
+
+      // 2. Buttons (CTAs, forms, actions)
       const btn = e.target.closest('button, .btn, a.button, .button, input[type="submit"], .pdp-btn-buynow, .pdp-btn-addcart, .category-primary, .btn-filter');
       if (btn) {
         const isDrawerOrModal = btn.hasAttribute('data-bs-toggle') || btn.hasAttribute('data-modal') || btn.hasAttribute('data-drawer') || btn.closest('.site-drawer-close, .modal-close');
@@ -3178,7 +3238,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
         }
       }
 
-      // 2. Links & Navigations
+      // 3. Links & Navigations
       const link = e.target.closest('a');
       if (link) {
         const href = link.getAttribute('href');
@@ -3202,7 +3262,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
       }
     }, true);
 
-    // 3. Form submissions
+    // 4. Form submissions
     document.addEventListener('submit', (e) => {
       const form = e.target;
       const submitBtn = form.querySelector('button[type="submit"], input[type="submit"], .button, .btn');
