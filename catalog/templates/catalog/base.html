@@ -1,0 +1,11 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Categories{% endblock %}
+{% block breadcrumb %}Categories{% endblock %}
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'web/css/categories.css' %}">
+<div class="categories-page">
+{% for message in messages %}<p class="category-message" role="status">{{ message }}</p>{% endfor %}
+{% block category_content %}{% endblock %}
+</div>
+{% endblock %}

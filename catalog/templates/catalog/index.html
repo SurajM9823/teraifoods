@@ -1,0 +1,40 @@
+{% extends 'catalog/base.html' %}
+{% block category_content %}
+<div class="category-heading"><div><h1>Categories</h1><p>{{ total }} categories · {{ active }} active</p></div>
+{% if perms.catalog.add_category %}<a class="category-primary" href="{% url 'catalog:category-add' %}">Add category</a>{% endif %}</div>
+<p>Create a category first, then add its subcategories. An inactive category also hides its subcategories from the active catalog.</p>
+<form method="get" class="category-filters">
+<label>Search<input type="search" name="q" value="{{ query }}" placeholder="Category or subcategory" maxlength="100"></label>
+<label>Category status<select name="status"><option value="">All</option><option value="active" {% if status == 'active' %}selected{% endif %}>Active</option><option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option></select></label>
+<button type="submit">Filter</button><a href="{% url 'catalog:index' %}">Clear</a>
+</form>
+{% for category in page %}
+<section class="category-group">
+<header class="category-row">
+<div class="category-name">{% if category.icon %}<i class="{{ category.icon }}" aria-hidden="true"></i>{% endif %}<div><h2>{{ category.name }}</h2><small>{{ category.slug }}</small></div></div>
+<span class="category-status {% if category.is_active %}is-active{% endif %}">{{ category.is_active|yesno:'Active,Inactive' }}</span>
+<div class="category-actions">
+{% if perms.catalog.add_subcategory %}<a href="{% url 'catalog:subcategory-add' %}?parent={{ category.pk }}">Add subcategory</a>{% endif %}
+{% if perms.catalog.change_category %}<a href="{% url 'catalog:category-edit' category.pk %}">Edit</a>
+<form method="post" action="{% url 'catalog:category-status' category.pk %}">{% csrf_token %}<input type="hidden" name="active" value="{{ category.is_active|yesno:'false,true' }}"><button type="submit">{{ category.is_active|yesno:'Deactivate,Activate' }}</button></form>{% endif %}
+{% if perms.catalog.delete_category %}<a class="category-danger" href="{% url 'catalog:category-delete' category.pk %}">Delete</a>{% endif %}
+</div></header>
+{% if category.description %}<p class="category-description">{{ category.description }}</p>{% endif %}
+{% if perms.catalog.view_subcategory %}
+<ul class="subcategory-list">
+{% for child in category.subcategories.all %}<li class="category-row">
+<div class="category-name">{% if child.icon %}<i class="{{ child.icon }}" aria-hidden="true"></i>{% endif %}<div><h3>{{ child.name }}</h3><small>{{ child.slug }}</small></div></div>
+<span class="category-status {% if child.is_active and category.is_active %}is-active{% endif %}">{% if not child.is_active %}Inactive{% elif not category.is_active %}Hidden by parent{% else %}Active{% endif %}</span>
+<div class="category-actions">{% if perms.catalog.change_subcategory %}<a href="{% url 'catalog:subcategory-edit' child.pk %}">Edit</a>
+<form method="post" action="{% url 'catalog:subcategory-status' child.pk %}">{% csrf_token %}<input type="hidden" name="active" value="{{ child.is_active|yesno:'false,true' }}"><button type="submit">{{ child.is_active|yesno:'Deactivate,Activate' }}</button></form>{% endif %}
+{% if perms.catalog.delete_subcategory %}<a class="category-danger" href="{% url 'catalog:subcategory-delete' child.pk %}">Delete</a>{% endif %}</div>
+</li>{% empty %}<li class="category-empty">No subcategories yet.</li>{% endfor %}
+</ul>{% endif %}
+</section>
+{% empty %}<div class="category-empty">No categories found. Add your first category to get started.</div>{% endfor %}
+{% if page.has_other_pages %}<nav class="category-pagination" aria-label="Category pages">
+{% if page.has_previous %}<a href="?q={{ query|urlencode }}&amp;status={{ status|urlencode }}&amp;page={{ page.previous_page_number }}">Previous</a>{% endif %}
+<span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+{% if page.has_next %}<a href="?q={{ query|urlencode }}&amp;status={{ status|urlencode }}&amp;page={{ page.next_page_number }}">Next</a>{% endif %}
+</nav>{% endif %}
+{% endblock %}

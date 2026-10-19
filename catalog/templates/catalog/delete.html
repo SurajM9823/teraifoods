@@ -1,0 +1,7 @@
+{% extends 'catalog/base.html' %}
+{% block category_content %}
+<h1>Delete {{ kind }}</h1><p>{{ item.name }}</p>
+{% if blocked %}<p>This category still has subcategories. Move or delete them first, or deactivate the category to hide the whole group.</p>
+{% else %}<p>Delete this {{ kind }} permanently?</p><form method="post">{% csrf_token %}<button class="category-danger" type="submit">Delete {{ kind }}</button></form>{% endif %}
+<p><a href="{% url 'catalog:index' %}">Back to categories</a></p>
+{% endblock %}

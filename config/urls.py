@@ -8,6 +8,7 @@ urlpatterns = [
     path("health/", health, name="health"),
     path("admin/system/login/", AdminLoginView.as_view()),
     path("admin/system/", admin.site.urls),
+    path("admin/categories/", include("catalog.urls")),
     path("admin/cms/", include("cms.urls")),
     path("admin/", include("web.backoffice.urls")),
     path("accounts/", include("allauth.urls")),

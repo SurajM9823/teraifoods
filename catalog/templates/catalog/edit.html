@@ -1,0 +1,14 @@
+{% extends 'catalog/base.html' %}{% load static %}
+{% block category_content %}
+<a href="{% url 'catalog:index' %}">← Categories</a>
+<h1>{% if editing %}Edit{% else %}Add{% endif %} {{ kind }}</h1>
+{% if no_parents %}<p>Create a category before adding subcategories.</p>{% if perms.catalog.add_category %}<a href="{% url 'catalog:category-add' %}">Create a category</a>{% endif %}
+{% else %}
+<form method="post" class="category-form">{% csrf_token %}{{ form.as_p }}
+<div class="category-icon-preview" aria-live="polite"><i id="category-icon-preview" aria-hidden="true"></i><span id="category-icon-label">No icon</span></div>
+{% if kind == 'subcategory' %}<p class="category-hint">An inactive parent hides this subcategory even when its own Active box is checked.</p>{% endif %}
+<button class="category-primary" type="submit">Save {{ kind }}</button> <a href="{% url 'catalog:index' %}">Cancel</a>
+</form>
+<script src="{% static 'web/js/categories.js' %}" defer></script>
+{% endif %}
+{% endblock %}

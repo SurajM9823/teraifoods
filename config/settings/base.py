@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions", "django.contrib.messages", "django.contrib.staticfiles",
     "web.apps.WebConfig",
     "cms.apps.CmsConfig",
+    "catalog.apps.CatalogConfig",
     "customers.apps.CustomersConfig",
     "allauth", "allauth.account", "allauth.socialaccount",
     "allauth.socialaccount.providers.google",

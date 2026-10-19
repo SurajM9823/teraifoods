@@ -5017,4 +5017,13 @@ svg rect[fill="#634c9f"] {
   justify-content: center !important;
 }
 
+/* Remove / Hide Deliver to button, drawer location, and delivery modal */
+.location-selector-button,
+.site-drawer-location,
+#location-selector,
+.modal-location {
+  display: none !important;
+}
+
+
 

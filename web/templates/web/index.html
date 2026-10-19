@@ -776,18 +776,6 @@ body.home header.site-header.sticky-header .categories-menu .categories-toggle {
 		</div><!-- site-drawer-header -->
   
 		<div class="site-drawer-row site-drawer-body flex-fill pt-20">
-			<div class="site-drawer-location d-flex align-items-center justify-content-between lh-1 mt-7 mb-18">
-					
-					<div class="col d-inline-flex align-items-center flex-fill">
-						<span class="text-12 text-gray-400 mr-6">Your Location</span>
-						<i class="klb-icon-map-pin mr-6"></i>
-						<p class="text-13 fw-bold mb-0">all</p>
-					</div><!-- col -->
-					<div class="col flex-auto">
-						<a href="#" class="modal-button text-13 text-decoration-none fw-semibold" data-modal="location-selector">Change</a>
-					</div><!-- col -->
-					
-			</div><!-- site-drawer-location -->
   
 				<ul id="menu-menu-1" class="menu-item">
 					<li class="menu-item current-menu-item"><a href="{% url 'web:home' %}">Home</a></li>
@@ -942,18 +930,6 @@ body.home header.site-header.sticky-header .categories-menu .categories-toggle {
 												</div><!-- site-brand -->
 				</div><!-- col -->
 				<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
-											<div class="quick-button style-1 location-selector-button">
-							<a href="#" class="action-link modal-button" data-modal="location-selector">
-							  <div class="action-icon">
-									<i class="klb-icon-map-pin"></i>
-							  </div><!-- action-icon -->
-							  <div class="action-text">
-									<span>Deliver to</span>
-									<p>all</p>
-							  </div><!-- action-text -->
-							</a>
-						</div><!-- quick-button -->
-
 						<!-- Currency Chooser -->
 						<div class="quick-button style-1 currency-selector-button position-relative">
 							<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
@@ -1730,65 +1706,7 @@ for (let j = 0; j < urlFields.length; j++) {
 		<div id="klbwl_wishlist" class="klbwl-popup"></div>	
 	
 
-	<div id="location-selector" class="site-modal modal-location strech d-flex align-items-center justify-content-center">
-		<div class="site-modal-overlay strech position-absolute"></div>
-		<div class="site-modal-body position-relative z-1 bg-white">
-			<div class="site-modal-header d-flex align-items-center justify-content-between pt-14 lg-pt-20 px-20 lg-px-24">
-				<div>
-					<h4 class="entry-title text-16 lg-text-18 fw-bold mb-1" style="color: #1e293b;">Deliver to you</h4>
-					<p class="text-12 text-gray-500 mb-0">Select your UK delivery location or type your postcode</p>
-				</div>
-				<div class="site-button close-button"><a href="#"><i class="klb-icon-x"></i></a></div>
-			</div><!-- site-modal-header -->
-			
-			<div class="site-modal-inner px-20 lg-px-24 py-14">
-				<!-- Quick Options: Current Location & All UK -->
-				<div class="d-flex align-items-center justify-content-between gap-2 mb-14">
-					<button type="button" id="btn-modal-geolocate" class="btn-delivery-option flex-fill">
-						<i class="klb-icon-map-pin"></i> Use Current Location
-					</button>
-					<button type="button" id="btn-modal-deliver-all" class="btn-delivery-option flex-fill">
-						<i class="klb-icon-check"></i> Deliver to All UK
-					</button>
-				</div>
-
-				<!-- Step 1: Postcode Input Field -->
-				<div class="address-form-group">
-					<label class="address-form-label" for="modal-postcode-input">1. UK Postcode</label>
-					<div class="position-relative d-flex align-items-center">
-						<input id="modal-postcode-input" class="address-form-control" type="text" placeholder="e.g. SW1A 1AA or EC1A 1BB" autocomplete="postal-code" style="padding-right: 40px; text-transform: uppercase;">
-						<button type="button" id="btn-modal-search-postcode" class="position-absolute end-0 border-0 bg-transparent text-gray-500 px-12" style="cursor: pointer;" title="Search Postcode">
-							<i class="klb-icon-search"></i>
-						</button>
-					</div>
-					<div id="modal-lookup-status" class="lookup-status"></div>
-				</div>
-
-				<!-- Step 2: House / Flat Number Field -->
-				<div class="address-form-group">
-					<label class="address-form-label" for="modal-house-input">2. House / Flat &amp; Street Name</label>
-					<input id="modal-house-input" class="address-form-control" type="text" placeholder="e.g. Flat 4B, 10 High Street" autocomplete="street-address">
-				</div>
-
-				<!-- Step 3: Instant Map Confirmation -->
-				<div class="address-form-group mb-14">
-					<label class="address-form-label d-flex justify-content-between align-items-center">
-						<span>3. Instant Map Confirmation</span>
-						<span class="text-11 text-gray-500 fw-normal">Drag pin to door</span>
-					</label>
-					<div id="modal-delivery-map" class="teraifood-map-container"></div>
-					<div id="modal-map-badge" class="map-helper-badge w-100">
-						<i class="klb-icon-map-pin"></i> <span>Type your postcode above to instantly center map &amp; place door pin</span>
-					</div>
-				</div>
-
-				<!-- Confirm Button -->
-				<button type="button" id="btn-modal-confirm-address" class="btn-confirm-address">
-					<i class="klb-icon-check"></i> Confirm Delivery Address
-				</button>
-			</div><!-- site-modal-inner -->
-		</div><!-- site-modal-body -->
-	</div><!-- site-modal --><script id="kirki-viewport-lists" >var kirkiViewports = {"md":{"value":1200,"scale":1,"minWidth":1200,"maxWidth":1200,"title":"Desktop","icon":"desktop","activeIcon":"desktop-hover","id":"md","type":"max"},"tablet":{"value":991,"scale":1,"minWidth":991,"maxWidth":991,"title":"Tablet","icon":"tablet-default","activeIcon":"tablet-hover","type":"max","id":"tablet"},"mobileLandscape":{"value":767,"scale":1,"minWidth":767,"maxWidth":767,"title":"Landscape","icon":"phone-hr-default","activeIcon":"phone-hr-hover","type":"max","id":"mobileLandscape"},"mobile":{"value":575,"scale":1,"minWidth":575,"maxWidth":575,"title":"Mobile","icon":"phone-vr-default","activeIcon":"phone-vr-hover","type":"max","id":"mobile"}};</script><script id="kirki-variable-lists" >var kirkiCSSVariable = {"data":[{"title":"Colors","key":"color","modes":[{"title":"Default","key":"default"}],"variables":[]},{"title":"Numbers","key":"size","modes":[{"title":"Default","key":"default"}],"variables":[]},{"title":"Text Styles","key":"text-style","modes":[{"title":"Default","key":"default"}],"variables":[]},{"title":"Font Family","key":"font-family","modes":[{"title":"Default","key":"default"}],"variables":[]}]};</script><script id="kirki-api-and-nonce" >
+	<script id="kirki-viewport-lists" >var kirkiViewports = {"md":{"value":1200,"scale":1,"minWidth":1200,"maxWidth":1200,"title":"Desktop","icon":"desktop","activeIcon":"desktop-hover","id":"md","type":"max"},"tablet":{"value":991,"scale":1,"minWidth":991,"maxWidth":991,"title":"Tablet","icon":"tablet-default","activeIcon":"tablet-hover","type":"max","id":"tablet"},"mobileLandscape":{"value":767,"scale":1,"minWidth":767,"maxWidth":767,"title":"Landscape","icon":"phone-hr-default","activeIcon":"phone-hr-hover","type":"max","id":"mobileLandscape"},"mobile":{"value":575,"scale":1,"minWidth":575,"maxWidth":575,"title":"Mobile","icon":"phone-vr-default","activeIcon":"phone-vr-hover","type":"max","id":"mobile"}};</script><script id="kirki-variable-lists" >var kirkiCSSVariable = {"data":[{"title":"Colors","key":"color","modes":[{"title":"Default","key":"default"}],"variables":[]},{"title":"Numbers","key":"size","modes":[{"title":"Default","key":"default"}],"variables":[]},{"title":"Text Styles","key":"text-style","modes":[{"title":"Default","key":"default"}],"variables":[]},{"title":"Font Family","key":"font-family","modes":[{"title":"Default","key":"default"}],"variables":[]}]};</script><script id="kirki-api-and-nonce" >
     window.wp_kirki = {
         ajaxUrl: "",
         restUrl: "",

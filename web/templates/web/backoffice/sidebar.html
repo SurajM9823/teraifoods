@@ -31,6 +31,12 @@
       {% include 'web/backoffice/icon.html' with name='pos' %}
       <span class="sidebar-label">POS</span>
     </a>
+    {% if perms.catalog.view_category %}
+    <a href="{% url 'catalog:index' %}" class="nav-item {% if active_page == 'categories' %}active{% endif %}" {% if active_page == 'categories' %}aria-current="page"{% endif %} title="Categories">
+      {% include 'web/backoffice/icon.html' with name='grid' %}
+      <span class="sidebar-label">Categories</span>
+    </a>
+    {% endif %}
     <a href="{% url 'backoffice:products' %}" class="nav-item {% if active_page == 'products' %}active{% endif %}" {% if active_page == 'products' %}aria-current="page"{% endif %} title="Products">
       {% include 'web/backoffice/icon.html' with name='box' %}
       <span class="sidebar-label">Products</span>
