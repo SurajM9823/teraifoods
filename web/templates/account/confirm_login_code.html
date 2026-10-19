@@ -1,0 +1,7 @@
+{% extends "account/base_confirm_code.html" %}
+{% block title %}Sign In Code{% endblock %}
+{% block header_title %}Enter Sign-In Code{% endblock %}
+{% block subtitle %}We emailed a 6-digit sign-in code to <strong>{{ email }}</strong>. Enter it below to log in.{% endblock %}
+{% block action_url %}{% url 'account_confirm_login_code' %}{% endblock %}
+{% block resend_action %}{% url 'account_confirm_login_code' %}{% endblock %}
+

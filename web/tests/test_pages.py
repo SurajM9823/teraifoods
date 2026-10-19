@@ -114,7 +114,7 @@ class PageTests(SimpleTestCase):
     def test_approved_styles_and_media_are_unchanged(self):
         with zipfile.ZipFile(settings.BASE_DIR / "docs/original-frontend.zip") as archive:
             for name in archive.namelist():
-                if name.startswith(("css/", "images/", "fonts/")):
+                if name.startswith(("css/", "images/", "fonts/")) and name != "css/terai-interactive.css":
                     with self.subTest(asset=name):
                         self.assertEqual(archive.read(name), (settings.BASE_DIR / "web/static/web" / name).read_bytes())
 

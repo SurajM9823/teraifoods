@@ -43,6 +43,6 @@ class Command(BaseCommand):
                     self.stdout.write("SMTP connection/authentication: OK (no email sent)")
             except (OSError, smtplib.SMTPException, ValueError) as exc:
                 code = getattr(exc, "smtp_code", None)
-                failures.append(f"SMTP: {type(exc).__name__}, code={code if isinstance(code, int) else 'unavailable'}")
+                failures.append(f"SMTP: {type(exc).__name__}: {exc} (code={code if isinstance(code, int) else 'unavailable'})")
         if failures:
             raise CommandError("; ".join(failures))

@@ -1,8 +1,43 @@
-{% extends "account/base_entrance.html" %}
-{% block head_title %}Create your account{% endblock %}
+{% extends "allauth/layouts/base.html" %}
+{% block head_title %}Create Account{% endblock %}
 {% block content %}
-<h1>Create Account</h1><p>We’ll email a six-digit code to verify it’s you.</p>
-<form method="post" action="{% url 'account_signup' %}">{% csrf_token %}{{ form.as_p }}{{ redirect_field }}<button type="submit">Create account & send code</button></form>
-<p class="auth-bottom">Already registered? <a href="{{ login_url }}">Sign in</a></p>
+<div class="auth-header">
+  <h1>Create Account</h1>
+  <p class="auth-subtitle">We'll email you a 6-digit code to verify your account.</p>
+</div>
+
+<form method="post" action="{% url 'account_signup' %}" class="auth-form" id="auth-form" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="form-errors">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="form-field">
+    <label for="{{ form.email.id_for_label }}">Email address</label>
+    {{ form.email }}
+    {{ form.email.errors }}
+  </div>
+  <div class="form-field">
+    <label for="{{ form.password1.id_for_label }}">Password</label>
+    {{ form.password1 }}
+    {{ form.password1.errors }}
+    <div class="pwd-feedback" id="pwd-len-feedback">
+      <span class="status-icon">○</span> At least 12 characters
+    </div>
+  </div>
+  <div class="form-field">
+    <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+    {{ form.password2 }}
+    {{ form.password2.errors }}
+    <div class="pwd-feedback" id="pwd-match-feedback">
+      <span class="status-icon">○</span> Passwords match
+    </div>
+  </div>
+  {{ redirect_field }}
+  <button type="submit" class="primary-btn" id="signup-submit-btn">Create Account & Send Code</button>
+</form>
+
+<div class="auth-divider"><span>or sign up with</span></div>
 {% include "socialaccount/snippets/login.html" %}
+
+<p class="auth-bottom">Already registered? <a href="{{ login_url }}">Sign in</a></p>
 {% endblock %}

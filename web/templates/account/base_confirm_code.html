@@ -1,0 +1,42 @@
+{% extends "allauth/layouts/base.html" %}
+{% load i18n %}
+{% block head_title %}{% block title %}Verify Code{% endblock %}{% endblock %}
+{% block content %}
+<div class="auth-header">
+  <h1>{% block header_title %}Enter Verification Code{% endblock %}</h1>
+  <p class="auth-subtitle">
+    {% block subtitle %}
+      We've sent a 6-digit code to your email. Enter it below to continue.
+    {% endblock %}
+  </p>
+</div>
+
+<form method="post" action="{% block action_url %}{% endblock %}" class="auth-form otp-form" id="auth-form" novalidate>
+  {% csrf_token %}
+  {% if verify_form.non_field_errors %}
+    <div class="form-errors">{{ verify_form.non_field_errors }}</div>
+  {% endif %}
+
+  <div class="form-field otp-field-group">
+    <label for="id_code">6-Digit Code</label>
+    {{ verify_form.code }}
+    {{ verify_form.code.errors }}
+  </div>
+
+  {{ redirect_field }}
+  <button type="submit" class="primary-btn" id="otp-submit-btn">Verify & Continue</button>
+</form>
+
+<div class="otp-actions">
+  {% if can_resend %}
+    <form id="resend-form" method="post" action="{% block resend_action %}{% endblock %}" class="inline-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="resend">
+      {{ redirect_field }}
+      <button type="submit" class="link-btn">Request new code</button>
+    </form>
+  {% endif %}
+  <a href="{% url 'account_login' %}" class="subtle-link">Return to Sign In</a>
+</div>
+{% endblock %}
+

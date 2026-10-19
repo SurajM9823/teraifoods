@@ -1,0 +1,38 @@
+﻿/* Keep the supplied mountain wordmark complete at every viewport size. */
+img[src*="terai_food_logo.png"] {
+  object-fit: contain;
+  object-position: center;
+  max-width: 100%;
+}
+header.site-header .site-brand img[src*="terai_food_logo.png"] {
+  width: 155px;
+  height: 64px;
+  max-height: 64px;
+}
+footer img[src*="terai_food_logo.png"] {
+  width: 180px;
+  height: auto;
+}
+.sidebar .sidebar-brand {
+  padding-left: 0;
+  flex-shrink: 0;
+}
+.sidebar .sidebar-brand img {
+  width: 48px;
+  height: 38px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+.sidebar:hover .sidebar-brand img,
+.sidebar:focus-within .sidebar-brand img,
+.sidebar-pinned .sidebar .sidebar-brand img {
+  width: 130px;
+}
+@media (max-width: 767px) {
+  header.site-header .site-brand img[src*="terai_food_logo.png"] {
+    width: 120px;
+    height: 50px;
+    max-height: 50px;
+  }
+  .sidebar .sidebar-brand img { width: 130px; }
+}

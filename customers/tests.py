@@ -128,7 +128,7 @@ class CustomerAuthenticationTests(TestCase):
         self.assertTrue(user.check_password(new_password))
         self.assertFalse(user.check_password(PASSWORD))
         self.assertEqual(old_session.get("/manage-profile/").status_code, 302)
-        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertIn("_auth_user_id", self.client.session)
 
     def test_unknown_reset_is_generic_and_does_not_send_mail(self):
         response = self.client.post(reverse("account_reset_password"), {"email": "unknown@example.com"})

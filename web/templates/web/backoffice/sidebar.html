@@ -1,8 +1,7 @@
 {% load static %}
 <aside class="sidebar" id="admin-sidebar" aria-label="Administration sidebar">
   <a href="{% url 'backoffice:dashboard' %}" class="sidebar-brand" aria-label="Terai Food dashboard">
-    <img src="{% static 'web/images/teraifood-icon.svg' %}" alt="">
-    <span class="sidebar-label brand-word">teraifood<span>STORE WORKSPACE</span></span>
+    <img src="{% static 'web/images/terai_food_logo.png' %}" alt="Terai Food">
   </a>
   <button type="button" class="pin-button" aria-pressed="false" title="Keep sidebar open">
     {% include 'web/backoffice/icon.html' with name='panel' %}

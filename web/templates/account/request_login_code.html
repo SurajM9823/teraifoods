@@ -1,0 +1,25 @@
+{% extends "allauth/layouts/base.html" %}
+{% block head_title %}Sign In with Code{% endblock %}
+{% block content %}
+<div class="auth-header">
+  <h1>Sign In with Code</h1>
+  <p class="auth-subtitle">Enter your email and we'll send a 6-digit code to log in without a password.</p>
+</div>
+
+<form method="post" action="{% url 'account_request_login_code' %}" class="auth-form" id="auth-form" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="form-errors">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="form-field">
+    <label for="{{ form.email.id_for_label }}">Email address</label>
+    {{ form.email }}
+    {{ form.email.errors }}
+  </div>
+  {{ redirect_field }}
+  <button type="submit" class="primary-btn">Send Sign-In Code</button>
+</form>
+
+<p class="auth-bottom"><a href="{% url 'account_login' %}">← Return to password sign in</a></p>
+{% endblock %}
+

@@ -1,15 +1,39 @@
-{% extends "account/base_entrance.html" %}
-{% block head_title %}Log in{% endblock %}
+{% extends "allauth/layouts/base.html" %}
+{% block head_title %}Sign In{% endblock %}
 {% block content %}
-<h1>Log in</h1>
-<form method="post" action="{% url 'account_login' %}">{% csrf_token %}
-{{ form.non_field_errors }}
-<div class="form-field"><label for="{{ form.login.id_for_label }}">Email address *</label>{{ form.login }}{{ form.login.errors }}</div>
-<div class="form-field"><label for="{{ form.password.id_for_label }}">Password *</label>{{ form.password }}{{ form.password.errors }}</div>
-<div class="login-options"><a href="{% url 'account_reset_password' %}">Lost your password?</a></div>
-{{ redirect_field }}<button type="submit">Log in</button></form>
-<a class="code-login-link" href="{{ request_login_code_url }}">Sign in with an email code</a>
-<div class="auth-divider">Or login with</div>
+<div class="auth-header">
+  <h1>Sign In</h1>
+  <p class="auth-subtitle">Access your orders, wishlist, and account settings.</p>
+</div>
+
+<form method="post" action="{% url 'account_login' %}" class="auth-form" id="auth-form">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="form-errors">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="form-field">
+    <label for="{{ form.login.id_for_label }}">Email address</label>
+    {{ form.login }}
+    {{ form.login.errors }}
+  </div>
+  <div class="form-field">
+    <div class="field-header">
+      <label for="{{ form.password.id_for_label }}">Password</label>
+      <a href="{% url 'account_reset_password' %}" class="subtle-link">Lost password?</a>
+    </div>
+    {{ form.password }}
+    {{ form.password.errors }}
+  </div>
+  {{ redirect_field }}
+  <button type="submit" class="primary-btn">Sign In</button>
+</form>
+
+<div class="code-login-wrap">
+  <a class="code-login-link" href="{{ request_login_code_url }}">Sign in with email code</a>
+</div>
+
+<div class="auth-divider"><span>or continue with</span></div>
 {% include "socialaccount/snippets/login.html" %}
-<p class="auth-bottom">You don't have an account yet? <a href="{{ signup_url }}">Register Now</a></p>
+
+<p class="auth-bottom">Don't have an account yet? <a href="{{ signup_url }}">Register Now</a></p>
 {% endblock %}

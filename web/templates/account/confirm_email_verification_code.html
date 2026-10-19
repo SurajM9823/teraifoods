@@ -1,0 +1,7 @@
+{% extends "account/base_confirm_code.html" %}
+{% block title %}Verify Email{% endblock %}
+{% block header_title %}Verify Your Email{% endblock %}
+{% block subtitle %}We emailed a 6-digit code to <strong>{{ email }}</strong>. Enter it below to complete your registration.{% endblock %}
+{% block action_url %}{% url 'account_email_verification_sent' %}{% endblock %}
+{% block resend_action %}{% url 'account_email_verification_sent' %}{% endblock %}
+

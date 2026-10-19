@@ -2593,7 +2593,10 @@
         if (event.data?.type === 'terai-auth-size' && Number.isFinite(event.data.height)) {
           accountFrame.style.height = Math.max(160, Math.min(event.data.height, window.innerHeight - 32)) + 'px';
         }
-        if (event.data?.type === 'terai-auth-complete') window.location.assign('/manage-profile/');
+        if (event.data?.type === 'terai-auth-complete') {
+          closeLoginModal();
+          window.location.assign('/');
+        }
       });
     }
     if (accountDialog.open) return;
@@ -2621,6 +2624,13 @@
     // Keep the original popup interaction; forms and verification run on the server.
     document.querySelectorAll('.login-form-button, .user, .header-account, [data-modal="login"]').forEach(button => {
       button.addEventListener('click', event => {
+        const text = (button.textContent || '').toLowerCase();
+        const link = button.tagName === 'A' ? button : button.querySelector('a');
+        const href = link ? (link.getAttribute('href') || '') : '';
+        if (text.includes('my account') || href.includes('manage-profile')) {
+          // User is authenticated; allow normal navigation to profile without opening login modal
+          return;
+        }
         event.preventDefault();
         event.stopPropagation();
         openLoginModal();
