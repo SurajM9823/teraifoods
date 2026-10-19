@@ -69,10 +69,16 @@
 					  slidesToShow: slide_itemsTablet ? slide_itemsTablet : (slide_items <= 4 ? slide_items : 3)
 					}
 				  }, {
+					breakpoint: 768,
+					settings: {
+					  slidesToShow: slide_itemsMobile ? slide_itemsMobile : (slide_items <= 3 ? slide_items : 2),
+					  slidesToScroll: 1
+					}
+				  }, {
 					breakpoint: 576,
 					settings: {
 					  slidesToShow: slide_itemsMobile ? slide_itemsMobile : (slide_items <= 3 ? slide_items : 2),
-					  slidesToScroll: slide_itemsMobile ? slide_itemsMobile : (slide_items <= 3 ? slide_items : 2),
+					  slidesToScroll: 1,
 					  dots: self.classList.contains('carousel-style') ? slide_dots === false ? true : true : slide_dots,
 					}
 				  }
