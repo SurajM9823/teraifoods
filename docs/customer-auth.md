@@ -94,6 +94,33 @@ for delivery failures; credentials and OTP contents are not intentionally logged
 
 ## Continue with Google
 
+Customer login and signup already use the real Google OAuth flow. To activate it:
+
+1. In Google Cloud / Google Auth Platform, create or select your project and
+   configure the consent screen for external customers (app name, support email,
+   contact email, and your website details). Use email/profile identity scopes.
+2. Create an OAuth client with application type **Web application**.
+3. Register the exact callback URLs below. For your live site use
+   `https://YOUR-DOMAIN/accounts/google/login/callback/`, including the trailing
+   slash. The public server IP `http://178.105.139.193/` is not a valid production
+   callback: Google requires HTTPS and a domain (localhost is the development
+   exception). Do not use the homepage as the callback URL.
+4. Copy the client ID and client secret into `/opt/teraifoods/.env.server` on the
+   systemd server, or `.env` for local Docker. Keep the secret out of chat and Git.
+5. Restart systemd services with:
+   `systemctl restart teraifoods-web.service teraifoods-worker.service`.
+   For Docker, use `docker compose up -d --force-recreate web worker`.
+6. Open customer login, click **Continue with Google**, and complete consent.
+   Verify that you reach `/manage-profile/`. Configure the consent audience for
+   your customers before launch; add test accounts when required by Testing mode.
+
+An email app password is unrelated to OAuth. JavaScript origins are not required
+by this server-side redirect flow. Use the same host in the browser as the
+registered callback. Configure HTTPS/allowed hosts/CSRF trusted origins for your
+live domain before testing production. See Google's
+[redirect URI validation rules](https://developers.google.com/identity/protocols/oauth2/web-server#uri-validation).
+
+
 In Google Cloud create a Web application OAuth client, configure its consent
 screen and test users while it is in Testing mode, and enable the email/profile
 scopes. Add the exact authorized redirect URI:
