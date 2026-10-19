@@ -8,7 +8,7 @@ import json
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse, resolve
 
 from web.selectors import list_pages
@@ -27,7 +27,7 @@ class AssetParser(HTMLParser):
             self.assets.append(attrs.get("href", ""))
 
 
-class PageTests(SimpleTestCase):
+class PageTests(TestCase):
     def test_all_pages_render_and_local_assets_exist(self):
         missing = set()
         for page in list_pages():

@@ -1,0 +1,24 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Website content{% endblock %}
+{% block breadcrumb %}Website content{% endblock %}
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'web/css/cms.css' %}">
+<div class="cms-page">
+<h1>Website content</h1>
+{% for message in messages %}<p role="status">{{ message }}</p>{% endfor %}
+<section><h2>Homepage carousel</h2>
+<p>Recommended size: 1170 x 548 pixels. Use a landscape image with space on the left for text. Product linking and automatic prices will be available later; no placeholder prices appear to shoppers.</p>
+{% if perms.cms.add_banner %}<a class="btn btn-primary" href="{% url 'cms:banner-add' %}">Add banner</a>{% endif %}
+<div class="cms-grid">
+{% for banner in banners %}<article>
+<img class="cms-preview" src="{{ banner.image_url }}" alt="{{ banner.image_alt }}">
+<h3>{{ banner.title }}</h3><p>Order {{ banner.position }} · {{ banner.is_active|yesno:'Published,Hidden' }}</p>
+{% if perms.cms.change_banner %}<a href="{% url 'cms:banner-edit' banner.pk %}">Edit banner</a>{% endif %}
+{% if perms.cms.delete_banner %}<form method="post" action="{% url 'cms:banner-delete' banner.pk %}">{% csrf_token %}<button type="submit">Delete banner</button></form>{% endif %}
+</article>{% empty %}<p>No banners yet.</p>{% endfor %}
+</div></section>
+<section><h2>Four information blocks</h2><p>Short, helpful text displayed below the carousel. Keep claims accurate; these headings and descriptions are visible to search engines.</p>
+<div class="cms-grid">{% for item in information %}<article><h3>{{ item.slot }}. {{ item.title }}</h3><p>{{ item.description }}</p><p>{{ item.is_active|yesno:'Published,Hidden' }}</p>
+{% if perms.cms.change_informationblock %}<a href="{% url 'cms:information-edit' item.pk %}">Edit information</a>{% endif %}</article>{% endfor %}</div>
+</section></div>
+{% endblock %}

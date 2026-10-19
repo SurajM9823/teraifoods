@@ -13,7 +13,11 @@ def page_view(request, page_key):
     page = get_page(page_key)
     if page is None:
         raise Http404("Page not found")
-    return render(request, page.template)
+    context = {}
+    if page.key == "home":
+        from cms.content import homepage_content
+        context["cms_home"] = homepage_content()
+    return render(request, page.template, context)
 
 
 @require_safe
