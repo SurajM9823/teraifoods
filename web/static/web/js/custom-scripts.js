@@ -13,6 +13,17 @@ jQuery.noConflict();
 			for( var i = 0; i < container.length; i++ ) {
 			  const self = container[i];
 
+			  // On mobile screens (<= 767.98px), New Arrivals slider uses native smooth CSS free-scroll matching packages slider below
+			  if (window.innerWidth <= 767.98 && (self.closest('.elementor-element-d6f7202') || self.closest('.elementor-element-2bdf9e6'))) {
+			    if ($(self).hasClass('slick-initialized')) {
+			      try { $(self).slick('unslick'); } catch(e) {}
+			    }
+			    $(self).find('.slick-dots').remove();
+			    $(self).find('.slick-arrow, .slick-nav').remove();
+			    $(self).removeClass('loader-default slider-loading-height');
+			    continue;
+			  }
+
 			  let slide_items = Number(self.dataset.items);
 			  let slide_itemsTablet = Number(self.dataset.itemstablet);
 			  let slide_itemsMobile = Number(self.dataset.itemsmobile);

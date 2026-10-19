@@ -38,10 +38,13 @@ footer img[src*="terai_food_logo.png"] {
 }
 
 /* ========================================================
-   MOBILE PRODUCT DETAIL PAGE (PDP) - FULL WIDTH & NO OUTER BORDER/BOX
+   MOBILE PRODUCT DETAIL PAGE (PDP) - TRUE FULL WIDTH & ZERO OUTER BOX BEZELS
    ======================================================== */
 @media (max-width: 991.98px) {
-  /* 1. Flush Edge-to-Edge Layout: Strip bootstrap gutters and outer layout padding */
+  /* 1. Flush Edge-to-Edge Layout: Strip bootstrap gutters and all outer padding */
+  body.terai-shop-page,
+  body.terai-shop-page #page,
+  body.terai-shop-page #main,
   body.terai-shop-page .shop-main-layout,
   body.terai-shop-page .shop-main-container,
   body.terai-shop-page .shop-main-row,
@@ -70,10 +73,10 @@ footer img[src*="terai_food_logo.png"] {
     overflow-x: hidden !important;
   }
 
-  /* 3. Sleek edge-to-edge breadcrumb */
+  /* 3. Compact edge-to-edge breadcrumb */
   body.terai-shop-page .pdp-breadcrumb-wrapper,
   .pdp-breadcrumb-wrapper {
-    padding: 8px 12px !important;
+    padding: 6px 10px !important;
     margin: 0 !important;
     overflow-x: auto !important;
     white-space: nowrap !important;
@@ -88,17 +91,18 @@ footer img[src*="terai_food_logo.png"] {
   }
   .pdp-breadcrumb {
     flex-wrap: nowrap !important;
-    font-size: 11.5px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
   }
 
-  /* 4. Remove the Constrictive Outer Box Card Border & Heavy Padding */
+  /* 4. Complete Removal of Outer Card Box: 0 Border, 0 Radius, 0 Margin */
   body.terai-shop-page .pdp-main-card,
   .pdp-main-card {
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    padding: 8px 12px 18px 12px !important;
-    margin: 0 0 8px 0 !important;
+    padding: 0 0 16px 0 !important;
+    margin: 0 !important;
     width: 100% !important;
     box-sizing: border-box !important;
     background: #ffffff !important;
@@ -108,12 +112,12 @@ footer img[src*="terai_food_logo.png"] {
   .pdp-main-row {
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important;
+    gap: 0 !important;
     width: 100% !important;
     margin: 0 !important;
   }
 
-  /* 5. Edge-to-edge Gallery on Mobile */
+  /* 5. Edge-to-edge Gallery on Mobile: No outer box border */
   body.terai-shop-page .pdp-gallery-col,
   .pdp-gallery-col {
     width: 100% !important;
@@ -126,25 +130,27 @@ footer img[src*="terai_food_logo.png"] {
   body.terai-shop-page .pdp-main-img-box,
   .pdp-main-img-box {
     width: 100% !important;
-    height: 340px !important;
-    max-height: 85vw !important;
-    border: 1px solid #f1f5f9 !important;
-    border-radius: 6px !important;
-    margin-bottom: 10px !important;
+    height: 350px !important;
+    max-height: 90vw !important;
+    border: none !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
     background: #ffffff !important;
   }
 
   body.terai-shop-page .pdp-main-img-box img,
   .pdp-main-img-box img {
-    max-width: 95% !important;
-    max-height: 95% !important;
+    max-width: 96% !important;
+    max-height: 96% !important;
     object-fit: contain !important;
   }
 
   body.terai-shop-page .pdp-thumbs-wrapper,
   .pdp-thumbs-wrapper {
     width: 100% !important;
-    padding: 0 !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
   }
 
   .pdp-thumbs-list {
@@ -157,14 +163,15 @@ footer img[src*="terai_food_logo.png"] {
     flex: 0 0 48px !important;
   }
 
-  /* 6. Uncongested Info Column: Use Full Width */
+  /* 6. Uncongested Info Column: Use Full Width with clean 10px side margins */
   body.terai-shop-page .pdp-info-col,
   .pdp-info-col {
     width: 100% !important;
     max-width: 100% !important;
     flex: 0 0 100% !important;
-    padding: 0 !important;
+    padding: 12px 10px 0 10px !important;
     margin: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .pdp-flash-strip {
@@ -174,7 +181,7 @@ footer img[src*="terai_food_logo.png"] {
   }
 
   .pdp-product-title {
-    font-size: 16px !important;
+    font-size: 16.5px !important;
     line-height: 1.35 !important;
     margin-bottom: 8px !important;
   }
@@ -252,10 +259,11 @@ footer img[src*="terai_food_logo.png"] {
     width: 100% !important;
     max-width: 100% !important;
     flex: 0 0 100% !important;
-    padding: 14px 0 0 0 !important;
+    padding: 14px 10px 0 10px !important;
     margin-top: 14px !important;
     border-left: none !important;
-    border-top: 1px solid #f1f5f9 !important;
+    border-top: 8px solid #f8fafc !important;
+    box-sizing: border-box !important;
   }
 
   /* 8. Description & Reviews: Convert boxed cards to clean full-width divided sections */
@@ -265,7 +273,7 @@ footer img[src*="terai_food_logo.png"] {
     border-top: 8px solid #f8fafc !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    padding: 16px 12px !important;
+    padding: 16px 10px !important;
     margin: 0 !important;
     width: 100% !important;
     box-sizing: border-box !important;

@@ -15,8 +15,10 @@
 			  // On mobile screens (<= 767.98px), New Arrivals slider uses native smooth CSS free-scroll matching packages slider below
 			  if (window.innerWidth <= 767.98 && (self.closest('.elementor-element-d6f7202') || self.closest('.elementor-element-2bdf9e6'))) {
 			    if ($(self).hasClass('slick-initialized')) {
-			      $(self).slick('unslick');
+			      try { $(self).slick('unslick'); } catch(e) {}
 			    }
+			    $(self).find('.slick-dots').remove();
+			    $(self).find('.slick-arrow, .slick-nav').remove();
 			    $(self).removeClass('loader-default slider-loading-height');
 			    continue;
 			  }
@@ -99,8 +101,23 @@
 		}
 	}
 	
+	function cleanUpMobileNewArrivals() {
+		if (window.innerWidth <= 767.98) {
+			$('.elementor-element-d6f7202 .site-slider, .elementor-element-2bdf9e6 .site-slider').each(function() {
+				if ($(this).hasClass('slick-initialized')) {
+					try { $(this).slick('unslick'); } catch(e) {}
+				}
+				$(this).find('.slick-dots').remove();
+				$(this).find('.slick-arrow, .slick-nav').remove();
+				$(this).removeClass('loader-default slider-loading-height');
+			});
+		}
+	}
+
 	$(document).ready(function() {
 		groginThemeModule.siteslider();
+		cleanUpMobileNewArrivals();
+		$(window).on('load', cleanUpMobileNewArrivals);
 
 		let lastWidth = window.innerWidth;
 		$(window).on('resize', function() {
@@ -112,14 +129,15 @@
 			lastWidth = window.innerWidth;
 
 			const isMobile = window.innerWidth <= 767.98;
-			$('.elementor-element-d6f7202 .site-slider, .elementor-element-2bdf9e6 .site-slider').each(function() {
-				if (isMobile && $(this).hasClass('slick-initialized')) {
-					$(this).slick('unslick');
-					$(this).removeClass('loader-default slider-loading-height');
-				} else if (!isMobile && !$(this).hasClass('slick-initialized')) {
-					groginThemeModule.siteslider();
-				}
-			});
+			if (isMobile) {
+				cleanUpMobileNewArrivals();
+			} else {
+				$('.elementor-element-d6f7202 .site-slider, .elementor-element-2bdf9e6 .site-slider').each(function() {
+					if (!$(this).hasClass('slick-initialized')) {
+						groginThemeModule.siteslider();
+					}
+				});
+			}
 		});
 	});
 

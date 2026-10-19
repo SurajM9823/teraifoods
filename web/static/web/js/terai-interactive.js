@@ -3123,8 +3123,115 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     });
   }
 
+  // --- 13. Instant Click & Navigation Spinner Feedback System ---
+  function setupGlobalClickFeedback() {
+    let progressBar = document.getElementById('terai-global-progress');
+    if (!progressBar) {
+      progressBar = document.createElement('div');
+      progressBar.id = 'terai-global-progress';
+      document.body.appendChild(progressBar);
+    }
+
+    let progressTimer = null;
+    function startProgress() {
+      if (!progressBar) return;
+      clearTimeout(progressTimer);
+      progressBar.style.width = '0%';
+      progressBar.style.opacity = '1';
+      progressBar.classList.add('is-active');
+      setTimeout(() => { if (progressBar) progressBar.style.width = '30%'; }, 40);
+      setTimeout(() => { if (progressBar) progressBar.style.width = '70%'; }, 180);
+      setTimeout(() => { if (progressBar) progressBar.style.width = '88%'; }, 400);
+    }
+
+    function stopProgress() {
+      if (!progressBar) return;
+      progressBar.style.width = '100%';
+      progressTimer = setTimeout(() => {
+        progressBar.style.opacity = '0';
+        setTimeout(() => {
+          if (progressBar) {
+            progressBar.style.width = '0%';
+            progressBar.classList.remove('is-active');
+          }
+        }, 300);
+      }, 150);
+
+      document.querySelectorAll('.is-loading, .is-navigating').forEach(el => {
+        el.classList.remove('is-loading', 'is-navigating');
+      });
+    }
+
+    window.addEventListener('pageshow', stopProgress);
+
+    // Click handler for all clickable triggers
+    document.addEventListener('click', (e) => {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+      // 1. Buttons (CTAs, forms, actions)
+      const btn = e.target.closest('button, .btn, a.button, .button, input[type="submit"], .pdp-btn-buynow, .pdp-btn-addcart, .category-primary, .btn-filter');
+      if (btn) {
+        const isDrawerOrModal = btn.hasAttribute('data-bs-toggle') || btn.hasAttribute('data-modal') || btn.hasAttribute('data-drawer') || btn.closest('.site-drawer-close, .modal-close');
+        if (!isDrawerOrModal) {
+          btn.classList.add('is-loading');
+          setTimeout(() => { btn.classList.remove('is-loading'); }, 4000);
+        }
+      }
+
+      // 2. Links & Navigations
+      const link = e.target.closest('a');
+      if (link) {
+        const href = link.getAttribute('href');
+        if (!href || href === '#' || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || link.target === '_blank') {
+          return;
+        }
+
+        const isInternal = href.startsWith('/') || href.startsWith(window.location.origin) || !href.includes('://');
+        if (isInternal) {
+          startProgress();
+
+          const productCard = link.closest('.product, .shop-product-card, .pdp-thumb-item');
+          if (productCard) {
+            productCard.classList.add('is-navigating');
+            setTimeout(() => { productCard.classList.remove('is-navigating'); }, 5000);
+          } else {
+            link.classList.add('is-navigating');
+            setTimeout(() => { link.classList.remove('is-navigating'); }, 5000);
+          }
+        }
+      }
+    }, true);
+
+    // 3. Form submissions
+    document.addEventListener('submit', (e) => {
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"], input[type="submit"], .button, .btn');
+      if (submitBtn) {
+        submitBtn.classList.add('is-loading');
+      }
+      startProgress();
+      setTimeout(() => {
+        if (submitBtn) submitBtn.classList.remove('is-loading');
+        stopProgress();
+      }, 6000);
+    });
+  }
+
+  function ensureMobileNewArrivalsClean() {
+    if (window.innerWidth <= 767.98) {
+      document.querySelectorAll('.elementor-element-d6f7202 .site-slider, .elementor-element-2bdf9e6 .site-slider').forEach(slider => {
+        if (window.jQuery && window.jQuery(slider).hasClass('slick-initialized')) {
+          try { window.jQuery(slider).slick('unslick'); } catch(e) {}
+        }
+        slider.querySelectorAll('.slick-dots, .slick-arrow, .slick-nav').forEach(el => el.remove());
+        slider.classList.remove('loader-default', 'slider-loading-height');
+      });
+    }
+  }
+
   // --- Initializer ---
   function init() {
+    ensureMobileNewArrivalsClean();
     indexProducts();
     initQuickviewModal();
     initWishlistDrawer();
@@ -3139,6 +3246,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     setupNavigationInterceptors();
     setupGlobalCategoriesDropdown();
     setupTestimonialsSlider();
+    setupGlobalClickFeedback();
     updateCartUI();
     updateWishlistUI();
   }
@@ -3148,6 +3256,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
   } else {
     init();
   }
+  window.addEventListener('load', ensureMobileNewArrivalsClean);
 
 })();
 
