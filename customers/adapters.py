@@ -1,3 +1,4 @@
+from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
@@ -15,3 +16,10 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             email=email.lower(), verified=True, user__is_active=True,
             user__is_staff=False, user__is_superuser=False,
         ).exists()
+
+
+class AccountAdapter(DefaultAccountAdapter):
+    def post_login(self, request, user, **kwargs):
+        # Apply only after every required authentication/verification stage succeeds.
+        kwargs['redirect_url'] = '/'
+        return super().post_login(request, user, **kwargs)

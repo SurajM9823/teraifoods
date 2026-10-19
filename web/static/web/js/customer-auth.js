@@ -5,6 +5,8 @@
   const notify = (type, extra = {}) => {
     if (embedded) {
       window.parent.postMessage({ type, ...extra }, window.location.origin);
+    } else if (type === 'terai-auth-complete') {
+      window.location.assign('/');
     }
   };
 
@@ -268,7 +270,6 @@
         const response = await fetch(form.action, {
           method: 'POST',
           body: formData,
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
           credentials: 'same-origin',
         });
 
@@ -276,7 +277,7 @@
         const targetUrl = response.url || '';
         if (response.redirected || targetUrl.includes('/manage-profile') || targetUrl.endsWith('/')) {
           const path = new URL(targetUrl, window.location.origin).pathname;
-          if (path === '/' || path === '/manage-profile/' || path.includes('profile')) {
+          if (response.ok && (path === '/' || path === '/manage-profile/')) {
             notify('terai-auth-complete');
             return;
           }
@@ -289,12 +290,6 @@
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-
-        // Check if response contains authenticated profile
-        if (doc.querySelector('.account-email') || doc.title.toLowerCase().includes('my account') || html.includes('✓ Email verified')) {
-          notify('terai-auth-complete');
-          return;
-        }
 
         renderNewCard(html);
       } catch (err) {

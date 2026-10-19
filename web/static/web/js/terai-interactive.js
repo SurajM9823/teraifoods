@@ -870,7 +870,7 @@
                         <input type="radio" name="drawer_payment" value="card" checked id="drawer-pay-card" class="payment-tile-radio">
                         <label for="drawer-pay-card" style="margin: 0; cursor: pointer;">Credit or Debit Card</label>
                       </div>
-                      <span style="font-size: 11px; font-weight: 700; color: #634c9f;">Visa / Mastercard / Amex</span>
+                      <span style="font-size: 11px; font-weight: 700; color: #1547A8;">Visa / Mastercard / Amex</span>
                     </div>
                     <div class="cart-drawer-payment-tile-body" id="drawer-card-box">
                       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; margin-top: 6px; border: 1px solid #e2e8f0; background: #fafafa;">
@@ -2101,7 +2101,7 @@
           <i class="klb-icon-x"></i>
         </button>
         <div class="d-flex align-items-center gap-3 mb-3">
-          <div style="width: 44px; height: 44px; border-radius: 10px; background: #f5f3ff; color: #634c9f; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #eff6ff; color: #1547A8; display: flex; align-items: center; justify-content: center; font-size: 22px;">
             <i class="klb-icon-truck"></i>
           </div>
           <div>
@@ -2114,7 +2114,7 @@
           <label class="form-label text-12 fw-semibold text-gray-600 mb-1">Order ID or UK Phone Number</label>
           <div class="input-group">
             <input type="text" id="track-order-input" class="form-control text-13" placeholder="e.g. TF-583921" value="TF-583921">
-            <button class="btn btn-primary text-13 px-3" type="button" id="btn-submit-track" style="background: #634c9f; border-color: #634c9f;">Track Now</button>
+            <button class="btn btn-primary text-13 px-3" type="button" id="btn-submit-track" style="background: #1547A8; border-color: #1547A8;">Track Now</button>
           </div>
         </div>
 
@@ -2145,7 +2145,7 @@
             <div class="track-step active">
               <div class="track-dot"><i class="klb-icon-truck"></i></div>
               <div class="track-step-info">
-                <h6 style="color: #634c9f;">3. Out for UK Delivery</h6>
+                <h6 style="color: #1547A8;">3. Out for UK Delivery</h6>
                 <p>Courier in transit &bull; <strong>Estimated delivery today by 16:30</strong></p>
               </div>
             </div>
@@ -2350,7 +2350,7 @@
           <i class="klb-icon-x"></i>
         </button>
         <div class="text-center mb-3">
-          <span class="badge" style="background: #f5f3ff; color: #634c9f; font-weight: 700; padding: 5px 12px; border-radius: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Pure Organic &bull; Fresh Daily</span>
+          <span class="badge" style="background: #eff6ff; color: #1547A8; font-weight: 700; padding: 5px 12px; border-radius: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Pure Organic &bull; Fresh Daily</span>
           <h3 class="text-20 fw-bold text-dark mt-2 mb-1">About Terai Food UK</h3>
           <p class="text-12 text-gray-500 mb-0">Bringing the authentic freshness of Himalayan &amp; organic farming to your British doorstep.</p>
         </div>
@@ -2376,7 +2376,7 @@
         </div>
 
         <div class="text-center pt-2">
-          <button type="button" class="btn btn-primary rounded-pill px-4 text-13" id="btn-about-close" style="background: #634c9f; border-color: #634c9f;">Start Shopping Groceries</button>
+          <button type="button" class="btn btn-primary rounded-pill px-4 text-13" id="btn-about-close" style="background: #1547A8; border-color: #1547A8;">Start Shopping Groceries</button>
         </div>
       </div>
     `;
@@ -2481,7 +2481,7 @@
           <i class="klb-icon-x"></i>
         </button>
         <div class="d-flex align-items-center gap-3 mb-3">
-          <div style="width: 44px; height: 44px; border-radius: 10px; background: #f5f3ff; color: #634c9f; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #eff6ff; color: #1547A8; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
             <i class="klb-icon-map-pin"></i>
           </div>
           <div>
@@ -2522,7 +2522,7 @@
             <label class="bulk-form-label">How can we help you today?</label>
             <textarea class="bulk-form-textarea" rows="2" placeholder="Ask about an order, product inquiry, or UK delivery..." required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary w-100 py-2 rounded-2 text-14 fw-bold" style="background: #634c9f; border-color: #634c9f;">
+          <button type="submit" class="btn btn-primary w-100 py-2 rounded-2 text-14 fw-bold" style="background: #1547A8; border-color: #1547A8;">
             Send Inquiry Message
           </button>
         </form>
@@ -2565,6 +2565,10 @@
     accountDialog.close();
   }
   function openLoginModal() {
+    if (document.querySelector('meta[name="customer-authenticated"]')?.content === 'true') {
+      window.location.assign('/manage-profile/');
+      return;
+    }
     accountReturnFocus = document.activeElement;
     if (!accountDialog) {
       const style = document.createElement('style');
@@ -2634,13 +2638,6 @@
     // Keep the original popup interaction; forms and verification run on the server.
     document.querySelectorAll('.login-form-button, .user, .header-account, [data-modal="login"]').forEach(button => {
       button.addEventListener('click', event => {
-        const text = (button.textContent || '').toLowerCase();
-        const link = button.tagName === 'A' ? button : button.querySelector('a');
-        const href = link ? (link.getAttribute('href') || '') : '';
-        if (text.includes('my account') || href.includes('manage-profile')) {
-          // User is authenticated; allow normal navigation to profile without opening login modal
-          return;
-        }
         event.preventDefault();
         event.stopPropagation();
         openLoginModal();
@@ -3102,7 +3099,7 @@
               const sidebar = document.querySelector('.shop-sidebar-categories');
               if (sidebar) {
                 sidebar.style.transition = 'box-shadow 0.25s ease';
-                sidebar.style.boxShadow = '0 0 0 2px #634c9f';
+                sidebar.style.boxShadow = '0 0 0 2px #1547A8';
                 setTimeout(() => { sidebar.style.boxShadow = ''; }, 1200);
               }
               return;

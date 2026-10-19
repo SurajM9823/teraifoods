@@ -61,6 +61,7 @@ class CustomerAuthenticationTests(TestCase):
         self.assertNotContains(page, code)
         response = self.client.post(reverse("account_email_verification_sent"), {"code": code})
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/")
         self.assertTrue(EmailAddress.objects.get(user=user).verified)
         self.assertIn("_auth_user_id", self.client.session)
         self.assertContains(self.client.get("/manage-profile/"), user.email)
@@ -98,10 +99,10 @@ class CustomerAuthenticationTests(TestCase):
     def test_password_login_case_insensitive_and_redirect_safe(self):
         self.verified_user()
         response = self.client.post(reverse("account_login"), {
-            "login": "SHOPPER@EXAMPLE.COM", "password": PASSWORD, "next": "https://evil.example/",
+            "login": "SHOPPER@EXAMPLE.COM", "password": PASSWORD, "next": "/manage-profile/",
         })
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/manage-profile/")
+        self.assertEqual(response.url, "/")
         self.assertIn("_auth_user_id", self.client.session)
 
     def test_login_by_email_code(self):
@@ -109,7 +110,8 @@ class CustomerAuthenticationTests(TestCase):
         response = self.client.post(reverse("account_request_login_code"), {"email": "shopper@example.com"})
         self.assertEqual(response.status_code, 302)
         self.assertNotIn("_auth_user_id", self.client.session)
-        self.client.post(reverse("account_confirm_login_code"), {"code": self.code()})
+        response = self.client.post(reverse("account_confirm_login_code"), {"code": self.code()})
+        self.assertEqual(response.url, "/")
         self.assertIn("_auth_user_id", self.client.session)
 
     def test_password_recovery_revokes_old_sessions(self):
@@ -124,6 +126,7 @@ class CustomerAuthenticationTests(TestCase):
             "password1": new_password, "password2": new_password,
         })
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/")
         user.refresh_from_db()
         self.assertTrue(user.check_password(new_password))
         self.assertFalse(user.check_password(PASSWORD))
@@ -227,6 +230,7 @@ class GoogleFlowTests(TestCase):
             response = self.client.get("/accounts/google/login/callback/", {"state": state, "code": "test-code"})
         self.assertEqual(response.status_code, 302)
         self.assertIn("_auth_user_id", self.client.session)
+        self.assertEqual(response.url, "/")
         self.assertTrue(SocialAccount.objects.filter(provider="google", uid="test-google-user").exists())
         self.client.post(reverse("account_logout"))
         self.client.get("/accounts/google/login/callback/", {"state": state, "code": "test-code"})

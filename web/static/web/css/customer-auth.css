@@ -1,7 +1,7 @@
 :root {
-  --purple: #634c9f;
-  --purple-hover: #503b85;
-  --purple-light: #f5f3ff;
+  --purple: #1547A8;
+  --purple-hover: #0f3580;
+  --purple-light: #eff6ff;
   --ink: #0f172a;
   --muted: #64748b;
   --line: #cbd5e1;
@@ -217,7 +217,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .otp-box:focus {
   border-color: var(--purple);
   background: #fff;
-  box-shadow: 0 0 0 2px rgba(99, 76, 159, 0.18);
+  box-shadow: 0 0 0 2px rgba(21, 71, 168,  0.18);
 }
 .otp-box.filled {
   border-color: #64748b;
