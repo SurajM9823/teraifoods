@@ -629,8 +629,10 @@
 		}
 	</style>
   <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-contact-page">
+{% include 'catalog/storefront/assets.html' with include_drawer=True %}
 
 	<div id="page" class="site">
 		<!-- Site Header -->
@@ -1298,7 +1300,7 @@
 
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=original-popup-2"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
 
 	<!-- Mobile Bottom Navbar -->
 	<div class="klb-mobile-bottom site-mobile-navbar">
@@ -1342,6 +1344,7 @@
 			</nav>
 		</div>
 	</div>
+
 
 </body>
 </html>

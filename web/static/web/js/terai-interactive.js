@@ -1807,6 +1807,7 @@
 
     categoryLinks.forEach(link => {
       link.addEventListener('click', (e) => {
+        if (link.hasAttribute('data-backend-category')) return;
         if (link.classList.contains('categories-toggle') || link.closest('.categories-toggle')) {
           return;
         }
@@ -2255,12 +2256,8 @@
             <div>
               <label class="bulk-form-label" for="bulk-category">Primary Category Needed</label>
               <select id="bulk-category" class="bulk-form-select">
-                <option value="Vegetables & Exotic Produce">Fresh Asian &amp; Exotic Produce</option>
-                <option value="Himalayan Rice & Grains">Himalayan Rice, Pulses &amp; Flours</option>
-                <option value="Organic Spices & Herbs">Whole &amp; Ground Organic Spices</option>
-                <option value="Chilled Meats & Seafood">Chilled Meats &amp; Seafood Packs</option>
-                <option value="Full Grocery Assortment">Mixed Pallet / Full Assortment</option>
-              </select>
+${document.getElementById('storefront-category-options')?.innerHTML || ''}
+</select>
             </div>
             <div>
               <label class="bulk-form-label" for="bulk-volume">Estimated Volume</label>
@@ -3006,73 +3003,9 @@
   }
 
   // --- Universal Categories Dropdown Menu ---
-  const GLOBAL_CATEGORIES_HTML = `
-    <nav class="site-categories collapse">
-      <ul id="category-menu" class="menu">
-        <li class="menu-item menu-item-has-children"><a href="/shop/"><img src="/static/web/images/apple.svg" alt="">Fruits &amp; Vegetables</a>
-          <ul class="sub-menu">
-            <li><a href="/shop/">Cuts &amp; Sprouts</a></li>
-            <li><a href="/shop/">Exotic Fruits &amp; Veggies</a></li>
-            <li><a href="/shop/">Fresh Fruits</a></li>
-            <li><a href="/shop/">Fresh Vegetables</a></li>
-            <li><a href="/shop/">Herbs &amp; Seasonings</a></li>
-            <li><a href="/shop/">Packaged Produce</a></li>
-            <li><a href="/shop/">Party Trays</a></li>
-          </ul>
-        </li>
-        <li class="menu-item menu-item-has-children"><a href="/shop/"><img src="/static/web/images/meat.svg" alt="">Meats &amp; Seafood</a>
-          <ul class="sub-menu">
-            <li><a href="/shop/">Beef Products</a></li>
-            <li><a href="/shop/">Chicken and Turkey Products</a></li>
-            <li><a href="/shop/">Fish Varieties</a></li>
-            <li><a href="/shop/">Lamb Products</a></li>
-            <li><a href="/shop/">Processed Red Meat Products</a></li>
-            <li><a href="/shop/">Seafood</a></li>
-          </ul>
-        </li>
-        <li class="menu-item menu-item-has-children"><a href="/shop/"><img src="/static/web/images/boiled-egg.svg" alt="">Breaksfast &amp; Dairy</a>
-          <ul class="sub-menu">
-            <li><a href="/shop/">Breads and Cereal Products</a></li>
-            <li><a href="/shop/">Breakfast Cereals and Bars</a></li>
-            <li><a href="/shop/">Butter &amp; Margarine</a></li>
-            <li><a href="/shop/">Cereals and Granolas</a></li>
-            <li><a href="/shop/">Cheese Varieties</a></li>
-            <li><a href="/shop/">Dairy Processing Products</a></li>
-            <li><a href="/shop/">Eggs and Egg Products</a></li>
-            <li><a href="/shop/">Fresh Dairy Products</a></li>
-          </ul>
-        </li>
-        <li class="menu-item menu-item-has-children"><a href="/shop/"><img src="/static/web/images/toast-bread.svg" alt="">Breads &amp; Bakery</a>
-          <ul class="sub-menu">
-            <li><a href="/shop/">Bakery Pastries and Rolls</a></li>
-            <li><a href="/shop/">Fresh Bread Varieties</a></li>
-            <li><a href="/shop/">Glazed and Filled Products</a></li>
-            <li><a href="/shop/">Gluten-Free Alternatives</a></li>
-            <li><a href="/shop/">Organic and Natural Breads</a></li>
-            <li><a href="/shop/">Pizza and Flatbreads</a></li>
-            <li><a href="/shop/">Sandwich Bread and Wraps</a></li>
-            <li><a href="/shop/">Sweets and Pastry Products</a></li>
-          </ul>
-        </li>
-        <li class="menu-item menu-item-has-children"><a href="/shop/"><img src="/static/web/images/cup.svg" alt="">Beverages</a>
-          <ul class="sub-menu">
-            <li><a href="/shop/">Drink Boxes &amp; Pouches</a></li>
-            <li><a href="/shop/">Coffee</a></li>
-            <li><a href="/shop/">Craft Beer</a></li>
-            <li><a href="/shop/">Milk &amp; Plant-Based Milk</a></li>
-            <li><a href="/shop/">Soda &amp; Pop</a></li>
-            <li><a href="/shop/">Sparkling Water</a></li>
-          </ul>
-        </li>
-        <li class="menu-item"><a href="/shop/"><img src="/static/web/images/snowflake.svg" alt="">Frozen Foods</a></li>
-        <li class="menu-item"><a href="/shop/"><img src="/static/web/images/bar.svg" alt="">Biscuits &amp; Snacks</a></li>
-        <li class="menu-item"><a href="/shop/"><img src="/static/web/images/wheat.svg" alt="">Grocery &amp; Staples</a></li>
-        <li class="menu-item"><a href="/shop/"><img src="/static/web/images/scoop.svg" alt="">Household Needs</a></li>
-        <li class="menu-item"><a href="/shop/"><img src="/static/web/images/toilet-paper.svg" alt="">Healthcare</a></li>
-        <li class="menu-item"><a href="/shop/"><img src="/static/web/images/baby-boy.svg" alt="">Baby &amp; Pregnancy</a></li>
-      </ul>
-    </nav>
-  `;
+  function globalCategoriesHTML() {
+    return document.getElementById('storefront-category-menu')?.innerHTML || '';
+  }
 
   function setupGlobalCategoriesDropdown() {
     const isHomePage = document.body.classList.contains('home');
@@ -3083,7 +3016,7 @@
       // Only inject site-categories on other pages or mobile shop
       let siteCat = menu.querySelector('.site-categories');
       if (!siteCat && (!isShopPage || window.innerWidth < 1200)) {
-        menu.insertAdjacentHTML('beforeend', GLOBAL_CATEGORIES_HTML);
+        menu.insertAdjacentHTML('beforeend', globalCategoriesHTML());
         siteCat = menu.querySelector('.site-categories');
       }
 
@@ -3138,7 +3071,7 @@
             } else {
               // On mobile/tablet shop page (< 1200px), toggle mobile categories dropdown
               if (!siteCat) {
-                menu.insertAdjacentHTML('beforeend', GLOBAL_CATEGORIES_HTML);
+                menu.insertAdjacentHTML('beforeend', globalCategoriesHTML());
                 siteCat = menu.querySelector('.site-categories');
               }
               if (siteCat) {
@@ -3151,7 +3084,7 @@
 
           // 3. ALL OTHER PAGES (Track Order, Blogs, Supports, Bulk Order, Manage Profile, Cart, Checkout, etc.)
           if (!siteCat) {
-            menu.insertAdjacentHTML('beforeend', GLOBAL_CATEGORIES_HTML);
+            menu.insertAdjacentHTML('beforeend', globalCategoriesHTML());
             siteCat = menu.querySelector('.site-categories');
           }
           if (siteCat) {

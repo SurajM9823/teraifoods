@@ -41,6 +41,7 @@ TEMPLATES = [{
         "django.contrib.auth.context_processors.auth",
         "django.contrib.messages.context_processors.messages",
         "customers.context_processors.authentication",
+        "catalog.context_processors.storefront_categories",
     ]},
 }]
 WSGI_APPLICATION = "config.wsgi.application"

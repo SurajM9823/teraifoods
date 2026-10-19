@@ -25,7 +25,9 @@ def _load():
     def item(category):
         return dict(id=category.pk, name=category.name, slug=category.slug,
                     description=category.description, icon=category.icon)
-    return [dict(**item(category), subcategories=[item(child) for child in category.subcategories.all()])
+    return [dict(**item(category), filter_key=category.legacy_key or category.slug,
+                 menu_image=category.menu_image,
+                 subcategories=[item(child) for child in category.subcategories.all()])
             for category in categories]
 
 
@@ -35,7 +37,7 @@ def category_tree():
         if generation is None:
             cache.add(GENERATION_KEY, uuid.uuid4().hex, timeout=None)
             generation = cache.get(GENERATION_KEY)
-        key = f'catalog:categories:v1:{generation}'
+        key = f'catalog:categories:v3:{generation}'
         result = cache.get(key)
         if result is not None:
             return result

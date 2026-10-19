@@ -34,17 +34,32 @@ Categories live in PostgreSQL; they contain no images or media uploads. The
 optional icons use the existing local Font Awesome Free font, with a curated
 picker and preview, so no external font service or arbitrary HTML is needed.
 
-`catalog.content.category_tree()` returns the active hierarchy for future product
-and storefront integrations. It uses shared Redis caching for five minutes with
+`catalog.content.category_tree()` returns the active hierarchy used by all storefront menus. It uses shared Redis caching for five minutes with
 a lock for concurrent misses. Saves/deletes rotate the cache generation after
 commit, including edits through Django admin. Cache failures fall back to the
 database; invalidation failure is bounded by the payload's five-minute TTL.
 Direct SQL or bulk QuerySet updates must call `invalidate_categories()` after
 commit because they bypass Django signals.
 
-This change implements the admin module and reusable category data; existing
-demo storefront menus and products are not assigned to categories automatically.
-No sample categories are inserted into the live database.
+## Shared storefront categories
+
+Every storefront category menu uses `catalog/storefront/menu.html`. Existing page
+wrappers, menu classes, SVG artwork, spacing and submenu structure are retained.
+The same partial supplies the homepage, shop/product sidebars, mobile drawer and
+JavaScript-injected dropdowns. The bulk enquiry selector also uses these rows.
+
+Migration 0003 imports the original 11 parent categories and 58 subcategories
+from the union of the old menus and category labels. It merges repeated names,
+corrects the breakfast spelling, preserves existing admin records and statuses,
+and is safe to run again without creating duplicates. Original SVG artwork is
+kept; admins can switch to a Font Awesome icon or clear both icon fields.
+
+Active/inactive status and edits now affect all storefront menus after commit.
+Legacy shop identifiers are retained internally so existing demonstration
+product filters continue to work after renaming a category or slug. Products
+are still demo data; subcategory links currently browse their parent product
+selection until product/subcategory assignments are implemented. No product
+backend is introduced by this category refactor.
 
 ## Deploy on the existing systemd server
 

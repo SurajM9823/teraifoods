@@ -1,0 +1,8 @@
+{% load static %}<ul {% if menu_id %}id="{{ menu_id }}"{% endif %} class="{{ menu_class|default:'' }}">
+{% for category in storefront_categories %}
+<li class="menu-item{% if category.subcategories %} menu-item-has-children{% endif %}"><a href="{% url 'web:shop' %}?category={{ category.slug|urlencode }}" class="cat-nav-link" data-backend-category="{{ category.slug }}" data-category="{{ category.filter_key }}">{% if category.icon %}<i class="{{ category.icon }}" aria-hidden="true"></i>{% elif category.menu_image %}<img src="{% static 'web/images/' %}{{ category.menu_image }}" alt=""{% if shop_menu %} class="me-2"{% endif %}>{% endif %}{{ category.name }}</a>
+{% if category.subcategories %}<ul class="sub-menu">
+{% for child in category.subcategories %}<li><a href="{% url 'web:shop' %}?category={{ category.slug|urlencode }}&amp;subcategory={{ child.slug|urlencode }}" class="cat-nav-link" data-backend-category="{{ category.slug }}" data-subcategory="{{ child.slug }}" data-category="{{ category.filter_key }}">{% if child.icon %}<i class="{{ child.icon }}" aria-hidden="true"></i>{% endif %}{{ child.name }}</a></li>{% endfor %}
+</ul>{% endif %}</li>
+{% endfor %}
+</ul>

@@ -1,0 +1,10 @@
+{% load static %}
+<script src="{% static 'web/js/storefront-categories.js' %}" defer></script>
+<template id="storefront-category-menu"><nav class="site-categories collapse">{% include 'catalog/storefront/menu.html' with menu_class='menu' %}</nav></template>
+<template id="storefront-category-options">{% for category in storefront_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}</template>
+{% if include_drawer %}
+<div id="categories-drawer" class="site-drawer site-categories-drawer get-header-height get-mobile-nav-height">
+  <div class="site-drawer-inner site-scroll"><nav class="site-categories">{% include 'catalog/storefront/menu.html' %}</nav></div>
+  <div class="site-drawer-overlay position-absolute strech"></div>
+</div>
+{% endif %}

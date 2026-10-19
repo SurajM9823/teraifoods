@@ -1,4 +1,4 @@
-{% load static %}
+{% load static catalog_tags %}
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -631,8 +631,10 @@
 		}
 	</style>
   <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-track-order-page">
+{% include 'catalog/storefront/assets.html' with include_drawer=True %}
 
 	<div id="page" class="site">
 		<!-- Site Header -->
@@ -913,7 +915,7 @@
 								<img src="{% static 'web/' %}images/1-9-700x700.jpg" alt="Organic Gala Apples" class="order-item-thumb">
 								<div class="order-item-info">
 									<h6 class="order-item-title">100% Organic Honeycrisp &amp; Gala Apples &ndash; 1.5kg Family Pack</h6>
-									<p class="order-item-meta">Category: Fresh Fruits &bull; Origin: Organic Bio-Orchard Kent</p>
+									<p class="order-item-meta">Category: {% category_label storefront_categories 'fruits-veg' 'fresh-fruits' %} &bull; Origin: Organic Bio-Orchard Kent</p>
 									<span class="badge bg-light text-success border border-success-subtle text-11 mt-1">Temperature Chilled</span>
 								</div>
 								<div class="order-item-price">&pound;4.25</div>
@@ -924,7 +926,7 @@
 								<img src="{% static 'web/' %}images/1-16-700x700.jpg" alt="Himalayan Stone-Ground Turmeric" class="order-item-thumb">
 								<div class="order-item-info">
 									<h6 class="order-item-title">Single-Origin Himalayan High-Curcumin Turmeric Powder (250g)</h6>
-									<p class="order-item-meta">Category: Spices &amp; Seasonings &bull; Stone-Ground</p>
+									<p class="order-item-meta">Category: {% category_label storefront_categories 'grocery' 'spices-seasonings' %} &bull; Stone-Ground</p>
 								</div>
 								<div class="order-item-price">&pound;3.99</div>
 								<div class="order-item-qty">Qty: 1</div>
@@ -961,7 +963,7 @@
 								<img src="{% static 'web/' %}images/1-38-700x700.jpg" alt="Organic Yellow Moong Lentils" class="order-item-thumb">
 								<div class="order-item-info">
 									<h6 class="order-item-title">Split Yellow Moong Lentils (Dhal) &ndash; 1kg Vacuum Bag</h6>
-									<p class="order-item-meta">Category: Organic Staples &bull; Zero Additives</p>
+									<p class="order-item-meta">Category: {% category_label storefront_categories 'grocery' 'organic-staples' %} &bull; Zero Additives</p>
 								</div>
 								<div class="order-item-price">&pound;2.80</div>
 								<div class="order-item-qty">Qty: 3</div>
@@ -998,7 +1000,7 @@
 								<img src="{% static 'web/' %}images/1-12-700x700.jpg" alt="Cold Pressed Pure Mustard Oil" class="order-item-thumb">
 								<div class="order-item-info">
 									<h6 class="order-item-title">Raw Cold-Pressed Himalayan Yellow Mustard Oil &ndash; 1L Glass Bottle</h6>
-									<p class="order-item-meta">Category: Oils &amp; Ghee &bull; 100% Virgin Pressed</p>
+									<p class="order-item-meta">Category: {% category_label storefront_categories 'grocery' 'oils-ghee' %} &bull; 100% Virgin Pressed</p>
 								</div>
 								<div class="order-item-price">&pound;6.50</div>
 								<div class="order-item-qty">Qty: 1</div>
@@ -1035,7 +1037,7 @@
 								<img src="{% static 'web/' %}images/1-30-700x700.jpg" alt="Organic Wholewheat Sourdough" class="order-item-thumb">
 								<div class="order-item-info">
 									<h6 class="order-item-title">Heritage Stoneground Wholewheat Sourdough Loaf (800g)</h6>
-									<p class="order-item-meta">Category: Breads &amp; Bakery &bull; Fresh Baked Morning Dispatch</p>
+									<p class="order-item-meta">Category: {% category_label storefront_categories 'bakery' %} &bull; Fresh Baked Morning Dispatch</p>
 								</div>
 								<div class="order-item-price">&pound;3.50</div>
 								<div class="order-item-qty">Qty: 2</div>
@@ -1229,7 +1231,7 @@
 
 
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=original-popup-2"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
 
 	<!-- Mobile Bottom Navbar -->
 	<div class="klb-mobile-bottom site-mobile-navbar">
@@ -1273,6 +1275,7 @@
 			</nav>
 		</div>
 	</div>
+
 
 </body>
 </html>

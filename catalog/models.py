@@ -22,6 +22,15 @@ class CategoryFields(models.Model):
 
 
 class Category(CategoryFields):
+    legacy_key = models.CharField(max_length=40, blank=True, editable=False)
+    menu_image = models.CharField(max_length=40, blank=True, choices=[
+        (name + '.svg', label) for name, label in (
+            ('apple', 'Fruit'), ('meat', 'Meat'), ('boiled-egg', 'Breakfast'),
+            ('toast-bread', 'Bread'), ('cup', 'Drinks'), ('snowflake', 'Frozen'),
+            ('bar', 'Snacks'), ('wheat', 'Grocery'), ('scoop', 'Household'),
+            ('toilet-paper', 'Healthcare'), ('baby-boy', 'Baby'),
+        )
+    ], help_text='Original storefront artwork. A selected Font Awesome icon takes priority.')
     class Meta(CategoryFields.Meta):
         abstract = False
         verbose_name_plural = 'categories'

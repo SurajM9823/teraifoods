@@ -13,6 +13,9 @@ from django.core.cache import cache
 class CategoryBrowserTests(StaticLiveServerTestCase):
     def test_category_management(self):
         cache.clear()
+        from catalog.models import Category, Subcategory
+        Subcategory.objects.all().delete()
+        Category.objects.all().delete()
         password = secrets.token_urlsafe(24)
         get_user_model().objects.create_superuser('category-browser', 'category@example.test', password)
         result = subprocess.run(
@@ -20,6 +23,27 @@ class CategoryBrowserTests(StaticLiveServerTestCase):
             cwd=settings.BASE_DIR,
             env={**os.environ, 'ADMIN_TEST_URL': self.live_server_url,
                  'ADMIN_TEST_USER': 'category-browser', 'ADMIN_TEST_PASSWORD': password},
+            capture_output=True, text=True, timeout=120,
+            creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        print(result.stdout)
+
+
+@skipUnless(os.environ.get('RUN_CATEGORY_BROWSER_TESTS') == '1', 'Optional Edge browser test')
+class StorefrontCategoryBrowserTests(StaticLiveServerTestCase):
+
+    def test_shared_storefront(self):
+        cache.clear()
+        # Transactional browser tests flush between classes; restore imported content.
+        import importlib
+        from django.apps import apps
+        from django.db import connection
+        importlib.import_module('catalog.migrations.0003_import_storefront_categories').seed(
+            apps, type('Editor', (), {'connection': connection})())
+        result = subprocess.run(
+            [shutil.which('node') or 'node', str(settings.BASE_DIR / 'tools/storefront_categories_smoke.cjs')],
+            cwd=settings.BASE_DIR, env={**os.environ, 'CUSTOMER_TEST_URL': self.live_server_url},
             capture_output=True, text=True, timeout=120,
             creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0,
         )

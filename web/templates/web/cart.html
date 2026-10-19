@@ -1,4 +1,4 @@
-{% load static %}
+{% load static catalog_tags %}
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -754,8 +754,10 @@
 		}
 	</style>
   <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-cart-page">
+{% include 'catalog/storefront/assets.html' with include_drawer=True %}
 
 	<div id="page" class="site">
 		<!-- Site Header -->
@@ -1062,7 +1064,7 @@
 									<h4 class="cart-item-title">
 										<a href="{% url 'web:product-detail' %}">Great Value Rising Crust Frozen Pizza &ndash; Supreme Oven Bake 780g</a>
 									</h4>
-									<p class="cart-item-meta">Category: Frozen Groceries | Sealed Thermal Cold-Chain Liner</p>
+									<p class="cart-item-meta">Category: {% category_label storefront_categories 'frozen' %} | Sealed Thermal Cold-Chain Liner</p>
 									<span class="cart-item-badge"><i class="klb-icon-snowflake me-1"></i>COLD SALE</span>
 								</div>
 
@@ -1735,7 +1737,7 @@
 			recalculateCart();
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=original-popup-2"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
 
 	<!-- Mobile Bottom Navbar -->
 	<div class="klb-mobile-bottom site-mobile-navbar">
@@ -1779,6 +1781,7 @@
 			</nav>
 		</div>
 	</div>
+
 
 </body>
 </html>

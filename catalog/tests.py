@@ -16,6 +16,8 @@ from .models import Category, Subcategory
 class CategoryTests(TestCase):
     def setUp(self):
         cache.clear()
+        Subcategory.objects.all().delete()
+        Category.objects.all().delete()
         self.category = Category.objects.create(name='Groceries', slug='groceries')
         self.child = Subcategory.objects.create(category=self.category, name='Rice', slug='rice')
         self.owner = get_user_model().objects.create_user('owner', is_staff=True, is_superuser=True)

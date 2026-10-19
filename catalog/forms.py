@@ -6,7 +6,7 @@ from .models import Category, Subcategory
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ('name', 'slug', 'description', 'icon', 'position', 'is_active')
+        fields = ('name', 'slug', 'description', 'icon', 'menu_image', 'position', 'is_active')
         widgets = {'description': forms.Textarea(attrs={'rows': 3})}
 
     def __init__(self, *args, **kwargs):
@@ -25,4 +25,4 @@ class CategoryForm(forms.ModelForm):
 class SubcategoryForm(CategoryForm):
     class Meta(CategoryForm.Meta):
         model = Subcategory
-        fields = ('category',) + CategoryForm.Meta.fields
+        fields = ('category',) + tuple(field for field in CategoryForm.Meta.fields if field != 'menu_image')

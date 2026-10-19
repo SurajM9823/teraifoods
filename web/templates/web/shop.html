@@ -178,7 +178,7 @@
 			.terai-shop-page .categories-menu {
 				width: auto;
 			}
-			.terai-shop-page .site-categories {
+			.terai-shop-page .categories-menu .site-categories {
 				position: absolute;
 				top: 100%;
 				left: 0;
@@ -190,7 +190,7 @@
 				z-index: 1000;
 				display: none;
 			}
-			.terai-shop-page .site-categories.show {
+			.terai-shop-page .categories-menu .site-categories.show {
 				display: block;
 			}
 		}
@@ -637,8 +637,10 @@
 		}
 	</style>
   <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-shop-page">
+{% include 'catalog/storefront/assets.html' with include_drawer=True %}
 
 	<div id="page" class="site">
 		<!-- Site Header (Identical to index.html with Both Nav Rows & Categories Dropdown) -->
@@ -804,70 +806,7 @@
 					<!-- Left Column: Sticky, Flush Left (0 Space), No Radius, Touching Footer -->
 					<div class="d-none d-xl-flex shop-category-anchor-col">
 						<nav class="site-categories show shop-sidebar-categories" id="shop-site-categories-menu">
-							<ul id="category-menu" class="menu">
-								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="fruits-veg"><img src="{% static 'web/' %}images/apple.svg" alt="" class="me-2">Fruits &amp; Vegetables</a>
-									<ul class="sub-menu">
-										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Cuts &amp; Sprouts</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Exotic Fruits &amp; Veggies</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Fresh Fruits</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Fresh Vegetables</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Herbs &amp; Seasonings</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Packaged Produce</a></li>
-									</ul>
-								</li>
-								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="meats"><img src="{% static 'web/' %}images/meat.svg" alt="" class="me-2">Meats &amp; Seafood</a>
-									<ul class="sub-menu">
-										<li><a href="#" class="cat-nav-link" data-category="meats">Beef Products</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="meats">Chicken &amp; Turkey</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="meats">Fish Varieties</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="meats">Grass-Fed Lamb</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="meats">Himalayan River Trout</a></li>
-									</ul>
-								</li>
-								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="breakfast"><img src="{% static 'web/' %}images/boiled-egg.svg" alt="" class="me-2">Breakfasts &amp; Dairy</a>
-									<ul class="sub-menu">
-										<li><a href="#" class="cat-nav-link" data-category="breakfast">Butter &amp; Ghee</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="breakfast">Cheese Varieties</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="breakfast">Condensed Milk</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="breakfast">Free-Range Eggs</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="breakfast">Organic Honey</a></li>
-									</ul>
-								</li>
-								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="bakery"><img src="{% static 'web/' %}images/toast-bread.svg" alt="" class="me-2">Breads &amp; Bakery</a>
-									<ul class="sub-menu">
-										<li><a href="#" class="cat-nav-link" data-category="bakery">Artisan Sourdough</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="bakery">Buns &amp; Rolls</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="bakery">Stoneground Atta</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="bakery">Flatbreads &amp; Rotis</a></li>
-									</ul>
-								</li>
-								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="beverages"><img src="{% static 'web/' %}images/cup.svg" alt="" class="me-2">Beverages</a>
-									<ul class="sub-menu">
-										<li><a href="#" class="cat-nav-link" data-category="beverages">Himalayan Green Tea</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="beverages">Cold-Pressed Juices</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="beverages">Plant-Based Milk</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="beverages">Artisan Coffee</a></li>
-									</ul>
-								</li>
-								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="frozen"><img src="{% static 'web/' %}images/snowflake.svg" alt="" class="me-2">Frozen Foods</a>
-									<ul class="sub-menu">
-										<li><a href="#" class="cat-nav-link" data-category="frozen">Frozen Veggies</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="frozen">Himalayan Momos</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="frozen">Frozen Entrees</a></li>
-									</ul>
-								</li>
-								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="snacks"><img src="{% static 'web/' %}images/bar.svg" alt="" class="me-2">Biscuits &amp; Snacks</a>
-									<ul class="sub-menu">
-										<li><a href="#" class="cat-nav-link" data-category="snacks">Chips &amp; Pretzels</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="snacks">Crackers &amp; Biscuits</a></li>
-										<li><a href="#" class="cat-nav-link" data-category="snacks">Roasted Himalayan Nuts</a></li>
-									</ul>
-								</li>
-								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="grocery"><img src="{% static 'web/' %}images/wheat.svg" alt="" class="me-2">Grocery &amp; Staples</a></li>
-								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="household"><img src="{% static 'web/' %}images/scoop.svg" alt="" class="me-2">Household Needs</a></li>
-								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="healthcare"><img src="{% static 'web/' %}images/toilet-paper.svg" alt="" class="me-2">Healthcare</a></li>
-								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="baby"><img src="{% static 'web/' %}images/baby-boy.svg" alt="" class="me-2">Baby &amp; Pregnancy</a></li>
-							</ul>
+							{% include 'catalog/storefront/menu.html' with menu_id='category-menu' menu_class='menu' shop_menu=True %}
 						</nav>
 
 						<!-- Fill Section Touching Footer (No curved radius) -->
@@ -1551,7 +1490,10 @@
 			const productsGrid = document.getElementById('shop-products-container');
 			const headerSearchInput = document.getElementById('shop-header-search-input');
 
-			let selectedCategory = 'all';
+			const selectedSlug = new URLSearchParams(location.search).get('category');
+            const selectedLink = Array.from(catNavLinks).find(a => a.dataset.backendCategory === selectedSlug);
+            let selectedCategory = selectedSlug ? (selectedLink?.dataset.category || '__unavailable__') : 'all';
+            const activeCategoryKeys = new Set(Array.from(catNavLinks).map(a => a.dataset.category));
 
 			// Filter Function
 			function applyFilters() {
@@ -1561,7 +1503,7 @@
 					const colCat = col.getAttribute('data-category');
 					const colName = (col.getAttribute('data-name') || '').toLowerCase();
 
-					const matchCat = (selectedCategory === 'all' || colCat === selectedCategory);
+					const matchCat = (activeCategoryKeys.has(colCat) && (selectedCategory === 'all' || colCat === selectedCategory));
 					const matchSearch = (!searchQuery || colName.includes(searchQuery));
 
 					if (matchCat && matchSearch) {
@@ -1585,6 +1527,7 @@
 			// Handle Clicks from Extended Categories Menu
 			catNavLinks.forEach(link => {
 				link.addEventListener('click', function (e) {
+                    if (this.hasAttribute('data-backend-category')) return;
 					e.preventDefault();
 					const cat = this.getAttribute('data-category');
 					if (!cat) return;
@@ -1633,7 +1576,7 @@
 	</script>
 
 	<!-- Main Theme and Interactive Engine -->
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=original-popup-2"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
 
 	<!-- Mobile Bottom Navbar -->
 	<div class="klb-mobile-bottom site-mobile-navbar">
@@ -1677,6 +1620,7 @@
 			</nav>
 		</div>
 	</div>
+
 
 </body>
 </html>

@@ -189,8 +189,10 @@
 <meta name="customer-authenticated" content="true">
 <link rel="stylesheet" href="{% static 'web/css/branding.css' %}">
 <script src="{% static 'web/js/customer-profile.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="terai-account-page">
+{% include 'catalog/storefront/assets.html' with include_drawer=True %}
 	<div id="page" class="site">
 
 		<!-- Site Header -->
@@ -496,7 +498,8 @@
 	<script src="{% static 'web/' %}js/jquery.min.js"></script>
 	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
 	
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=auth-home-3"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+
 </body>
 </html>
 
