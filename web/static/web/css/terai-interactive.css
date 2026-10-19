@@ -4745,6 +4745,51 @@ svg rect[fill="#634c9f"] {
   }
 
   /* 2. New Arrivals Horizontal Free-Scroll (matching packages / "Only This Week" slider below) */
+  /* KILL ALL LOADERS & PSEUDO-ELEMENT SPINNERS FOR NEW ARRIVALS ON MOBILE */
+  .elementor-element-d6f7202 .site-slider::after,
+  .elementor-element-2bdf9e6 .site-slider::after,
+  .elementor-element-d6f7202 .loader-default::after,
+  .elementor-element-2bdf9e6 .loader-default::after,
+  .elementor-element-d6f7202::after,
+  .elementor-element-2bdf9e6::after,
+  .elementor-element-d6f7202 .site-module::after,
+  .elementor-element-d6f7202 .site-module-body::after,
+  .elementor-element-d6f7202 .site-slider::before,
+  .elementor-element-2bdf9e6 .site-slider::before {
+    display: none !important;
+    content: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    animation: none !important;
+    -webkit-animation: none !important;
+  }
+
+  /* REMOVE LOADING PLACEHOLDER HEIGHT & LIMITS */
+  .elementor-element-d6f7202 .slider-loading-height,
+  .elementor-element-2bdf9e6 .slider-loading-height,
+  .elementor-element-d6f7202 .carousel-style,
+  .elementor-element-2bdf9e6 .carousel-style {
+    min-height: 0 !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+
+  /* OVERRIDE slider.css: ENSURE ALL SLIDER ITEMS ARE ALWAYS DISPLAYED & VISIBLE */
+  .elementor-element-d6f7202 .site-slider > *:not(.slick-nav),
+  .elementor-element-2bdf9e6 .site-slider > *:not(.slick-nav),
+  .elementor-element-d6f7202 .site-slider .slider-item,
+  .elementor-element-2bdf9e6 .site-slider .slider-item,
+  .elementor-element-d6f7202 .slider-item,
+  .elementor-element-2bdf9e6 .slider-item,
+  .elementor-element-d6f7202 .slider-item:first-child,
+  .elementor-element-2bdf9e6 .slider-item:first-child,
+  .elementor-element-d6f7202 .site-slider .slider-item:first-child,
+  .elementor-element-2bdf9e6 .site-slider .slider-item:first-child {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
   .elementor-element-d6f7202,
   .elementor-element-d6f7202 > .e-con-inner,
   .elementor-element-d6f7202 .elementor-element-4a352b8,

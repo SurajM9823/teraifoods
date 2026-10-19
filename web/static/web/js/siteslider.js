@@ -17,6 +17,7 @@
 			    if ($(self).hasClass('slick-initialized')) {
 			      $(self).slick('unslick');
 			    }
+			    $(self).removeClass('loader-default slider-loading-height');
 			    continue;
 			  }
 
@@ -101,11 +102,20 @@
 	$(document).ready(function() {
 		groginThemeModule.siteslider();
 
+		let lastWidth = window.innerWidth;
 		$(window).on('resize', function() {
+			// On mobile, vertical scrolling triggers resize due to address bar show/hide.
+			// Only re-evaluate when horizontal screen width actually changes (e.g. orientation change).
+			if (window.innerWidth === lastWidth) {
+				return;
+			}
+			lastWidth = window.innerWidth;
+
 			const isMobile = window.innerWidth <= 767.98;
 			$('.elementor-element-d6f7202 .site-slider, .elementor-element-2bdf9e6 .site-slider').each(function() {
 				if (isMobile && $(this).hasClass('slick-initialized')) {
 					$(this).slick('unslick');
+					$(this).removeClass('loader-default slider-loading-height');
 				} else if (!isMobile && !$(this).hasClass('slick-initialized')) {
 					groginThemeModule.siteslider();
 				}
