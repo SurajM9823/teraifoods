@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="refresh" content="0; url=/shop/">
+	<title>Redirecting to Shops – Terai Food UK</title>
+	<link rel="canonical" href="{% url 'web:shop' %}">
+	<script>
+		window.location.replace('/shop/');
+	</script>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 50px;">
+	<p>Redirecting to <a href="{% url 'web:shop' %}">Shops &amp; All Products</a>...</p>
+</body>
+</html>

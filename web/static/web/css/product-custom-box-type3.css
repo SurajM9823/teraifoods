@@ -1,0 +1,151 @@
+.product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button {
+    font-size: 0;
+    padding: 0;
+    color: var(--theme-body-color);	
+    height: 32px;	
+}
+
+.product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button {
+    -webkit-transform: translateX(6px);
+    transform: translateX(6px);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button:hover {
+    background-color: var(--color-white);
+    border-radius: 50%;
+}
+
+.products .product:hover .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
+
+.product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button::before {
+    font-family: "klbtheme";
+    font-style: normal;
+    font-weight: normal;
+    speak: never;
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: 0.2em;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1em;
+    margin-left: 0.2em;
+    font-size: 120%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\e8e8';
+    text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3);
+    font-size: calc(1.0625rem + 0.125rem);
+}
+
+.product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button:nth-child(4) {
+    -webkit-transition-delay: 0.06s;
+    transition-delay: 0.06s;
+}
+
+.products .product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.added_to_cart {
+    font-size: 0;
+    margin-top: .5rem;
+    margin-left: 0;
+	border-color:#fff;
+}
+
+.products .product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.added_to_cart:hover {
+	background-color: var(--color-gray-100);
+}
+
+.products .product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.added_to_cart {
+    opacity: 0;
+    -webkit-transform: translateX(10px);
+    transform: translateX(10px);
+    will-change: opacity, transform;
+}
+
+.products .product:hover .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.added_to_cart {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
+
+.products .product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+.product-custom-type3 .thumbnail-buttons .product-button a.added_to_cart:before {
+    font-family: "klbtheme";
+    font-style: normal;
+    font-weight: normal;
+    speak: never;
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: 0.2em;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1em;
+    margin-left: 0.2em;
+    font-size: 120%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3);
+    font-size: 1.25rem;
+}
+
+.product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.added_to_cart:hover {
+    background-color: var(--color-white);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;	
+}
+
+.product-custom-type3 .thumbnail-wrapper .thumbnail-buttons a.added_to_cart {
+    display: inline-flex;
+    align-items: center;	
+}
+
+.products .product .product-wrapper.product-custom-type3 .product-title + .product-rating {
+    margin-bottom: 0px;
+}
+
+.product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button i {
+    display: none;
+}
+
+.product .product-custom-type3 .thumbnail-wrapper {
+    margin-bottom: 1.625rem;
+}
+
+.product .product-custom-type3 .product-gallery-wrapper .product-gallery-dots {
+    right: auto;
+    left: 0;
+}
+
+.product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button:hover {
+    background-color: var(--color-gray-100);
+}
+
+@media (max-width: 991px) {
+    .products .product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.button,
+	.products .product .product-custom-type3 .thumbnail-wrapper .thumbnail-buttons .product-button a.added_to_cart{
+        opacity: 1;
+        visibility: visible;
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+}

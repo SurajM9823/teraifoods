@@ -1,0 +1,141 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Bulk Order Inquiries{% endblock %}
+{% block breadcrumb %}Bulk Order Inquiries{% endblock %}
+{% block main_content %}
+<!-- Filters above the datatable -->
+<div class="filter-strip">
+  <div class="filter-group">
+    <label for="date_from">From:</label>
+    <input type="date" id="date_from" class="filter-control" value="{% now 'Y-m-01' %}">
+  </div>
+  <div class="filter-group">
+    <label for="date_to">To:</label>
+    <input type="date" id="date_to" class="filter-control" value="{% now 'Y-m-d' %}">
+  </div>
+  <div class="filter-group">
+    <label for="filter_status">Status:</label>
+    <select id="filter_status" class="filter-control">
+      <option value="">All Statuses</option>
+      <option value="new">New</option>
+      <option value="under_review">Under Review</option>
+      <option value="quoted">Quoted</option>
+      <option value="converted">Converted</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="filter_urgency">Urgency:</label>
+    <select id="filter_urgency" class="filter-control">
+      <option value="">All Urgencies</option>
+      <option value="high">High</option>
+      <option value="normal">Normal</option>
+      <option value="low">Low</option>
+    </select>
+  </div>
+  <input type="text" class="filter-control filter-search" placeholder="Search inquiries by ID, company, contact or products..." aria-label="Search bulk order inquiries">
+  <button type="button" class="btn btn-primary btn-sm">Filter</button>
+  <button type="button" class="btn btn-outline btn-sm">Reset</button>
+
+  <div class="filter-actions-right">
+    <button class="btn btn-outline btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='file' %} Export CSV</button>
+    <button class="btn btn-primary btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='plus' %} New Inquiry</button>
+  </div>
+</div>
+
+<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
+<div class="summary-strip">
+  <span class="summary-item">Total Inquiries: <strong>{{ summary.total_inquiries }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">New Requests: <strong>{{ summary.new_requests }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Awaiting Quote: <strong>{{ summary.awaiting_quote }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Est. Pipeline: <strong>{{ summary.estimated_pipeline }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Converted Value: <strong>{{ summary.converted_value }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Filtered Items: <strong>{{ inquiries_list|length }}</strong></span>
+</div>
+
+<!-- Clean, dense datatable -->
+<div class="table-responsive">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Inquiry ID</th>
+        <th>Company &amp; Location</th>
+        <th>Contact Person</th>
+        <th>Requested Products &amp; Volume</th>
+        <th>Est. Value</th>
+        <th>Urgency</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inq in inquiries_list %}
+      <tr>
+        <td class="table-cell-bold">#{{ inq.id }}</td>
+        <td>
+          <strong>{{ inq.company }}</strong>
+          <div class="table-cell-muted">Postcode: {{ inq.delivery_postcode }}</div>
+        </td>
+        <td>
+          <strong>{{ inq.contact_name }}</strong>
+          <div class="table-cell-muted">{{ inq.email }} &bull; {{ inq.phone }}</div>
+        </td>
+        <td class="table-cell-muted" style="max-width: 280px;">{{ inq.products }}</td>
+        <td class="table-cell-bold">{{ inq.est_value }}</td>
+        <td>
+          {% if inq.urgency == 'High' %}
+            <span class="badge badge-danger"><span class="badge-dot"></span> High</span>
+          {% elif inq.urgency == 'Normal' %}
+            <span class="badge badge-neutral">Normal</span>
+          {% else %}
+            <span class="badge badge-secondary">Low</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if inq.status == 'New' %}
+            <span class="badge badge-info"><span class="badge-dot"></span> New</span>
+          {% elif inq.status == 'Under Review' %}
+            <span class="badge badge-warning"><span class="badge-dot"></span> Under Review</span>
+          {% elif inq.status == 'Quoted' %}
+            <span class="badge badge-primary">Quoted</span>
+          {% elif inq.status == 'Converted' %}
+            <span class="badge badge-success"><span class="badge-dot"></span> Converted</span>
+          {% elif inq.status == 'Rejected' %}
+            <span class="badge badge-danger">Rejected</span>
+          {% else %}
+            <span class="badge badge-neutral">{{ inq.status }}</span>
+          {% endif %}
+        </td>
+        <td class="table-cell-muted">{{ inq.date }}</td>
+        <td style="text-align: right; white-space: nowrap;">
+          <button class="btn btn-primary btn-sm" type="button">Quote</button>
+          <button class="btn btn-outline btn-sm" type="button">Details</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination 1 2 3 >> -->
+<div class="pagination-bar">
+  <span>Showing 1 to {{ inquiries_list|length }} of {{ summary.total_inquiries }} inquiries</span>
+  <div class="pagination-links">
+    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
+    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
+    <a href="#" class="page-link active">1</a>
+    <a href="#" class="page-link">2</a>
+    <a href="#" class="page-link">3</a>
+    <a href="#" class="page-link">4</a>
+    <a href="#" class="page-link">5</a>
+    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
+    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,343 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>The Cold-Chain Journey: Keeping Organic Vegetables Crisp in the UK – Terai Food</title>
+	<meta name="description" content="Discover how Terai Food uses temperature-controlled delivery boxes, real-time logistics monitoring, and biodegradable insulation to deliver field-crisp vegetables across the UK.">
+	<meta name="keywords" content="cold chain grocery UK, fresh vegetable delivery, temperature controlled delivery, organic logistics London">
+	<link rel="canonical" href="{% url 'web:blogs-organic-vegetables-delivery-uk' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		body {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f8fafc;
+			color: #1e293b;
+		}
+		.article-header {
+			background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #634c9f 100%);
+			color: #ffffff;
+			padding: 55px 0 65px;
+			position: relative;
+			overflow: hidden;
+		}
+		.hero-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			background: rgba(255, 255, 255, 0.18);
+			backdrop-filter: blur(8px);
+			border: 1px solid rgba(255, 255, 255, 0.25);
+			color: #ffffff;
+			padding: 6px 16px;
+			border-radius: 30px;
+			font-size: 12px;
+			font-weight: 600;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			margin-bottom: 16px;
+		}
+		.article-header h1 {
+			font-size: 36px;
+			font-weight: 800;
+			letter-spacing: -0.8px;
+			line-height: 1.25;
+			color: #ffffff;
+			margin-bottom: 16px;
+		}
+		.article-meta {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 20px;
+			font-size: 13px;
+			color: #e2e8f0;
+		}
+		.hero-breadcrumbs {
+			font-size: 13px;
+			color: #cbd5e1;
+			margin-bottom: 18px;
+		}
+		.hero-breadcrumbs a {
+			color: #ffffff;
+			text-decoration: underline;
+		}
+		.article-body-section {
+			padding: 60px 0 80px;
+		}
+		.article-main-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 18px;
+			padding: 45px;
+			box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+			margin-bottom: 40px;
+		}
+		.featured-media {
+			border-radius: 14px;
+			overflow: hidden;
+			margin-bottom: 35px;
+			border: 1px solid #e2e8f0;
+		}
+		.featured-media img {
+			width: 100%;
+			max-height: 480px;
+			object-fit: cover;
+		}
+		.content-prose h2 {
+			font-size: 24px;
+			font-weight: 800;
+			color: #0f172a;
+			margin-top: 36px;
+			margin-bottom: 16px;
+		}
+		.content-prose p {
+			font-size: 15px;
+			color: #334155;
+			line-height: 1.8;
+			margin-bottom: 20px;
+		}
+		.step-card {
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			border-radius: 12px;
+			padding: 22px;
+			margin-bottom: 20px;
+		}
+		.step-card h4 {
+			font-size: 16px;
+			font-weight: 700;
+			color: #2563eb;
+			margin-bottom: 8px;
+		}
+		.sidebar-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 14px;
+			padding: 24px;
+			margin-bottom: 24px;
+		}
+		.sidebar-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-bottom: 18px;
+			padding-bottom: 10px;
+			border-bottom: 2px solid #f1f5f9;
+			position: relative;
+		}
+		.sidebar-title::after {
+			content: "";
+			position: absolute;
+			bottom: -2px;
+			left: 0;
+			width: 40px;
+			height: 2px;
+			background: #634c9f;
+		}
+		.recent-item {
+			display: flex;
+			gap: 12px;
+			margin-bottom: 16px;
+			text-decoration: none !important;
+		}
+		.recent-thumb {
+			width: 60px;
+			height: 60px;
+			border-radius: 8px;
+			object-fit: cover;
+			flex-shrink: 0;
+		}
+		.recent-info h6 {
+			font-size: 13px;
+			font-weight: 600;
+			color: #1e293b;
+			line-height: 1.35;
+			margin-bottom: 4px;
+		}
+	</style>
+</head>
+<body class="single-post terai-article-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button me-4">
+								<a href="{% url 'web:home' %}" class="action-link">
+									<div class="action-icon"><i class="klb-icon-map-pin"></i></div>
+									<div class="action-text"><span>Deliver to</span><p>all (UK Wide)</p></div>
+								</a>
+							</div>
+							<div class="header-search search-overlay flex-fill">
+								<form action="{% url 'web:home' %}" class="search-form search-type-1" role="search" method="get">
+									<input class="form-control search-input filled" type="search" name="s" placeholder="Search groceries..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+								</form>
+							</div>
+						</div>
+
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-3">
+							<div class="quick-button style-1">
+								<a href="{% url 'web:checkout' %}" class="action-link">
+									<div class="action-icon"><i class="klb-icon-shopping-cart-3"></i><span class="action-count cart-count count">0</span></div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1">
+				<div class="container">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+							<nav class="site-menu horizontal menu-shadow primary-menu">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:about' %}">About Us</a></li>
+									<li class="menu-item current-menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:home' %}#contact">Contact</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:home' %}#order-tracking"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:home' %}#bulk-order" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- Article Hero Header -->
+		<section class="article-header">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-10">
+						<div class="hero-breadcrumbs">
+							<a href="{% url 'web:home' %}">Home</a> &nbsp;/&nbsp; <a href="{% url 'web:blogs' %}">Blog Journal</a> &nbsp;/&nbsp; <span class="text-white">Cold-Chain Delivery</span>
+						</div>
+						<span class="hero-badge"><i class="klb-icon-truck"></i> Logistics &amp; Freshness Guarantee</span>
+						<h1>The Cold-Chain Journey: How We Keep Fresh Organic Vegetables Crisp in the UK</h1>
+						<div class="article-meta">
+							<span><i class="klb-icon-user"></i> By Terai Logistics &amp; Quality Team</span>
+							<span><i class="klb-icon-calendar"></i> October 10, 2026</span>
+							<span><i class="klb-icon-clock"></i> 5 min read</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Main Content -->
+		<section class="article-body-section">
+			<div class="container">
+				<div class="row g-5">
+					<div class="col-lg-8">
+						<article class="article-main-card">
+							<div class="featured-media">
+								<img src="{% static 'web/' %}images/banner-02.jpg" alt="Cold Chain Fresh Produce">
+							</div>
+
+							<div class="content-prose">
+								<p class="lead text-17 text-dark fw-medium lh-lg">
+									Delivering fragile heirloom greens, crisp spinach, and tender organic herbs across British postal zones without losing crispness requires scientific temperature management at every mile.
+								</p>
+
+								<h2>1. Pre-Cooling at the Farm Gate</h2>
+								<p>
+									Within 90 minutes of harvest, field heat is quickly removed via forced-air hydro-cooling. This puts cellular respiration into slumber, locking in sugars and vitamin C.
+								</p>
+
+								<div class="step-card">
+									<h4><i class="klb-icon-shield-check"></i> Sustainable Wool &amp; Paper Foil Insulation</h4>
+									<p class="mb-0 text-14">We utilize 100% compostable sheep wool and recycled paper bubble-liners that outperform harmful polystyrene boxes by maintaining below 4&deg;C for up to 36 hours.</p>
+								</div>
+
+								<h2>2. Smart Route Planning &amp; Live Postcode Dispatch</h2>
+								<p>
+									Integrated GPS dispatch links each delivery route with real-time UK traffic data. When you enter your UK postcode at checkout, our dispatch engine routes orders through nearest regional fulfillment centers in London, Birmingham, and Manchester.
+								</p>
+
+								<h2>3. The "Crisp Guarantee"</h2>
+								<p>
+									If any item arrives compromised or wilted, our 1-click replacement policy credits your basket instantly. Freshness is not just a promise; it is our operational benchmark.
+								</p>
+
+								<hr class="my-4">
+								<div class="d-flex align-items-center justify-content-between">
+									<a href="{% url 'web:blogs' %}" class="text-primary text-decoration-none fw-bold">&larr; Back to Journal</a>
+									<a href="{% url 'web:home' %}" class="btn btn-primary btn-sm px-3" style="background: #634c9f; border-color: #634c9f;">Shop Fresh Veggies</a>
+								</div>
+							</div>
+						</article>
+					</div>
+
+					<div class="col-lg-4">
+						<div class="sidebar-card">
+							<h4 class="sidebar-title">Explore Related</h4>
+							<a href="{% url 'web:blogs-himalayan-spices-guide' %}" class="recent-item">
+								<img src="{% static 'web/' %}images/banner-04.jpg" alt="Spices" class="recent-thumb">
+								<div class="recent-info">
+									<h6>10 Essential Himalayan Spices for UK Kitchens</h6>
+									<span class="recent-date">Oct 12, 2026</span>
+								</div>
+							</a>
+							<a href="{% url 'web:blogs-high-protein-lentils-dhal-recipes' %}" class="recent-item">
+								<img src="{% static 'web/' %}images/banner-05.jpg" alt="Dhal" class="recent-thumb">
+								<div class="recent-info">
+									<h6>5 High-Protein Organic Lentil Dhal Bowls</h6>
+									<span class="recent-date">Oct 07, 2026</span>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container text-center text-12 text-gray-600">
+					Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold">startupghar.com</a>. All rights reserved.
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,53 @@
+limit_req_zone $binary_remote_addr zone=admin_login:10m rate=5r/m;
+limit_req_zone $binary_remote_addr zone=customer_auth:10m rate=30r/m;
+limit_req_zone $binary_remote_addr zone=site_traffic:10m rate=10r/s;
+limit_conn_zone $binary_remote_addr zone=client_connections:10m;
+
+server {
+    listen 80;
+    server_name ${NGINX_HOST};
+    server_tokens off;
+    return 301 https://${NGINX_HOST}$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name ${NGINX_HOST};
+    server_tokens off;
+    resolver 127.0.0.11 valid=5s ipv6=off;
+    ssl_certificate /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_cache shared:TLS:10m;
+    ssl_session_timeout 1d;
+    client_max_body_size 10m;
+    client_body_timeout 10s;
+    client_header_timeout 10s;
+    keepalive_timeout 30s;
+    limit_conn client_connections 30;
+    limit_conn_status 429;
+    limit_req_status 429;
+
+    location ^~ /accounts/ {
+        client_max_body_size 32k;
+        limit_req zone=customer_auth burst=20 nodelay;
+        access_log off;
+        include /etc/nginx/proxy_params_terai.conf;
+    }
+
+    location /static/ {
+        alias /var/www/static/;
+        autoindex off;
+    }
+
+    location ~ ^/admin/(login/?|system/login/?)$ {
+        limit_req zone=admin_login burst=10 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/proxy_params_terai.conf;
+    }
+
+    location / {
+        limit_req zone=site_traffic burst=40 nodelay;
+        include /etc/nginx/proxy_params_terai.conf;
+    }
+}

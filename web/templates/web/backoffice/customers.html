@@ -1,0 +1,114 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Customers{% endblock %}
+{% block breadcrumb %}Customers{% endblock %}
+{% block main_content %}
+<!-- Filters above the datatable -->
+<div class="filter-strip">
+  <div class="filter-group">
+    <label for="date_from">Joined From:</label>
+    <input type="date" id="date_from" class="filter-control" value="{% now 'Y-01-01' %}">
+  </div>
+  <div class="filter-group">
+    <label for="date_to">To:</label>
+    <input type="date" id="date_to" class="filter-control" value="{% now 'Y-m-d' %}">
+  </div>
+  <div class="filter-group">
+    <label for="filter_tier">Tier:</label>
+    <select id="filter_tier" class="filter-control">
+      <option value="">All Tiers</option>
+      <option value="retail">Retail Customer</option>
+      <option value="silver">Wholesale Tier 1 (Silver)</option>
+      <option value="gold">Wholesale Tier 2 (Gold)</option>
+      <option value="hospitality">Restaurant Partner</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="filter_status">Status:</label>
+    <select id="filter_status" class="filter-control">
+      <option value="">All Statuses</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+  <input type="text" class="filter-control filter-search" placeholder="Search customer by name, email or phone..." aria-label="Search customers">
+  <button type="button" class="btn btn-primary btn-sm">Filter</button>
+  <button type="button" class="btn btn-outline btn-sm">Reset</button>
+
+  <div class="filter-actions-right">
+    <button class="btn btn-outline btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='file' %} Export CSV</button>
+    <button class="btn btn-primary btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='plus' %} Add Customer</button>
+  </div>
+</div>
+
+<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
+<div class="summary-strip">
+  <span class="summary-item">Total Accounts: <strong>{{ stats.total }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Wholesale Clients: <strong>{{ stats.wholesale }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Repeat Order Rate: <strong>{{ stats.repeat_rate }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Average LTV: <strong>{{ stats.ltv }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Total Spend: <strong>£78,410.00</strong></span>
+</div>
+
+<!-- Clean, dense datatable -->
+<div class="table-responsive">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Phone</th>
+        <th>Account Tier</th>
+        <th>Orders Count</th>
+        <th>Total Spent</th>
+        <th>Status</th>
+        <th>Member Since</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cust in customers_list %}
+      <tr>
+        <td>
+          <strong>{{ cust.name }}</strong>
+          <div class="table-cell-muted">{{ cust.email }}</div>
+        </td>
+        <td class="table-cell-muted">{{ cust.phone }}</td>
+        <td><span class="badge badge-info">{{ cust.tier }}</span></td>
+        <td class="table-cell-bold">{{ cust.orders_count }} orders</td>
+        <td class="table-cell-bold">{{ cust.total_spent }}</td>
+        <td>
+          {% if cust.status == 'Active' %}
+            <span class="badge badge-success"><span class="badge-dot"></span> Active</span>
+          {% else %}
+            <span class="badge badge-neutral"><span class="badge-dot"></span> Inactive</span>
+          {% endif %}
+        </td>
+        <td class="table-cell-muted">{{ cust.joined }}</td>
+        <td style="text-align: right;">
+          <button class="btn btn-outline btn-sm" type="button">Profile</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination 1 2 3 >> -->
+<div class="pagination-bar">
+  <span>Showing 1 to {{ customers_list|length }} of {{ stats.total }} accounts</span>
+  <div class="pagination-links">
+    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
+    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
+    <a href="#" class="page-link active">1</a>
+    <a href="#" class="page-link">2</a>
+    <a href="#" class="page-link">3</a>
+    <a href="#" class="page-link">4</a>
+    <a href="#" class="page-link">5</a>
+    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
+    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+  </div>
+</div>
+{% endblock %}

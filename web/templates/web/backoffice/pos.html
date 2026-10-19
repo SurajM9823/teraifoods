@@ -1,0 +1,153 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Point of Sale (POS){% endblock %}
+{% block breadcrumb %}Point of Sale{% endblock %}
+{% block main_content %}
+<!-- Filters above the datatable -->
+<div class="filter-strip">
+  <div class="filter-group">
+    <label for="pos_date">Date:</label>
+    <input type="date" id="pos_date" class="filter-control" value="{% now 'Y-m-d' %}">
+  </div>
+  <div class="filter-group">
+    <label for="pos_cat">Category:</label>
+    <select id="pos_cat" class="filter-control">
+      {% for cat in categories %}
+        <option value="{{ cat }}">{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <input type="text" class="filter-control filter-search" placeholder="Scan barcode or type SKU, product name..." aria-label="POS product search">
+  <button type="button" class="btn btn-primary btn-sm">Search</button>
+  <button type="button" class="btn btn-outline btn-sm">Clear</button>
+
+  <div class="filter-actions-right">
+    <span style="font-size: 10px; font-weight: 700; color: #000;">Register #01 · London Store</span>
+  </div>
+</div>
+
+<!-- Summary statistics in simple key-value pairs without boxes -->
+<div class="summary-strip">
+  <span class="summary-item">Terminal: <strong>#01 London</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Today's Sales: <strong>£642.30</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Transactions: <strong>19 receipts</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Opening Cash: <strong>£150.00</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Cashier: <strong>{{ request.user.username }}</strong></span>
+</div>
+
+<div class="pos-layout">
+  <!-- Left Side: Product Datatable -->
+  <div class="pos-table-section">
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Weight</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+          <tr>
+            <td class="table-cell-muted"><code>{{ p.sku }}</code></td>
+            <td class="table-cell-bold">{{ p.name }}</td>
+            <td><span class="badge badge-neutral">{{ p.category }}</span></td>
+            <td class="table-cell-muted">{{ p.weight }}</td>
+            <td class="table-cell-bold">£{{ p.price }}</td>
+            <td><span class="badge badge-success">{{ p.stock }} in stock</span></td>
+            <td style="text-align: right;">
+              <button class="btn btn-primary btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='plus' %} Add</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination 1 2 3 >> -->
+    <div class="pagination-bar">
+      <span>Showing 1 to {{ products|length }} of 64 products</span>
+      <div class="pagination-links">
+        <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
+        <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
+        <a href="#" class="page-link active">1</a>
+        <a href="#" class="page-link">2</a>
+        <a href="#" class="page-link">3</a>
+        <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
+        <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side: Order Ticket -->
+  <aside class="pos-ticket" aria-label="Current register sale">
+    <div class="ticket-header">
+      <div>
+        <div class="ticket-title">Current Ticket</div>
+        <div class="table-cell-muted">Customer: Walk-in Retail Shopper</div>
+      </div>
+      <button class="btn btn-outline btn-sm" type="button">Reset</button>
+    </div>
+
+    <ul class="ticket-list">
+      <li class="ticket-item">
+        <div>
+          <strong>Himalayan Basmati Rice</strong>
+          <span class="table-cell-muted">5 kg &times; 1</span>
+        </div>
+        <strong>£12.50</strong>
+      </li>
+      <li class="ticket-item">
+        <div>
+          <strong>Cold-Pressed Mustard Oil</strong>
+          <span class="table-cell-muted">1 L &times; 2</span>
+        </div>
+        <strong>£13.60</strong>
+      </li>
+      <li class="ticket-item">
+        <div>
+          <strong>Wild Timut Pepper</strong>
+          <span class="table-cell-muted">100 g &times; 1</span>
+        </div>
+        <strong>£3.95</strong>
+      </li>
+    </ul>
+
+    <div class="ticket-summary">
+      <div class="summary-row">
+        <span>Items Total</span>
+        <span>4 items</span>
+      </div>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>£30.05</span>
+      </div>
+      <div class="summary-row">
+        <span>VAT (Zero-rated Food)</span>
+        <span>£0.00</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total Due</span>
+        <span>£30.05</span>
+      </div>
+
+      <div class="payment-methods">
+        <button class="btn btn-outline" type="button">{% include 'web/backoffice/icon.html' with name='bag' %} Cash</button>
+        <button class="btn btn-outline" type="button">{% include 'web/backoffice/icon.html' with name='pos' %} Card</button>
+      </div>
+
+      <button class="btn btn-primary charge-btn" type="button">
+        {% include 'web/backoffice/icon.html' with name='check' %} Complete Sale (£30.05)
+      </button>
+    </div>
+  </aside>
+</div>
+{% endblock %}

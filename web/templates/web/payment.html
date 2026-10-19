@@ -1,0 +1,1384 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Select Payment Method – Terai Food UK | Secure UK Checkout</title>
+	<meta name="description" content="Choose your preferred UK payment method: Credit or Debit Card (Visa, Mastercard, Amex), Apple Pay, Google Pay, PayPal, Klarna, or Cash on Cold-Chain Delivery.">
+	<link rel="canonical" href="{% url 'web:payment' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		/* Global Zero Border Radius & High Contrast Sharp Styling */
+		.terai-payment-page,
+		.terai-payment-page *,
+		.terai-payment-page .btn,
+		.terai-payment-page .form-control,
+		.terai-payment-page .badge,
+		.terai-payment-page .alert,
+		.terai-payment-page input,
+		.terai-payment-page select,
+		.terai-payment-page textarea {
+			border-radius: 0 !important;
+		}
+
+		body.terai-payment-page {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #eff0f5;
+			color: #0f172a;
+		}
+
+		/* Top Navigation Bulk Order CTA */
+		.nav-bulk-order-cta {
+			background: #f5f3ff;
+			color: #634c9f !important;
+			border: 1px solid #ede9fe;
+			padding: 7px 14px !important;
+			font-weight: 700 !important;
+			transition: all 0.2s ease;
+		}
+		.nav-bulk-order-cta:hover {
+			background: #634c9f !important;
+			color: #ffffff !important;
+		}
+
+		/* Clean Breadcrumbs Bar */
+		.payment-breadcrumbs-wrapper {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 8px 0;
+		}
+		.payment-breadcrumbs {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+		}
+		.payment-breadcrumbs a {
+			color: #64748b;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.15s ease;
+		}
+		.payment-breadcrumbs a:hover {
+			color: #634c9f;
+		}
+		.payment-breadcrumbs .breadcrumb-separator {
+			color: #94a3b8;
+			font-size: 10px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.payment-breadcrumbs .breadcrumb-current {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		/* Main Content Layout */
+		.payment-main-layout {
+			padding: 20px 0 60px;
+		}
+		.payment-section-title {
+			font-size: 17px;
+			font-weight: 700;
+			color: #212121;
+			margin-bottom: 16px;
+			letter-spacing: -0.2px;
+		}
+
+		.payment-layout-row {
+			display: flex;
+			align-items: flex-start;
+			gap: 16px;
+			margin: 0;
+		}
+
+		/* Left Area: ~68% */
+		.payment-methods-col {
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+		}
+
+		/* Right Area: ~32% */
+		.payment-summary-col {
+			width: 340px;
+			flex: 0 0 340px;
+		}
+
+		/* ========================================================
+		   UK PAYMENT METHOD SELECTION TILES (MATCHING DARAZ GRID)
+		   ======================================================== */
+		.payment-tiles-grid {
+			display: grid;
+			grid-template-columns: repeat(5, 1fr);
+			gap: 10px;
+		}
+		@media (max-width: 1200px) {
+			.payment-tiles-grid {
+				grid-template-columns: repeat(3, 1fr);
+			}
+		}
+		@media (max-width: 768px) {
+			.payment-tiles-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		.payment-tile-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			padding: 16px 10px 14px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			cursor: pointer;
+			transition: all 0.15s ease;
+			box-sizing: border-box;
+			min-height: 105px;
+			position: relative;
+		}
+		.payment-tile-card:hover {
+			border-color: #0089a7;
+			background: #fafbfc;
+		}
+		.payment-tile-card.is-active {
+			border: 2px solid #0089a7;
+			background: #ffffff;
+		}
+		.payment-tile-card.is-active::after {
+			content: "✓";
+			position: absolute;
+			top: 0;
+			right: 0;
+			background: #0089a7;
+			color: #ffffff;
+			font-size: 10px;
+			font-weight: 800;
+			width: 16px;
+			height: 16px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		/* Tile Icons */
+		.tile-icon-wrap {
+			height: 32px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 8px;
+		}
+		.tile-icon-card {
+			width: 32px;
+			height: 22px;
+			background: #0284c7;
+			border-radius: 2px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			color: #ffffff;
+			font-size: 13px;
+		}
+		.tile-icon-apple {
+			font-size: 24px;
+			color: #000000;
+			line-height: 1;
+		}
+		.tile-icon-paypal {
+			font-size: 22px;
+			color: #003087;
+			font-weight: 900;
+			font-style: italic;
+		}
+		.tile-icon-klarna {
+			background: #ffb3c7;
+			color: #000000;
+			font-size: 10px;
+			font-weight: 900;
+			padding: 3px 6px;
+			letter-spacing: 0.5px;
+		}
+		.tile-icon-cod {
+			width: 32px;
+			height: 24px;
+			background: #16a34a;
+			color: #ffffff;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 14px;
+		}
+
+		.tile-title {
+			font-size: 11.5px;
+			font-weight: 800;
+			color: #212121;
+			margin: 0 0 2px;
+			line-height: 1.25;
+		}
+		.tile-subtitle {
+			font-size: 10px;
+			color: #757575;
+			margin: 0;
+			line-height: 1.2;
+		}
+
+		/* ========================================================
+		   SELECTED PAYMENT FORM CONTAINER (WHITE CARD) - COMPACT
+		   ======================================================== */
+		.payment-form-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			padding: 12px 14px;
+			box-sizing: border-box;
+		}
+		.form-card-title {
+			font-size: 12px;
+			font-weight: 800;
+			color: #212121;
+			margin: 0 0 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.btn-add-card-toggle {
+			background: #f0fdfa;
+			border: 1px dashed #0089a7;
+			color: #0089a7;
+			font-size: 11px;
+			font-weight: 800;
+			padding: 3px 8px;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			text-transform: uppercase;
+			transition: all 0.15s ease;
+		}
+		.btn-add-card-toggle:hover {
+			background: #0089a7;
+			color: #ffffff;
+			border-style: solid;
+		}
+
+		/* Saved Cards 2-in-a-row Grid */
+		.saved-cards-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 8px;
+			margin-bottom: 8px;
+		}
+		@media (max-width: 600px) {
+			.saved-cards-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+		.saved-card-item {
+			background: #f8fafc;
+			border: 1px solid #cbd5e1;
+			padding: 8px 10px;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			cursor: pointer;
+			position: relative;
+			transition: all 0.15s ease;
+			box-sizing: border-box;
+		}
+		.saved-card-item:hover {
+			border-color: #0089a7;
+			background: #ffffff;
+		}
+		.saved-card-item.is-selected {
+			background: #ffffff;
+			border: 1.5px solid #0089a7;
+			box-shadow: 0 2px 6px rgba(0, 137, 167, 0.08);
+		}
+		.saved-card-item.is-selected::after {
+			content: "✓";
+			position: absolute;
+			top: 0;
+			right: 0;
+			background: #0089a7;
+			color: #ffffff;
+			font-size: 9px;
+			font-weight: 800;
+			width: 14px;
+			height: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.card-item-top {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.card-type-badge {
+			font-size: 9.5px;
+			font-weight: 800;
+			padding: 1px 5px;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			display: inline-flex;
+			align-items: center;
+			gap: 3px;
+		}
+		.card-badge-visa {
+			color: #1a1f71;
+			border-color: #1a1f71;
+		}
+		.card-badge-mastercard {
+			color: #eb001b;
+			border-color: #eb001b;
+		}
+		.card-default-badge {
+			font-size: 8.5px;
+			font-weight: 800;
+			background: #e0f2fe;
+			color: #0369a1;
+			padding: 1px 4px;
+			text-transform: uppercase;
+		}
+		.card-number-masked {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			letter-spacing: 0.5px;
+			margin: 0;
+		}
+		.card-item-bottom {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 10px;
+			color: #64748b;
+		}
+		.card-cvv-inline {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+		}
+		.cvv-mini-input {
+			width: 44px;
+			height: 22px;
+			font-size: 11px;
+			text-align: center;
+			border: 1px solid #cbd5e1;
+			padding: 0 3px;
+			background: #ffffff;
+		}
+		.cvv-mini-input:focus {
+			border-color: #0089a7;
+			outline: none;
+		}
+
+		/* Collapsible / Expandable Add Card Form (Compact) */
+		.add-card-form-box {
+			display: none;
+			background: #f8fafc;
+			border: 1px solid #cbd5e1;
+			padding: 10px 12px;
+			margin-bottom: 8px;
+		}
+		.add-card-form-box.is-open {
+			display: block;
+		}
+		.add-card-form-title {
+			font-size: 11px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			margin-bottom: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.pay-form-group-compact {
+			margin-bottom: 8px;
+		}
+		.pay-form-label-compact {
+			display: block;
+			font-size: 10.5px;
+			font-weight: 700;
+			color: #334155;
+			margin-bottom: 2px;
+		}
+		.pay-form-input-compact {
+			height: 28px;
+			width: 100%;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			padding: 0 8px;
+			font-size: 11.5px;
+			color: #0f172a;
+			box-sizing: border-box;
+		}
+		.pay-form-input-compact:focus {
+			border-color: #0089a7;
+			outline: none;
+		}
+		.btn-save-new-card {
+			height: 28px;
+			background: #0089a7;
+			border: 1px solid #0089a7;
+			color: #ffffff;
+			font-size: 10.5px;
+			font-weight: 800;
+			padding: 0 12px;
+			cursor: pointer;
+			text-transform: uppercase;
+			transition: background 0.15s ease;
+		}
+		.btn-save-new-card:hover {
+			background: #02667d;
+		}
+
+		.payment-detail-panel {
+			display: none;
+		}
+		.payment-detail-panel.is-visible {
+			display: block;
+		}
+
+		.pay-checkbox-label {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 11px;
+			color: #616161;
+			cursor: pointer;
+		}
+
+		/* UK Wallet Buttons (Apple Pay / PayPal) */
+		.wallet-pay-btn-apple {
+			height: 42px;
+			width: 100%;
+			max-width: 320px;
+			background: #000000;
+			color: #ffffff;
+			border: 1px solid #000000;
+			font-size: 14px;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			cursor: pointer;
+			transition: opacity 0.15s ease;
+		}
+		.wallet-pay-btn-apple:hover {
+			opacity: 0.88;
+		}
+
+		.wallet-pay-btn-paypal {
+			height: 42px;
+			width: 100%;
+			max-width: 320px;
+			background: #ffc439;
+			color: #003087;
+			border: 1px solid #e0a824;
+			font-size: 14px;
+			font-weight: 800;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			cursor: pointer;
+			transition: background 0.15s ease;
+		}
+		.wallet-pay-btn-paypal:hover {
+			background: #f4b41a;
+		}
+
+		/* ========================================================
+		   RIGHT SIDEBAR: ORDER SUMMARY (MATCHING DARAZ REFERENCE)
+		   ======================================================== */
+		.payment-summary-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			padding: 16px 18px;
+			box-sizing: border-box;
+		}
+		.summary-header-title {
+			font-size: 14px;
+			font-weight: 800;
+			color: #212121;
+			margin: 0 0 14px;
+		}
+		.summary-line-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 11.5px;
+			color: #616161;
+			margin-bottom: 12px;
+			line-height: 1.35;
+		}
+		.summary-line-val {
+			font-weight: 700;
+			color: #212121;
+			margin-left: 8px;
+		}
+		.summary-total-container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-top: 1px solid #f1f5f9;
+			padding-top: 12px;
+			margin-top: 8px;
+			margin-bottom: 16px;
+		}
+		.summary-total-text {
+			font-size: 13px;
+			font-weight: 800;
+			color: #212121;
+		}
+		.summary-total-amount {
+			font-size: 19px;
+			font-weight: 800;
+			color: #634c9f;
+			line-height: 1.1;
+		}
+
+		/* Big Purple Confirm & Pay Button */
+		.btn-pay-confirm {
+			width: 100%;
+			height: 40px;
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			font-size: 13px;
+			font-weight: 800;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			cursor: pointer;
+			text-decoration: none;
+			transition: background 0.15s ease;
+		}
+		.btn-pay-confirm:hover {
+			background: #503d82;
+			border-color: #503d82;
+			color: #ffffff;
+		}
+
+		/* Security badges under summary */
+		.security-trust-box {
+			margin-top: 14px;
+			padding-top: 12px;
+			border-top: 1px solid #f1f5f9;
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+		.security-trust-item {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 10.5px;
+			color: #616161;
+		}
+		.security-trust-item i {
+			color: #16a34a;
+			font-size: 12px;
+		}
+
+		/* Floating Messages Pill */
+		.floating-message-btn {
+			position: fixed;
+			bottom: 24px;
+			right: 24px;
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+			padding: 7px 14px;
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			text-decoration: none;
+			z-index: 999;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.floating-message-btn:hover {
+			background: #0f172a;
+			color: #ffffff;
+			border-color: #0f172a;
+		}
+		.floating-message-btn i {
+			color: #634c9f;
+			font-size: 14px;
+		}
+
+		/* Success Receipt Modal */
+		.custom-modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1050;
+		}
+		.custom-modal-card {
+			background: #ffffff;
+			width: 460px;
+			max-width: 90%;
+			border: 1px solid #cbd5e1;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+			box-sizing: border-box;
+		}
+
+		/* Responsive Breakdown */
+		@media (max-width: 991px) {
+			.payment-layout-row {
+				flex-direction: column;
+			}
+			.payment-summary-col {
+				width: 100%;
+				flex: 0 0 100%;
+			}
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-payment-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
+									<input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1">
+				<div class="container">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+							<div class="categories-menu me-4">
+								<a href="{% url 'web:shop' %}" class="categories-toggle d-flex align-items-center fw-bold text-dark text-decoration-none py-2">
+									<i class="klb-icon-layout-grid me-2 text-primary"></i>All Categories
+								</a>
+							</div>
+							<nav class="site-menu horizontal menu-shadow primary-menu">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:shop' %}">Shops</a></li>
+									<li class="menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:contact' %}">Supports</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- Clean Breadcrumbs Bar -->
+		<div class="payment-breadcrumbs-wrapper">
+			<div class="container-fluid px-3 px-xl-4">
+				<nav class="payment-breadcrumbs" aria-label="breadcrumb">
+					<a href="{% url 'web:home' %}">Home</a>
+					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+					<a href="{% url 'web:cart' %}">Shopping Cart</a>
+					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+					<a href="{% url 'web:checkout' %}">Checkout</a>
+					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+					<span class="breadcrumb-current">Select Payment Method</span>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Main Payment Layout (Daraz Architecture with UK Methods) -->
+		<main class="payment-main-layout">
+			<div class="container-fluid px-3 px-xl-4">
+				
+				<h2 class="payment-section-title">Select Payment Method</h2>
+
+				<div class="payment-layout-row">
+
+					<!-- LEFT COLUMN: ~68% UK Payment Selection & Input Details -->
+					<div class="payment-methods-col">
+
+						<!-- UK Payment Method Selection Tiles (Matching Reference Grid) -->
+						<div class="payment-tiles-grid" role="tablist">
+							
+							<!-- Tile 1: Credit / Debit Card -->
+							<div class="payment-tile-card is-active" data-method="card" role="tab" tabindex="0">
+								<div class="tile-icon-wrap">
+									<div class="tile-icon-card">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+								</div>
+								<h4 class="tile-title">Credit/Debit Card</h4>
+								<p class="tile-subtitle">Visa, Mastercard, Amex</p>
+							</div>
+
+							<!-- Tile 2: Apple Pay / Google Pay -->
+							<div class="payment-tile-card" data-method="applepay" role="tab" tabindex="0">
+								<div class="tile-icon-wrap">
+									<span class="tile-icon-apple"></span>
+								</div>
+								<h4 class="tile-title">Apple Pay / GPay</h4>
+								<p class="tile-subtitle">Instant UK 1-Click</p>
+							</div>
+
+							<!-- Tile 3: PayPal -->
+							<div class="payment-tile-card" data-method="paypal" role="tab" tabindex="0">
+								<div class="tile-icon-wrap">
+									<span class="tile-icon-paypal">P</span>
+								</div>
+								<h4 class="tile-title">PayPal UK</h4>
+								<p class="tile-subtitle">PayPal &amp; Pay in 3</p>
+							</div>
+
+							<!-- Tile 4: Klarna Pay in 3 -->
+							<div class="payment-tile-card" data-method="klarna" role="tab" tabindex="0">
+								<div class="tile-icon-wrap">
+									<span class="tile-icon-klarna">Klarna.</span>
+								</div>
+								<h4 class="tile-title">Klarna Pay Later</h4>
+								<p class="tile-subtitle">3 Interest-free slices</p>
+							</div>
+
+							<!-- Tile 5: Cash on Delivery -->
+							<div class="payment-tile-card" data-method="cod" role="tab" tabindex="0">
+								<div class="tile-icon-wrap">
+									<div class="tile-icon-cod">
+										<i class="klb-icon-truck"></i>
+									</div>
+								</div>
+								<h4 class="tile-title">Cash on Delivery</h4>
+								<p class="tile-subtitle">Pay upon refrigerated arrival</p>
+							</div>
+
+						</div>
+
+						<!-- Payment Detail Form Container -->
+						<div class="payment-form-card">
+
+							<!-- PANEL 1: Credit / Debit Card (Compact 2-Cards-in-a-Row + Add More Card) -->
+							<div class="payment-detail-panel is-visible" id="panel-card">
+								<div class="form-card-title">
+									<span>Saved Cards (Select to Pay)</span>
+									<button type="button" class="btn-add-card-toggle" id="btn-toggle-add-card">
+										<i class="klb-icon-plus"></i> + Add More Card
+									</button>
+								</div>
+
+								<!-- 2 Cards within the row! -->
+								<div class="saved-cards-grid" id="saved-cards-container">
+									<!-- Card 1: Visa (Default) -->
+									<div class="saved-card-item is-selected" data-card-id="card-1">
+										<div class="card-item-top">
+											<span class="card-type-badge card-badge-visa"><strong>VISA</strong> DEBIT</span>
+											<span class="card-default-badge">DEFAULT</span>
+										</div>
+										<p class="card-number-masked">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 8821</p>
+										<div class="card-item-bottom">
+											<span>Suraj Mahato &bull; 08/28</span>
+											<div class="card-cvv-inline" onclick="event.stopPropagation();">
+												<label style="font-size: 9px; font-weight: bold; margin: 0;">CVV:</label>
+												<input type="password" class="cvv-mini-input" maxlength="4" value="842" placeholder="CVV">
+											</div>
+										</div>
+									</div>
+
+									<!-- Card 2: Mastercard -->
+									<div class="saved-card-item" data-card-id="card-2">
+										<div class="card-item-top">
+											<span class="card-type-badge card-badge-mastercard"><strong>Mastercard</strong></span>
+											<span style="font-size: 9px; color: #64748b;">UK Credit</span>
+										</div>
+										<p class="card-number-masked">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4019</p>
+										<div class="card-item-bottom">
+											<span>Suraj Mahato &bull; 11/29</span>
+											<div class="card-cvv-inline" onclick="event.stopPropagation();">
+												<label style="font-size: 9px; font-weight: bold; margin: 0;">CVV:</label>
+												<input type="password" class="cvv-mini-input" maxlength="4" placeholder="CVV">
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- Collapsible Add New Card Form -->
+								<div class="add-card-form-box" id="add-card-box">
+									<div class="add-card-form-title">
+										<span><i class="klb-icon-credit-card me-1 text-primary"></i> Enter New Card Information</span>
+										<span style="font-size: 10px; color: #ef4444; cursor: pointer;" id="btn-cancel-add-card">&times; Close</span>
+									</div>
+									<div class="pay-form-group-compact">
+										<label class="pay-form-label-compact" for="new-card-num">Card Number *</label>
+										<input type="text" id="new-card-num" class="pay-form-input-compact" placeholder="4242 •••• •••• 4242" maxlength="19">
+									</div>
+									<div class="row g-2">
+										<div class="col-sm-6">
+											<div class="pay-form-group-compact">
+												<label class="pay-form-label-compact" for="new-card-name">Cardholder Name *</label>
+												<input type="text" id="new-card-name" class="pay-form-input-compact" placeholder="e.g. Suraj Mahato" value="Suraj Mahato">
+											</div>
+										</div>
+										<div class="col-sm-3 col-6">
+											<div class="pay-form-group-compact">
+												<label class="pay-form-label-compact" for="new-card-exp">Expiry (MM/YY) *</label>
+												<input type="text" id="new-card-exp" class="pay-form-input-compact" placeholder="MM/YY" maxlength="5">
+											</div>
+										</div>
+										<div class="col-sm-3 col-6">
+											<div class="pay-form-group-compact">
+												<label class="pay-form-label-compact" for="new-card-cvv">CVV *</label>
+												<input type="password" id="new-card-cvv" class="pay-form-input-compact" placeholder="123" maxlength="4">
+											</div>
+										</div>
+									</div>
+									<div class="d-flex align-items-center justify-content-between mt-2 pt-1 border-top">
+										<label class="pay-checkbox-label" style="margin-top: 0; font-size: 10.5px;">
+											<input type="checkbox" id="save-new-card-cb" checked>
+											<span>Save card for future orders</span>
+										</label>
+										<button type="button" class="btn-save-new-card" id="btn-submit-new-card">
+											Add &amp; Use Card
+										</button>
+									</div>
+								</div>
+
+								<div class="d-flex align-items-center justify-content-between text-10 text-gray-500 pt-1 border-top">
+									<span><i class="klb-icon-shield-check text-success me-1"></i> 256-bit SSL encrypted tokenization</span>
+									<span>Accepted: Visa, Mastercard, AMEX, Maestro</span>
+								</div>
+							</div>
+
+							<!-- PANEL 2: Apple Pay / Google Pay -->
+							<div class="payment-detail-panel" id="panel-applepay">
+								<div class="form-card-title">
+									<span>Instant UK Mobile Payment</span>
+									<span class="text-11 text-success fw-bold"><i class="klb-icon-check-circle me-1"></i>BIOMETRIC SECURE</span>
+								</div>
+								<p class="text-12 text-gray-600 mb-3" style="line-height: 1.5;">
+									Complete your order in one second using Touch ID, Face ID, or your UK bank account linked with Apple Pay / Google Pay.
+								</p>
+								<button type="button" class="wallet-pay-btn-apple" onclick="document.getElementById('payment-success-modal').style.display = 'flex';">
+									<span>Pay</span> &nbsp; Pay &pound;39.67 with Apple Pay
+								</button>
+							</div>
+
+							<!-- PANEL 3: PayPal -->
+							<div class="payment-detail-panel" id="panel-paypal">
+								<div class="form-card-title">
+									<span>PayPal Checkout &amp; Pay in 3</span>
+								</div>
+								<p class="text-12 text-gray-600 mb-3" style="line-height: 1.5;">
+									You will be safely routed to PayPal to log in and confirm. You can also split this purchase into 3 interest-free monthly installments of &pound;13.22.
+								</p>
+								<button type="button" class="wallet-pay-btn-paypal" onclick="document.getElementById('payment-success-modal').style.display = 'flex';">
+									<i>PayPal</i> &nbsp; Continue with PayPal UK
+								</button>
+							</div>
+
+							<!-- PANEL 4: Klarna -->
+							<div class="payment-detail-panel" id="panel-klarna">
+								<div class="form-card-title">
+									<span>Klarna UK &ndash; Flexible Payments</span>
+								</div>
+								<div class="p-3 mb-3 border" style="background: #fff5f7;">
+									<div class="d-flex align-items-center justify-content-between text-12 fw-bold text-dark mb-2">
+										<span>3 Interest-free payments:</span>
+										<strong class="text-dark">&pound;13.22 / month</strong>
+									</div>
+									<p class="text-11 text-gray-600 mb-0" style="line-height: 1.4;">
+										&bull; <strong>1st payment (&pound;13.22):</strong> Charged today upon order dispatch.<br>
+										&bull; <strong>2nd payment (&pound;13.22):</strong> Charged in 30 days automatically.<br>
+										&bull; <strong>3rd payment (&pound;13.23):</strong> Charged in 60 days. No fees, no interest.
+									</p>
+								</div>
+								<p class="text-11 text-gray-500 mb-0">18+, UK residents only. Subject to status. Terms apply.</p>
+							</div>
+
+							<!-- PANEL 5: Cash on Delivery -->
+							<div class="payment-detail-panel" id="panel-cod">
+								<div class="form-card-title">
+									<span>Cash on Cold-Chain Delivery (UK Postcodes)</span>
+								</div>
+								<p class="text-12 text-gray-600 mb-3" style="line-height: 1.5;">
+									Pay <strong>&pound;39.67</strong> directly to our refrigerated transport courier upon arrival. Our drivers carry contactless card terminals as well as accept exact British sterling banknotes (£).
+								</p>
+								<div class="d-flex align-items-center gap-2 text-11 text-primary fw-bold">
+									<i class="klb-icon-shield-check"></i> Safe doorstep hand-off with temperature verification guarantee (&lt;4&deg;C).
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+					<!-- RIGHT COLUMN: ~32% Order Summary (Matches Reference Image) -->
+					<aside class="payment-summary-col">
+						<div class="payment-summary-card">
+							<h3 class="summary-header-title">Order Summary</h3>
+
+							<div class="summary-line-item">
+								<span>Subtotal(1 items and shipping fee included)</span>
+								<span class="summary-line-val">&pound;39.67</span>
+							</div>
+
+							<div class="summary-total-container">
+								<span class="summary-total-text">Total Amount</span>
+								<span class="summary-total-amount">&pound;39.67</span>
+							</div>
+
+							<button type="button" class="btn-pay-confirm" id="btn-final-pay">
+								Confirm &amp; Pay &pound;39.67
+							</button>
+
+							<div class="security-trust-box">
+								<div class="security-trust-item">
+									<i class="klb-icon-shield-check"></i>
+									<span>Bank-grade 256-bit SSL encryption</span>
+								</div>
+								<div class="security-trust-item">
+									<i class="klb-icon-lock"></i>
+									<span>PCI-DSS Level 1 certified UK compliance</span>
+								</div>
+								<div class="security-trust-item">
+									<i class="klb-icon-rotate-cw"></i>
+									<span>100% Fresh Cold-Chain guarantee or instant refund</span>
+								</div>
+							</div>
+						</div>
+					</aside>
+
+				</div>
+			</div>
+		</main>
+
+		<!-- Floating Messages Pill -->
+		<a href="{% url 'web:contact' %}" class="floating-message-btn" title="Messages">
+			<i class="klb-icon-message-circle"></i>
+			<span>Messages</span>
+		</a>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:shop' %}" class="text-gray-600 hover-primary">Shop Catalog</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-gray-600 hover-primary">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Supports</a></li>
+								<li class="mb-2"><a href="{% url 'web:cart' %}" class="text-gray-600 hover-primary">Shopping Cart</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Customer Care</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#terms" class="text-gray-600 hover-primary">Terms of Service</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<div class="widget widget-newsletter">
+								<h4 class="text-14 fw-bold text-dark text-uppercase mb-2">Join our newsletter</h4>
+								<p class="text-12 text-gray-500 mb-2">Register now to get latest updates on promotions &amp; recipes.</p>
+								<div class="site-newsletter-form">
+									<form class="mc4wp-form" method="post" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Terai Food newsletter!');">
+										<div class="mc4wp-form-fields position-relative d-flex">
+											<input class="subscribe-input form-control text-12" type="email" placeholder="Enter your email" required style="height: 32px; border-radius: 0; padding-right: 60px;">
+											<button class="btn btn-primary" type="submit" style="position: absolute; right: 0; top: 0; height: 32px; font-size: 11px; font-weight: 700; border-radius: 0; background: #634c9f; border-color: #634c9f; padding: 0 10px;">SEND</button>
+										</div>
+										<p class="text-11 text-gray-400 mt-1 mb-0">By subscribing you agree to our Terms &amp; Privacy.</p>
+									</form>
+								</div>
+								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
+								<div class="site-social d-flex gap-2">
+									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
+									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
+									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
+									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+		<!-- Success Receipt Modal -->
+		<div class="custom-modal-backdrop" id="payment-success-modal">
+			<div class="custom-modal-card text-center p-4">
+				<div class="mb-3">
+					<div style="width: 58px; height: 58px; background: #ecfdf5; border: 1.5px solid #a7f3d0; display: inline-flex; align-items: center; justify-content: center;">
+						<i class="klb-icon-check text-success" style="font-size: 30px;"></i>
+					</div>
+				</div>
+				<h3 class="fw-bold text-18 text-dark mb-1">Payment Successful!</h3>
+				<p class="text-12 text-gray-500 mb-3">Your payment of <strong>&pound;39.67</strong> has been securely authorized. Your cold-chain grocery order is now confirmed for dispatch.</p>
+
+				<div class="bg-light p-3 mb-3 text-12 border text-start">
+					<div class="d-flex justify-content-between mb-1">
+						<span class="text-gray-500">Order ID:</span>
+						<strong class="text-dark">#TF-984210</strong>
+					</div>
+					<div class="d-flex justify-content-between mb-1">
+						<span class="text-gray-500">Payment Reference:</span>
+						<span class="text-dark">UK-STRIPE-AUTH-9201</span>
+					</div>
+					<div class="d-flex justify-content-between mb-1">
+						<span class="text-gray-500">Delivery Guaranteed:</span>
+						<strong class="text-success">Tomorrow by 1:00 PM</strong>
+					</div>
+					<div class="d-flex justify-content-between">
+						<span class="text-gray-500">Delivery Address:</span>
+						<span class="text-dark text-end">Greenwich, London SE10 0ER</span>
+					</div>
+				</div>
+
+				<div class="d-flex gap-2">
+					<a href="{% url 'web:track-order' %}" class="btn btn-outline-secondary w-50 text-12 fw-bold py-2">Track Order</a>
+					<a href="{% url 'web:home' %}" class="btn-pay-confirm w-50 text-12" style="text-decoration: none;">Back to Home</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+
+	<!-- Interactive Payment Method Switching Script -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const tiles = document.querySelectorAll('.payment-tile-card');
+			const panels = {
+				card: document.getElementById('panel-card'),
+				applepay: document.getElementById('panel-applepay'),
+				paypal: document.getElementById('panel-paypal'),
+				klarna: document.getElementById('panel-klarna'),
+				cod: document.getElementById('panel-cod')
+			};
+
+			const finalPayBtn = document.getElementById('btn-final-pay');
+			const successModal = document.getElementById('payment-success-modal');
+
+			tiles.forEach(tile => {
+				tile.addEventListener('click', function() {
+					tiles.forEach(t => t.classList.remove('is-active'));
+					this.classList.add('is-active');
+
+					const method = this.getAttribute('data-method');
+
+					// Hide all panels
+					Object.values(panels).forEach(panel => {
+						if (panel) panel.classList.remove('is-visible');
+					});
+
+					// Show active panel
+					if (panels[method]) {
+						panels[method].classList.add('is-visible');
+					}
+
+					// Update button text according to method
+					if (method === 'applepay') {
+						finalPayBtn.textContent = 'Pay £39.67 with Pay';
+					} else if (method === 'paypal') {
+						finalPayBtn.textContent = 'Pay £39.67 with PayPal';
+					} else if (method === 'klarna') {
+						finalPayBtn.textContent = 'Confirm Klarna Slice (£13.22/mo)';
+					} else if (method === 'cod') {
+						finalPayBtn.textContent = 'Place Order (Cash on Delivery)';
+					} else {
+						finalPayBtn.textContent = 'Confirm & Pay £39.67';
+					}
+				});
+			});
+
+			// Final Pay Button Click
+			if (finalPayBtn) {
+				finalPayBtn.addEventListener('click', function() {
+					successModal.style.display = 'flex';
+				});
+			}
+
+			// Saved Cards Selection Logic
+			const cardsContainer = document.getElementById('saved-cards-container');
+			function setupCardClicks() {
+				const cardItems = document.querySelectorAll('.saved-card-item');
+				cardItems.forEach(card => {
+					card.onclick = function() {
+						cardItems.forEach(c => c.classList.remove('is-selected'));
+						this.classList.add('is-selected');
+					};
+				});
+			}
+			setupCardClicks();
+
+			// Toggle Add Card Form
+			const btnToggleAddCard = document.getElementById('btn-toggle-add-card');
+			const btnCancelAddCard = document.getElementById('btn-cancel-add-card');
+			const addCardBox = document.getElementById('add-card-box');
+
+			if (btnToggleAddCard && addCardBox) {
+				btnToggleAddCard.addEventListener('click', function() {
+					addCardBox.classList.toggle('is-open');
+				});
+			}
+			if (btnCancelAddCard && addCardBox) {
+				btnCancelAddCard.addEventListener('click', function() {
+					addCardBox.classList.remove('is-open');
+				});
+			}
+
+			// Add New Card Submission
+			const btnSubmitNewCard = document.getElementById('btn-submit-new-card');
+			if (btnSubmitNewCard && cardsContainer) {
+				btnSubmitNewCard.addEventListener('click', function() {
+					const num = document.getElementById('new-card-num').value.trim();
+					const name = document.getElementById('new-card-name').value.trim() || 'Suraj Mahato';
+					const exp = document.getElementById('new-card-exp').value.trim() || '12/28';
+					const cvv = document.getElementById('new-card-cvv').value.trim() || '123';
+
+					if (!num || num.length < 4) {
+						alert('Please enter a valid card number.');
+						return;
+					}
+
+					const last4 = num.replace(/\s+/g, '').slice(-4);
+					const isAmex = num.startsWith('3');
+					const cardType = isAmex ? 'AMEX' : (num.startsWith('5') ? 'Mastercard' : 'VISA');
+					const badgeClass = cardType === 'VISA' ? 'card-badge-visa' : 'card-badge-mastercard';
+
+					// Create new card item
+					const newCardEl = document.createElement('div');
+					newCardEl.className = 'saved-card-item is-selected';
+					newCardEl.innerHTML = `
+						<div class="card-item-top">
+							<span class="card-type-badge ${badgeClass}"><strong>${cardType}</strong></span>
+							<span style="font-size: 8.5px; font-weight: 800; color: #16a34a; background: #ecfdf5; padding: 1px 4px;">NEW</span>
+						</div>
+						<p class="card-number-masked">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; ${last4}</p>
+						<div class="card-item-bottom">
+							<span>${name} &bull; ${exp}</span>
+							<div class="card-cvv-inline" onclick="event.stopPropagation();">
+								<label style="font-size: 9px; font-weight: bold; margin: 0;">CVV:</label>
+								<input type="password" class="cvv-mini-input" maxlength="4" value="${cvv}" placeholder="CVV">
+							</div>
+						</div>
+					`;
+
+					// Deselect other cards
+					document.querySelectorAll('.saved-card-item').forEach(c => c.classList.remove('is-selected'));
+
+					// Append and setup
+					cardsContainer.appendChild(newCardEl);
+					setupCardClicks();
+
+					// Reset & close form
+					document.getElementById('new-card-num').value = '';
+					document.getElementById('new-card-exp').value = '';
+					document.getElementById('new-card-cvv').value = '';
+					addCardBox.classList.remove('is-open');
+				});
+			}
+		});
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+</body>
+</html>
+

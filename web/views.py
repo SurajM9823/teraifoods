@@ -1,0 +1,33 @@
+from django.http import Http404, JsonResponse
+from django.shortcuts import render
+from django.views.decorators.http import require_safe
+from django.views.decorators.cache import never_cache
+from django.db import connection, DatabaseError
+
+from web.selectors import get_page
+from web.services import build_page_directory
+
+
+@require_safe
+def page_view(request, page_key):
+    page = get_page(page_key)
+    if page is None:
+        raise Http404("Page not found")
+    return render(request, page.template)
+
+
+@require_safe
+def page_directory(request):
+    return JsonResponse(build_page_directory())
+
+
+@never_cache
+@require_safe
+def health(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+    except DatabaseError:
+        return JsonResponse({"status": "unavailable"}, status=503)
+    return JsonResponse({"status": "ok"})

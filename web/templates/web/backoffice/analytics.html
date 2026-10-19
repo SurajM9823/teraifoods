@@ -1,0 +1,127 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Web Analytics{% endblock %}
+{% block breadcrumb %}Web Analytics{% endblock %}
+{% block main_content %}
+<!-- Filters above the datatable -->
+<div class="filter-strip">
+  <div class="filter-group">
+    <label for="date_from">From:</label>
+    <input type="date" id="date_from" class="filter-control" value="{% now 'Y-m-01' %}">
+  </div>
+  <div class="filter-group">
+    <label for="date_to">To:</label>
+    <input type="date" id="date_to" class="filter-control" value="{% now 'Y-m-d' %}">
+  </div>
+  <div class="filter-group">
+    <label for="filter_channel">Channel:</label>
+    <select id="filter_channel" class="filter-control">
+      <option value="">All Traffic Channels</option>
+      <option value="direct">Direct</option>
+      <option value="organic">Google Organic</option>
+      <option value="social">Social Media</option>
+      <option value="email">Email Campaigns</option>
+    </select>
+  </div>
+  <input type="text" class="filter-control filter-search" placeholder="Filter by landing page URL..." aria-label="Search landing pages">
+  <button type="button" class="btn btn-primary btn-sm">Filter</button>
+  <button type="button" class="btn btn-outline btn-sm">Reset</button>
+
+  <div class="filter-actions-right">
+    <button class="btn btn-outline btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='file' %} Export CSV</button>
+  </div>
+</div>
+
+<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
+<div class="summary-strip">
+  <span class="summary-item">Unique Visitors: <strong>{{ metrics.visitors }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Page Views: <strong>{{ metrics.page_views }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Conversion Rate: <strong>{{ metrics.conversion_rate }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Avg Order Value: <strong>{{ metrics.avg_order_value }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Total Attributed Revenue: <strong>£8,420.50</strong></span>
+</div>
+
+<!-- Clean, dense datatable: Traffic Acquisition Channels -->
+<div class="table-responsive">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Traffic Channel</th>
+        <th>Sessions / Visitors</th>
+        <th>Traffic Share</th>
+        <th>Top Converting Page</th>
+        <th>Orders Placed</th>
+        <th>Channel Conversion</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for src in traffic_sources %}
+      <tr>
+        <td class="table-cell-bold">{{ src.source }}</td>
+        <td>{{ src.visitors }} sessions</td>
+        <td><strong>{{ src.percentage }}%</strong></td>
+        <td class="table-cell-muted"><code>/product/himalayan-basmati-rice</code></td>
+        <td class="table-cell-bold">{% if forloop.first %}184{% elif forloop.counter == 2 %}136{% elif forloop.counter == 3 %}62{% else %}30{% endif %} orders</td>
+        <td><span class="badge badge-success">3.4%</span></td>
+        <td style="text-align: right;">
+          <button class="btn btn-outline btn-sm" type="button">Breakdown</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination 1 2 3 >> -->
+<div class="pagination-bar">
+  <span>Showing 1 to {{ traffic_sources|length }} of {{ traffic_sources|length }} acquisition channels</span>
+  <div class="pagination-links">
+    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
+    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
+    <a href="#" class="page-link active">1</a>
+    <a href="#" class="page-link">2</a>
+    <a href="#" class="page-link">3</a>
+    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
+    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+  </div>
+</div>
+
+<!-- Secondary Table: Top Converting Landing Pages -->
+<div style="margin-top: 14px;">
+  <div class="filter-strip" style="background: #f7f7f7; border-bottom: 1px solid #bbbbbb;">
+    <strong style="font-size: 10px; text-transform: uppercase; color: #000;">Top Engaging Product Landing Pages</strong>
+  </div>
+  <div class="table-responsive" style="border-top: 0;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Page URL</th>
+          <th>Product / Title</th>
+          <th>Pageviews</th>
+          <th>Add to Cart Actions</th>
+          <th>Checkout Conversions</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for page in top_pages %}
+        <tr>
+          <td class="table-cell-muted"><code>{{ page.page }}</code></td>
+          <td class="table-cell-bold">{{ page.title }}</td>
+          <td>{{ page.views }}</td>
+          <td>{% if forloop.first %}820{% elif forloop.counter == 2 %}540{% elif forloop.counter == 3 %}310{% else %}280{% endif %}</td>
+          <td><span class="badge badge-success">{{ page.conversions }} orders</span></td>
+          <td style="text-align: right;">
+            <button class="btn btn-outline btn-sm" type="button">Details</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% load static %}
+<aside class="sidebar" id="admin-sidebar" aria-label="Administration sidebar">
+  <a href="{% url 'backoffice:dashboard' %}" class="sidebar-brand" aria-label="Terai Food dashboard">
+    <img src="{% static 'web/images/teraifood-icon.svg' %}" alt="">
+    <span class="sidebar-label brand-word">teraifood<span>STORE WORKSPACE</span></span>
+  </a>
+  <button type="button" class="pin-button" aria-pressed="false" title="Keep sidebar open">
+    {% include 'web/backoffice/icon.html' with name='panel' %}
+    <span class="sidebar-label pin-label">Keep sidebar open</span>
+  </button>
+  <div class="nav-caption sidebar-label">WORKSPACE</div>
+  <nav aria-label="Main navigation">
+    <a href="{% url 'backoffice:dashboard' %}" class="nav-item {% if active_page == 'overview' %}active{% endif %}" {% if active_page == 'overview' %}aria-current="page"{% endif %} title="Overview">
+      {% include 'web/backoffice/icon.html' with name='grid' %}
+      <span class="sidebar-label">Overview</span>
+    </a>
+    <a href="{% url 'backoffice:orders' %}" class="nav-item {% if active_page == 'orders' %}active{% endif %}" {% if active_page == 'orders' %}aria-current="page"{% endif %} title="Orders">
+      {% include 'web/backoffice/icon.html' with name='bag' %}
+      <span class="sidebar-label">Orders</span>
+    </a>
+    <a href="{% url 'backoffice:bulk-orders' %}" class="nav-item {% if active_page == 'bulk_orders' %}active{% endif %}" {% if active_page == 'bulk_orders' %}aria-current="page"{% endif %} title="Bulk Order Inquiries">
+      {% include 'web/backoffice/icon.html' with name='file' %}
+      <span class="sidebar-label">Bulk Inquiries</span>
+    </a>
+    <a href="{% url 'backoffice:pos' %}" class="nav-item {% if active_page == 'pos' %}active{% endif %}" {% if active_page == 'pos' %}aria-current="page"{% endif %} title="POS">
+      {% include 'web/backoffice/icon.html' with name='pos' %}
+      <span class="sidebar-label">POS</span>
+    </a>
+    <a href="{% url 'backoffice:products' %}" class="nav-item {% if active_page == 'products' %}active{% endif %}" {% if active_page == 'products' %}aria-current="page"{% endif %} title="Products">
+      {% include 'web/backoffice/icon.html' with name='box' %}
+      <span class="sidebar-label">Products</span>
+    </a>
+    <a href="{% url 'backoffice:analytics' %}" class="nav-item {% if active_page == 'analytics' %}active{% endif %}" {% if active_page == 'analytics' %}aria-current="page"{% endif %} title="Web Analytics">
+      {% include 'web/backoffice/icon.html' with name='analytics' %}
+      <span class="sidebar-label">Web Analytics</span>
+    </a>
+    <a href="{% url 'backoffice:customers' %}" class="nav-item {% if active_page == 'customers' %}active{% endif %}" {% if active_page == 'customers' %}aria-current="page"{% endif %} title="Customers">
+      {% include 'web/backoffice/icon.html' with name='users' %}
+      <span class="sidebar-label">Customers</span>
+    </a>
+    <a href="{% url 'backoffice:site-settings' %}" class="nav-item {% if active_page == 'settings' %}active{% endif %}" {% if active_page == 'settings' %}aria-current="page"{% endif %} title="Site Settings">
+      {% include 'web/backoffice/icon.html' with name='settings' %}
+      <span class="sidebar-label">Site Settings</span>
+    </a>
+    <a href="{% url 'backoffice:pricing-tier-groups' %}" class="nav-item {% if active_page == 'pricing' %}active{% endif %}" {% if active_page == 'pricing' %}aria-current="page"{% endif %} title="Pricing & Tier Group">
+      {% include 'web/backoffice/icon.html' with name='pricing' %}
+      <span class="sidebar-label">Pricing &amp; Tier Group</span>
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <form method="post" action="{% url 'backoffice:logout' %}">{% csrf_token %}
+      <button class="nav-item logout-button" title="Sign out">
+        {% include 'web/backoffice/icon.html' with name='logout' %}
+        <span class="sidebar-label">Sign out</span>
+      </button>
+    </form>
+    <div class="sidebar-account">
+      <span class="avatar">{{ request.user.get_username|slice:':1'|upper }}</span>
+      <span class="sidebar-label">
+        <strong>{{ request.user.get_short_name|default:request.user.get_username }}</strong>
+        <small>{% if request.user.is_superuser %}Super administrator{% else %}Staff member{% endif %}</small>
+      </span>
+    </div>
+  </div>
+</aside>
+

@@ -1,0 +1,12 @@
+{% extends "allauth/layouts/base.html" %}
+{% block head_title %}My account{% endblock %}
+{% block content %}
+<span class="eyebrow">YOUR ACCOUNT</span><h1>Hello{% if user.first_name %}, {{ user.first_name }}{% endif %}.</h1><p class="account-email">{{ user.email }}</p><span class="verified-badge">✓ Email verified</span>
+<nav class="account-links" aria-label="Account settings">
+<a href="{% url 'account_email' %}">Manage email address <span>→</span></a>
+<a href="{% url 'account_change_password' %}">Change or set password <span>→</span></a>
+<a href="{% url 'socialaccount_connections' %}">Connected sign-in accounts <span>→</span></a>
+<a href="{% url 'web:shop' %}">Continue shopping <span>→</span></a>
+</nav>
+<form method="post" action="{% url 'account_logout' %}">{% csrf_token %}<button class="secondary-button" type="submit">Sign out</button></form>
+{% endblock %}

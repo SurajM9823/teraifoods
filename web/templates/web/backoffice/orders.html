@@ -1,0 +1,128 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Orders{% endblock %}
+{% block breadcrumb %}Orders{% endblock %}
+{% block main_content %}
+<!-- Filters above the datatable -->
+<div class="filter-strip">
+  <div class="filter-group">
+    <label for="date_from">From:</label>
+    <input type="date" id="date_from" class="filter-control" value="{% now 'Y-m-01' %}">
+  </div>
+  <div class="filter-group">
+    <label for="date_to">To:</label>
+    <input type="date" id="date_to" class="filter-control" value="{% now 'Y-m-d' %}">
+  </div>
+  <div class="filter-group">
+    <label for="filter_status">Status:</label>
+    <select id="filter_status" class="filter-control">
+      <option value="">All Statuses</option>
+      <option value="processing">Processing</option>
+      <option value="shipped">Shipped</option>
+      <option value="delivered">Delivered</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="filter_channel">Channel:</label>
+    <select id="filter_channel" class="filter-control">
+      <option value="">All Channels</option>
+      <option value="retail">Retail</option>
+      <option value="wholesale">Wholesale</option>
+    </select>
+  </div>
+  <input type="text" class="filter-control filter-search" placeholder="Search orders by ID, customer name or items..." aria-label="Search orders">
+  <button type="button" class="btn btn-primary btn-sm">Filter</button>
+  <button type="button" class="btn btn-outline btn-sm">Reset</button>
+
+  <div class="filter-actions-right">
+    <button class="btn btn-outline btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='file' %} Export CSV</button>
+    <button class="btn btn-primary btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='plus' %} New Order</button>
+  </div>
+</div>
+
+<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
+<div class="summary-strip">
+  <span class="summary-item">Total Orders: <strong>{{ summary.total_orders }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Processing: <strong>{{ summary.processing }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Dispatched: <strong>{{ summary.dispatched }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Total Gross Value: <strong>{{ summary.total_revenue }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Filtered Items: <strong>{{ orders_list|length }}</strong></span>
+</div>
+
+<!-- Clean, dense datatable -->
+<div class="table-responsive">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Channel / Tier</th>
+        <th>Items Summary</th>
+        <th>Total</th>
+        <th>Payment</th>
+        <th>Fulfillment</th>
+        <th>Date</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders_list %}
+      <tr>
+        <td class="table-cell-bold">#{{ order.id }}</td>
+        <td>
+          <strong>{{ order.customer }}</strong>
+          <div class="table-cell-muted">{{ order.email }}</div>
+        </td>
+        <td><span class="badge badge-neutral">{{ order.type }}</span></td>
+        <td class="table-cell-muted" style="max-width: 280px;">{{ order.items_summary }}</td>
+        <td class="table-cell-bold">{{ order.total }}</td>
+        <td>
+          {% if order.payment_status == 'Paid' %}
+            <span class="badge badge-success"><span class="badge-dot"></span> Paid</span>
+          {% elif order.payment_status == 'Pending' %}
+            <span class="badge badge-warning"><span class="badge-dot"></span> Pending</span>
+          {% else %}
+            <span class="badge badge-danger"><span class="badge-dot"></span> {{ order.payment_status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if order.fulfillment_status == 'Delivered' %}
+            <span class="badge badge-success">{{ order.fulfillment_status }}</span>
+          {% elif order.fulfillment_status == 'Shipped' %}
+            <span class="badge badge-info">{{ order.fulfillment_status }}</span>
+          {% elif order.fulfillment_status == 'Processing' %}
+            <span class="badge badge-warning">{{ order.fulfillment_status }}</span>
+          {% else %}
+            <span class="badge badge-neutral">{{ order.fulfillment_status }}</span>
+          {% endif %}
+        </td>
+        <td class="table-cell-muted">{{ order.date }}</td>
+        <td style="text-align: right;">
+          <button class="btn btn-outline btn-sm" type="button">View</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination 1 2 3 >> -->
+<div class="pagination-bar">
+  <span>Showing 1 to {{ orders_list|length }} of {{ summary.total_orders }} orders</span>
+  <div class="pagination-links">
+    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
+    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
+    <a href="#" class="page-link active">1</a>
+    <a href="#" class="page-link">2</a>
+    <a href="#" class="page-link">3</a>
+    <a href="#" class="page-link">4</a>
+    <a href="#" class="page-link">5</a>
+    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
+    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+  </div>
+</div>
+{% endblock %}

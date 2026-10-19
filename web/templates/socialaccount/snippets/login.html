@@ -1,0 +1,6 @@
+{% load socialaccount %}
+{% if google_login_enabled %}
+  <form class="google-form" method="post" action="{% provider_login_url 'google' process='login' %}">{% csrf_token %}<button class="google-button" type="submit"><span aria-hidden="true">G</span> Continue with Google</button></form>
+{% else %}
+  <button class="google-button" type="button" disabled><span aria-hidden="true">G</span> Google sign-in coming soon</button>
+{% endif %}

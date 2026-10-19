@@ -1,0 +1,1744 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Shopping Cart – Terai Food UK | Farm Fresh &amp; Himalayan Groceries</title>
+	<meta name="description" content="View your Terai Food shopping cart, select items for cold-chain checkout, apply discount vouchers, and enjoy fast UK delivery.">
+	<meta name="keywords" content="shopping cart, Terai Food checkout, organic groceries cart UK">
+	<link rel="canonical" href="{% url 'web:cart' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		/* Global Zero Border Radius & High Contrast Sharp Styling */
+		.terai-cart-page,
+		.terai-cart-page *,
+		.terai-cart-page .btn,
+		.terai-cart-page .form-control,
+		.terai-cart-page .badge,
+		.terai-cart-page .alert,
+		.terai-cart-page input,
+		.terai-cart-page select,
+		.terai-cart-page textarea {
+			border-radius: 0 !important;
+		}
+
+		body.terai-cart-page {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f1f5f9;
+			color: #0f172a;
+		}
+
+		/* Top Navigation Bulk Order CTA */
+		.nav-bulk-order-cta {
+			background: #f5f3ff;
+			color: #634c9f !important;
+			border: 1px solid #ede9fe;
+			padding: 7px 14px !important;
+			font-weight: 700 !important;
+			transition: all 0.2s ease;
+		}
+		.nav-bulk-order-cta:hover {
+			background: #634c9f !important;
+			color: #ffffff !important;
+		}
+
+		/* Clean Breadcrumbs Bar */
+		.cart-breadcrumbs-wrapper {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 8px 0;
+		}
+		.cart-breadcrumbs {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+		}
+		.cart-breadcrumbs a {
+			color: #64748b;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.15s ease;
+		}
+		.cart-breadcrumbs a:hover {
+			color: #634c9f;
+		}
+		.cart-breadcrumbs .breadcrumb-separator {
+			color: #94a3b8;
+			font-size: 10px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.cart-breadcrumbs .breadcrumb-current {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		/* Main Cart Layout Container */
+		.cart-main-layout {
+			padding: 16px 0 40px;
+		}
+		.cart-layout-row {
+			display: flex;
+			align-items: flex-start;
+			gap: 16px;
+			margin: 0;
+		}
+
+		/* Left Column: ~72% Active Cart Items List */
+		.cart-items-col {
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		/* Right Column: ~28% Sticky Order Summary */
+		.cart-summary-col {
+			width: 330px;
+			flex: 0 0 330px;
+			position: sticky;
+			top: 16px;
+		}
+
+		/* ========================================================
+		   DARAZ-STYLE SHARP CART CARDS & VENDOR GROUPS
+		   ======================================================== */
+
+		/* Custom Checkbox (Sharp Square Zero Radius) */
+		.cart-custom-checkbox {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			cursor: pointer;
+			user-select: none;
+			margin: 0;
+		}
+		.cart-custom-checkbox input {
+			position: absolute;
+			opacity: 0;
+			cursor: pointer;
+			height: 0;
+			width: 0;
+		}
+		.checkbox-box {
+			width: 16px;
+			height: 16px;
+			background-color: #ffffff;
+			border: 1.5px solid #94a3b8;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.15s ease;
+			flex-shrink: 0;
+		}
+		.cart-custom-checkbox:hover input ~ .checkbox-box {
+			border-color: #634c9f;
+		}
+		.cart-custom-checkbox input:checked ~ .checkbox-box {
+			background-color: #634c9f;
+			border-color: #634c9f;
+		}
+		.cart-custom-checkbox input:indeterminate ~ .checkbox-box {
+			background-color: #634c9f;
+			border-color: #634c9f;
+		}
+		.checkbox-box::after {
+			content: "";
+			display: none;
+			width: 4px;
+			height: 8px;
+			border: solid #ffffff;
+			border-width: 0 2px 2px 0;
+			transform: rotate(45deg);
+			margin-bottom: 2px;
+		}
+		.cart-custom-checkbox input:checked ~ .checkbox-box::after {
+			display: block;
+		}
+		.cart-custom-checkbox input:indeterminate ~ .checkbox-box::after {
+			display: block;
+			width: 8px;
+			height: 2px;
+			background-color: #ffffff;
+			border: none;
+			transform: none;
+			margin-bottom: 0;
+		}
+		.cart-custom-checkbox input:disabled ~ .checkbox-box {
+			background-color: #e2e8f0;
+			border-color: #cbd5e1;
+			cursor: not-allowed;
+		}
+
+		/* Top Action Bar (Select All + Delete) */
+		.cart-top-bar {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			padding: 10px 14px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			box-sizing: border-box;
+		}
+		.select-all-label {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			cursor: pointer;
+			margin: 0;
+		}
+		.select-all-count {
+			color: #64748b;
+			font-weight: 700;
+		}
+		.cart-delete-all-btn {
+			background: none;
+			border: none;
+			padding: 0;
+			color: #64748b;
+			font-size: 11.5px;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			cursor: pointer;
+			text-transform: uppercase;
+			transition: color 0.15s ease;
+		}
+		.cart-delete-all-btn:hover {
+			color: #ef4444;
+		}
+
+		/* Vendor Store Group Card */
+		.vendor-group-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
+		}
+		.vendor-group-header {
+			background: #fafafa;
+			border-bottom: 1px solid #f1f5f9;
+			padding: 8px 14px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+		}
+		.vendor-title-link {
+			color: #0f172a;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			transition: color 0.15s ease;
+		}
+		.vendor-title-link:hover {
+			color: #634c9f;
+		}
+		.vendor-title-link i.vendor-icon {
+			color: #634c9f;
+			font-size: 14px;
+		}
+		.vendor-title-link i.arrow-icon {
+			color: #94a3b8;
+			font-size: 10px;
+		}
+
+		/* Cart Item Row */
+		.cart-item-row {
+			padding: 12px 14px;
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			background: #ffffff;
+			border-bottom: 1px solid #f1f5f9;
+			transition: background-color 0.15s ease, opacity 0.15s ease;
+			box-sizing: border-box;
+		}
+		.cart-item-row:last-child {
+			border-bottom: none;
+		}
+		.cart-item-row.is-unselected {
+			background-color: #fafbfc;
+			opacity: 0.65;
+		}
+		.cart-item-thumb-box {
+			width: 76px;
+			height: 76px;
+			border: 1px solid #e2e8f0;
+			background: #f8fafc;
+			flex-shrink: 0;
+			overflow: hidden;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.cart-item-thumb-box img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.cart-item-info {
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+		.cart-item-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #0f172a;
+			line-height: 1.35;
+			margin: 0;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		.cart-item-title a {
+			color: #0f172a;
+			text-decoration: none;
+			transition: color 0.15s ease;
+		}
+		.cart-item-title a:hover {
+			color: #634c9f;
+		}
+		.cart-item-meta {
+			font-size: 11px;
+			color: #64748b;
+			margin: 0;
+			line-height: 1.3;
+		}
+		.cart-item-badge {
+			display: inline-block;
+			align-self: flex-start;
+			background: #fff1f2;
+			color: #e11d48;
+			border: 1px solid #fecdd3;
+			font-size: 9.5px;
+			font-weight: 800;
+			padding: 1px 5px;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+		}
+		.cart-item-badge.badge-fresh {
+			background: #f0fdf4;
+			color: #166534;
+			border-color: #bbf7d0;
+		}
+
+		/* Price and Stepper Columns */
+		.cart-item-pricing {
+			width: 120px;
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+		.cart-item-price {
+			font-size: 15px;
+			font-weight: 800;
+			color: #634c9f;
+			line-height: 1.2;
+		}
+		.cart-item-old-price {
+			font-size: 11px;
+			color: #94a3b8;
+			text-decoration: line-through;
+			margin-top: 1px;
+		}
+		.cart-item-actions {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-top: 6px;
+		}
+		.cart-icon-btn {
+			background: none;
+			border: none;
+			padding: 0;
+			color: #94a3b8;
+			font-size: 14px;
+			cursor: pointer;
+			transition: color 0.15s ease;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.cart-icon-btn:hover {
+			color: #0f172a;
+		}
+		.cart-icon-btn.btn-wishlist:hover,
+		.cart-icon-btn.btn-wishlist.active {
+			color: #e11d48;
+		}
+		.cart-icon-btn.btn-delete:hover {
+			color: #ef4444;
+		}
+
+		/* Numeric Quantity Stepper */
+		.cart-stepper {
+			display: inline-flex;
+			align-items: center;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			height: 28px;
+			box-sizing: border-box;
+		}
+		.stepper-btn {
+			width: 26px;
+			height: 26px;
+			background: #f8fafc;
+			border: none;
+			color: #64748b;
+			font-size: 14px;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: background-color 0.15s ease, color 0.15s ease;
+			padding: 0;
+		}
+		.stepper-btn:hover {
+			background: #e2e8f0;
+			color: #0f172a;
+		}
+		.stepper-btn:disabled {
+			background: #f1f5f9;
+			color: #cbd5e1;
+			cursor: not-allowed;
+		}
+		.stepper-input {
+			width: 36px;
+			height: 26px;
+			border: none;
+			border-left: 1px solid #cbd5e1;
+			border-right: 1px solid #cbd5e1;
+			text-align: center;
+			font-size: 12px;
+			font-weight: 700;
+			color: #0f172a;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.stepper-input:focus {
+			outline: none;
+			background: #f8fafc;
+		}
+
+		/* ========================================================
+		   UNAVAILABLE ITEMS (OUT OF STOCK) SECTION
+		   ======================================================== */
+		.unavailable-section-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			margin-top: 4px;
+		}
+		.unavailable-header {
+			background: #fafafa;
+			border-bottom: 1px solid #f1f5f9;
+			padding: 9px 14px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+		}
+		.unavailable-header-actions {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+		}
+		.unavailable-action-link {
+			color: #64748b;
+			text-decoration: none;
+			font-size: 11px;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			transition: color 0.15s ease;
+			cursor: pointer;
+		}
+		.unavailable-action-link:hover {
+			color: #0f172a;
+		}
+		.cart-item-row.is-unavailable {
+			background-color: #fafafa;
+			opacity: 0.65;
+		}
+		.badge-out-of-stock {
+			background: #fee2e2;
+			color: #b91c1c;
+			border: 1px solid #fecaca;
+			font-size: 9.5px;
+			font-weight: 800;
+			padding: 1px 6px;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+			display: inline-block;
+			align-self: flex-start;
+		}
+
+		/* ========================================================
+		   RIGHT COLUMN: STICKY ORDER SUMMARY CARD
+		   ======================================================== */
+		.order-summary-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			padding: 14px;
+			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
+		}
+		.order-summary-title {
+			font-size: 14px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			padding-bottom: 8px;
+			border-bottom: 2px solid #0f172a;
+			margin: 0 0 12px;
+		}
+		.summary-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 12px;
+			color: #64748b;
+			margin-bottom: 8px;
+		}
+		.summary-row-val {
+			font-weight: 700;
+			color: #0f172a;
+		}
+		.summary-shipping-free {
+			color: #16a34a;
+			font-weight: 800;
+		}
+
+		/* Free Shipping Progress bar */
+		.shipping-notice-box {
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			padding: 7px 9px;
+			margin-bottom: 12px;
+			font-size: 10.5px;
+			color: #475569;
+			line-height: 1.35;
+		}
+		.shipping-notice-box strong {
+			color: #0f172a;
+		}
+
+		/* Voucher Input Box */
+		.voucher-input-group {
+			display: flex;
+			position: relative;
+			margin: 8px 0 12px;
+		}
+		.voucher-input {
+			height: 32px;
+			flex: 1;
+			border: 1px solid #cbd5e1;
+			border-right: none;
+			padding: 0 8px;
+			font-size: 11.5px;
+			color: #0f172a;
+			text-transform: uppercase;
+		}
+		.voucher-input:focus {
+			border-color: #634c9f;
+			outline: none;
+		}
+		.voucher-btn {
+			height: 32px;
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 800;
+			letter-spacing: 0.5px;
+			padding: 0 14px;
+			cursor: pointer;
+			transition: background 0.15s ease;
+		}
+		.voucher-btn:hover {
+			background: #503d82;
+			border-color: #503d82;
+		}
+		.voucher-applied-tag {
+			display: none;
+			background: #ecfdf5;
+			border: 1px solid #a7f3d0;
+			color: #065f46;
+			font-size: 10.5px;
+			font-weight: 700;
+			padding: 4px 8px;
+			margin-bottom: 10px;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.voucher-remove-link {
+			color: #ef4444;
+			cursor: pointer;
+			text-decoration: underline;
+		}
+
+		/* Total Row */
+		.summary-total-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-top: 1px solid #e2e8f0;
+			padding-top: 10px;
+			margin-bottom: 14px;
+		}
+		.summary-total-label {
+			font-size: 13px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+		}
+		.summary-total-val {
+			font-size: 18px;
+			font-weight: 800;
+			color: #634c9f;
+		}
+
+		/* Main Proceed Button (Wishlist Purple Accent with Zero Radius) */
+		.checkout-proceed-btn {
+			width: 100%;
+			height: 38px;
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			font-size: 13px;
+			font-weight: 800;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background 0.15s ease;
+		}
+		.checkout-proceed-btn:hover {
+			background: #503d82;
+			border-color: #503d82;
+			color: #ffffff;
+		}
+		.checkout-proceed-btn:disabled,
+		.checkout-proceed-btn.disabled {
+			background: #cbd5e1;
+			border-color: #cbd5e1;
+			color: #64748b;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+
+		/* Trust & Security Guarantee Mini-cards */
+		.summary-trust-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			margin-top: 14px;
+			padding-top: 12px;
+			border-top: 1px solid #f1f5f9;
+		}
+		.trust-mini-item {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 10.5px;
+			color: #475569;
+			font-weight: 600;
+		}
+		.trust-mini-item i {
+			color: #16a34a;
+			font-size: 13px;
+		}
+
+		/* Floating Daraz-style Messages Pill */
+		.floating-message-btn {
+			position: fixed;
+			bottom: 24px;
+			right: 24px;
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+			padding: 7px 14px;
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			text-decoration: none;
+			z-index: 999;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.floating-message-btn:hover {
+			background: #0f172a;
+			color: #ffffff;
+			border-color: #0f172a;
+		}
+		.floating-message-btn i {
+			color: #634c9f;
+			font-size: 14px;
+		}
+		.floating-message-btn:hover i {
+			color: #a7f3d0;
+		}
+
+		/* Responsive Breakdown */
+		@media (max-width: 991px) {
+			.cart-layout-row {
+				flex-direction: column;
+			}
+			.cart-summary-col {
+				width: 100%;
+				flex: 0 0 100%;
+				position: static;
+			}
+			.cart-item-row {
+				flex-wrap: wrap;
+				gap: 10px;
+			}
+			.cart-item-info {
+				width: calc(100% - 110px);
+			}
+			.cart-item-pricing {
+				width: auto;
+				margin-left: 30px;
+			}
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-cart-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
+									<input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1">
+				<div class="container">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+							<div class="categories-menu me-4">
+								<a href="{% url 'web:shop' %}" class="categories-toggle d-flex align-items-center fw-bold text-dark text-decoration-none py-2">
+									<i class="klb-icon-layout-grid me-2 text-primary"></i>All Categories
+								</a>
+							</div>
+							<nav class="site-menu horizontal menu-shadow primary-menu">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:shop' %}">Shops</a></li>
+									<li class="menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:contact' %}">Supports</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- Clean Breadcrumbs Bar -->
+		<div class="cart-breadcrumbs-wrapper">
+			<div class="container-fluid px-3 px-xl-4">
+				<nav class="cart-breadcrumbs" aria-label="breadcrumb">
+					<a href="{% url 'web:home' %}">Home</a>
+					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+					<a href="{% url 'web:shop' %}">Shops</a>
+					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+					<span class="breadcrumb-current">Shopping Cart</span>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Main Cart Content Section -->
+		<main class="cart-main-layout">
+			<div class="container-fluid px-3 px-xl-4">
+				<div class="cart-layout-row">
+
+					<!-- LEFT COLUMN: ~72% Items List -->
+					<section class="cart-items-col" id="active-cart-container">
+
+						<!-- Top Select All Bar -->
+						<div class="cart-top-bar">
+							<label class="select-all-label">
+								<span class="cart-custom-checkbox">
+									<input type="checkbox" id="master-select-all" checked>
+									<span class="checkbox-box"></span>
+								</span>
+								<span>SELECT ALL (<span id="total-cart-items-count">5</span> ITEM(S))</span>
+							</label>
+
+							<button type="button" class="cart-delete-all-btn" id="delete-selected-btn" title="Delete selected items">
+								<i class="klb-icon-trash-2"></i> DELETE
+							</button>
+						</div>
+
+						<!-- VENDOR STORE 1: Himalayan Farm Direct Organic -->
+						<div class="vendor-group-card" data-vendor="himalayan-farms">
+							<div class="vendor-group-header">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="vendor-group-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+								<a href="{% url 'web:shop' %}" class="vendor-title-link">
+									<i class="klb-icon-store-2 vendor-icon"></i>
+									<span>Himalayan Farm Direct Organic</span>
+									<i class="klb-icon-arrow-right arrow-icon"></i>
+								</a>
+							</div>
+
+							<!-- Item 1: Cantaloupe Melon Fresh Organic Cut -->
+							<div class="cart-item-row" data-id="item-101" data-price="3.49" data-unit-price="3.49">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="item-select-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+
+								<div class="cart-item-thumb-box">
+									<a href="{% url 'web:product-detail' %}">
+										<img src="{% static 'web/' %}images/1-500x500.jpg" alt="Cantaloupe Melon Fresh Organic Cut">
+									</a>
+								</div>
+
+								<div class="cart-item-info">
+									<h4 class="cart-item-title">
+										<a href="{% url 'web:product-detail' %}">Cantaloupe Melon Fresh Organic Cut &ndash; 1kg Farm Sliced</a>
+									</h4>
+									<p class="cart-item-meta">Origin: High Valley Organic Orchards | Fresh Chilled 4&deg;C</p>
+									<span class="cart-item-badge badge-fresh"><i class="klb-icon-shield-check me-1"></i>ORGANIC HARVEST</span>
+								</div>
+
+								<div class="cart-item-pricing">
+									<span class="cart-item-price">&pound;<span class="item-display-price">3.49</span></span>
+									<span class="cart-item-old-price">&pound;4.99</span>
+									<div class="cart-item-actions">
+										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
+										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+									</div>
+								</div>
+
+								<div class="cart-stepper">
+									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
+									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
+									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
+								</div>
+							</div>
+
+							<!-- Item 2: Simply Orange Pulp Free Juice -->
+							<div class="cart-item-row" data-id="item-102" data-price="2.45" data-unit-price="2.45">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="item-select-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+
+								<div class="cart-item-thumb-box">
+									<a href="{% url 'web:product-detail' %}">
+										<img src="{% static 'web/' %}images/1-12-500x500.jpg" alt="Simply Orange Pulp Free Juice">
+									</a>
+								</div>
+
+								<div class="cart-item-info">
+									<h4 class="cart-item-title">
+										<a href="{% url 'web:product-detail' %}">Simply Orange Pulp Free Juice &ndash; 52 fl oz Pure Vitamin C</a>
+									</h4>
+									<p class="cart-item-meta">Brand: Terai Pure Juices | No Added Sugar | Pasteurized</p>
+									<span class="cart-item-badge badge-fresh"><i class="klb-icon-check me-1"></i>FRESH COLD-PRESSED</span>
+								</div>
+
+								<div class="cart-item-pricing">
+									<span class="cart-item-price">&pound;<span class="item-display-price">4.90</span></span>
+									<span class="cart-item-old-price">&pound;7.98</span>
+									<div class="cart-item-actions">
+										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
+										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+									</div>
+								</div>
+
+								<div class="cart-stepper">
+									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
+									<input type="text" class="stepper-input" value="2" min="1" max="99" readonly>
+									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- VENDOR STORE 2: Terai Artisan Bakery & Dairy Hub -->
+						<div class="vendor-group-card" data-vendor="terai-bakery">
+							<div class="vendor-group-header">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="vendor-group-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+								<a href="{% url 'web:shop' %}" class="vendor-title-link">
+									<i class="klb-icon-store-2 vendor-icon"></i>
+									<span>Terai Artisan Bakery &amp; Dairy Hub</span>
+									<i class="klb-icon-arrow-right arrow-icon"></i>
+								</a>
+							</div>
+
+							<!-- Item 3: Great Value Rising Crust Supreme Pizza -->
+							<div class="cart-item-row" data-id="item-103" data-price="8.99" data-unit-price="8.99">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="item-select-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+
+								<div class="cart-item-thumb-box">
+									<a href="{% url 'web:product-detail' %}">
+										<img src="{% static 'web/' %}images/1-87-500x500.jpg" alt="Great Value Rising Crust Frozen Pizza">
+									</a>
+								</div>
+
+								<div class="cart-item-info">
+									<h4 class="cart-item-title">
+										<a href="{% url 'web:product-detail' %}">Great Value Rising Crust Frozen Pizza &ndash; Supreme Oven Bake 780g</a>
+									</h4>
+									<p class="cart-item-meta">Category: Frozen Groceries | Sealed Thermal Cold-Chain Liner</p>
+									<span class="cart-item-badge"><i class="klb-icon-snowflake me-1"></i>COLD SALE</span>
+								</div>
+
+								<div class="cart-item-pricing">
+									<span class="cart-item-price">&pound;<span class="item-display-price">8.99</span></span>
+									<span class="cart-item-old-price">&pound;9.99</span>
+									<div class="cart-item-actions">
+										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
+										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+									</div>
+								</div>
+
+								<div class="cart-stepper">
+									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
+									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
+									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
+								</div>
+							</div>
+
+							<!-- Item 4: Pure Himalayan Raw Honey & Wild Herb Infusion -->
+							<div class="cart-item-row" data-id="item-104" data-price="12.50" data-unit-price="12.50">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="item-select-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+
+								<div class="cart-item-thumb-box">
+									<a href="{% url 'web:product-detail' %}">
+										<img src="{% static 'web/' %}images/1-105-500x500.jpg" alt="Pure Himalayan Raw Honey & Wild Herb Infusion">
+									</a>
+								</div>
+
+								<div class="cart-item-info">
+									<h4 class="cart-item-title">
+										<a href="{% url 'web:product-detail' %}">Pure Himalayan Raw Honey &amp; Wild Herb Infusion &ndash; 450g Glass Jar</a>
+									</h4>
+									<p class="cart-item-meta">High Altitude Beekeeper Harvest | 100% Unpasteurized &amp; Natural</p>
+									<span class="cart-item-badge badge-fresh"><i class="klb-icon-shield-check me-1"></i>WILD HONEY</span>
+								</div>
+
+								<div class="cart-item-pricing">
+									<span class="cart-item-price">&pound;<span class="item-display-price">12.50</span></span>
+									<span class="cart-item-old-price">&pound;15.00</span>
+									<div class="cart-item-actions">
+										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
+										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+									</div>
+								</div>
+
+								<div class="cart-stepper">
+									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
+									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
+									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- VENDOR STORE 3: Spices, Tea & Herbal Kitchen -->
+						<div class="vendor-group-card" data-vendor="himalayan-spices">
+							<div class="vendor-group-header">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="vendor-group-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+								<a href="{% url 'web:shop' %}" class="vendor-title-link">
+									<i class="klb-icon-store-2 vendor-icon"></i>
+									<span>Spices, Tea &amp; Herbal Kitchen</span>
+									<i class="klb-icon-arrow-right arrow-icon"></i>
+								</a>
+							</div>
+
+							<!-- Item 5: Authentic Sun-Dried Timut Himalayan Pepper Pods -->
+							<div class="cart-item-row" data-id="item-105" data-price="5.80" data-unit-price="5.80">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" class="item-select-checkbox" checked>
+									<span class="checkbox-box"></span>
+								</label>
+
+								<div class="cart-item-thumb-box">
+									<a href="{% url 'web:product-detail' %}">
+										<img src="{% static 'web/' %}images/1-30-500x500.jpg" alt="Authentic Sun-Dried Timut Himalayan Pepper">
+									</a>
+								</div>
+
+								<div class="cart-item-info">
+									<h4 class="cart-item-title">
+										<a href="{% url 'web:product-detail' %}">Authentic Sun-Dried Timut Himalayan Pepper Pods &ndash; 200g Pouch</a>
+									</h4>
+									<p class="cart-item-meta">Grapefruit Citrus Aroma | Whole Dried Wild Peppercorns</p>
+									<span class="cart-item-badge badge-fresh"><i class="klb-icon-tag me-1"></i>STONE SOURCED</span>
+								</div>
+
+								<div class="cart-item-pricing">
+									<span class="cart-item-price">&pound;<span class="item-display-price">5.80</span></span>
+									<span class="cart-item-old-price">&pound;7.20</span>
+									<div class="cart-item-actions">
+										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
+										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+									</div>
+								</div>
+
+								<div class="cart-stepper">
+									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
+									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
+									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- UNAVAILABLE ITEMS SECTION (Out of stock items like Daraz screenshot) -->
+						<div class="unavailable-section-card">
+							<div class="unavailable-header">
+								<span>Unavailable items (2)</span>
+								<div class="unavailable-header-actions">
+									<span class="unavailable-action-link" id="delete-unavailable-all-btn"><i class="klb-icon-trash-2"></i> Delete all</span>
+									<span class="unavailable-action-link" id="move-wishlist-all-btn"><i class="klb-icon-heart-4"></i> Move all to wishlist</span>
+								</div>
+							</div>
+
+							<!-- Unavailable Item 1 -->
+							<div class="cart-item-row is-unavailable" id="unavail-1">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" disabled>
+									<span class="checkbox-box"></span>
+								</label>
+
+								<div class="cart-item-thumb-box">
+									<img src="{% static 'web/' %}images/1-109-500x500.jpg" alt="Aged Himalayan Yak Hard Cheese Churpi">
+								</div>
+
+								<div class="cart-item-info">
+									<h4 class="cart-item-title" style="color: #64748b;">Aged Himalayan Yak Hard Cheese (Churpi) Chews &ndash; 250g</h4>
+									<p class="cart-item-meta">Traditional Pastoral Recipe | High-Protein Artisan Snack</p>
+									<span class="badge-out-of-stock">Out of stock &bull; Restocking in 2 days</span>
+								</div>
+
+								<div class="cart-item-pricing">
+									<span class="cart-item-price" style="color: #64748b;">&pound;6.90</span>
+									<span class="cart-item-old-price">&pound;8.50</span>
+									<div class="cart-item-actions">
+										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
+										<button type="button" class="cart-icon-btn btn-delete" onclick="document.getElementById('unavail-1').remove();" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+									</div>
+								</div>
+
+								<div class="cart-stepper" style="opacity: 0.5;">
+									<button type="button" class="stepper-btn" disabled>&minus;</button>
+									<input type="text" class="stepper-input" value="1" readonly disabled>
+									<button type="button" class="stepper-btn" disabled>&#43;</button>
+								</div>
+							</div>
+
+							<!-- Unavailable Item 2 -->
+							<div class="cart-item-row is-unavailable" id="unavail-2">
+								<label class="cart-custom-checkbox">
+									<input type="checkbox" disabled>
+									<span class="checkbox-box"></span>
+								</label>
+
+								<div class="cart-item-thumb-box">
+									<img src="{% static 'web/' %}images/1-2-500x500.jpg" alt="Cold-Pressed Himalayan Walnut Kernel Oil">
+								</div>
+
+								<div class="cart-item-info">
+									<h4 class="cart-item-title" style="color: #64748b;">Cold-Pressed Himalayan Walnut Kernel Oil &ndash; 250ml Extra Virgin</h4>
+									<p class="cart-item-meta">Omega-3 Rich | First Cold Expeller Pressed</p>
+									<span class="badge-out-of-stock">Out of stock</span>
+								</div>
+
+								<div class="cart-item-pricing">
+									<span class="cart-item-price" style="color: #64748b;">&pound;9.99</span>
+									<span class="cart-item-old-price">&pound;12.50</span>
+									<div class="cart-item-actions">
+										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
+										<button type="button" class="cart-icon-btn btn-delete" onclick="document.getElementById('unavail-2').remove();" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+									</div>
+								</div>
+
+								<div class="cart-stepper" style="opacity: 0.5;">
+									<button type="button" class="stepper-btn" disabled>&minus;</button>
+									<input type="text" class="stepper-input" value="1" readonly disabled>
+									<button type="button" class="stepper-btn" disabled>&#43;</button>
+								</div>
+							</div>
+						</div>
+
+					</section>
+
+					<!-- RIGHT COLUMN: ~28% Sticky Order Summary -->
+					<aside class="cart-summary-col">
+						<div class="order-summary-card">
+							<h3 class="order-summary-title">Order Summary</h3>
+
+							<div class="summary-row">
+								<span>Subtotal (<span id="summary-items-count">5</span> items)</span>
+								<span class="summary-row-val">&pound;<span id="summary-subtotal">35.68</span></span>
+							</div>
+
+							<div class="summary-row">
+								<span>Cold-Chain Shipping</span>
+								<span class="summary-row-val" id="summary-shipping-fee">&pound;3.99</span>
+							</div>
+
+							<!-- Voucher Code Section -->
+							<div class="voucher-applied-tag" id="voucher-applied-box">
+								<span><i class="klb-icon-tag me-1"></i> Voucher applied: <strong id="applied-code-name">TERAI10</strong> (-&pound;<span id="voucher-discount-val">3.57</span>)</span>
+								<span class="voucher-remove-link" id="remove-voucher-btn">&times; Remove</span>
+							</div>
+
+							<div class="voucher-input-group" id="voucher-input-wrapper">
+								<input type="text" class="voucher-input" id="voucher-code-input" placeholder="Enter Voucher Code (e.g. TERAI10)">
+								<button type="button" class="voucher-btn" id="apply-voucher-btn">APPLY</button>
+							</div>
+
+							<!-- Total Amount -->
+							<div class="summary-total-row">
+								<span class="summary-total-label">Total</span>
+								<span class="summary-total-val">&pound;<span id="summary-grand-total">39.67</span></span>
+							</div>
+
+							<!-- Checkout Call to Action -->
+							<a href="{% url 'web:checkout' %}" class="checkout-proceed-btn" id="checkout-button">
+								PROCEED TO CHECKOUT (<span id="checkout-btn-count">5</span>)
+							</a>
+						</div>
+					</aside>
+
+				</div>
+			</div>
+		</main>
+
+		<!-- Floating Message / Help Pill (as seen in Daraz reference) -->
+		<a href="{% url 'web:contact' %}" class="floating-message-btn" title="Live Customer Support">
+			<i class="klb-icon-message-circle"></i>
+			<span>Messages</span>
+		</a>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:shop' %}" class="text-gray-600 hover-primary">Shop Catalog</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-gray-600 hover-primary">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Supports</a></li>
+								<li class="mb-2"><a href="{% url 'web:cart' %}" class="text-primary fw-semibold">Shopping Cart</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Customer Care</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#terms" class="text-gray-600 hover-primary">Terms of Service</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<div class="widget widget-newsletter">
+								<h4 class="text-14 fw-bold text-dark text-uppercase mb-2">Join our newsletter</h4>
+								<p class="text-12 text-gray-500 mb-2">Register now to get latest updates on promotions &amp; recipes.</p>
+								<div class="site-newsletter-form">
+									<form class="mc4wp-form" method="post" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Terai Food newsletter!');">
+										<div class="mc4wp-form-fields position-relative d-flex">
+											<input class="subscribe-input form-control text-12" type="email" placeholder="Enter your email" required style="height: 32px; border-radius: 0; padding-right: 60px;">
+											<button class="btn btn-primary" type="submit" style="position: absolute; right: 0; top: 0; height: 32px; font-size: 11px; font-weight: 700; border-radius: 0; background: #634c9f; border-color: #634c9f; padding: 0 10px;">SEND</button>
+										</div>
+										<p class="text-11 text-gray-400 mt-1 mb-0">By subscribing you agree to our Terms &amp; Privacy.</p>
+									</form>
+								</div>
+								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
+								<div class="site-social d-flex gap-2">
+									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
+									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
+									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
+									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+
+	<!-- Advanced Cart Interaction & Calculation Script -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const masterSelectAll = document.getElementById('master-select-all');
+			const vendorGroupCheckboxes = document.querySelectorAll('.vendor-group-checkbox');
+			const itemCheckboxes = document.querySelectorAll('.item-select-checkbox');
+			const summarySubtotalEl = document.getElementById('summary-subtotal');
+			const summaryShippingFeeEl = document.getElementById('summary-shipping-fee');
+			const summaryGrandTotalEl = document.getElementById('summary-grand-total');
+			const summaryItemsCountEl = document.getElementById('summary-items-count');
+			const checkoutBtnCountEl = document.getElementById('checkout-btn-count');
+			const totalCartItemsCountEl = document.getElementById('total-cart-items-count');
+			const headerCartBadgeEl = document.getElementById('header-cart-badge');
+			const shippingThresholdBox = document.getElementById('shipping-threshold-box');
+			const shippingNoticeText = document.getElementById('shipping-notice-text');
+			const checkoutButton = document.getElementById('checkout-button');
+
+			let appliedDiscount = 0;
+			let appliedVoucherName = null;
+
+			// Free shipping threshold
+			const FREE_SHIPPING_THRESHOLD = 40.0;
+			const BASE_SHIPPING_FEE = 3.99;
+
+			// Recalculate Subtotal, Shipping, Vouchers, and Total
+			function recalculateCart() {
+				const activeRows = document.querySelectorAll('.cart-item-row:not(.is-unavailable)');
+				let selectedCount = 0;
+				let subtotal = 0;
+				let totalActiveItems = activeRows.length;
+
+				activeRows.forEach(row => {
+					const cb = row.querySelector('.item-select-checkbox');
+					const qtyInput = row.querySelector('.stepper-input');
+					const unitPrice = parseFloat(row.getAttribute('data-unit-price')) || 0;
+					const qty = parseInt(qtyInput.value, 10) || 1;
+					const itemTotal = unitPrice * qty;
+
+					// Update row price display
+					const priceSpan = row.querySelector('.item-display-price');
+					if (priceSpan) {
+						priceSpan.textContent = itemTotal.toFixed(2);
+					}
+
+					if (cb && cb.checked) {
+						selectedCount += 1;
+						subtotal += itemTotal;
+						row.classList.remove('is-unselected');
+					} else {
+						row.classList.add('is-unselected');
+					}
+				});
+
+				// Update item counts
+				if (summaryItemsCountEl) summaryItemsCountEl.textContent = selectedCount;
+				if (checkoutBtnCountEl) checkoutBtnCountEl.textContent = selectedCount;
+				if (totalCartItemsCountEl) totalCartItemsCountEl.textContent = totalActiveItems;
+				if (headerCartBadgeEl) headerCartBadgeEl.textContent = totalActiveItems;
+
+				// Calculate Shipping Fee
+				let shippingFee = 0;
+				if (selectedCount === 0) {
+					shippingFee = 0;
+					if (shippingThresholdBox) shippingThresholdBox.style.display = 'none';
+				} else if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+					shippingFee = 0;
+					if (summaryShippingFeeEl) {
+						summaryShippingFeeEl.innerHTML = '<span class="summary-shipping-free">FREE</span>';
+					}
+					if (shippingThresholdBox) {
+						shippingThresholdBox.style.display = 'block';
+						shippingNoticeText.innerHTML = '<i class="klb-icon-check-circle text-success me-1"></i> You unlocked <strong>FREE Cold-Chain Delivery</strong>!';
+					}
+				} else {
+					shippingFee = BASE_SHIPPING_FEE;
+					const needed = (FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2);
+					if (summaryShippingFeeEl) {
+						summaryShippingFeeEl.textContent = '£' + BASE_SHIPPING_FEE.toFixed(2);
+					}
+					if (shippingThresholdBox) {
+						shippingThresholdBox.style.display = 'block';
+						shippingNoticeText.innerHTML = '<i class="klb-icon-truck text-primary me-1"></i> Add <strong>£' + needed + '</strong> more for <strong>FREE Delivery</strong>!';
+					}
+				}
+
+				// Voucher Calculation
+				let discountVal = 0;
+				if (appliedVoucherName === 'TERAI10') {
+					discountVal = subtotal * 0.10;
+				} else if (appliedVoucherName === 'FREESHIP') {
+					discountVal = shippingFee;
+				}
+				appliedDiscount = discountVal;
+
+				const discountDisplayEl = document.getElementById('voucher-discount-val');
+				if (discountDisplayEl) {
+					discountDisplayEl.textContent = discountVal.toFixed(2);
+				}
+
+				const grandTotal = Math.max(0, subtotal + shippingFee - discountVal);
+
+				if (summarySubtotalEl) summarySubtotalEl.textContent = subtotal.toFixed(2);
+				if (summaryGrandTotalEl) summaryGrandTotalEl.textContent = grandTotal.toFixed(2);
+
+				// Enable / Disable checkout button
+				if (checkoutButton) {
+					if (selectedCount === 0) {
+						checkoutButton.classList.add('disabled');
+						checkoutButton.setAttribute('disabled', 'disabled');
+						checkoutButton.textContent = 'SELECT ITEMS TO CHECKOUT (0)';
+					} else {
+						checkoutButton.classList.remove('disabled');
+						checkoutButton.removeAttribute('disabled');
+						checkoutButton.textContent = 'PROCEED TO CHECKOUT (' + selectedCount + ')';
+					}
+				}
+
+				// Update Master Select All state
+				updateMasterState();
+				updateVendorStates();
+			}
+
+			// Update Master Checkbox state
+			function updateMasterState() {
+				const activeCheckboxes = Array.from(document.querySelectorAll('.cart-item-row:not(.is-unavailable) .item-select-checkbox'));
+				if (activeCheckboxes.length === 0) {
+					masterSelectAll.checked = false;
+					masterSelectAll.indeterminate = false;
+					return;
+				}
+				const allChecked = activeCheckboxes.every(cb => cb.checked);
+				const noneChecked = activeCheckboxes.every(cb => !cb.checked);
+
+				if (allChecked) {
+					masterSelectAll.checked = true;
+					masterSelectAll.indeterminate = false;
+				} else if (noneChecked) {
+					masterSelectAll.checked = false;
+					masterSelectAll.indeterminate = false;
+				} else {
+					masterSelectAll.checked = false;
+					masterSelectAll.indeterminate = true;
+				}
+			}
+
+			// Update Vendor Group Checkbox states
+			function updateVendorStates() {
+				const vendorCards = document.querySelectorAll('.vendor-group-card');
+				vendorCards.forEach(card => {
+					const vendorCb = card.querySelector('.vendor-group-checkbox');
+					const itemCbs = Array.from(card.querySelectorAll('.item-select-checkbox'));
+					if (!vendorCb || itemCbs.length === 0) return;
+
+					const allChecked = itemCbs.every(cb => cb.checked);
+					const noneChecked = itemCbs.every(cb => !cb.checked);
+
+					if (allChecked) {
+						vendorCb.checked = true;
+						vendorCb.indeterminate = false;
+					} else if (noneChecked) {
+						vendorCb.checked = false;
+						vendorCb.indeterminate = false;
+					} else {
+						vendorCb.checked = false;
+						vendorCb.indeterminate = true;
+					}
+				});
+			}
+
+			// Master Select All Click
+			if (masterSelectAll) {
+				masterSelectAll.addEventListener('change', function() {
+					const targetState = this.checked;
+					const allItemCbs = document.querySelectorAll('.cart-item-row:not(.is-unavailable) .item-select-checkbox');
+					allItemCbs.forEach(cb => {
+						cb.checked = targetState;
+					});
+					const allVendorCbs = document.querySelectorAll('.vendor-group-checkbox');
+					allVendorCbs.forEach(vcb => {
+						vcb.checked = targetState;
+						vcb.indeterminate = false;
+					});
+					recalculateCart();
+				});
+			}
+
+			// Vendor Group Checkbox Click
+			document.querySelectorAll('.vendor-group-checkbox').forEach(vcb => {
+				vcb.addEventListener('change', function() {
+					const card = this.closest('.vendor-group-card');
+					const itemCbs = card.querySelectorAll('.item-select-checkbox');
+					itemCbs.forEach(cb => {
+						cb.checked = this.checked;
+					});
+					recalculateCart();
+				});
+			});
+
+			// Individual Item Checkbox Click
+			document.querySelectorAll('.item-select-checkbox').forEach(cb => {
+				cb.addEventListener('change', function() {
+					recalculateCart();
+				});
+			});
+
+			// Stepper Plus / Minus
+			document.querySelectorAll('.cart-stepper').forEach(stepper => {
+				const minusBtn = stepper.querySelector('.btn-minus');
+				const plusBtn = stepper.querySelector('.btn-plus');
+				const input = stepper.querySelector('.stepper-input');
+
+				if (minusBtn && plusBtn && input) {
+					minusBtn.addEventListener('click', function() {
+						let val = parseInt(input.value, 10) || 1;
+						if (val > 1) {
+							val -= 1;
+							input.value = val;
+							recalculateCart();
+						}
+					});
+
+					plusBtn.addEventListener('click', function() {
+						let val = parseInt(input.value, 10) || 1;
+						if (val < 99) {
+							val += 1;
+							input.value = val;
+							recalculateCart();
+						}
+					});
+				}
+			});
+
+			// Delete Single Item Row
+			document.querySelectorAll('.cart-icon-btn.btn-delete').forEach(btn => {
+				btn.addEventListener('click', function() {
+					const row = this.closest('.cart-item-row');
+					const vendorCard = this.closest('.vendor-group-card');
+					if (row) {
+						row.remove();
+						if (vendorCard && vendorCard.querySelectorAll('.cart-item-row').length === 0) {
+							vendorCard.remove();
+						}
+						recalculateCart();
+					}
+				});
+			});
+
+			// Toggle Wishlist Heart
+			document.querySelectorAll('.cart-icon-btn.btn-wishlist').forEach(btn => {
+				btn.addEventListener('click', function() {
+					this.classList.toggle('active');
+					const icon = this.querySelector('i');
+					if (this.classList.contains('active')) {
+						icon.className = 'klb-icon-heart-3 text-danger';
+					} else {
+						icon.className = 'klb-icon-heart-4';
+					}
+				});
+			});
+
+			// Delete Selected Button
+			const deleteSelectedBtn = document.getElementById('delete-selected-btn');
+			if (deleteSelectedBtn) {
+				deleteSelectedBtn.addEventListener('click', function() {
+					const selectedRows = document.querySelectorAll('.cart-item-row:not(.is-unavailable) .item-select-checkbox:checked');
+					if (selectedRows.length === 0) {
+						alert('No items are currently selected to delete.');
+						return;
+					}
+					if (confirm('Are you sure you want to remove ' + selectedRows.length + ' item(s) from your shopping cart?')) {
+						selectedRows.forEach(cb => {
+							const row = cb.closest('.cart-item-row');
+							const vendorCard = cb.closest('.vendor-group-card');
+							if (row) row.remove();
+							if (vendorCard && vendorCard.querySelectorAll('.cart-item-row').length === 0) {
+								vendorCard.remove();
+							}
+						});
+						recalculateCart();
+					}
+				});
+			}
+
+			// Delete All Unavailable Items
+			const deleteUnavailableBtn = document.getElementById('delete-unavailable-all-btn');
+			if (deleteUnavailableBtn) {
+				deleteUnavailableBtn.addEventListener('click', function() {
+					const unavailSection = document.querySelector('.unavailable-section-card');
+					if (unavailSection) {
+						unavailSection.remove();
+					}
+				});
+			}
+
+			// Move All Unavailable to Wishlist
+			const moveWishlistAllBtn = document.getElementById('move-wishlist-all-btn');
+			if (moveWishlistAllBtn) {
+				moveWishlistAllBtn.addEventListener('click', function() {
+					alert('All out of stock items have been moved to your Wishlist for restocking alerts!');
+					const unavailSection = document.querySelector('.unavailable-section-card');
+					if (unavailSection) unavailSection.remove();
+				});
+			}
+
+			// Voucher Apply Functionality
+			const applyVoucherBtn = document.getElementById('apply-voucher-btn');
+			const voucherInput = document.getElementById('voucher-code-input');
+			const voucherAppliedBox = document.getElementById('voucher-applied-box');
+			const removeVoucherBtn = document.getElementById('remove-voucher-btn');
+
+			if (applyVoucherBtn && voucherInput) {
+				applyVoucherBtn.addEventListener('click', function() {
+					const code = voucherInput.value.trim().toUpperCase();
+					if (!code) {
+						alert('Please enter a voucher code.');
+						return;
+					}
+					if (code === 'TERAI10') {
+						appliedVoucherName = 'TERAI10';
+						voucherAppliedBox.style.display = 'flex';
+						document.getElementById('applied-code-name').textContent = 'TERAI10 (10% OFF)';
+						voucherInput.value = '';
+						recalculateCart();
+					} else if (code === 'FREESHIP') {
+						appliedVoucherName = 'FREESHIP';
+						voucherAppliedBox.style.display = 'flex';
+						document.getElementById('applied-code-name').textContent = 'FREESHIP (FREE SHIPPING)';
+						voucherInput.value = '';
+						recalculateCart();
+					} else {
+						alert('Invalid voucher code. Try "TERAI10" for 10% off your basket!');
+					}
+				});
+			}
+
+			if (removeVoucherBtn) {
+				removeVoucherBtn.addEventListener('click', function() {
+					appliedVoucherName = null;
+					appliedDiscount = 0;
+					voucherAppliedBox.style.display = 'none';
+					recalculateCart();
+				});
+			}
+
+			// Initial Calculation
+			recalculateCart();
+		});
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+</body>
+</html>
+

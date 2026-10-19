@@ -1,0 +1,612 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>10 Essential Himalayan &amp; Terai Spices Every UK Kitchen Needs – Terai Food Journal</title>
+	<meta name="description" content="Discover 10 essential authentic Himalayan and Terai spices for UK kitchens. Learn the culinary secrets, immune-boosting benefits, and cooking methods of cumin, timur pepper, stone-ground turmeric, and black salt.">
+	<meta name="keywords" content="Himalayan spices UK, Terai spices London, wild timur pepper, organic turmeric UK, Himalayan black salt recipe">
+	<link rel="canonical" href="{% url 'web:blogs-himalayan-spices-guide' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		body {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f8fafc;
+			color: #1e293b;
+		}
+
+		/* Article Header */
+		.article-header {
+			background: linear-gradient(135deg, #2d1e5f 0%, #634c9f 60%, #7e63b8 100%);
+			color: #ffffff;
+			padding: 55px 0 65px;
+			position: relative;
+			overflow: hidden;
+		}
+		.hero-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			background: rgba(255, 255, 255, 0.18);
+			backdrop-filter: blur(8px);
+			border: 1px solid rgba(255, 255, 255, 0.25);
+			color: #ffffff;
+			padding: 6px 16px;
+			border-radius: 30px;
+			font-size: 12px;
+			font-weight: 600;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			margin-bottom: 16px;
+		}
+		.article-header h1 {
+			font-size: 36px;
+			font-weight: 800;
+			letter-spacing: -0.8px;
+			line-height: 1.25;
+			color: #ffffff;
+			margin-bottom: 16px;
+		}
+		.article-meta {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 20px;
+			font-size: 13px;
+			color: #e2e8f0;
+		}
+		.article-meta span {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.hero-breadcrumbs {
+			font-size: 13px;
+			color: #cbd5e1;
+			margin-bottom: 18px;
+		}
+		.hero-breadcrumbs a {
+			color: #ffffff;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+		}
+
+		/* Main Content Layout */
+		.article-body-section {
+			padding: 60px 0 80px;
+		}
+		.article-main-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 18px;
+			padding: 45px;
+			box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+			margin-bottom: 40px;
+		}
+		.featured-media {
+			border-radius: 14px;
+			overflow: hidden;
+			margin-bottom: 35px;
+			border: 1px solid #e2e8f0;
+		}
+		.featured-media img {
+			width: 100%;
+			max-height: 480px;
+			object-fit: cover;
+			display: block;
+		}
+
+		/* Content Typography */
+		.content-prose h2 {
+			font-size: 24px;
+			font-weight: 800;
+			color: #0f172a;
+			margin-top: 36px;
+			margin-bottom: 16px;
+			letter-spacing: -0.4px;
+		}
+		.content-prose h3 {
+			font-size: 19px;
+			font-weight: 700;
+			color: #1e293b;
+			margin-top: 28px;
+			margin-bottom: 12px;
+		}
+		.content-prose p {
+			font-size: 15px;
+			color: #334155;
+			line-height: 1.8;
+			margin-bottom: 20px;
+		}
+		.content-prose ul, .content-prose ol {
+			padding-left: 24px;
+			margin-bottom: 24px;
+		}
+		.content-prose li {
+			font-size: 14.5px;
+			color: #334155;
+			line-height: 1.75;
+			margin-bottom: 10px;
+		}
+		.spice-box {
+			background: #fdfcfe;
+			border-left: 4px solid #634c9f;
+			border-top: 1px solid #ede9fe;
+			border-right: 1px solid #ede9fe;
+			border-bottom: 1px solid #ede9fe;
+			padding: 20px 24px;
+			border-radius: 0 12px 12px 0;
+			margin-bottom: 24px;
+		}
+		.spice-box h4 {
+			font-size: 16px;
+			font-weight: 700;
+			color: #634c9f;
+			margin-bottom: 6px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.spice-box p {
+			margin-bottom: 0;
+			font-size: 13.5px;
+		}
+
+		/* Quote Callout */
+		.terai-callout {
+			background: #f5f3ff;
+			border-radius: 12px;
+			padding: 24px 30px;
+			margin: 32px 0;
+			border: 1px dashed #d8b4fe;
+		}
+		.terai-callout p {
+			font-size: 15px;
+			font-style: italic;
+			color: #4c1d95;
+			margin-bottom: 6px;
+		}
+
+		/* Share & Tags */
+		.article-tags-share {
+			border-top: 1px solid #f1f5f9;
+			padding-top: 24px;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+		}
+		.article-tag {
+			background: #f1f5f9;
+			color: #475569;
+			font-size: 12px;
+			font-weight: 600;
+			padding: 5px 14px;
+			border-radius: 20px;
+			text-decoration: none;
+			margin-right: 6px;
+		}
+		.article-tag:hover {
+			background: #634c9f;
+			color: #ffffff;
+		}
+
+		/* Author Card */
+		.article-author-card {
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			border-radius: 14px;
+			padding: 24px;
+			display: flex;
+			gap: 18px;
+			align-items: center;
+			margin-top: 35px;
+		}
+		.author-big-avatar {
+			width: 60px;
+			height: 60px;
+			border-radius: 50%;
+			background: #634c9f;
+			color: #ffffff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 20px;
+			font-weight: 800;
+			flex-shrink: 0;
+		}
+
+		/* Sidebar */
+		.sidebar-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 14px;
+			padding: 24px;
+			margin-bottom: 24px;
+		}
+		.sidebar-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-bottom: 18px;
+			padding-bottom: 10px;
+			border-bottom: 2px solid #f1f5f9;
+			position: relative;
+		}
+		.sidebar-title::after {
+			content: "";
+			position: absolute;
+			bottom: -2px;
+			left: 0;
+			width: 40px;
+			height: 2px;
+			background: #634c9f;
+		}
+		.recent-item {
+			display: flex;
+			gap: 12px;
+			margin-bottom: 16px;
+			text-decoration: none !important;
+		}
+		.recent-thumb {
+			width: 60px;
+			height: 60px;
+			border-radius: 8px;
+			object-fit: cover;
+			flex-shrink: 0;
+		}
+		.recent-info h6 {
+			font-size: 13px;
+			font-weight: 600;
+			color: #1e293b;
+			line-height: 1.35;
+			margin-bottom: 4px;
+		}
+		.recent-item:hover .recent-info h6 {
+			color: #634c9f;
+		}
+		.recent-date {
+			font-size: 11px;
+			color: #94a3b8;
+		}
+	</style>
+</head>
+<body class="single-post terai-article-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button me-4">
+								<a href="{% url 'web:home' %}" class="action-link">
+									<div class="action-icon"><i class="klb-icon-map-pin"></i></div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all (UK Wide)</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="header-search search-overlay flex-fill">
+								<form action="{% url 'web:home' %}" class="search-form search-type-1" role="search" method="get">
+									<input class="form-control search-input filled" type="search" name="s" placeholder="Search farm fresh produce, Himalayan spices, dairy..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+								</form>
+							</div>
+						</div>
+
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-3">
+							<div class="quick-button style-1">
+								<a href="{% url 'web:home' %}" class="action-link">
+									<div class="action-icon"><i class="klb-icon-store-2"></i></div>
+									<div class="action-text">
+										<span>Explore</span>
+										<p>Catalog</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1">
+								<a href="{% url 'web:checkout' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1">
+				<div class="container">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+							<nav class="site-menu horizontal menu-shadow primary-menu">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:about' %}">About Us</a></li>
+									<li class="menu-item current-menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:home' %}#contact">Contact</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:home' %}#order-tracking"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:home' %}#bulk-order" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- Article Hero Header -->
+		<section class="article-header">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-10">
+						<div class="hero-breadcrumbs">
+							<a href="{% url 'web:home' %}">Home</a> &nbsp;/&nbsp; <a href="{% url 'web:blogs' %}">Blog Journal</a> &nbsp;/&nbsp; <span class="text-white">Himalayan Spices Guide</span>
+						</div>
+						<span class="hero-badge"><i class="klb-icon-tag"></i> Culinary Heritage &bull; Spices &amp; Wellness</span>
+						<h1>10 Essential Himalayan &amp; Terai Spices Every UK Kitchen Needs for Wholesome Cooking</h1>
+						<div class="article-meta">
+							<span><i class="klb-icon-user"></i> By Chef Kiran &amp; Terai Culinary Team</span>
+							<span><i class="klb-icon-calendar"></i> October 12, 2026</span>
+							<span><i class="klb-icon-clock"></i> 6 min read</span>
+							<span><i class="klb-icon-eye"></i> 2.4k Views</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Article Body & Sidebar -->
+		<section class="article-body-section">
+			<div class="container">
+				<div class="row g-5">
+					<!-- Main Article Column (8 Cols) -->
+					<div class="col-lg-8">
+						<article class="article-main-card">
+							<div class="featured-media">
+								<img src="{% static 'web/' %}images/banner-04.jpg" alt="10 Essential Himalayan Spices">
+							</div>
+
+							<div class="content-prose">
+								<p class="lead text-17 text-dark fw-medium lh-lg">
+									Spices in the Himalayan and Terai regions are not merely flavor enhancers; they have been the cornerstone of daily vitality, gut harmony, and seasonal immunity for centuries.
+								</p>
+
+								<p>
+									For home cooks living in the UK, incorporating authentic single-origin spices transforms simple weeknight curries, lentil broths, roasted winter root vegetables, and grilled meats into culinary masterpieces. Here are the 10 must-have spices that elevate both taste and well-being.
+								</p>
+
+								<h2>1. Wild Timur Pepper (Himalayan Szechuan)</h2>
+								<div class="spice-box">
+									<h4><i class="klb-icon-check-circle"></i> Aroma Profile: Grapefruit, citrus pine, tingling warmth</h4>
+									<p>Wild-foraged in high-altitude scrub forests, Timur is renowned for its unique mouth-numbing tingling sensation and vibrant citrus aroma. Add a pinch to tomato chutneys or dry meat rubs.</p>
+								</div>
+
+								<h2>2. Stone-Ground High-Curcumin Turmeric</h2>
+								<div class="spice-box">
+									<h4><i class="klb-icon-check-circle"></i> Aroma Profile: Earthy, warm ginger undertones</h4>
+									<p>Unlike industrially processed turmeric powder where essential oils have been extracted, our stone-ground Terai turmeric retains 5–6% natural curcumin density for maximum cellular anti-inflammatory protection.</p>
+								</div>
+
+								<h2>3. Jimbu (Himalayan Sun-Dried Chives)</h2>
+								<p>
+									An absolute staple of high-mountain cuisine, Jimbu is gently dried grass belonging to the onion/garlic family. When fried in hot ghee or mustard oil for just three seconds, it produces an intoxicating nutty aroma that turns ordinary yellow dhal into a restaurant-worthy feast.
+								</p>
+
+								<h2>4. Himalayan Black Salt (Kala Namak)</h2>
+								<div class="spice-box">
+									<h4><i class="klb-icon-check-circle"></i> Aroma Profile: Savory, volcanic, sulfurous richness</h4>
+									<p>A secret weapon in plant-based and vegan kitchens. Hand-mined from ancient mineral beds, Kala Namak provides an egg-like savory umami flavor while soothing digestive acid reflux.</p>
+								</div>
+
+								<div class="terai-callout">
+									<p>"The secret of authentic Terai cooking is the tempering (Tadka) — releasing essential spice oils in warm fat before pouring over hot lentils."</p>
+									<span class="text-12 fw-bold text-dark">— Chef Kiran, Terai Culinary Lead</span>
+								</div>
+
+								<h2>5. Cold-Pressed Mustard Oil</h2>
+								<p>
+									In Terai culture, raw yellow mustard oil is treated as liquid gold. Its pungent wasabi-like kick mellows upon heating into a smoky, nutty base essential for authentic fish stews and vegetable stir-fries.
+								</p>
+
+								<h2>6. Whole Cumin Seeds (Jeera)</h2>
+								<p>
+									Sun-dried directly on village threshing floors, small-grain Himalayan cumin possesses three times more volatile oil than standard supermarket varieties, releasing deep caramel notes upon roasting.
+								</p>
+
+								<h2>7. Methi (Fenugreek Seeds)</h2>
+								<p>
+									Bitter and bold when raw, yet fragrant and maple-like when tempered in oil. Fenugreek is widely recognized by British herbalists for balancing blood sugar and digestion.
+								</p>
+
+								<h2>8. Green Cardamom Pods</h2>
+								<p>
+									Whole hand-picked green pods full of glistening black seeds, perfect for morning chai, fragrant basmati pulao, and soothing herbal infusions.
+								</p>
+
+								<h2>9. Asafetida (Hing)</h2>
+								<p>
+									A pinch of pure Hing in hot oil unlocks garlic-shallot richness while preventing bloating when cooking fibrous pulses and brassicas.
+								</p>
+
+								<h2>10. Coriander Seeds (Dhania)</h2>
+								<p>
+									Freshly crushed coriander seeds lend bright floral citrus notes that balance heavier winter curries and hearty root vegetable stews.
+								</p>
+
+								<hr class="my-4">
+
+								<div class="article-tags-share">
+									<div>
+										<span class="fw-semibold text-13 me-2">Tags:</span>
+										<a href="{% url 'web:blogs' %}" class="article-tag">Spices</a>
+										<a href="{% url 'web:blogs' %}" class="article-tag">Himalayan</a>
+										<a href="{% url 'web:blogs' %}" class="article-tag">Healthy Cooking</a>
+										<a href="{% url 'web:blogs' %}" class="article-tag">Organic UK</a>
+									</div>
+									<div class="d-flex align-items-center gap-2">
+										<span class="fw-semibold text-13">Share:</span>
+										<a href="https://www.facebook.com" target="_blank" class="text-gray-500 hover-primary"><i class="klb-social-icon-facebook"></i></a>
+										<a href="https://www.twitter.com" target="_blank" class="text-gray-500 hover-primary"><i class="klb-social-icon-twitter"></i></a>
+									</div>
+								</div>
+
+								<div class="article-author-card">
+									<div class="author-big-avatar">TF</div>
+									<div>
+										<h5 class="text-16 fw-bold text-dark mb-1">Written by Terai Culinary Desk</h5>
+										<p class="text-13 text-gray-600 mb-0">Our culinary team works directly with bio-farmers and herbal specialists to bring authentic regional flavors and nutritional secrets to British kitchens.</p>
+									</div>
+								</div>
+							</div>
+						</article>
+					</div>
+
+					<!-- Sidebar (4 Cols) -->
+					<div class="col-lg-4">
+						<div class="sidebar-card">
+							<h4 class="sidebar-title">Shop Spices Mentioned</h4>
+							<p class="text-13 text-gray-500 mb-3">All ingredients in this article are available for same-day packing &amp; fast UK home delivery.</p>
+							<a href="{% url 'web:home' %}" class="btn btn-primary w-100 text-13 fw-semibold" style="background: #634c9f; border-color: #634c9f; border-radius: 8px;">
+								<i class="klb-icon-shopping-bag me-1"></i> Browse Spices Catalog
+							</a>
+						</div>
+
+						<div class="sidebar-card">
+							<h4 class="sidebar-title">Related Articles</h4>
+							<a href="{% url 'web:blogs-organic-vegetables-delivery-uk' %}" class="recent-item">
+								<img src="{% static 'web/' %}images/banner-02.jpg" alt="Cold Chain" class="recent-thumb">
+								<div class="recent-info">
+									<h6>How We Keep Groceries Fresh on UK Roads</h6>
+									<span class="recent-date">Oct 10, 2026 &bull; 5 min read</span>
+								</div>
+							</a>
+
+							<a href="{% url 'web:blogs-high-protein-lentils-dhal-recipes' %}" class="recent-item">
+								<img src="{% static 'web/' %}images/banner-05.jpg" alt="Dhal Bowls" class="recent-thumb">
+								<div class="recent-info">
+									<h6>5 High-Protein Organic Lentil Dhal Bowls</h6>
+									<span class="recent-date">Oct 07, 2026 &bull; 7 min read</span>
+								</div>
+							</a>
+
+							<a href="{% url 'web:blogs-wholesale-bulk-grocery-guide-uk' %}" class="recent-item">
+								<img src="{% static 'web/' %}images/banner-09.jpg" alt="Wholesale" class="recent-thumb">
+								<div class="recent-info">
+									<h6>Wholesale Sourcing for UK Caterers &amp; Cafes</h6>
+									<span class="recent-date">Oct 03, 2026 &bull; 4 min read</span>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-primary fw-semibold">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:checkout' %}" class="text-gray-600 hover-primary">Checkout</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#order-tracking" class="text-gray-600 hover-primary">Track Order</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}#contact" class="text-gray-600 hover-primary">Help &amp; Support</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">UK Delivery Hubs</h4>
+							<p class="text-13 text-gray-600 mb-3">Delivering across Greater London, Birmingham, Manchester, Leeds, Glasgow, and all UK postcodes.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

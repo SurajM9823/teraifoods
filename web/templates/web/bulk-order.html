@@ -1,0 +1,1298 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Bulk Order &amp; Wholesale Purchase Order – Terai Food UK</title>
+	<meta name="description" content="Submit formal purchase orders, wholesale grocery inquiries, and custom commercial quotes with Terai Food UK. Excel-style multi-line product procurement matrix.">
+	<link rel="canonical" href="{% url 'web:bulk-order' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		/* Global Zero Radius & Congested Sharp Modern Styling */
+		body.terai-bulk-order-page,
+		.terai-bulk-order-page *,
+		.terai-bulk-order-page *::before,
+		.terai-bulk-order-page *::after {
+			border-radius: 0 !important;
+		}
+		body.terai-bulk-order-page {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f8fafc;
+			color: #0f172a;
+		}
+
+		/* Top Navigation Bulk Order CTA */
+		.nav-bulk-order-cta {
+			background: #f5f3ff;
+			color: #634c9f !important;
+			border: 1px solid #ede9fe;
+			padding: 7px 14px !important;
+			font-weight: 700 !important;
+			transition: all 0.2s ease;
+		}
+		.nav-bulk-order-cta:hover {
+			background: #634c9f !important;
+			color: #ffffff !important;
+		}
+
+		/* Clean Breadcrumbs (In-content) */
+		.bulk-breadcrumbs {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+			margin-bottom: 14px;
+		}
+		.bulk-breadcrumbs a {
+			color: #64748b;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.15s ease;
+		}
+		.bulk-breadcrumbs a:hover {
+			color: #634c9f;
+		}
+		.bulk-breadcrumbs .breadcrumb-separator {
+			color: #94a3b8;
+			font-size: 10px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.bulk-breadcrumbs .breadcrumb-current {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		/* ========================================================
+		   BULK ORDER PAGE: Inherited Shop Page Layout, Size, Width & Scroll Effect
+		   Sticky Header-Nav & 280px Flush Left Sidebar (0 space, 0 radius)
+		   ======================================================== */
+		.terai-bulk-order-page .header-nav {
+			position: sticky !important;
+			top: 0 !important;
+			z-index: 1000 !important;
+			background: #ffffff !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+		}
+		.terai-bulk-order-page .categories-menu {
+			position: relative;
+			width: 280px !important;
+			flex: 0 0 280px !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		.terai-bulk-order-page .categories-menu .categories-toggle {
+			width: 280px !important;
+			height: 48px;
+			justify-content: flex-start;
+			padding: 0 20px;
+			background: #ffffff;
+			border: none !important;
+			border-right: 1px solid #e2e8f0 !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+			border-left: none !important;
+			border-top: none !important;
+			border-radius: 0 !important;
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+		}
+		.terai-bulk-order-page .categories-menu .categories-toggle i {
+			font-size: 16px;
+			color: #634c9f;
+		}
+
+		/* Desktop Layout (>= 1200px): Flush left (0 space), sticky on scroll, 0 radius */
+		@media (min-width: 1200px) {
+			.terai-bulk-order-page .bulk-main-layout {
+				padding: 0 0 0 0 !important;
+				margin: 0 !important;
+			}
+			.terai-bulk-order-page .bulk-main-container {
+				padding-left: 0 !important;
+				max-width: 100% !important;
+				width: 100% !important;
+			}
+			.terai-bulk-order-page .bulk-main-row {
+				margin: 0 !important;
+				display: flex !important;
+				align-items: flex-start !important; /* Required for sticky child */
+			}
+			.terai-bulk-order-page .bulk-sidebar-col {
+				width: 280px !important;
+				flex: 0 0 280px !important;
+				position: sticky !important;
+				top: 48px !important; /* Flush right beneath sticky sub-nav */
+				height: auto !important;
+				min-height: calc(100vh - 48px) !important;
+				background: #ffffff !important;
+				border-right: 1px solid #e2e8f0 !important;
+				border-left: none !important;
+				border-top: none !important;
+				border-bottom: none !important;
+				border-radius: 0 !important;
+				padding: 0 !important;
+				margin: 0 !important;
+				z-index: 100 !important;
+				align-self: flex-start !important;
+				display: flex !important;
+				flex-direction: column !important;
+				gap: 0 !important;
+				overflow-y: auto !important;
+				max-height: calc(100vh - 48px) !important;
+				scrollbar-width: thin;
+			}
+			.terai-bulk-order-page .bulk-content-col {
+				flex: 1 !important;
+				min-width: 0 !important;
+				padding: 20px 32px 50px !important; /* Exact match to shop & blog pages */
+			}
+		}
+
+		/* Mobile & Tablet (< 1200px) */
+		@media (max-width: 1199px) {
+			.terai-bulk-order-page .bulk-sidebar-col {
+				width: 100% !important;
+				flex: 0 0 100% !important;
+				position: static !important;
+				border-right: none !important;
+				border-bottom: 1px solid #e2e8f0 !important;
+				margin-bottom: 20px !important;
+			}
+			.terai-bulk-order-page .bulk-content-col {
+				padding: 16px !important;
+			}
+			.terai-bulk-order-page .categories-menu {
+				width: auto !important;
+			}
+		}
+
+		/* Sidebar Widgets: Seamless continuous column matching shop & blog pages */
+		.bulk-sidebar-widget {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 14px 16px;
+			box-sizing: border-box;
+		}
+		.bulk-sidebar-widget:last-child {
+			border-bottom: none;
+		}
+		.sidebar-widget-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 2px solid #0f172a;
+			padding-bottom: 6px;
+			margin-bottom: 12px;
+		}
+		.sidebar-widget-title {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0;
+		}
+		.sidebar-widget-title i {
+			color: #634c9f;
+			margin-right: 4px;
+		}
+
+		/* Sidebar Topics & Status Links */
+		.sidebar-cat-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.sidebar-cat-item + .sidebar-cat-item {
+			border-top: 1px solid #f1f5f9;
+		}
+		.sidebar-cat-link {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 6px 6px;
+			font-size: 11.5px;
+			font-weight: 600;
+			color: #0f172a;
+			text-decoration: none;
+			transition: all 0.15s ease;
+		}
+		.sidebar-cat-link:hover,
+		.sidebar-cat-link.active {
+			background: #f8fafc;
+			color: #634c9f;
+			padding-left: 10px;
+		}
+		.sidebar-cat-link .cat-count {
+			font-size: 10px;
+			font-weight: 700;
+			color: #64748b;
+			background: #f1f5f9;
+			padding: 1px 5px;
+			border: 1px solid #e2e8f0;
+		}
+		.sidebar-cat-link.active .cat-count {
+			background: #634c9f;
+			color: #ffffff;
+			border-color: #634c9f;
+		}
+
+		/* Sidebar Input Fields for P.O., Ship To, & Delivery Details */
+		.po-side-field {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+		.po-side-label {
+			font-size: 10px;
+			font-weight: 700;
+			color: #475569;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+			margin-bottom: 0;
+		}
+		.po-side-input,
+		.po-side-select {
+			height: 26px !important;
+			line-height: 24px !important;
+			font-size: 11px !important;
+			padding: 2px 6px !important;
+			background: #ffffff !important;
+			border: 1px solid #cbd5e1 !important;
+			border-radius: 0 !important;
+			color: #0f172a !important;
+			width: 100% !important;
+			box-sizing: border-box;
+		}
+		.po-side-input:focus,
+		.po-side-select:focus {
+			border-color: #634c9f !important;
+			outline: none !important;
+		}
+
+		/* Formal Purchase Order Document Sheet (Content Area) */
+		.po-document-container {
+			max-width: 100%;
+			margin: 0;
+			position: relative;
+			z-index: 10;
+		}
+		.po-sheet {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			border-radius: 0 !important;
+			box-shadow: none;
+			padding: 16px 20px;
+		}
+		@media (max-width: 768px) {
+			.po-sheet {
+				padding: 12px 10px;
+			}
+		}
+
+		.po-table-wrap {
+			overflow-x: auto;
+			overflow-y: visible;
+			margin-bottom: 12px;
+		}
+		@media (min-width: 992px) {
+			.po-table-wrap {
+				overflow: visible;
+			}
+		}
+
+		/* Excel-Style Grid Table - Congested, Compact, Small Height */
+		.excel-po-table {
+			width: 100%;
+			border-collapse: collapse;
+			border: 1px solid #cbd5e1;
+			margin-bottom: 0;
+		}
+		.excel-po-table th {
+			background: #0284c7;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 700;
+			text-transform: uppercase;
+			padding: 4px 6px;
+			border: 1px solid #0369a1;
+			text-align: center;
+			letter-spacing: 0.3px;
+			white-space: nowrap;
+		}
+		.excel-po-table td {
+			border: 1px solid #cbd5e1;
+			padding: 0 !important;
+			background: #ffffff;
+			position: relative;
+			height: 26px;
+		}
+		.excel-po-table tr:nth-child(even) td {
+			background: #fbfcfe;
+		}
+		.excel-po-table tr:hover td {
+			background: #f0f9ff;
+		}
+
+		/* Embedded Compact Excel Inputs */
+		.cell-input {
+			width: 100% !important;
+			border: none !important;
+			background: transparent !important;
+			font-size: 11px !important;
+			padding: 2px 6px !important;
+			height: 26px !important;
+			line-height: 22px !important;
+			border-radius: 0 !important;
+			color: #0f172a !important;
+			font-family: inherit !important;
+			transition: all 0.1s ease;
+			box-sizing: border-box !important;
+			box-shadow: none !important;
+			outline: none !important;
+		}
+		.cell-input:focus {
+			background: #e0f2fe !important;
+			box-shadow: inset 0 0 0 1px #0284c7 !important;
+			outline: none !important;
+		}
+		.btn-po-add-row-visible {
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			font-weight: 700;
+			font-size: 11px;
+			padding: 3px 10px;
+			height: 25px;
+			line-height: 19px;
+			border-radius: 0 !important;
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.btn-po-add-row-visible:hover {
+			background: #503d82;
+			border-color: #503d82;
+			color: #ffffff;
+		}
+		.btn-po-side-save {
+			width: 100%;
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			font-weight: 700;
+			font-size: 11px;
+			padding: 4px 10px;
+			height: 26px;
+			line-height: 18px;
+			border-radius: 0 !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.btn-po-side-save:hover {
+			background: #503d82;
+			border-color: #503d82;
+			color: #ffffff;
+		}
+		.btn-po-action-mini {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			font-size: 11px;
+			font-weight: 600;
+			color: #475569;
+			padding: 2px 8px;
+			height: 25px;
+			line-height: 21px;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			border-radius: 0 !important;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.btn-po-action-mini:hover {
+			background: #f1f5f9;
+			color: #634c9f;
+			border-color: #634c9f;
+		}
+		.cell-qty {
+			text-align: center;
+			font-weight: 600;
+		}
+		.cell-item-code {
+			font-family: monospace;
+			font-weight: 600;
+			color: #0369a1;
+			text-align: center;
+			font-size: 10.5px !important;
+		}
+		.cell-price, .cell-total {
+			text-align: right;
+			font-weight: 600;
+			padding-right: 8px !important;
+		}
+		.cell-total {
+			background: #f8fafc !important;
+			color: #0f172a;
+			cursor: not-allowed;
+		}
+
+		/* Autocomplete Product Search Dropdown inside Excel Cell */
+		.item-suggest-dropdown {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			width: 380px;
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			border-radius: 8px;
+			box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+			z-index: 1000;
+			max-height: 240px;
+			overflow-y: auto;
+			display: none;
+		}
+		.item-suggest-dropdown.active {
+			display: block;
+		}
+		.suggest-item {
+			padding: 8px 12px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
+			font-size: 12.5px;
+			border-bottom: 1px solid #f1f5f9;
+			transition: background 0.1s ease;
+		}
+		.suggest-item:hover {
+			background: #f0f9ff;
+			color: #0284c7;
+		}
+
+		/* Summary Totals Table (Bottom Right) - Congested */
+		.po-summary-box {
+			float: right;
+			width: 280px;
+			margin-bottom: 14px;
+		}
+		.summary-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		.summary-table td {
+			padding: 4px 8px;
+			font-size: 11px;
+		}
+		.summary-table td.label-col {
+			text-align: right;
+			font-weight: 600;
+			color: #475569;
+		}
+		.summary-table td.val-col {
+			text-align: right;
+			font-weight: 700;
+			color: #0f172a;
+			width: 105px;
+			border-bottom: 1px solid #e2e8f0;
+		}
+		.summary-table tr.total-row td {
+			border-top: 2px solid #0f172a;
+			border-bottom: 2px solid #0f172a;
+			font-size: 13.5px;
+			font-weight: 800;
+			color: #0369a1;
+			padding-top: 6px;
+			padding-bottom: 6px;
+		}
+
+		/* Bottom Terms & Signature */
+		.po-terms-wrap {
+			clear: both;
+			padding-top: 14px;
+			border-top: 1px solid #e2e8f0;
+			font-size: 11px;
+			color: #64748b;
+			line-height: 1.5;
+		}
+		.po-signature-row {
+			display: flex;
+			justify-content: flex-end;
+			gap: 30px;
+			margin-top: 20px;
+			padding-top: 15px;
+		}
+		.sig-line {
+			border-top: 1px solid #0f172a;
+			width: 200px;
+			text-align: center;
+			font-size: 11px;
+			font-weight: 600;
+			color: #475569;
+			padding-top: 4px;
+		}
+
+		/* Action Buttons toolbar */
+		.po-actions-bar {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 8px;
+			margin-top: 14px;
+			padding-top: 12px;
+			border-top: 1px solid #e2e8f0;
+		}
+		.btn-po-add-row {
+			background: #f8fafc;
+			border: 1px dashed #0284c7;
+			color: #0284c7;
+			font-weight: 600;
+			font-size: 11px;
+			padding: 4px 10px;
+			border-radius: 0 !important;
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.btn-po-add-row:hover {
+			background: #f0f9ff;
+			border-color: #0369a1;
+		}
+		.btn-po-submit {
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			font-weight: 700;
+			padding: 4px 14px;
+			height: 28px;
+			line-height: 18px;
+			border-radius: 0 !important;
+			font-size: 11.5px;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			transition: all 0.15s ease;
+			box-shadow: none;
+			cursor: pointer;
+		}
+		.btn-po-submit:hover {
+			background: #503d82;
+			border-color: #503d82;
+			color: #ffffff;
+		}
+		.btn-po-print {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			color: #334155;
+			font-weight: 600;
+			padding: 4px 10px;
+			height: 28px;
+			line-height: 18px;
+			border-radius: 0 !important;
+			font-size: 11px;
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.btn-po-print:hover {
+			background: #f8fafc;
+			border-color: #94a3b8;
+		}
+
+		/* Row delete button */
+		.btn-del-row {
+			background: transparent;
+			border: none !important;
+			color: #94a3b8;
+			font-size: 13px;
+			cursor: pointer;
+			padding: 0;
+			width: 100%;
+			height: 26px;
+			border-radius: 0 !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.15s ease;
+		}
+		.btn-del-row:hover {
+			color: #ef4444;
+			background: #fee2e2;
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-bulk-order-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
+									<input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1 border-top">
+				<div class="container-fluid ps-0 pe-4 pe-xl-5">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+
+							<!-- Header All Categories Button -->
+							<div class="categories-menu">
+								<a href="{% url 'web:shop' %}" class="categories-toggle" id="bulk-sidebar-toggle-btn">
+									<i class="klb-icon-layout-grid me-2"></i>All Categories
+								</a>
+							</div>
+
+							<!-- Primary Menu with Updated Nav Items -->
+							<nav class="site-menu horizontal menu-shadow primary-menu ms-4">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:shop' %}">Shops</a></li>
+									<li class="menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:contact' %}">Supports</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item current-menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- ========================================================
+		     MAIN BULK ORDER LAYOUT: Desktop Extended Categories / B2B Wholesale Portal
+		     Flush Left (ps-0), Zero Border Radius, Sticky Sidebar & Scroll Effect
+		     ======================================================== -->
+		<main id="main" class="site-primary bulk-main-layout">
+			<div class="container-fluid ps-0 pe-4 pe-xl-5 bulk-main-container">
+				<form id="bulk-po-form" onsubmit="event.preventDefault(); submitPurchaseOrder();">
+					<div class="bulk-main-row">
+
+						<!-- Left Column: Exactly 280px, Sticky on Scroll, Flush Left (0 Space), No Radius -->
+						<aside class="bulk-sidebar-col" id="bulk-sidebar">
+							<!-- Widget 1: Delivery & Ship To Details (Small Form) -->
+							<div class="bulk-sidebar-widget">
+								<div class="sidebar-widget-header">
+									<h4 class="sidebar-widget-title"><i class="klb-icon-map-pin"></i> Delivery &amp; Ship To</h4>
+								</div>
+								<div class="d-flex flex-column gap-2">
+									<div class="po-side-field">
+										<label class="po-side-label" for="buyer-company-name">Company / Business *</label>
+										<input type="text" id="buyer-company-name" class="po-side-input fw-semibold" placeholder="Company Name" required value="Henderson Gourmet Kitchens Ltd">
+									</div>
+									<div class="po-side-field">
+										<label class="po-side-label" for="buyer-contact-name">Contact Person *</label>
+										<input type="text" id="buyer-contact-name" class="po-side-input" placeholder="Contact Person" required value="Alex Henderson">
+									</div>
+									<div class="po-side-field">
+										<label class="po-side-label" for="buyer-address">Delivery Address *</label>
+										<input type="text" id="buyer-address" class="po-side-input" placeholder="Street Address" required value="42 Baker Street, Marylebone">
+									</div>
+									<div class="po-side-field">
+										<label class="po-side-label" for="buyer-city-postcode">City &amp; Postcode *</label>
+										<input type="text" id="buyer-city-postcode" class="po-side-input" placeholder="City, Postcode" required value="London, W1U 7AL">
+									</div>
+									<div class="po-side-field">
+										<label class="po-side-label" for="buyer-phone-email">Phone / Email *</label>
+										<input type="text" id="buyer-phone-email" class="po-side-input" placeholder="Phone or Email" required value="+44 7700 900543">
+									</div>
+									<div class="po-side-field">
+										<label class="po-side-label" for="po-delivery-date">Requested Delivery Date</label>
+										<input type="date" id="po-delivery-date" class="po-side-input" value="2026-10-18">
+									</div>
+									<div class="pt-2">
+										<button type="button" class="btn-po-side-save" onclick="saveDeliveryDetails()">
+											<i class="klb-icon-check"></i> Save Details
+										</button>
+									</div>
+								</div>
+							</div>
+						</aside>
+
+						<!-- Right Content Column: Breadcrumbs & Product Line Items Matrix -->
+						<div class="bulk-content-col">
+							<!-- In-content Breadcrumbs -->
+							<nav class="bulk-breadcrumbs" aria-label="breadcrumb">
+								<a href="{% url 'web:home' %}">Home</a>
+								<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+								<span class="breadcrumb-current">B2B Purchase Order &amp; Wholesale Procurement</span>
+							</nav>
+
+							<div class="po-document-container">
+								<div class="po-sheet">
+									<!-- Top Bar: Title & Mini Actions -->
+									<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2 mb-3 border-bottom">
+										<div>
+											<h1 class="text-15 fw-bold text-dark mb-0 text-uppercase" style="letter-spacing: 0.5px;">Purchase Order Product Items</h1>
+										</div>
+										<div class="d-flex align-items-center gap-2">
+											<button type="button" class="btn-po-action-mini" onclick="window.print()"><i class="klb-icon-printer"></i> Print / PDF</button>
+											<button type="button" class="btn-po-action-mini" onclick="exportExcelCSV()"><i class="klb-icon-download"></i> Export CSV</button>
+										</div>
+									</div>
+
+									<!-- Congested Excel-Style Product Line Items Table -->
+									<div class="po-table-wrap">
+										<table class="excel-po-table" id="excel-po-items-table">
+											<thead>
+												<tr>
+													<th style="width: 55px;">Qty</th>
+													<th style="width: 100px;">Item #</th>
+													<th style="min-width: 260px;">Description (Search or Type Product)</th>
+													<th style="width: 95px;">Pack / Unit</th>
+													<th style="width: 95px;">Unit Price (&pound;)</th>
+													<th style="width: 105px;">Line Total (&pound;)</th>
+													<th style="width: 30px;"></th>
+												</tr>
+											</thead>
+											<tbody id="po-items-body">
+												<!-- Line 1 -->
+												<tr class="po-row">
+													<td><input type="number" class="cell-input cell-qty row-qty" value="12" min="1" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-item-code row-sku" value="TF-APP-01" readonly></td>
+													<td>
+														<input type="text" class="cell-input row-desc" value="Organic Honeycrisp &amp; Gala Apples" placeholder="Type product name to search..." onkeyup="handleProductSearch(this)">
+														<div class="item-suggest-dropdown"></div>
+													</td>
+													<td><input type="text" class="cell-input text-center row-unit" value="1.5kg Bag"></td>
+													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="2.80" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-total row-total" value="33.60" readonly></td>
+													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
+												</tr>
+
+												<!-- Line 2 -->
+												<tr class="po-row">
+													<td><input type="number" class="cell-input cell-qty row-qty" value="10" min="1" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-item-code row-sku" value="TF-LEN-04" readonly></td>
+													<td>
+														<input type="text" class="cell-input row-desc" value="Organic Yellow Moong Lentils (Dhal)" placeholder="Type product name to search..." onkeyup="handleProductSearch(this)">
+														<div class="item-suggest-dropdown"></div>
+													</td>
+													<td><input type="text" class="cell-input text-center row-unit" value="5kg Sack"></td>
+													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="11.50" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-total row-total" value="115.00" readonly></td>
+													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
+												</tr>
+
+												<!-- Line 3 -->
+												<tr class="po-row">
+													<td><input type="number" class="cell-input cell-qty row-qty" value="50" min="1" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-item-code row-sku" value="TF-OIL-02" readonly></td>
+													<td>
+														<input type="text" class="cell-input row-desc" value="Raw Cold-Pressed Himalayan Mustard Oil" placeholder="Type product name to search..." onkeyup="handleProductSearch(this)">
+														<div class="item-suggest-dropdown"></div>
+													</td>
+													<td><input type="text" class="cell-input text-center row-unit" value="1L Glass"></td>
+													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="5.20" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-total row-total" value="260.00" readonly></td>
+													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
+												</tr>
+
+												<!-- Line 4 (Empty Ready for typing) -->
+												<tr class="po-row">
+													<td><input type="number" class="cell-input cell-qty row-qty" value="" placeholder="1" min="1" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-item-code row-sku" value="" placeholder="-" readonly></td>
+													<td>
+														<input type="text" class="cell-input row-desc" value="" placeholder="Type to search e.g. Turmeric, Flour, Ghee..." onkeyup="handleProductSearch(this)">
+														<div class="item-suggest-dropdown"></div>
+													</td>
+													<td><input type="text" class="cell-input text-center row-unit" value="" placeholder="Unit"></td>
+													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="" placeholder="0.00" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-total row-total" value="0.00" readonly></td>
+													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
+												</tr>
+
+												<!-- Line 5 (Empty Ready for typing) -->
+												<tr class="po-row">
+													<td><input type="number" class="cell-input cell-qty row-qty" value="" placeholder="1" min="1" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-item-code row-sku" value="" placeholder="-" readonly></td>
+													<td>
+														<input type="text" class="cell-input row-desc" value="" placeholder="Type to search e.g. Timur, Rice, Sourdough..." onkeyup="handleProductSearch(this)">
+														<div class="item-suggest-dropdown"></div>
+													</td>
+													<td><input type="text" class="cell-input text-center row-unit" value="" placeholder="Unit"></td>
+													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="" placeholder="0.00" oninput="calcRow(this)"></td>
+													<td><input type="text" class="cell-input cell-total row-total" value="0.00" readonly></td>
+													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+
+									<!-- Prominent Visible + Button -->
+									<div class="mt-2 mb-3">
+										<button type="button" class="btn-po-add-row-visible" onclick="addNewRow()">
+											<i class="klb-icon-plus" style="font-weight: 900; font-size: 13px;"></i> Add Material Line
+										</button>
+									</div>
+
+									<!-- Summary Totals Table (Bottom Right) -->
+									<div class="po-summary-box">
+										<table class="summary-table">
+											<tbody>
+												<tr>
+													<td class="label-col">Subtotal:</td>
+													<td class="val-col">&pound;<span id="po-subtotal">408.60</span></td>
+												</tr>
+												<tr>
+													<td class="label-col">Wholesale Volume Discount (5%):</td>
+													<td class="val-col text-success">&minus;&pound;<span id="po-discount">20.43</span></td>
+												</tr>
+												<tr>
+													<td class="label-col">UK VAT / Tax (0% Food Groceries):</td>
+													<td class="val-col">&pound;<span id="po-tax">0.00</span></td>
+												</tr>
+												<tr class="total-row">
+													<td class="label-col">Estimated Total:</td>
+													<td class="val-col">&pound;<span id="po-grand-total">388.17</span></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+
+									<!-- Legal Terms & Instructions -->
+									<div class="po-terms-wrap">
+										<ol class="ps-3 mb-0">
+											<li>Please send one duplicate copy of your purchase order invoice for accounting records.</li>
+											<li>Enter product description, desired packaging unit, and expected quantity. Custom off-catalog materials can be typed in freely.</li>
+											<li>Payment will be invoiced under approved Net 30 terms or pre-delivery bank clearance.</li>
+											<li>Direct inquiries and pallet delivery scheduling: Contact +44 20 7946 0912 or b2b@teraifood.co.uk.</li>
+										</ol>
+
+										<div class="po-signature-row">
+											<div class="sig-line">Authorized Buyer Signature</div>
+											<div class="sig-line">Date: October 17, 2026</div>
+										</div>
+									</div>
+
+									<!-- Bottom Action Toolbar -->
+									<div class="po-actions-bar">
+										<div class="d-flex gap-2">
+											<button type="button" class="btn-po-print" onclick="window.print()">
+												<i class="klb-icon-printer"></i> Print / Save PDF
+											</button>
+											<button type="button" class="btn-po-print" onclick="exportExcelCSV()">
+												<i class="klb-icon-download"></i> Export CSV
+											</button>
+										</div>
+
+										<button type="submit" class="btn-po-submit">
+											<i class="klb-icon-check-circle"></i> Submit Bulk Purchase Order Request
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</main>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> b2b@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-gray-600 hover-primary">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:bulk-order' %}" class="text-primary fw-semibold">Bulk Order PO</a></li>
+								<li class="mb-2"><a href="{% url 'web:track-order' %}" class="text-gray-600 hover-primary">Track Order</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Support</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">UK Delivery Hubs</h4>
+							<p class="text-13 text-gray-600 mb-3">Wholesale Pallet &amp; Scheduled van deliveries across Greater London, Midlands, and Scotland.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container text-center text-12 text-gray-600">
+					Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold">startupghar.com</a>. All rights reserved.
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Interactive Excel-Form Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+	<script>
+		// Catalog of Wholesale Materials for Instant Autocomplete
+		const wholesaleCatalog = [
+			{ sku: "TF-APP-01", name: "Organic Honeycrisp & Gala Apples", unit: "1.5kg Bag", price: 2.80 },
+			{ sku: "TF-LEN-04", name: "Organic Yellow Moong Lentils (Dhal)", unit: "5kg Sack", price: 11.50 },
+			{ sku: "TF-OIL-02", name: "Raw Cold-Pressed Himalayan Mustard Oil", unit: "1L Glass", price: 5.20 },
+			{ sku: "TF-TUR-01", name: "Single-Origin Himalayan Stone-Ground Turmeric", unit: "1kg Tub", price: 8.90 },
+			{ sku: "TF-TIM-03", name: "Wild Foraged Himalayan Timur Pepper", unit: "500g Bag", price: 14.50 },
+			{ sku: "TF-RIC-05", name: "Premium Aged Himalayan Basmati Rice", unit: "10kg Sack", price: 18.00 },
+			{ sku: "TF-FLR-02", name: "Chakki Fresh Stoneground Atta Wholewheat", unit: "10kg Bag", price: 9.50 },
+			{ sku: "TF-GHE-01", name: "Grass-Fed Pure Desi Cow Ghee", unit: "1kg Tin", price: 12.00 },
+			{ sku: "TF-BAK-08", name: "Artisanal Organic Sourdough Loaves", unit: "Box of 6", price: 15.00 },
+			{ sku: "TF-TEA-02", name: "Organic Single-Estate Himalayan Black Tea", unit: "1kg Bulk", price: 16.50 },
+			{ sku: "TF-SAL-01", name: "Crushed Himalayan Pink & Black Rock Salt", unit: "5kg Bag", price: 6.00 },
+			{ sku: "TF-CAR-04", name: "Green Cardamom Pods (Bold 8mm)", unit: "500g Pack", price: 22.00 },
+			{ sku: "TF-CUM-01", name: "Whole High-Altitude Cumin Seeds (Jeera)", unit: "2kg Bag", price: 9.80 }
+		];
+
+		// Live Calculation for Single Row
+		function calcRow(inputElem) {
+			const tr = inputElem.closest('tr');
+			const qty = parseFloat(tr.querySelector('.row-qty').value) || 0;
+			const price = parseFloat(tr.querySelector('.row-price').value) || 0;
+			const total = (qty * price).toFixed(2);
+			tr.querySelector('.row-total').value = total;
+			recalculateGrandTotal();
+		}
+
+		// Recalculate Entire Purchase Order Subtotal, Discount, & Grand Total
+		function recalculateGrandTotal() {
+			let subtotal = 0;
+			document.querySelectorAll('.row-total').forEach(input => {
+				subtotal += parseFloat(input.value) || 0;
+			});
+
+			// 5% discount for bulk orders over £200
+			const discount = subtotal >= 200 ? (subtotal * 0.05) : 0;
+			const grandTotal = subtotal - discount;
+
+			document.getElementById('po-subtotal').textContent = subtotal.toFixed(2);
+			document.getElementById('po-discount').textContent = discount.toFixed(2);
+			document.getElementById('po-grand-total').textContent = grandTotal.toFixed(2);
+		}
+
+		// Autocomplete Product Search inside Excel cell
+		function handleProductSearch(input) {
+			const query = input.value.toLowerCase().trim();
+			const tr = input.closest('tr');
+			const dropdown = tr.querySelector('.item-suggest-dropdown');
+
+			if (!query) {
+				dropdown.classList.remove('active');
+				return;
+			}
+
+			const matches = wholesaleCatalog.filter(p => p.name.toLowerCase().includes(query) || p.sku.toLowerCase().includes(query));
+
+			if (matches.length === 0) {
+				dropdown.innerHTML = `<div class="p-2 text-12 text-muted">Custom Material (manual entry enabled)</div>`;
+				dropdown.classList.add('active');
+				return;
+			}
+
+			dropdown.innerHTML = matches.map(m => `
+				<div class="suggest-item" onclick="selectProduct(this, '${m.sku}', '${m.name.replace(/'/g, "\\'")}', '${m.unit}', ${m.price})">
+					<div>
+						<strong class="text-dark d-block">${m.name}</strong>
+						<span class="text-11 text-muted">SKU: ${m.sku} &bull; Pack: ${m.unit}</span>
+					</div>
+					<div class="fw-bold text-primary">&pound;${m.price.toFixed(2)}</div>
+				</div>
+			`).join('');
+			dropdown.classList.add('active');
+		}
+
+		function selectProduct(itemElem, sku, name, unit, price) {
+			const tr = itemElem.closest('tr');
+			tr.querySelector('.row-sku').value = sku;
+			tr.querySelector('.row-desc').value = name;
+			tr.querySelector('.row-unit').value = unit;
+			tr.querySelector('.row-price').value = price.toFixed(2);
+			
+			const qtyInput = tr.querySelector('.row-qty');
+			if (!qtyInput.value || parseFloat(qtyInput.value) <= 0) {
+				qtyInput.value = 10; // Default wholesale minimum
+			}
+
+			tr.querySelector('.item-suggest-dropdown').classList.remove('active');
+			calcRow(qtyInput);
+		}
+
+		// Close autocomplete dropdown on outside click
+		document.addEventListener('click', (e) => {
+			if (!e.target.closest('.item-suggest-dropdown') && !e.target.classList.contains('row-desc')) {
+				document.querySelectorAll('.item-suggest-dropdown').forEach(d => d.classList.remove('active'));
+			}
+		});
+
+		// Add New Spreadsheet Line Item
+		function addNewRow() {
+			const tbody = document.getElementById('po-items-body');
+			const tr = document.createElement('tr');
+			tr.className = 'po-row';
+			tr.innerHTML = `
+				<td><input type="number" class="cell-input cell-qty row-qty" value="10" min="1" oninput="calcRow(this)"></td>
+				<td><input type="text" class="cell-input cell-item-code row-sku" value="" placeholder="-" readonly></td>
+				<td>
+					<input type="text" class="cell-input row-desc" value="" placeholder="Type to search e.g. Ginger, Honey, Pulses..." onkeyup="handleProductSearch(this)">
+					<div class="item-suggest-dropdown"></div>
+				</td>
+				<td><input type="text" class="cell-input text-center row-unit" value="" placeholder="Unit"></td>
+				<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="" placeholder="0.00" oninput="calcRow(this)"></td>
+				<td><input type="text" class="cell-input cell-total row-total" value="0.00" readonly></td>
+				<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
+			`;
+			tbody.appendChild(tr);
+			tr.querySelector('.row-desc').focus();
+		}
+
+		// Delete Row
+		function removeRow(btn) {
+			const tr = btn.closest('tr');
+			if (document.querySelectorAll('.po-row').length > 1) {
+				tr.remove();
+				recalculateGrandTotal();
+			} else {
+				alert('At least one purchase order line item is required.');
+			}
+		}
+
+		// Save Delivery & Ship-To Details
+		function saveDeliveryDetails() {
+			const company = document.getElementById('buyer-company-name').value;
+			alert(`✅ Delivery & Ship-To details saved successfully for "${company || 'Authorized Buyer'}".`);
+		}
+
+		// Submit Purchase Order Request
+		function submitPurchaseOrder() {
+			const poNum = 'PO-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+			const buyerCompany = document.getElementById('buyer-company-name').value;
+			const total = document.getElementById('po-grand-total').textContent;
+
+			alert(`✅ Purchase Order Submitted Successfully!\n\nOrder Ref Generated: ${poNum}\nCompany: ${buyerCompany}\nEstimated Total: £${total}\n\nA formal PDF confirmation and B2B pricing verification has been dispatched to your email. Our commercial procurement team will phone you within 2 hours.`);
+		}
+
+		// Export CSV
+		function exportExcelCSV() {
+			let csv = "Qty,Item #,Description,Unit,Unit Price (GBP),Line Total (GBP)\n";
+			document.querySelectorAll('.po-row').forEach(row => {
+				const qty = row.querySelector('.row-qty').value;
+				const sku = row.querySelector('.row-sku').value;
+				const desc = `"${row.querySelector('.row-desc').value.replace(/"/g, '""')}"`;
+				const unit = row.querySelector('.row-unit').value;
+				const price = row.querySelector('.row-price').value;
+				const total = row.querySelector('.row-total').value;
+				if (desc && desc !== '""') {
+					csv += `${qty},${sku},${desc},${unit},${price},${total}\n`;
+				}
+			});
+
+			const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.setAttribute("href", url);
+			link.setAttribute("download", `TeraiFood_PO_${Date.now()}.csv`);
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		}
+
+
+
+		// Quick fill from category
+		function quickAddBulkCategory(name, sku, unit, price) {
+			addNewRow();
+			const rows = document.querySelectorAll('.po-row');
+			const lastRow = rows[rows.length - 1];
+			if (lastRow) {
+				lastRow.querySelector('.row-qty').value = 10;
+				lastRow.querySelector('.row-sku').value = sku;
+				lastRow.querySelector('.row-desc').value = name;
+				lastRow.querySelector('.row-unit').value = unit;
+				lastRow.querySelector('.row-price').value = price.toFixed(2);
+				calcRow(lastRow.querySelector('.row-qty'));
+				lastRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+		}
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+</body>
+</html>

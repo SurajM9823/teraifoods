@@ -1,0 +1,1316 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Food &amp; Wellness Journal – Terai Food UK | Recipes, Organic Living &amp; Guides</title>
+	<meta name="description" content="Explore healthy recipes, authentic Himalayan spice guides, cold-chain grocery tips, and organic nutrition guides on the Terai Food UK Journal.">
+	<meta name="keywords" content="organic recipes UK, Himalayan spices blog, healthy cooking London, fresh vegetable guide UK, Terai Food articles">
+	<link rel="canonical" href="{% url 'web:blogs' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		/* Global Zero Border Radius & High Contrast */
+		.terai-blogs-page,
+		.terai-blogs-page *,
+		.terai-blogs-page .btn,
+		.terai-blogs-page .form-control,
+		.terai-blogs-page .badge {
+			border-radius: 0 !important;
+		}
+		body.terai-blogs-page {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f8fafc;
+			color: #0f172a;
+		}
+
+		/* Clean Breadcrumbs (In-content) */
+		.blog-breadcrumbs {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+			margin-bottom: 14px;
+		}
+		.blog-breadcrumbs a {
+			color: #64748b;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.15s ease;
+		}
+		.blog-breadcrumbs a:hover {
+			color: #634c9f;
+		}
+		.blog-breadcrumbs .breadcrumb-separator {
+			color: #94a3b8;
+			font-size: 10px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.blog-breadcrumbs .breadcrumb-current {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		/* ========================================================
+		   BLOGS PAGE: Inherited Shop Page Layout, Size, Width & Scroll Effect
+		   Sticky Header-Nav & 280px Flush Left Sidebar (0 space, 0 radius)
+		   ======================================================== */
+		.terai-blogs-page .header-nav {
+			position: sticky !important;
+			top: 0 !important;
+			z-index: 1000 !important;
+			background: #ffffff !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+		}
+		.terai-blogs-page .categories-menu {
+			position: relative;
+			width: 280px !important;
+			flex: 0 0 280px !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		.terai-blogs-page .categories-menu .categories-toggle {
+			width: 280px !important;
+			height: 48px;
+			justify-content: flex-start;
+			padding: 0 20px;
+			background: #ffffff;
+			border: none !important;
+			border-right: 1px solid #e2e8f0 !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+			border-left: none !important;
+			border-top: none !important;
+			border-radius: 0 !important;
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+		}
+		.terai-blogs-page .categories-menu .categories-toggle i {
+			font-size: 16px;
+			color: #634c9f;
+		}
+
+		/* Desktop Layout (>= 1200px): Flush left (0 space), sticky on scroll, 0 radius */
+		@media (min-width: 1200px) {
+			.terai-blogs-page .blog-main-layout {
+				padding: 0 0 0 0 !important;
+				margin: 0 !important;
+			}
+			.terai-blogs-page .blog-main-container {
+				padding-left: 0 !important;
+				max-width: 100% !important;
+				width: 100% !important;
+			}
+			.terai-blogs-page .blog-main-row {
+				margin: 0 !important;
+				display: flex !important;
+				align-items: flex-start !important; /* Required for sticky child */
+			}
+			.terai-blogs-page .blog-sidebar-col {
+				width: 280px !important;
+				flex: 0 0 280px !important;
+				position: sticky !important;
+				top: 48px !important; /* Flush right beneath sticky sub-nav */
+				height: auto !important;
+				min-height: calc(100vh - 48px) !important;
+				background: #ffffff !important;
+				border-right: 1px solid #e2e8f0 !important;
+				border-left: none !important;
+				border-top: none !important;
+				border-bottom: none !important;
+				border-radius: 0 !important;
+				padding: 0 !important;
+				margin: 0 !important;
+				z-index: 100 !important;
+				align-self: flex-start !important;
+				display: flex !important;
+				flex-direction: column !important;
+				gap: 0 !important;
+				overflow-y: auto !important;
+				max-height: calc(100vh - 48px) !important;
+				scrollbar-width: thin;
+			}
+			.terai-blogs-page .blog-content-col {
+				flex: 1 !important;
+				min-width: 0 !important;
+				padding: 20px 32px 50px !important; /* Exact match to shop.html */
+			}
+		}
+
+		/* Mobile & Tablet (< 1200px) */
+		@media (max-width: 1199px) {
+			.terai-blogs-page .blog-sidebar-col {
+				width: 100% !important;
+				flex: 0 0 100% !important;
+				position: static !important;
+				border-right: none !important;
+				border-bottom: 1px solid #e2e8f0 !important;
+				margin-bottom: 20px !important;
+			}
+			.terai-blogs-page .blog-content-col {
+				padding: 16px !important;
+			}
+			.terai-blogs-page .categories-menu {
+				width: auto !important;
+			}
+		}
+
+		/* Sidebar Widgets: Seamless continuous column matching shop page */
+		.blog-sidebar-widget {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 14px 16px;
+			box-sizing: border-box;
+		}
+		.blog-sidebar-widget:last-child {
+			border-bottom: none;
+		}
+		.sidebar-widget-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 2px solid #0f172a;
+			padding-bottom: 5px;
+			margin-bottom: 8px;
+		}
+		.sidebar-widget-title {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0;
+		}
+		.sidebar-widget-title i {
+			color: #634c9f;
+			margin-right: 4px;
+		}
+
+		/* Sidebar Categories / Topics List */
+		.sidebar-cat-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.sidebar-cat-item + .sidebar-cat-item {
+			border-top: 1px solid #f1f5f9;
+		}
+		.sidebar-cat-link {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 6px 6px;
+			font-size: 11.5px;
+			font-weight: 600;
+			color: #0f172a;
+			text-decoration: none;
+			transition: all 0.15s ease;
+		}
+		.sidebar-cat-link:hover,
+		.sidebar-cat-link.active {
+			background: #f8fafc;
+			color: #634c9f;
+			padding-left: 10px;
+		}
+		.sidebar-cat-link .cat-count {
+			font-size: 10px;
+			font-weight: 700;
+			color: #64748b;
+			background: #f1f5f9;
+			padding: 1px 5px;
+			border: 1px solid #e2e8f0;
+		}
+		.sidebar-cat-link.active .cat-count {
+			background: #634c9f;
+			color: #ffffff;
+			border-color: #634c9f;
+		}
+
+		/* Sidebar Popular Articles: Vertically Stacked */
+		.sidebar-popular-list {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+		.popular-post-item {
+			display: flex;
+			gap: 8px;
+			align-items: center;
+			padding: 5px 2px;
+			border-bottom: 1px solid #f1f5f9;
+			text-decoration: none !important;
+		}
+		.popular-post-item:last-child {
+			border-bottom: none;
+			padding-bottom: 0;
+		}
+		.popular-thumb-wrap {
+			width: 48px;
+			height: 48px;
+			flex-shrink: 0;
+			border: 1px solid #cbd5e1;
+			overflow: hidden;
+			background: #f1f5f9;
+		}
+		.popular-thumb {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.popular-details {
+			flex: 1;
+			min-width: 0;
+		}
+		.popular-title {
+			font-size: 11px;
+			font-weight: 700;
+			line-height: 1.3;
+			color: #0f172a;
+			margin: 0 0 2px;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		.popular-post-item:hover .popular-title {
+			color: #634c9f;
+		}
+		.popular-meta {
+			font-size: 9.5px;
+			color: #64748b;
+			font-weight: 500;
+		}
+
+		/* Sidebar Search - Perfect Matching Height */
+		.sidebar-search-form {
+			display: flex;
+			align-items: stretch;
+			width: 100%;
+			height: 32px;
+			box-sizing: border-box;
+		}
+		.sidebar-search-input {
+			height: 32px !important;
+			line-height: 30px;
+			font-size: 11.5px;
+			color: #0f172a;
+			border: 1px solid #cbd5e1;
+			border-right: none;
+			padding: 0 8px;
+			width: calc(100% - 36px);
+			flex: 1;
+			min-width: 0;
+			background: #ffffff;
+			box-sizing: border-box;
+			border-radius: 0 !important;
+		}
+		.sidebar-search-input:focus {
+			border-color: #634c9f;
+			outline: none;
+		}
+		.sidebar-search-btn {
+			height: 32px !important;
+			width: 36px;
+			padding: 0;
+			background: #634c9f;
+			color: #ffffff;
+			border: 1px solid #634c9f;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			box-sizing: border-box;
+			border-radius: 0 !important;
+		}
+		.sidebar-search-btn i {
+			font-size: 13px;
+			line-height: 1;
+		}
+
+		/* Sidebar Newsletter Box */
+		.sidebar-newsletter-box {
+			background: #faf5ff;
+			border: 1px dashed #c084fc;
+		}
+		.sidebar-newsletter-input {
+			height: 28px;
+			font-size: 11px;
+			border: 1px solid #cbd5e1;
+			padding: 4px 8px;
+			margin-bottom: 6px;
+			width: 100%;
+			border-radius: 0 !important;
+		}
+		.sidebar-newsletter-btn {
+			height: 28px;
+			font-size: 10.5px;
+			font-weight: 700;
+			text-transform: uppercase;
+			background: #634c9f;
+			color: #ffffff;
+			border: none;
+			width: 100%;
+			cursor: pointer;
+			border-radius: 0 !important;
+		}
+
+		/* FEATURED ARTICLE: Tiny, Thin, Sharp Visible Border, High Contrast */
+		.featured-article-card {
+			background: #ffffff;
+			border: 1px solid #94a3b8;
+			display: flex;
+			align-items: stretch;
+			overflow: hidden;
+			position: relative;
+		}
+		.featured-card-thumb-wrap {
+			width: 250px;
+			flex: 0 0 250px;
+			border-right: 1px solid #cbd5e1;
+			overflow: hidden;
+			position: relative;
+			background: #f1f5f9;
+		}
+		.featured-card-thumb {
+			width: 100%;
+			height: 100%;
+			min-height: 145px;
+			object-fit: cover;
+		}
+		.featured-card-body {
+			padding: 10px 14px;
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+		.featured-tag-row {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 4px;
+		}
+		.featured-pill-badge {
+			background: #b91c1c;
+			color: #ffffff;
+			font-size: 9.5px;
+			font-weight: 800;
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			padding: 2px 6px;
+		}
+		.featured-meta-info {
+			font-size: 10.5px;
+			color: #64748b;
+			font-weight: 500;
+		}
+		.featured-article-title {
+			font-size: 15px;
+			font-weight: 800;
+			line-height: 1.3;
+			color: #0f172a;
+			margin: 0 0 4px;
+		}
+		.featured-article-title a {
+			color: #0f172a;
+			text-decoration: none;
+		}
+		.featured-article-title a:hover {
+			color: #634c9f;
+		}
+		.featured-article-excerpt {
+			font-size: 11.5px;
+			color: #1e293b;
+			line-height: 1.4;
+			margin: 0 0 8px;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		.featured-bottom-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding-top: 5px;
+			border-top: 1px solid #f1f5f9;
+		}
+		.featured-author-pill {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 10.5px;
+			font-weight: 600;
+			color: #0f172a;
+		}
+		.featured-author-pill .dot {
+			width: 6px;
+			height: 6px;
+			background: #16a34a;
+			display: inline-block;
+		}
+		.featured-read-btn {
+			font-size: 10.5px;
+			font-weight: 800;
+			color: #ffffff;
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			padding: 3px 10px;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+		.featured-read-btn:hover {
+			background: #4f3984;
+			color: #ffffff;
+		}
+
+		/* BLOGS GRID: Dense / Congested 3 Columns with Sharp 1px Borders */
+		.blogs-cards-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 10px;
+		}
+		@media (max-width: 1200px) {
+			.blogs-cards-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+		@media (max-width: 600px) {
+			.blogs-cards-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		/* Individual Card: Tiny, Tight, Bright Black Text, Visible Border */
+		.blog-post-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+			position: relative;
+			transition: border-color 0.15s ease, box-shadow 0.15s ease;
+		}
+		.blog-post-card:hover {
+			border-color: #634c9f;
+			box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+		}
+		.card-thumb-wrap {
+			position: relative;
+			height: 120px;
+			border-bottom: 1px solid #cbd5e1;
+			background: #f1f5f9;
+			overflow: hidden;
+		}
+		.card-thumb-wrap img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.card-cat-badge {
+			position: absolute;
+			top: 6px;
+			left: 6px;
+			background: #ffffff;
+			color: #0f172a;
+			border: 1px solid #cbd5e1;
+			font-size: 9px;
+			font-weight: 800;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+			padding: 2px 5px;
+			z-index: 2;
+		}
+		.card-body-content {
+			padding: 8px 10px 10px;
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+		}
+		.card-meta-row {
+			font-size: 10px;
+			font-weight: 600;
+			color: #64748b;
+			margin-bottom: 4px;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.card-title-text {
+			font-size: 12px;
+			font-weight: 700;
+			line-height: 1.35;
+			color: #0f172a;
+			margin: 0 0 4px;
+			height: 33px;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		.card-title-text a {
+			color: #0f172a;
+			text-decoration: none;
+		}
+		.blog-post-card:hover .card-title-text a {
+			color: #634c9f;
+		}
+		.card-excerpt-text {
+			font-size: 11px;
+			color: #334155;
+			line-height: 1.38;
+			margin: 0 0 6px;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			flex: 1;
+		}
+		.card-footer-row {
+			padding-top: 5px;
+			border-top: 1px solid #f1f5f9;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 10px;
+			margin-top: auto;
+		}
+		.card-author-name {
+			font-weight: 600;
+			color: #64748b;
+		}
+		.card-read-link {
+			font-weight: 800;
+			color: #634c9f;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
+		}
+		.card-read-link:hover {
+			text-decoration: underline;
+		}
+
+		/* Responsive Breakdown */
+		@media (max-width: 991px) {
+			.blog-layout-row {
+				flex-direction: column;
+			}
+			.blog-sidebar-col {
+				width: 100%;
+				flex: 0 0 100%;
+			}
+			.featured-article-card {
+				flex-direction: column;
+			}
+			.featured-card-thumb-wrap {
+				width: 100%;
+				flex: 0 0 160px;
+				border-right: none;
+				border-bottom: 1px solid #cbd5e1;
+			}
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-blogs-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
+									<input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1 border-top">
+				<div class="container-fluid ps-0 pe-4 pe-xl-5">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+
+							<!-- Header All Categories Button -->
+							<div class="categories-menu">
+								<a href="{% url 'web:shop' %}" class="categories-toggle" id="blog-search-toggle-btn">
+									<i class="klb-icon-layout-grid me-2"></i>All Categories
+								</a>
+							</div>
+
+							<!-- Primary Menu with Updated Nav Items -->
+							<nav class="site-menu horizontal menu-shadow primary-menu ms-4">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:shop' %}">Shops</a></li>
+									<li class="menu-item current-menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:contact' %}">Supports</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- ========================================================
+		     MAIN BLOG LAYOUT: Desktop Extended Categories / Search Articles + Blog Feed
+		     Flush Left (ps-0), Zero Border Radius, Sticky Sidebar & Scroll Effect
+		     ======================================================== -->
+		<main id="main" class="site-primary blog-main-layout">
+			<div class="container-fluid ps-0 pe-4 pe-xl-5 blog-main-container">
+				<div class="blog-main-row">
+
+					<!-- Left Column: Exactly 280px, Sticky on Scroll, Flush Left (0 Space), No Radius -->
+					<aside class="blog-sidebar-col">
+						<!-- Widget 1: Search Journal -->
+						<div class="blog-sidebar-widget">
+							<form id="blog-sidebar-search" class="sidebar-search-form" action="#" method="get">
+								<input type="text" id="blog-search-term" class="sidebar-search-input" placeholder="Search recipe, spice, tips..." autocomplete="off">
+								<button type="submit" class="sidebar-search-btn" title="Search"><i class="klb-icon-search"></i></button>
+							</form>
+						</div>
+
+						<!-- Widget 2: Blog Topics / Categories -->
+						<div class="blog-sidebar-widget">
+							<div class="sidebar-widget-header">
+								<h4 class="sidebar-widget-title"><i class="klb-icon-layout-list"></i> Blog Topics</h4>
+								<span class="text-10 text-gray-500 fw-bold">6 ARTICLES</span>
+							</div>
+							<ul class="sidebar-cat-list">
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link active" data-filter="all">
+										<span><i class="klb-icon-check me-1 text-primary"></i> All Articles</span>
+										<span class="cat-count">6</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" data-filter="spices">
+										<span>Himalayan Spices &amp; Herbs</span>
+										<span class="cat-count">1</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" data-filter="logistics">
+										<span>Cold-Chain Logistics</span>
+										<span class="cat-count">1</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" data-filter="recipes">
+										<span>Comfort Dhal Recipes</span>
+										<span class="cat-count">1</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" data-filter="wholesale">
+										<span>Wholesale &amp; Sourcing</span>
+										<span class="cat-count">1</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" data-filter="nutrition">
+										<span>Nutrition Science</span>
+										<span class="cat-count">1</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" data-filter="seasonal">
+										<span>Seasonal Living</span>
+										<span class="cat-count">1</span>
+									</a>
+								</li>
+							</ul>
+						</div>
+
+						<!-- Widget 3: Popular Articles (Vertically Stacked) -->
+						<div class="blog-sidebar-widget">
+							<div class="sidebar-widget-header">
+								<h4 class="sidebar-widget-title"><i class="klb-icon-trending-up"></i> Popular Articles</h4>
+								<span class="text-10 text-gray-500 fw-bold">TRENDING</span>
+							</div>
+							<div class="sidebar-popular-list">
+								<a href="{% url 'web:blogs-himalayan-spices-guide' %}" class="popular-post-item">
+									<div class="popular-thumb-wrap">
+										<img src="{% static 'web/' %}images/banner-04.jpg" alt="Himalayan Spices" class="popular-thumb">
+									</div>
+									<div class="popular-details">
+										<h6 class="popular-title">10 Essential Himalayan Spices for UK Kitchens</h6>
+										<span class="popular-meta">Oct 12 &bull; 6 min read</span>
+									</div>
+								</a>
+
+								<a href="{% url 'web:blogs-organic-vegetables-delivery-uk' %}" class="popular-post-item">
+									<div class="popular-thumb-wrap">
+										<img src="{% static 'web/' %}images/banner-02.jpg" alt="Cold Chain Freshness" class="popular-thumb">
+									</div>
+									<div class="popular-details">
+										<h6 class="popular-title">How We Keep Farm Groceries Crisp Across UK</h6>
+										<span class="popular-meta">Oct 10 &bull; 5 min read</span>
+									</div>
+								</a>
+
+								<a href="{% url 'web:blogs-high-protein-lentils-dhal-recipes' %}" class="popular-post-item">
+									<div class="popular-thumb-wrap">
+										<img src="{% static 'web/' %}images/banner-05.jpg" alt="Lentil Dhal Bowls" class="popular-thumb">
+									</div>
+									<div class="popular-details">
+										<h6 class="popular-title">5 High-Protein Organic Lentil Dhal Bowls</h6>
+										<span class="popular-meta">Oct 07 &bull; 7 min read</span>
+									</div>
+								</a>
+
+								<a href="{% url 'web:blogs-wholesale-bulk-grocery-guide-uk' %}" class="popular-post-item">
+									<div class="popular-thumb-wrap">
+										<img src="{% static 'web/' %}images/banner-09.jpg" alt="Wholesale Procurement" class="popular-thumb">
+									</div>
+									<div class="popular-details">
+										<h6 class="popular-title">Wholesale Grocery Sourcing for UK Caterers</h6>
+										<span class="popular-meta">Oct 03 &bull; 4 min read</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Widget 4: Quick Newsletter Box -->
+						<div class="blog-sidebar-widget sidebar-newsletter-box text-center">
+							<div class="text-18 text-primary mb-1"><i class="klb-icon-mail"></i></div>
+							<h5 class="text-12 fw-bold text-dark mb-1">Weekly Kitchen Bulletin</h5>
+							<p class="text-11 text-gray-600 mb-2 lh-sm">Seasonal grocery recipes &amp; member discounts delivered weekly.</p>
+							<form onsubmit="event.preventDefault(); alert('Subscribed to Terai Food Bulletin!');">
+								<input type="email" class="sidebar-newsletter-input form-control" placeholder="Your email address" required>
+								<button type="submit" class="sidebar-newsletter-btn">Subscribe Free</button>
+							</form>
+						</div>
+					</aside>
+
+					<!-- RIGHT COLUMN: Rest ~70% Content Column -->
+					<div class="blog-content-col">
+
+						<!-- Clean In-Content Breadcrumbs Bar -->
+						<nav class="blog-breadcrumbs" aria-label="breadcrumb">
+							<a href="{% url 'web:home' %}">Home</a>
+							<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+							<span class="breadcrumb-current">Blog Journal</span>
+						</nav>
+
+						<!-- FEATURED ARTICLE CARD: Tiny, Thin, Sharp Visible Border, High-Contrast Text -->
+						<article class="featured-article-card" data-category="spices">
+							<div class="featured-card-thumb-wrap">
+								<a href="{% url 'web:blogs-himalayan-spices-guide' %}" class="d-block h-100">
+									<img src="{% static 'web/' %}images/banner-04.jpg" alt="10 Essential Himalayan Spices" class="featured-card-thumb">
+								</a>
+							</div>
+							<div class="featured-card-body">
+								<div class="featured-tag-row">
+									<span class="featured-pill-badge">FEATURED ARTICLE</span>
+									<span class="featured-meta-info">October 12, 2026 &bull; 6 min read &bull; Himalayan Living</span>
+								</div>
+								<h2 class="featured-article-title">
+									<a href="{% url 'web:blogs-himalayan-spices-guide' %}">
+										10 Essential Himalayan &amp; Terai Spices Every UK Kitchen Needs for Wholesome Cooking
+									</a>
+								</h2>
+								<p class="featured-article-excerpt">
+									Discover the deep aromatics, digestive wellness benefits, and culinary traditions behind pure cumin seeds, wild timur pepper, stone-ground turmeric, and hand-harvested Himalayan black salt.
+								</p>
+								<div class="featured-bottom-row">
+									<div class="featured-author-pill">
+										<span class="dot"></span>
+										<span>By Terai Culinary Team</span>
+									</div>
+									<a href="{% url 'web:blogs-himalayan-spices-guide' %}" class="featured-read-btn">
+										Read Full Article <i class="klb-icon-arrow-right"></i>
+									</a>
+								</div>
+							</div>
+						</article>
+
+						<!-- BLOGS GRID: Dense 3 Columns, Sharp Borders, Zero Radius -->
+						<div class="blogs-cards-grid" id="blogs-cards-container">
+
+							<!-- Post 1: Logistics -->
+							<article class="blog-post-card" data-category="logistics">
+								<div class="card-thumb-wrap">
+									<a href="{% url 'web:blogs-organic-vegetables-delivery-uk' %}">
+										<img src="{% static 'web/' %}images/banner-02.jpg" alt="Cold Chain Fresh Produce">
+									</a>
+									<span class="card-cat-badge">Logistics &amp; Quality</span>
+								</div>
+								<div class="card-body-content">
+									<div class="card-meta-row">
+										<i class="klb-icon-calendar"></i> Oct 10, 2026 &bull; 5 min read
+									</div>
+									<h3 class="card-title-text">
+										<a href="{% url 'web:blogs-organic-vegetables-delivery-uk' %}">
+											The Cold-Chain Journey: How We Keep Fresh Organic Vegetables Crisp
+										</a>
+									</h3>
+									<p class="card-excerpt-text">
+										Specialized temperature-controlled packing and local micro-hubs preserve farm vitamins from harvest to your door.
+									</p>
+									<div class="card-footer-row">
+										<span class="card-author-name">Supply Ops</span>
+										<a href="{% url 'web:blogs-organic-vegetables-delivery-uk' %}" class="card-read-link">Read <i class="klb-icon-arrow-right"></i></a>
+									</div>
+								</div>
+							</article>
+
+							<!-- Post 2: Recipes -->
+							<article class="blog-post-card" data-category="recipes">
+								<div class="card-thumb-wrap">
+									<a href="{% url 'web:blogs-high-protein-lentils-dhal-recipes' %}">
+										<img src="{% static 'web/' %}images/banner-05.jpg" alt="Lentil Dhal Bowls">
+									</a>
+									<span class="card-cat-badge">Comfort Recipes</span>
+								</div>
+								<div class="card-body-content">
+									<div class="card-meta-row">
+										<i class="klb-icon-calendar"></i> Oct 07, 2026 &bull; 7 min read
+									</div>
+									<h3 class="card-title-text">
+										<a href="{% url 'web:blogs-high-protein-lentils-dhal-recipes' %}">
+											5 High-Protein Organic Lentil Dhal Bowls for Autumn &amp; Winter Comfort
+										</a>
+									</h3>
+									<p class="card-excerpt-text">
+										Warm, fragrant, plant-based dinner bowls ready in under 25 minutes using yellow moong and black urad dhal.
+									</p>
+									<div class="card-footer-row">
+										<span class="card-author-name">Chef Kiran</span>
+										<a href="{% url 'web:blogs-high-protein-lentils-dhal-recipes' %}" class="card-read-link">Read <i class="klb-icon-arrow-right"></i></a>
+									</div>
+								</div>
+							</article>
+
+							<!-- Post 3: Wholesale -->
+							<article class="blog-post-card" data-category="wholesale">
+								<div class="card-thumb-wrap">
+									<a href="{% url 'web:blogs-wholesale-bulk-grocery-guide-uk' %}">
+										<img src="{% static 'web/' %}images/banner-09.jpg" alt="Wholesale Bulk Grocery UK">
+									</a>
+									<span class="card-cat-badge">Wholesale &amp; Sourcing</span>
+								</div>
+								<div class="card-body-content">
+									<div class="card-meta-row">
+										<i class="klb-icon-calendar"></i> Oct 03, 2026 &bull; 4 min read
+									</div>
+									<h3 class="card-title-text">
+										<a href="{% url 'web:blogs-wholesale-bulk-grocery-guide-uk' %}">
+											Wholesale Grocery Sourcing for UK Caterers &amp; Restaurants
+										</a>
+									</h3>
+									<p class="card-excerpt-text">
+										Cut food costs without compromising freshness with tier pricing, scheduled recurring pallets, and Net 30 terms.
+									</p>
+									<div class="card-footer-row">
+										<span class="card-author-name">B2B Procurement</span>
+										<a href="{% url 'web:blogs-wholesale-bulk-grocery-guide-uk' %}" class="card-read-link">Read <i class="klb-icon-arrow-right"></i></a>
+									</div>
+								</div>
+							</article>
+
+							<!-- Post 4: Nutrition Science -->
+							<article class="blog-post-card" data-category="nutrition">
+								<div class="card-thumb-wrap">
+									<a href="{% url 'web:blogs-organic-vs-conventional-food-benefits' %}">
+										<img src="{% static 'web/' %}images/banner-06.jpg" alt="Organic Nutrition">
+									</a>
+									<span class="card-cat-badge">Nutrition Science</span>
+								</div>
+								<div class="card-body-content">
+									<div class="card-meta-row">
+										<i class="klb-icon-calendar"></i> Sep 28, 2026 &bull; 6 min read
+									</div>
+									<h3 class="card-title-text">
+										<a href="{% url 'web:blogs-organic-vs-conventional-food-benefits' %}">
+											Organic vs Conventional: The Real Science of Pesticide-Free Eating
+										</a>
+									</h3>
+									<p class="card-excerpt-text">
+										An evidence-based look at antioxidant density and why organic soil micro-organisms produce superior food.
+									</p>
+									<div class="card-footer-row">
+										<span class="card-author-name">Nutrition Desk</span>
+										<a href="{% url 'web:blogs-organic-vs-conventional-food-benefits' %}" class="card-read-link">Read <i class="klb-icon-arrow-right"></i></a>
+									</div>
+								</div>
+							</article>
+
+							<!-- Post 5: Seasonal Living -->
+							<article class="blog-post-card" data-category="seasonal">
+								<div class="card-thumb-wrap">
+									<a href="{% url 'web:blogs-seasonal-fruits-vegetables-calendar-uk' %}">
+										<img src="{% static 'web/' %}images/banner-07.jpg" alt="UK Seasonal Calendar">
+									</a>
+									<span class="card-cat-badge">Seasonal Living</span>
+								</div>
+								<div class="card-body-content">
+									<div class="card-meta-row">
+										<i class="klb-icon-calendar"></i> Sep 22, 2026 &bull; 5 min read
+									</div>
+									<h3 class="card-title-text">
+										<a href="{% url 'web:blogs-seasonal-fruits-vegetables-calendar-uk' %}">
+											The British &amp; Himalayan Seasonal Eating Calendar: What to Cook
+										</a>
+									</h3>
+									<p class="card-excerpt-text">
+										Eating in harmony with harvest cycles saves money and maximizes dietary vitamins throughout the year.
+									</p>
+									<div class="card-footer-row">
+										<span class="card-author-name">Terai Editors</span>
+										<a href="{% url 'web:blogs-seasonal-fruits-vegetables-calendar-uk' %}" class="card-read-link">Read <i class="klb-icon-arrow-right"></i></a>
+									</div>
+								</div>
+							</article>
+
+							<!-- Post 6: Spices Deep Dive -->
+							<article class="blog-post-card" data-category="spices">
+								<div class="card-thumb-wrap">
+									<a href="{% url 'web:blogs-himalayan-spices-guide' %}">
+										<img src="{% static 'web/' %}images/banner-04.jpg" alt="Wild Timur Pepper">
+									</a>
+									<span class="card-cat-badge">Himalayan Spices</span>
+								</div>
+								<div class="card-body-content">
+									<div class="card-meta-row">
+										<i class="klb-icon-calendar"></i> Sep 15, 2026 &bull; 4 min read
+									</div>
+									<h3 class="card-title-text">
+										<a href="{% url 'web:blogs-himalayan-spices-guide' %}">
+											Wild Timur Pepper &amp; Black Salt: Ancient Ayurvedic Flavor Profiles
+										</a>
+									</h3>
+									<p class="card-excerpt-text">
+										How altitude-grown botanicals deliver citrus tingling notes and gut-health support for daily home cooking.
+									</p>
+									<div class="card-footer-row">
+										<span class="card-author-name">Terai Research</span>
+										<a href="{% url 'web:blogs-himalayan-spices-guide' %}" class="card-read-link">Read <i class="klb-icon-arrow-right"></i></a>
+									</div>
+								</div>
+							</article>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-primary fw-semibold">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:checkout' %}" class="text-gray-600 hover-primary">Checkout</a></li>
+								<li class="mb-2"><a href="{% url 'web:track-order' %}" class="text-gray-600 hover-primary">Track Order</a></li>
+								<li class="mb-2"><a href="{% url 'web:bulk-order' %}" class="text-gray-600 hover-primary">Bulk Order PO</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Support</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#terms" class="text-gray-600 hover-primary">Terms of Service</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<div class="widget widget-newsletter">
+								<h4 class="text-14 fw-bold text-dark text-uppercase mb-2">Join our newsletter</h4>
+								<p class="text-12 text-gray-500 mb-2">Register now to get latest updates on promotions &amp; recipes.</p>
+								<div class="site-newsletter-form">
+									<form class="mc4wp-form" method="post" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Terai Food newsletter!');">
+										<div class="mc4wp-form-fields position-relative d-flex">
+											<input class="subscribe-input form-control text-12" type="email" placeholder="Enter your email" required style="height: 32px; border-radius: 0; padding-right: 60px;">
+											<button class="btn btn-primary" type="submit" style="position: absolute; right: 0; top: 0; height: 32px; font-size: 11px; font-weight: 700; border-radius: 0; background: #634c9f; border-color: #634c9f; padding: 0 10px;">SEND</button>
+										</div>
+										<p class="text-11 text-gray-400 mt-1 mb-0">By subscribing you agree to our Terms &amp; Privacy.</p>
+									</form>
+								</div>
+								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
+								<div class="site-social d-flex gap-2">
+									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
+									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
+									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
+									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+
+	<!-- Interactive Filter and Search Script -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const catLinks = document.querySelectorAll('.sidebar-cat-link');
+			const blogCards = document.querySelectorAll('.blog-post-card');
+			const featuredCard = document.querySelector('.featured-article-card');
+
+			catLinks.forEach(link => {
+				link.addEventListener('click', function(e) {
+					e.preventDefault();
+					const filter = this.getAttribute('data-filter');
+
+					// Update active class on sidebar categories
+					catLinks.forEach(l => {
+						if (l.getAttribute('data-filter') === filter) {
+							l.classList.add('active');
+						} else {
+							l.classList.remove('active');
+						}
+					});
+
+					// Filter cards
+					blogCards.forEach(card => {
+						const cardCat = card.getAttribute('data-category');
+						if (filter === 'all' || cardCat === filter) {
+							card.style.display = 'flex';
+						} else {
+							card.style.display = 'none';
+						}
+					});
+
+					// Filter featured card
+					if (featuredCard) {
+						const featCat = featuredCard.getAttribute('data-category');
+						if (filter === 'all' || featCat === filter) {
+							featuredCard.style.display = 'flex';
+						} else {
+							featuredCard.style.display = 'none';
+						}
+					}
+				});
+			});
+
+			// Search input filter
+			const searchForm = document.getElementById('blog-sidebar-search');
+			const searchInput = document.getElementById('blog-search-term');
+			if (searchForm && searchInput) {
+				const performSearch = () => {
+					const query = searchInput.value.toLowerCase().trim();
+					blogCards.forEach(card => {
+						const title = card.querySelector('.card-title-text').textContent.toLowerCase();
+						const excerpt = card.querySelector('.card-excerpt-text').textContent.toLowerCase();
+						if (!query || title.includes(query) || excerpt.includes(query)) {
+							card.style.display = 'flex';
+						} else {
+							card.style.display = 'none';
+						}
+					});
+					if (featuredCard) {
+						const title = featuredCard.querySelector('.featured-article-title').textContent.toLowerCase();
+						const excerpt = featuredCard.querySelector('.featured-article-excerpt').textContent.toLowerCase();
+						if (!query || title.includes(query) || excerpt.includes(query)) {
+							featuredCard.style.display = 'flex';
+						} else {
+							featuredCard.style.display = 'none';
+						}
+					}
+				};
+				searchForm.addEventListener('submit', function(e) {
+					e.preventDefault();
+					performSearch();
+				});
+				searchInput.addEventListener('input', performSearch);
+			}
+
+
+		});
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+</body>
+</html>
+

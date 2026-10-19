@@ -1,0 +1,2577 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm – Terai Food UK</title>
+	<meta name="description" content="Shop organic groceries, Himalayan spices, cold-pressed oils, lentils, stoneground flour, and flash sales with fast UK-wide delivery.">
+	<meta name="keywords" content="organic shop UK, flash deals grocery, Himalayan spices shop, buy dal London, Terai Food store">
+	<link rel="canonical" href="{% url 'web:shop' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		body {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f8fafc;
+			color: #1e293b;
+		}
+
+		/* Nav & Second Nav Header (Identical to index.html) */
+		.site-menu.primary-menu .menu > li > a {
+			font-size: 14px;
+			font-weight: 600;
+			color: #1e293b;
+			padding: 14px 16px;
+			display: inline-flex;
+			align-items: center;
+			text-decoration: none;
+			transition: color 0.2s ease;
+		}
+		.site-menu.primary-menu .menu > li.current-menu-item > a,
+		.site-menu.primary-menu .menu > li > a:hover {
+			color: #634c9f;
+		}
+		.nav-bulk-order-cta {
+			background: #f5f3ff;
+			color: #634c9f !important;
+			border: 1px solid #ede9fe;
+			border-radius: 6px;
+			padding: 7px 14px !important;
+			font-weight: 700 !important;
+			transition: all 0.2s ease;
+		}
+		.nav-bulk-order-cta:hover {
+			background: #634c9f !important;
+			color: #ffffff !important;
+		}
+
+		/* ========================================================
+		   SHOP PAGE SPECIFIC: Sticky Categories, No Left Space,
+		   Zero Border Radius, Extended from Sub-Navbar (ONLY FOR SHOP PAGE)
+		   ======================================================== */
+		.terai-shop-page .header-nav {
+			position: sticky !important;
+			top: 0 !important;
+			z-index: 1000 !important;
+			background: #ffffff !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+		}
+		.terai-shop-page .categories-menu {
+			position: relative;
+			width: 280px !important;
+			flex: 0 0 280px !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		.terai-shop-page .categories-menu .categories-toggle {
+			width: 280px !important;
+			height: 48px;
+			justify-content: flex-start;
+			padding: 0 20px;
+			background: #ffffff;
+			border: none !important;
+			border-right: 1px solid #e2e8f0 !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+			border-left: none !important;
+			border-top: none !important;
+			border-radius: 0 !important; /* NO curved radius at button */
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+		}
+		.terai-shop-page .categories-menu .categories-toggle i {
+			font-size: 16px;
+			color: #634c9f;
+		}
+		.terai-shop-page .categories-menu .categories-toggle::after {
+			display: none !important;
+			content: none !important;
+		}
+
+		/* Desktop Layout (>= 1200px): Flush left (0 space), sticky on scroll, 0 radius */
+		@media (min-width: 1200px) {
+			.terai-shop-page .shop-main-layout {
+				padding: 0 0 0 0 !important;
+				margin: 0 !important;
+			}
+			.terai-shop-page .shop-main-container {
+				padding-left: 0 !important;
+				max-width: 100% !important;
+				width: 100% !important;
+			}
+			.terai-shop-page .shop-main-row {
+				margin: 0 !important;
+				display: flex !important;
+				align-items: flex-start !important; /* Required for sticky child */
+			}
+			.terai-shop-page .shop-category-anchor-col {
+				width: 280px !important;
+				flex: 0 0 280px !important;
+				position: sticky !important;
+				top: 125px !important; /* Perfectly flush right beneath sticky masthead / sub-nav */
+				height: auto !important;
+				min-height: calc(100vh - 125px) !important;
+				background: #ffffff !important;
+				border-right: 1px solid #e2e8f0 !important;
+				border-left: none !important; /* NO space or border on left edge */
+				border-top: none !important;
+				border-bottom: none !important;
+				border-radius: 0 !important; /* NO curved radius */
+				padding: 0 !important;
+				margin: 0 !important;
+				z-index: 1000 !important;
+				align-self: flex-start !important;
+				display: flex !important;
+				flex-direction: column !important;
+				justify-content: space-between !important;
+				overflow: visible !important;
+			}
+			.terai-shop-page .shop-sidebar-categories {
+				display: block !important;
+				position: relative !important;
+				width: 100% !important;
+				background: transparent !important;
+				box-shadow: none !important;
+				border: none !important;
+				border-radius: 0 !important; /* NO curved radius */
+				z-index: 100 !important;
+				visibility: visible !important;
+				opacity: 1 !important;
+				overflow: visible !important;
+			}
+			.terai-shop-page .shop-products-col {
+				flex: 1 !important;
+				min-width: 0 !important;
+				padding: 20px 32px 50px !important;
+			}
+			.terai-shop-page .site-footer {
+				margin-top: 0 !important;
+			}
+		}
+
+		/* Mobile & Tablet (< 1200px) toggleable */
+		@media (max-width: 1199px) {
+			.terai-shop-page .categories-menu {
+				width: auto;
+			}
+			.terai-shop-page .site-categories {
+				position: absolute;
+				top: 100%;
+				left: 0;
+				width: 270px;
+				background: #ffffff;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+				border: 1px solid #e2e8f0;
+				border-radius: 0 !important;
+				z-index: 1000;
+				display: none;
+			}
+			.terai-shop-page .site-categories.show {
+				display: block;
+			}
+		}
+
+		/* ========================================================
+		   SUB-MENU FLYOUT STYLING (Identical to Home Page Tiny Beautiful List)
+		   ======================================================== */
+		.site-categories > ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			position: static !important;
+		}
+		.site-categories > ul > li {
+			position: static !important; /* Anchors sub-menu to .site-categories top, exact same as home page! */
+		}
+		.site-categories > ul > li + li {
+			border-top: 1px solid #f1f5f9;
+		}
+		.site-categories > ul > li > a {
+			display: flex;
+			align-items: center;
+			padding: 10px 18px;
+			font-size: 13px;
+			font-weight: 500;
+			color: #334155;
+			text-decoration: none;
+			transition: all 0.15s ease;
+			border-radius: 0 !important;
+		}
+		.site-categories > ul > li > a:hover,
+		.site-categories > ul > li.active > a {
+			background: #f8fafc;
+			color: #634c9f;
+			font-weight: 600;
+		}
+		.site-categories > ul > li > a img {
+			width: 16px;
+			height: 16px;
+			object-fit: contain;
+			margin-right: 10px;
+		}
+		.site-categories > ul > li.menu-item-has-children > a::after {
+			content: "\e8ef";
+			font-family: "klbtheme";
+			font-size: 10px;
+			margin-left: auto;
+			color: #94a3b8;
+		}
+		.site-categories > ul > li .sub-menu {
+			position: absolute !important;
+			left: 100% !important;
+			top: 0 !important;
+			width: 250px !important;
+			min-height: 100% !important;
+			height: auto !important;
+			background: #ffffff !important;
+			border: 1px solid #e2e8f0 !important;
+			border-left: 1px solid #f1f5f9 !important;
+			box-shadow: 10px 15px 30px rgba(0, 0, 0, 0.08) !important;
+			padding: 18px 0 !important;
+			margin: 0 !important;
+			list-style: none !important;
+			display: none;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+			transition: opacity 0.12s ease, visibility 0.12s ease;
+			z-index: 99999 !important;
+		}
+		.site-categories > ul > li.menu-item-has-children:hover > .sub-menu {
+			display: block !important;
+			opacity: 1 !important;
+			visibility: visible !important;
+			pointer-events: auto !important;
+		}
+		.site-categories > ul > li .sub-menu li {
+			padding: 0 22px !important;
+			margin: 0 0 4px 0 !important;
+			border: none !important;
+		}
+		.site-categories > ul > li .sub-menu li a {
+			display: block !important;
+			padding: 4px 0 !important;
+			font-size: 13.5px !important;
+			font-weight: 400 !important;
+			color: #1e293b !important;
+			text-decoration: none !important;
+			background: transparent !important;
+			transition: color 0.15s ease !important;
+			border-radius: 0 !important;
+		}
+		.site-categories > ul > li .sub-menu li a:hover {
+			color: #634c9f !important;
+			text-decoration: underline !important;
+			background: transparent !important;
+		}
+
+		/* ========================================================
+		   COMPACT BORDER-TOUCHING PRODUCT GRID (Matching Best Sellers)
+		   ======================================================== */
+		.shop-main-layout {
+			padding: 0 0 50px;
+		}
+
+		/* Sleek Minimal-Height Top Sort Controls */
+		.shop-top-controls {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			margin-bottom: 12px;
+			padding-top: 6px;
+			height: 36px;
+		}
+		.shop-sort-wrapper {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			white-space: nowrap;
+		}
+		.shop-sort-wrapper label {
+			font-size: 12px;
+			color: #64748b;
+			margin-bottom: 0;
+			font-weight: 500;
+			white-space: nowrap;
+		}
+		.compact-sort-select {
+			font-size: 12.5px;
+			font-weight: 500;
+			color: #1e293b;
+			border: 1px solid #e2e8f0;
+			border-radius: 6px;
+			height: 32px;
+			padding: 2px 28px 2px 10px;
+			background: #ffffff;
+			cursor: pointer;
+		}
+
+		/* 4-COLUMN BORDER-TOUCHING PRODUCT GRID (Shared 1px borders) */
+		.shop-products-grid-container {
+			display: flex;
+			flex-wrap: wrap;
+			background: #ffffff;
+			border: 1px solid #e5e7eb;
+			border-radius: 6px;
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+		}
+
+		/* Individual Product Card (Touching borders seamlessly) */
+		.shop-product-card {
+			width: 25%; /* 4 columns on desktop */
+			border-right: 1px solid #e5e7eb;
+			border-bottom: 1px solid #e5e7eb;
+			background: #ffffff;
+			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
+			position: relative;
+			transition: box-shadow 0.2s ease, transform 0.2s ease;
+		}
+		@media (min-width: 1200px) {
+			.shop-product-card:nth-child(4n) {
+				border-right: none;
+			}
+			.shop-product-card:nth-last-child(-n+4) {
+				border-bottom: none;
+			}
+		}
+		@media (min-width: 768px) and (max-width: 1199px) {
+			.shop-product-card {
+				width: 33.333333%;
+			}
+			.shop-product-card:nth-child(3n) {
+				border-right: none;
+			}
+			.shop-product-card:nth-last-child(-n+3) {
+				border-bottom: none;
+			}
+		}
+		@media (max-width: 767px) {
+			.shop-product-card {
+				width: 50%;
+			}
+			.shop-product-card:nth-child(2n) {
+				border-right: none;
+			}
+			.shop-product-card:nth-last-child(-n+2) {
+				border-bottom: none;
+			}
+		}
+
+		.shop-product-card:hover {
+			z-index: 2;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+		}
+
+		/* Inner Card Wrapper & Proportions */
+		.shop-product-card .card-wrapper {
+			padding: 14px 14px 16px;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			box-sizing: border-box;
+		}
+
+		/* Thumbnail: prominent, covering area */
+		.shop-product-card .thumbnail-wrapper {
+			position: relative;
+			height: 175px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #ffffff;
+			margin-bottom: 8px;
+		}
+		.shop-product-card .product-thumbnail {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.shop-product-card .product-thumbnail img {
+			max-height: 155px;
+			max-width: 90%;
+			width: auto;
+			object-fit: contain;
+			transition: transform 0.25s ease;
+		}
+		.shop-product-card:hover .product-thumbnail img {
+			transform: scale(1.04);
+		}
+
+		/* Badges: Red pill discount in top-left */
+		.shop-product-card .badge-discount {
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			background: #e02424;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 700;
+			padding: 2px 7px;
+			border-radius: 6px;
+			z-index: 2;
+			line-height: 1.25;
+		}
+
+		/* Top-right actions: Wishlist & Quickview */
+		.shop-product-card .action-icons {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+			z-index: 2;
+		}
+		.shop-product-card .action-icon-link {
+			color: #0f172a;
+			font-size: 16px;
+			text-decoration: none;
+			line-height: 1;
+			transition: color 0.15s ease;
+		}
+		.shop-product-card .action-icon-link.eye-link {
+			color: #94a3b8;
+			font-size: 15px;
+		}
+		.shop-product-card .action-icon-link:hover {
+			color: #634c9f;
+		}
+
+		/* Content Description Area: Shorter than image */
+		.shop-product-card .content-area {
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+		}
+
+		/* Sub-badge: COLD SALE or ORGANIC */
+		.shop-product-card .tag-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 10px;
+			font-weight: 700;
+			text-transform: uppercase;
+			padding: 2px 6px;
+			border-radius: 4px;
+			margin-bottom: 5px;
+			width: fit-content;
+			line-height: 1.3;
+		}
+		.shop-product-card .tag-badge.cold-sale {
+			background: #e0f2fe;
+			color: #0284c7;
+		}
+		.shop-product-card .tag-badge.organic {
+			background: #dcfce7;
+			color: #16a34a;
+		}
+		.shop-product-card .tag-badge.pure {
+			background: #fef3c7;
+			color: #b45309;
+		}
+		.shop-product-card .tag-badge.himalayan {
+			background: #f3e8ff;
+			color: #7e22ce;
+		}
+
+		/* Product Title: NOT bold, little thin (500), bright & easy to read */
+		.shop-product-card .product-title {
+			font-size: 13.5px;
+			font-weight: 500;
+			line-height: 1.35;
+			color: #1e293b;
+			margin: 0 0 5px;
+			height: 36px;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		.shop-product-card .product-title a {
+			color: #1e293b;
+			text-decoration: none;
+			transition: color 0.15s ease;
+		}
+		.shop-product-card .product-title a:hover {
+			color: #634c9f;
+		}
+
+		/* Star Rating + Count */
+		.shop-product-card .rating-row {
+			display: flex;
+			align-items: center;
+			gap: 3px;
+			margin-bottom: 6px;
+		}
+		.shop-product-card .star-rating {
+			font-size: 11px;
+			color: #f59e0b;
+			letter-spacing: -1px;
+		}
+		.shop-product-card .review-count {
+			font-size: 11.5px;
+			color: #64748b;
+			margin-left: 4px;
+		}
+
+		/* Price Row: Bold Red & Strikethrough */
+		.shop-product-card .price-row {
+			display: flex;
+			align-items: baseline;
+			gap: 6px;
+			margin-top: auto;
+			margin-bottom: 10px;
+		}
+		.shop-product-card .sale-price {
+			font-size: 16.5px;
+			font-weight: 700;
+			color: #dc2626;
+		}
+		.shop-product-card .regular-price {
+			font-size: 12.5px;
+			color: #64748b;
+			text-decoration: line-through;
+		}
+		.shop-product-card .range-price {
+			font-size: 15.5px;
+			font-weight: 700;
+			color: #0f172a;
+		}
+
+		/* Add to Cart Pill Button (Matching user reference) */
+		.shop-product-card .btn-cart-pill {
+			border: 1px solid #634c9f;
+			border-radius: 999px;
+			height: 34px;
+			padding: 0 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			color: #634c9f;
+			font-weight: 500;
+			font-size: 13px;
+			text-decoration: none;
+			width: 100%;
+			background: transparent;
+			transition: all 0.2s ease;
+		}
+		.shop-product-card .btn-cart-pill .plus-symbol {
+			font-size: 16px;
+			font-weight: 400;
+			line-height: 1;
+		}
+		.shop-product-card .btn-cart-pill:hover {
+			background: #634c9f;
+			color: #ffffff;
+		}
+
+		/* End of collection divider */
+		.shop-end-divider {
+			text-align: center;
+			margin: 20px 0 10px;
+			font-size: 11.5px;
+			color: #94a3b8;
+			font-weight: 600;
+		}
+	</style>
+
+	<style>
+		/* ========================================================
+		   PRODUCT DETAIL PAGE (PDP) - DARAZ / TERAI FOOD STYLING
+		   ======================================================== */
+		.pdp-container {
+			flex: 1 !important;
+			min-width: 0 !important;
+			padding: 16px 28px 60px !important;
+			background-color: #f8fafc;
+		}
+
+		/* Breadcrumb */
+		.pdp-breadcrumb-wrapper {
+			margin-bottom: 14px;
+		}
+		.pdp-breadcrumb {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 6px;
+			font-size: 12.5px;
+			color: #64748b;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.pdp-breadcrumb a {
+			color: #3b82f6;
+			text-decoration: none;
+			transition: color 0.15s ease;
+		}
+		.pdp-breadcrumb a:hover {
+			color: #1d4ed8;
+			text-decoration: underline;
+		}
+		.pdp-breadcrumb .sep {
+			color: #94a3b8;
+			font-size: 11px;
+		}
+		.pdp-breadcrumb .current {
+			color: #1e293b;
+			font-weight: 500;
+			max-width: none;
+		}
+
+		/* Main Product Card */
+		.pdp-main-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 4px;
+			padding: 20px 22px;
+			margin-bottom: 18px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+		}
+		.pdp-main-row {
+			display: flex;
+			gap: 22px;
+		}
+
+		/* Column 1: Image Gallery (340px) */
+		.pdp-gallery-col {
+			width: 340px;
+			flex: 0 0 340px;
+		}
+		.pdp-main-img-box {
+			width: 100%;
+			height: 340px;
+			border: 1px solid #f1f5f9;
+			border-radius: 4px;
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #ffffff;
+			overflow: hidden;
+			margin-bottom: 12px;
+		}
+		.pdp-main-img-box img {
+			max-width: 92%;
+			max-height: 92%;
+			object-fit: contain;
+			transition: transform 0.25s ease;
+		}
+		.pdp-main-img-box:hover img {
+			transform: scale(1.04);
+		}
+		.pdp-badge-flash {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			background: #dc2626;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 800;
+			padding: 3px 8px;
+			border-radius: 3px;
+			letter-spacing: 0.5px;
+			z-index: 2;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+
+		/* Thumbnails */
+		.pdp-thumbs-wrapper {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.pdp-thumb-arrow {
+			width: 24px;
+			height: 52px;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			border-radius: 3px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			color: #64748b;
+			font-size: 12px;
+			transition: all 0.15s ease;
+		}
+		.pdp-thumb-arrow:hover {
+			background: #ede9fe;
+			color: #634c9f;
+		}
+		.pdp-thumbs-list {
+			display: flex;
+			gap: 8px;
+			overflow-x: auto;
+			scrollbar-width: none;
+			flex: 1;
+		}
+		.pdp-thumbs-list::-webkit-scrollbar {
+			display: none;
+		}
+		.pdp-thumb-item {
+			width: 54px;
+			height: 54px;
+			border: 1.5px solid #e2e8f0;
+			border-radius: 3px;
+			padding: 2px;
+			cursor: pointer;
+			background: #ffffff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			transition: border-color 0.15s ease;
+			flex: 0 0 54px;
+		}
+		.pdp-thumb-item img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+		.pdp-thumb-item.active {
+			border-color: #634c9f;
+			box-shadow: 0 0 0 1px #634c9f;
+		}
+		.pdp-thumb-video-icon {
+			position: absolute;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.45);
+			border-radius: 2px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #ffffff;
+			font-size: 13px;
+		}
+
+		/* Column 2: Product Info (Middle) */
+		.pdp-info-col {
+			flex: 1;
+			min-width: 0;
+			padding: 0 12px;
+		}
+		.pdp-flash-strip {
+			background: linear-gradient(90deg, #fef2f2 0%, #fff7ed 100%);
+			border: 1px solid #fecaca;
+			border-radius: 4px;
+			padding: 8px 14px;
+			margin-bottom: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+		.pdp-flash-title {
+			color: #dc2626;
+			font-weight: 800;
+			font-size: 13px;
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			text-transform: uppercase;
+		}
+		.pdp-flash-timer {
+			font-size: 12px;
+			color: #475569;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.pdp-flash-timer strong {
+			color: #0f172a;
+			font-weight: 700;
+		}
+		.pdp-product-title {
+			font-size: 19px;
+			font-weight: 600;
+			color: #0f172a;
+			line-height: 1.38;
+			margin-bottom: 10px;
+		}
+		.pdp-meta-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #f1f5f9;
+			padding-bottom: 12px;
+			margin-bottom: 12px;
+		}
+		.pdp-meta-left {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 8px;
+			font-size: 12.5px;
+		}
+		.pdp-gold-stars {
+			color: #f59e0b;
+			letter-spacing: 1px;
+			font-size: 14px;
+		}
+		.pdp-meta-link {
+			color: #3b82f6;
+			text-decoration: none;
+		}
+		.pdp-meta-link:hover {
+			text-decoration: underline;
+		}
+		.pdp-meta-actions {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.pdp-icon-btn {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			border: 1px solid #e2e8f0;
+			background: #ffffff;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			color: #64748b;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.pdp-icon-btn:hover {
+			color: #dc2626;
+			border-color: #dc2626;
+			background: #fef2f2;
+		}
+		.pdp-brand-row {
+			font-size: 12.5px;
+			color: #64748b;
+			margin-bottom: 14px;
+		}
+		.pdp-brand-row a {
+			color: #3b82f6;
+			text-decoration: none;
+			font-weight: 500;
+		}
+		.pdp-brand-row a:hover {
+			text-decoration: underline;
+		}
+
+		/* Price Box */
+		.pdp-price-box {
+			background: #f8fafc;
+			border-radius: 4px;
+			padding: 12px 18px;
+			margin-bottom: 16px;
+		}
+		.pdp-main-price {
+			font-size: 26px;
+			font-weight: 700;
+			color: #634c9f;
+			line-height: 1;
+			margin-bottom: 6px;
+		}
+		.pdp-strike-price {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+		}
+		.pdp-strike-price del {
+			color: #94a3b8;
+		}
+		.pdp-discount-pill {
+			background: #fee2e2;
+			color: #dc2626;
+			font-weight: 700;
+			font-size: 11.5px;
+			padding: 1px 6px;
+			border-radius: 3px;
+		}
+
+		/* Promotions */
+		.pdp-promo-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 16px;
+			font-size: 12.5px;
+		}
+		.pdp-promo-label {
+			color: #64748b;
+			width: 80px;
+		}
+		.pdp-promo-badge {
+			background: #fff7ed;
+			border: 1px solid #fed7aa;
+			color: #ea580c;
+			font-weight: 600;
+			font-size: 12px;
+			padding: 3px 10px;
+			border-radius: 3px;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			cursor: pointer;
+		}
+
+		/* Quantity */
+		.pdp-qty-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 22px;
+			font-size: 13px;
+		}
+		.pdp-qty-label {
+			color: #64748b;
+			width: 80px;
+		}
+		.pdp-stepper {
+			display: inline-flex;
+			align-items: center;
+			border: 1px solid #cbd5e1;
+			border-radius: 3px;
+			overflow: hidden;
+			background: #ffffff;
+		}
+		.pdp-stepper button {
+			width: 32px;
+			height: 32px;
+			border: none;
+			background: #f1f5f9;
+			color: #334155;
+			font-size: 16px;
+			font-weight: 600;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: background 0.15s ease;
+		}
+		.pdp-stepper button:hover {
+			background: #e2e8f0;
+		}
+		.pdp-stepper input {
+			width: 44px;
+			height: 32px;
+			border: none;
+			border-left: 1px solid #cbd5e1;
+			border-right: 1px solid #cbd5e1;
+			text-align: center;
+			font-weight: 600;
+			font-size: 14px;
+			color: #0f172a;
+			outline: none;
+		}
+		.pdp-stock-text {
+			color: #d97706;
+			font-size: 12px;
+			font-weight: 500;
+		}
+
+		/* Buttons */
+		.pdp-actions-row {
+			display: flex;
+			gap: 12px;
+		}
+		.pdp-btn-buynow {
+			flex: 1;
+			height: 44px;
+			line-height: 44px;
+			background: #2bbeba;
+			color: #ffffff;
+			border: none;
+			border-radius: 4px;
+			font-weight: 700;
+			font-size: 14px;
+			cursor: pointer;
+			text-align: center;
+			white-space: nowrap;
+			transition: background 0.15s ease, transform 0.1s ease;
+		}
+		.pdp-btn-buynow:hover {
+			background: #239e9a;
+		}
+		.pdp-btn-addcart {
+			flex: 1;
+			height: 44px;
+			line-height: 44px;
+			background: #634c9f;
+			color: #ffffff;
+			border: none;
+			border-radius: 4px;
+			font-weight: 700;
+			font-size: 14px;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			white-space: nowrap;
+			padding: 0 12px;
+			transition: background 0.15s ease, transform 0.1s ease;
+		}
+		.pdp-btn-addcart:hover {
+			background: #de4c05;
+		}
+
+		/* Column 3: Delivery & Seller Info (310px) */
+		.pdp-delivery-col {
+			width: 310px;
+			flex: 0 0 310px;
+			border-left: 1px solid #f1f5f9;
+			padding-left: 20px;
+		}
+		.pdp-box-header {
+			font-size: 12px;
+			font-weight: 700;
+			text-transform: uppercase;
+			color: #94a3b8;
+			letter-spacing: 0.5px;
+			margin-bottom: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.pdp-delivery-item {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 12px;
+			font-size: 12.5px;
+		}
+		.pdp-delivery-item i {
+			color: #64748b;
+			font-size: 15px;
+			margin-top: 2px;
+		}
+		.pdp-delivery-details {
+			flex: 1;
+		}
+		.pdp-delivery-details .title {
+			color: #0f172a;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.pdp-delivery-details .change-link {
+			color: #3b82f6;
+			font-size: 11.5px;
+			font-weight: 600;
+			text-decoration: none;
+		}
+		.pdp-delivery-details .sub {
+			color: #64748b;
+			font-size: 11.5px;
+			margin-top: 2px;
+		}
+		.pdp-delivery-details .price {
+			color: #0f172a;
+			font-weight: 700;
+		}
+		.pdp-divider {
+			height: 1px;
+			background: #f1f5f9;
+			margin: 14px 0;
+		}
+
+		/* QR Box */
+		.pdp-qr-card {
+			background: #f8fafc;
+			border: 1px dashed #cbd5e1;
+			border-radius: 4px;
+			padding: 10px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-bottom: 16px;
+		}
+		.pdp-qr-code {
+			width: 48px;
+			height: 48px;
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			padding: 2px;
+			border-radius: 3px;
+		}
+		.pdp-qr-code img {
+			width: 100%;
+			height: 100%;
+		}
+		.pdp-qr-text {
+			font-size: 11px;
+			color: #64748b;
+			line-height: 1.35;
+		}
+		.pdp-qr-text strong {
+			color: #0f172a;
+			display: block;
+			font-size: 11.5px;
+		}
+
+		/* Seller Box */
+		.pdp-seller-card {
+			background: #fafafa;
+			border: 1px solid #f1f5f9;
+			border-radius: 4px;
+			padding: 12px;
+		}
+		.pdp-seller-title {
+			font-size: 11.5px;
+			color: #94a3b8;
+			text-transform: uppercase;
+			font-weight: 600;
+			margin-bottom: 4px;
+		}
+		.pdp-seller-name {
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-bottom: 10px;
+		}
+		.pdp-seller-stats {
+			display: flex;
+			text-align: center;
+			border-top: 1px solid #e2e8f0;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 8px 0;
+			margin-bottom: 10px;
+		}
+		.pdp-seller-stat-col {
+			flex: 1;
+			border-right: 1px solid #f1f5f9;
+		}
+		.pdp-seller-stat-col:last-child {
+			border-right: none;
+		}
+		.pdp-stat-label {
+			font-size: 10px;
+			color: #64748b;
+			text-transform: uppercase;
+			line-height: 1.2;
+		}
+		.pdp-stat-value {
+			font-size: 15px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-top: 2px;
+		}
+		.pdp-btn-visit-store {
+			width: 100%;
+			height: 32px;
+			border: 1px solid #3b82f6;
+			background: #ffffff;
+			color: #3b82f6;
+			font-size: 12px;
+			font-weight: 700;
+			border-radius: 3px;
+			cursor: pointer;
+			text-transform: uppercase;
+			transition: all 0.15s ease;
+		}
+		.pdp-btn-visit-store:hover {
+			background: #3b82f6;
+			color: #ffffff;
+		}
+
+		/* Description, Reviews, Q&A Sections */
+		.pdp-section-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 4px;
+			padding: 22px 24px;
+			margin-bottom: 18px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+		}
+		.pdp-section-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-bottom: 16px;
+			border-bottom: 1px solid #f1f5f9;
+			padding-bottom: 10px;
+		}
+
+		/* Notice Strip */
+		.pdp-notice-banner {
+			background: #fffbeb;
+			border: 1px solid #fde68a;
+			border-radius: 4px;
+			padding: 10px 14px;
+			font-size: 12px;
+			color: #92400e;
+			line-height: 1.45;
+			margin-bottom: 16px;
+			display: flex;
+			gap: 8px;
+		}
+
+		/* Specs List */
+		.pdp-specs-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 8px 24px;
+			margin-bottom: 20px;
+			font-size: 13px;
+			color: #334155;
+		}
+		.pdp-spec-item {
+			display: flex;
+			align-items: baseline;
+			gap: 6px;
+		}
+		.pdp-spec-bullet {
+			color: #634c9f;
+			font-weight: bold;
+		}
+		.pdp-spec-label {
+			font-weight: 600;
+			color: #0f172a;
+		}
+
+		/* Narrative */
+		.pdp-narrative {
+			font-size: 13.5px;
+			line-height: 1.65;
+			color: #334155;
+			margin-bottom: 20px;
+		}
+		.pdp-narrative p {
+			margin-bottom: 12px;
+		}
+		.pdp-feature-banner {
+			width: 100%;
+			max-height: 280px;
+			border-radius: 4px;
+			overflow: hidden;
+			margin: 16px 0;
+			border: 1px solid #f1f5f9;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #f8fafc;
+		}
+		.pdp-feature-banner img {
+			width: 100%;
+			height: 260px;
+			object-fit: cover;
+		}
+		.pdp-viewmore-btn {
+			display: block;
+			margin: 16px auto 0;
+			padding: 6px 20px;
+			border: 1px solid #3b82f6;
+			background: #ffffff;
+			color: #3b82f6;
+			border-radius: 3px;
+			font-size: 12px;
+			font-weight: 700;
+			cursor: pointer;
+			text-transform: uppercase;
+		}
+		.pdp-viewmore-btn:hover {
+			background: #eff6ff;
+		}
+
+		/* Ratings & Reviews */
+		.pdp-ratings-overview {
+			display: flex;
+			gap: 32px;
+			align-items: center;
+			padding-bottom: 20px;
+			border-bottom: 1px solid #f1f5f9;
+			margin-bottom: 20px;
+		}
+		.pdp-score-block {
+			text-align: center;
+			min-width: 140px;
+		}
+		.pdp-big-score {
+			font-size: 38px;
+			font-weight: 800;
+			color: #0f172a;
+			line-height: 1;
+		}
+		.pdp-score-scale {
+			font-size: 18px;
+			color: #94a3b8;
+			font-weight: 400;
+		}
+		.pdp-bars-block {
+			flex: 1;
+			max-width: 440px;
+		}
+		.pdp-bar-row {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+			color: #64748b;
+			margin-bottom: 4px;
+		}
+		.pdp-bar-stars {
+			width: 65px;
+			color: #f59e0b;
+			letter-spacing: 0.5px;
+			font-size: 11px;
+		}
+		.pdp-bar-track {
+			flex: 1;
+			height: 8px;
+			background: #f1f5f9;
+			border-radius: 4px;
+			overflow: hidden;
+		}
+		.pdp-bar-fill {
+			height: 100%;
+			background: #f59e0b;
+			border-radius: 4px;
+		}
+		.pdp-bar-count {
+			width: 30px;
+			text-align: right;
+			color: #64748b;
+			font-size: 11.5px;
+		}
+
+		/* Reviews Controls */
+		.pdp-reviews-controls {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 16px;
+			font-size: 12.5px;
+		}
+		.pdp-review-item {
+			padding: 16px 0;
+			border-bottom: 1px solid #f1f5f9;
+		}
+		.pdp-review-item:last-child {
+			border-bottom: none;
+		}
+		.pdp-review-stars {
+			color: #f59e0b;
+			font-size: 13px;
+			margin-bottom: 4px;
+		}
+		.pdp-review-author {
+			font-size: 12px;
+			color: #64748b;
+			margin-bottom: 6px;
+		}
+		.pdp-review-author strong {
+			color: #0f172a;
+		}
+		.pdp-verified-badge {
+			color: #16a34a;
+			font-size: 11px;
+			margin-left: 6px;
+		}
+		.pdp-review-content {
+			font-size: 13px;
+			color: #334155;
+			line-height: 1.45;
+			margin-bottom: 10px;
+		}
+		.pdp-review-photos {
+			display: flex;
+			gap: 8px;
+			margin-bottom: 8px;
+		}
+		.pdp-review-photo {
+			width: 60px;
+			height: 60px;
+			border: 1px solid #e2e8f0;
+			border-radius: 3px;
+			overflow: hidden;
+			cursor: pointer;
+		}
+		.pdp-review-photo img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.pdp-review-helpful {
+			font-size: 11.5px;
+			color: #94a3b8;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			cursor: pointer;
+		}
+		.pdp-review-helpful:hover {
+			color: #64748b;
+		}
+
+		/* Pagination */
+		.pdp-pagination {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			gap: 4px;
+			margin-top: 16px;
+		}
+		.pdp-page-btn {
+			min-width: 28px;
+			height: 28px;
+			border: 1px solid #e2e8f0;
+			background: #ffffff;
+			color: #475569;
+			font-size: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 3px;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.pdp-page-btn.active {
+			background: #634c9f;
+			color: #ffffff;
+			border-color: #634c9f;
+		}
+		.pdp-page-btn:hover:not(.active) {
+			background: #f1f5f9;
+		}
+
+		/* Q&A Section */
+		.pdp-qa-box {
+			text-align: center;
+			padding: 30px 20px;
+			color: #64748b;
+			font-size: 13px;
+		}
+		.pdp-qa-icon {
+			font-size: 32px;
+			color: #cbd5e1;
+			margin-bottom: 8px;
+		}
+
+		/* Related Products 4-Col Grid (Matching shop cards) */
+		.pdp-related-grid {
+			display: flex;
+			flex-wrap: wrap;
+			border: 1px solid #e5e7eb;
+			border-radius: 6px;
+			overflow: hidden;
+			background: #ffffff;
+		}
+		.pdp-related-grid .shop-product-card {
+			width: 25%;
+			box-sizing: border-box;
+			border-right: 1px solid #e5e7eb;
+			border-bottom: none;
+			padding: 12px 14px;
+			position: relative;
+			display: flex;
+			flex-direction: column;
+		}
+		.pdp-related-grid .shop-product-card:last-child {
+			border-right: none;
+		}
+
+		/* Responsive PDP adjustments */
+		@media (max-width: 1200px) {
+			.pdp-main-row {
+				flex-wrap: wrap;
+			}
+			.pdp-delivery-col {
+				width: 100%;
+				flex: 0 0 100%;
+				border-left: none;
+				border-top: 1px solid #f1f5f9;
+				padding-left: 0;
+				padding-top: 20px;
+				margin-top: 20px;
+			}
+			.pdp-specs-grid {
+				grid-template-columns: 1fr;
+			}
+			.pdp-related-grid .shop-product-card {
+				width: 50%;
+				border-bottom: 1px solid #e5e7eb;
+			}
+		}
+		@media (max-width: 768px) {
+			.pdp-gallery-col {
+				width: 100%;
+				flex: 0 0 100%;
+			}
+			.pdp-main-img-box {
+				height: 280px;
+			}
+			.pdp-related-grid .shop-product-card {
+				width: 100%;
+				border-right: none;
+			}
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-shop-page">
+
+	<div id="page" class="site">
+		<!-- Site Header (Identical to index.html with Both Nav Rows & Categories Dropdown) -->
+		<header id="masthead" class="site-header position-relative border-bottom border-gray-200 z-3 header-type1" role="banner">
+			<!-- Header Row 1: Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="shop-header-search-form">
+									<input class="form-control search-input filled" type="search" name="s" id="shop-header-search-input" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Header Row 2: Second Nav with All Categories Dropdown + Primary Menu (Flush Left, Sticky) -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1 border-top">
+				<div class="container-fluid ps-0 pe-4 pe-xl-5">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+
+							<!-- Header All Categories Button (Square, NO curved radius, flush to left edge) -->
+							<div class="categories-menu">
+								<a href="#" class="categories-toggle" id="shop-categories-toggle-btn">
+									<i class="klb-icon-layout-grid me-2"></i>All Categories
+								</a>
+							</div>
+
+							<!-- Primary Menu with Updated Nav Items -->
+							<nav class="site-menu horizontal menu-shadow primary-menu ms-4">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item current-menu-item"><a href="{% url 'web:shop' %}" id="nav-shop-btn">Shops</a></li>
+									<li class="menu-item"><a href="{% url 'web:blogs' %}" id="nav-blog-btn">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:contact' %}" id="nav-contact-btn">Supports</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}" id="nav-track-order-btn"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" id="nav-bulk-order-btn" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- ========================================================
+		     MAIN SHOP LAYOUT: Desktop Extended Categories + 4-Column Flash Sale Grid
+		     ======================================================== -->
+		<main id="main" class="site-primary shop-main-layout">
+			<div class="container-fluid ps-0 pe-4 pe-xl-5 shop-main-container">
+				<div class="shop-main-row">
+
+					<!-- Left Column: Sticky, Flush Left (0 Space), No Radius, Touching Footer -->
+					
+<div class="d-none d-xl-flex shop-category-anchor-col">
+						<nav class="site-categories show shop-sidebar-categories" id="shop-site-categories-menu">
+							<ul id="category-menu" class="menu">
+								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="fruits-veg"><img src="{% static 'web/' %}images/apple.svg" alt="" class="me-2">Fruits &amp; Vegetables</a>
+									<ul class="sub-menu">
+										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Cuts &amp; Sprouts</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Exotic Fruits &amp; Veggies</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Fresh Fruits</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Fresh Vegetables</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Herbs &amp; Seasonings</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="fruits-veg">Packaged Produce</a></li>
+									</ul>
+								</li>
+								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="meats"><img src="{% static 'web/' %}images/meat.svg" alt="" class="me-2">Meats &amp; Seafood</a>
+									<ul class="sub-menu">
+										<li><a href="#" class="cat-nav-link" data-category="meats">Beef Products</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="meats">Chicken &amp; Turkey</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="meats">Fish Varieties</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="meats">Grass-Fed Lamb</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="meats">Himalayan River Trout</a></li>
+									</ul>
+								</li>
+								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="breakfast"><img src="{% static 'web/' %}images/boiled-egg.svg" alt="" class="me-2">Breakfasts &amp; Dairy</a>
+									<ul class="sub-menu">
+										<li><a href="#" class="cat-nav-link" data-category="breakfast">Butter &amp; Ghee</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="breakfast">Cheese Varieties</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="breakfast">Condensed Milk</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="breakfast">Free-Range Eggs</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="breakfast">Organic Honey</a></li>
+									</ul>
+								</li>
+								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="bakery"><img src="{% static 'web/' %}images/toast-bread.svg" alt="" class="me-2">Breads &amp; Bakery</a>
+									<ul class="sub-menu">
+										<li><a href="#" class="cat-nav-link" data-category="bakery">Artisan Sourdough</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="bakery">Buns &amp; Rolls</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="bakery">Stoneground Atta</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="bakery">Flatbreads &amp; Rotis</a></li>
+									</ul>
+								</li>
+								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="beverages"><img src="{% static 'web/' %}images/cup.svg" alt="" class="me-2">Beverages</a>
+									<ul class="sub-menu">
+										<li><a href="#" class="cat-nav-link" data-category="beverages">Himalayan Green Tea</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="beverages">Cold-Pressed Juices</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="beverages">Plant-Based Milk</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="beverages">Artisan Coffee</a></li>
+									</ul>
+								</li>
+								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="frozen"><img src="{% static 'web/' %}images/snowflake.svg" alt="" class="me-2">Frozen Foods</a>
+									<ul class="sub-menu">
+										<li><a href="#" class="cat-nav-link" data-category="frozen">Frozen Veggies</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="frozen">Himalayan Momos</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="frozen">Frozen Entrees</a></li>
+									</ul>
+								</li>
+								<li class="menu-item menu-item-has-children"><a href="#" class="cat-nav-link" data-category="snacks"><img src="{% static 'web/' %}images/bar.svg" alt="" class="me-2">Biscuits &amp; Snacks</a>
+									<ul class="sub-menu">
+										<li><a href="#" class="cat-nav-link" data-category="snacks">Chips &amp; Pretzels</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="snacks">Crackers &amp; Biscuits</a></li>
+										<li><a href="#" class="cat-nav-link" data-category="snacks">Roasted Himalayan Nuts</a></li>
+									</ul>
+								</li>
+								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="grocery"><img src="{% static 'web/' %}images/wheat.svg" alt="" class="me-2">Grocery &amp; Staples</a></li>
+								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="household"><img src="{% static 'web/' %}images/scoop.svg" alt="" class="me-2">Household Needs</a></li>
+								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="healthcare"><img src="{% static 'web/' %}images/toilet-paper.svg" alt="" class="me-2">Healthcare</a></li>
+								<li class="menu-item"><a href="#" class="cat-nav-link" data-category="baby"><img src="{% static 'web/' %}images/baby-boy.svg" alt="" class="me-2">Baby &amp; Pregnancy</a></li>
+							</ul>
+						</nav>
+
+						<!-- Fill Section Touching Footer (No curved radius) -->
+						<div class="shop-sidebar-footer-fill mt-auto pt-3 pb-3 px-3 border-top" style="background:#ffffff; border-radius:0 !important;">
+							<div class="d-flex align-items-center gap-2 mb-3">
+								<i class="klb-icon-phone text-primary fs-5"></i>
+								<div>
+									<div class="fw-bold text-dark text-12">Support Helpline</div>
+									<div class="text-gray-500 text-11">+44 20 7946 0912</div>
+								</div>
+							</div>
+							<a href="{% url 'web:bulk-order' %}" class="btn btn-outline-primary btn-sm w-100 py-1" style="font-size: 11.5px; font-weight: 700; border-radius: 0 !important;">Wholesale Bulk PO &raquo;</a>
+						</div>
+					</div>
+
+					<!-- Right Main Storefront: 4-Column Flash Sale Product Cards -->
+					
+
+					<!-- Right Content Area: Product Detail Page with Breadcrumb (Daraz / Terai Style) -->
+					<div class="pdp-container">
+
+						<!-- 1. Breadcrumb -->
+						<div class="pdp-breadcrumb-wrapper">
+							<ul class="pdp-breadcrumb">
+								<li><a href="{% url 'web:home' %}">Home</a></li>
+								<li class="sep">&gt;</li>
+								<li><a href="{% url 'web:shop' %}">Groceries</a></li>
+								<li class="sep">&gt;</li>
+								<li><a href="{% url 'web:shop' %}">Cooking &amp; Baking Ingredients</a></li>
+								<li class="sep">&gt;</li>
+								<li><a href="{% url 'web:shop' %}">Condiment Dressing</a></li>
+								<li class="sep">&gt;</li>
+								<li><a href="{% url 'web:shop' %}">Chilli Sauce</a></li>
+								<li class="sep">&gt;</li>
+								<li class="current">LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm | Chinese Achar | Chilli Oil | Chicken Achar</li>
+							</ul>
+						</div>
+
+						<!-- 2. Main Product Showcase Card (3-Column Daraz PDP) -->
+						<div class="pdp-main-card">
+							<div class="pdp-main-row">
+
+								<!-- Column 1: Gallery -->
+								<div class="pdp-gallery-col">
+									<div class="pdp-main-img-box">
+										<span class="pdp-badge-flash"><i class="klb-icon-zap"></i> FLASH SALE</span>
+										<img src="{% static 'web/' %}images/laoganma-chicken-main.jpg" alt="LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm" id="pdp-active-image">
+									</div>
+
+									<div class="pdp-thumbs-wrapper">
+										<button class="pdp-thumb-arrow" id="pdp-thumb-prev" title="Previous">&lt;</button>
+										<div class="pdp-thumbs-list" id="pdp-thumbs-list">
+											<div class="pdp-thumb-item active" data-img="{% static 'web/' %}images/laoganma-chicken-main.jpg">
+												<img src="{% static 'web/' %}images/laoganma-chicken-main.jpg" alt="Jar Front">
+											</div>
+											<div class="pdp-thumb-item" data-img="{% static 'web/' %}images/1-105-500x500.jpg">
+												<div class="pdp-thumb-video-icon">&#9658;</div>
+												<img src="{% static 'web/' %}images/1-105-500x500.jpg" alt="Video Preview">
+											</div>
+											<div class="pdp-thumb-item" data-img="{% static 'web/' %}images/1-30-500x500.jpg">
+												<img src="{% static 'web/' %}images/1-30-500x500.jpg" alt="Side Ingredients">
+											</div>
+											<div class="pdp-thumb-item" data-img="{% static 'web/' %}images/1-109-500x500.jpg">
+												<img src="{% static 'web/' %}images/1-109-500x500.jpg" alt="Serving Spoon">
+											</div>
+											<div class="pdp-thumb-item" data-img="{% static 'web/' %}images/1-12-500x500.jpg">
+												<img src="{% static 'web/' %}images/1-12-500x500.jpg" alt="Recipe Bowl">
+											</div>
+										</div>
+										<button class="pdp-thumb-arrow" id="pdp-thumb-next" title="Next">&gt;</button>
+									</div>
+								</div>
+
+								<!-- Column 2: Product Purchase Details -->
+								<div class="pdp-info-col">
+
+									<!-- Flash Sale Strip -->
+									<div class="pdp-flash-strip">
+										<span class="pdp-flash-title"><i class="klb-icon-zap"></i> FLASH SALE</span>
+										<div class="pdp-flash-timer">
+											<span>Ends in:</span>
+											<strong id="pdp-countdown-timer">02d 14h 32m 45s</strong>
+											<span class="text-muted ms-2">| 24 sold / 38 left</span>
+										</div>
+									</div>
+
+									<h1 class="pdp-product-title">LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm | Chinese Achar | Chilli Oil | Chicken Achar</h1>
+
+									<!-- Ratings & Social Meta -->
+									<div class="pdp-meta-row">
+										<div class="pdp-meta-left">
+											<span class="pdp-gold-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+											<a href="#reviews-section" class="pdp-meta-link">198 Ratings</a>
+											<span class="text-muted">|</span>
+											<a href="#qa-section" class="pdp-meta-link">42 Answered Questions</a>
+										</div>
+										<div class="pdp-meta-actions">
+											<button class="pdp-icon-btn" title="Share with friends" id="pdp-btn-share"><i class="klb-icon-share"></i></button>
+											<button class="pdp-icon-btn" title="Add to Wishlist" id="pdp-btn-wishlist"><i class="klb-icon-heart"></i></button>
+										</div>
+									</div>
+
+									<div class="pdp-brand-row">
+										Brand: <a href="{% url 'web:shop' %}">Lao Gan Ma</a>
+										<span class="text-muted mx-2">|</span>
+										<a href="{% url 'web:shop' %}">More Condiments &amp; Spices from Lao Gan Ma</a>
+									</div>
+
+									<!-- Price Box -->
+									<div class="pdp-price-box">
+										<div class="pdp-main-price">Rs. 419 <span style="font-size: 18px; font-weight: 500; color: #475569;">(&pound;4.19)</span></div>
+										<div class="pdp-strike-price">
+											<del>Rs. 550 (&pound;5.50)</del>
+											<span class="pdp-discount-pill">-24%</span>
+										</div>
+									</div>
+
+									<!-- Promotions -->
+									<div class="pdp-promo-row">
+										<span class="pdp-promo-label">Promotions</span>
+										<span class="pdp-promo-badge">Min. spend &pound;25, 10% OFF &gt;</span>
+										<span class="pdp-promo-badge">Buy 2 Get &pound;1 OFF &gt;</span>
+									</div>
+
+									<!-- Quantity Stepper -->
+									<div class="pdp-qty-row">
+										<span class="pdp-qty-label">Quantity</span>
+										<div class="pdp-stepper">
+											<button id="pdp-qty-minus">-</button>
+											<input type="text" id="pdp-qty-input" value="1" readonly>
+											<button id="pdp-qty-plus">+</button>
+										</div>
+										<span class="pdp-stock-text">Only 14 items left, buy fast!</span>
+									</div>
+
+									<!-- Action CTA Buttons -->
+									<div class="pdp-actions-row">
+										<button class="pdp-btn-buynow" id="pdp-btn-buy">Buy Now</button>
+										<button class="pdp-btn-addcart" id="pdp-btn-cart"><i class="klb-icon-shopping-cart"></i> Add to Cart</button>
+									</div>
+
+								</div>
+
+								<!-- Column 3: Delivery Options & Seller Profile -->
+								<div class="pdp-delivery-col">
+
+									<div class="pdp-box-header">
+										<span>Delivery Options</span>
+										<i class="klb-icon-info-circle text-muted"></i>
+									</div>
+
+									<!-- Location -->
+									<div class="pdp-delivery-item">
+										<i class="klb-icon-map-pin"></i>
+										<div class="pdp-delivery-details">
+											<div class="title">
+												<span>London, Greater London (SW1A)</span>
+												<a href="#" class="change-link">CHANGE</a>
+											</div>
+										</div>
+									</div>
+
+									<!-- Standard Delivery -->
+									<div class="pdp-delivery-item">
+										<i class="klb-icon-truck"></i>
+										<div class="pdp-delivery-details">
+											<div class="title">
+												<span>Standard Delivery</span>
+												<span class="price">&pound;2.49</span>
+											</div>
+											<div class="sub">Guaranteed within 24&ndash;48 hrs &bull; Free over &pound;40</div>
+										</div>
+									</div>
+
+									<!-- Cash / Card -->
+									<div class="pdp-delivery-item">
+										<i class="klb-icon-credit-card"></i>
+										<div class="pdp-delivery-details">
+											<div class="title">Cash on Delivery &amp; Cards</div>
+											<div class="sub">UK Debit/Credit &amp; Apple Pay Available</div>
+										</div>
+									</div>
+
+									<div class="pdp-divider"></div>
+
+									<!-- Return & Warranty -->
+									<div class="pdp-box-header">
+										<span>Return &amp; Warranty</span>
+									</div>
+									<div class="pdp-delivery-item">
+										<i class="klb-icon-refresh-cw"></i>
+										<div class="pdp-delivery-details">
+											<div class="title">14 Days Free Returns</div>
+											<div class="sub">Change of mind is applicable for sealed grocery</div>
+										</div>
+									</div>
+									<div class="pdp-delivery-item">
+										<i class="klb-icon-shield-check"></i>
+										<div class="pdp-delivery-details">
+											<div class="title">100% Authentic Quality</div>
+											<div class="sub">Certified Soil Association &amp; Himalayan Origin</div>
+										</div>
+									</div>
+
+									<div class="pdp-divider"></div>
+
+									<!-- QR Box -->
+									<div class="pdp-qr-card">
+										<div class="pdp-qr-code">
+											<img src="{% static 'web/' %}images/teraifood-icon.svg" alt="QR Code">
+										</div>
+										<div class="pdp-qr-text">
+											<strong>Scan with mobile</strong>
+											Order via Terafood iOS &amp; Android App for extra 5% discount
+										</div>
+									</div>
+
+									<!-- Seller Card -->
+									<div class="pdp-seller-card">
+										<div class="pdp-seller-title">Sold by</div>
+										<div class="pdp-seller-name">Cang Choice 3 &bull; Terafood Direct UK</div>
+										<div class="pdp-seller-stats">
+											<div class="pdp-seller-stat-col">
+												<div class="pdp-stat-label">Positive Seller Ratings</div>
+												<div class="pdp-stat-value">89%</div>
+											</div>
+											<div class="pdp-seller-stat-col">
+												<div class="pdp-stat-label">Ship on Time</div>
+												<div class="pdp-stat-value">100%</div>
+											</div>
+											<div class="pdp-seller-stat-col">
+												<div class="pdp-stat-label">Chat Response Rate</div>
+												<div class="pdp-stat-value">96%</div>
+											</div>
+										</div>
+										<button class="pdp-btn-visit-store" onclick="window.location.href='/shop/'">Visit Store</button>
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+
+						<!-- 3. Section: Product Description Box -->
+						<div class="pdp-section-card" id="description-section">
+							<h2 class="pdp-section-title">Description</h2>
+
+							<!-- Disclaimer Notice -->
+							<div class="pdp-notice-banner">
+								<span>&#9432;</span>
+								<div>The information provided here is for reference only. Actual product packaging and materials may contain more and different information than shown on our website. We recommend that you do not rely solely on the information presented here and that you always read labels, warnings, and directions before using or consuming a product.</div>
+							</div>
+
+							<!-- Specifications List -->
+							<div class="pdp-specs-grid">
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Brand:</span> LAOGANMA (Tao Huabi)</div>
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Model Name:</span> Chili Sauce With Chicken Flavour, Chicken Achar, Chicken Pickle</div>
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Quantity:</span> 280g Type: Sauce</div>
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Classification &amp; Use:</span> Accompaniment / Mixture / Marinade</div>
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Shelf Life:</span> 18 Months</div>
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Caution:</span> No Added Artificial Preservatives</div>
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Dietary:</span> Non-vegetarian (Authentic tender chicken pieces)</div>
+								<div class="pdp-spec-item"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Container Type:</span> Hermetic Glass Bottle</div>
+								<div class="pdp-spec-item" style="grid-column: 1 / -1;"><span class="pdp-spec-bullet">&bull;</span> <span class="pdp-spec-label">Ingredients:</span> Soybean Oil, Chicken, Chili, Garlic, Salt, Sichuan Peppercorn</div>
+							</div>
+
+							<!-- Narrative Paragraphs -->
+							<div class="pdp-narrative">
+								<p><strong>Lao Gan Ma Chili Sauce with Chicken</strong>, also known as Tao Huabi, is a seasoning oil that elevates the flavour and takes taste buds on a savory culinary adventure. This world-renowned condiment originates from Guizhou and has gained international acclaim for its unique blend of crispy texture, deep umami, and fragrant heat.</p>
+								<p>The star ingredient in Lao Gan Ma Chicken Chili Sauce is the carefully selected high-quality chicken, skillfully diced and fried until crunchy, then infused into rich soybean oil alongside sun-dried red chili peppers, garlic, and fragrant Sichuan peppercorns. This sauce delivers a harmonious balance of crispy bits, savory chicken aroma, and appetizing tingling heat.</p>
+								<p>Whether you're looking to elevate Himalayan momos and dumplings, stir-fry noodles, noodles, fried rice, or marinate roasted meats, Lao Gan Ma Chicken Chili Sauce brings authentic gourmet depth to every single bite.</p>
+
+								<!-- High Quality Culinary Banner -->
+								<div class="pdp-feature-banner">
+									<img src="{% static 'web/' %}images/banner-07.jpg" alt="Rich Chili Sauce Culinary Preparation">
+								</div>
+							</div>
+
+							<button class="pdp-viewmore-btn" id="pdp-btn-viewmore">View More &#9662;</button>
+						</div>
+
+						<!-- 4. Section: Ratings & Reviews Box -->
+						<div class="pdp-section-card" id="reviews-section">
+							<h2 class="pdp-section-title">Ratings &amp; Reviews of LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm | Chinese Achar | Chilli Oil | Chicken Achar</h2>
+
+							<div class="pdp-ratings-overview">
+								<div class="pdp-score-block">
+									<div class="pdp-big-score">4.6<span class="pdp-score-scale">/5</span></div>
+									<div class="pdp-gold-stars my-1" style="font-size: 18px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+									<div class="text-muted" style="font-size: 12px;">198 Ratings</div>
+								</div>
+
+								<div class="pdp-bars-block">
+									<div class="pdp-bar-row">
+										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 61%;"></div></div>
+										<span class="pdp-bar-count">121</span>
+									</div>
+									<div class="pdp-bar-row">
+										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 25%;"></div></div>
+										<span class="pdp-bar-count">50</span>
+									</div>
+									<div class="pdp-bar-row">
+										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 7%;"></div></div>
+										<span class="pdp-bar-count">14</span>
+									</div>
+									<div class="pdp-bar-row">
+										<span class="pdp-bar-stars">&#9733;&#9733;&#9734;&#9734;&#9734;</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 1%;"></div></div>
+										<span class="pdp-bar-count">2</span>
+									</div>
+									<div class="pdp-bar-row">
+										<span class="pdp-bar-stars">&#9733;&#9734;&#9734;&#9734;&#9734;</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 6%;"></div></div>
+										<span class="pdp-bar-count">11</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Controls -->
+							<div class="pdp-reviews-controls">
+								<span class="fw-bold text-dark">Product Reviews</span>
+								<div class="d-flex gap-3">
+									<span class="text-muted" style="cursor: pointer;"><i class="klb-icon-sliders me-1"></i> Sort: Default &#9662;</span>
+									<span class="text-muted" style="cursor: pointer;"><i class="klb-icon-filter me-1"></i> Filter: All star &#9662;</span>
+								</div>
+							</div>
+
+							<!-- Individual Reviews -->
+							<div class="pdp-reviews-list">
+
+								<!-- Review 1 -->
+								<div class="pdp-review-item">
+									<div class="pdp-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+									<div class="pdp-review-author"><strong>Suraj K.</strong> <span class="pdp-verified-badge">&#10004; Verified Purchase</span> &bull; <span class="text-muted">15 Oct 2026</span></div>
+									<div class="pdp-review-content">Yummyyy! The crunchy chicken bits and aromatic chili oil combination is simply unmatched. Tastes delicious with rice and noodles.</div>
+									<div class="pdp-review-photos">
+										<div class="pdp-review-photo"><img src="{% static 'web/' %}images/laoganma-chicken-main.jpg" alt="Review photo"></div>
+									</div>
+									<div class="pdp-review-helpful"><i class="klb-icon-thumbs-up"></i> 9</div>
+								</div>
+
+								<!-- Review 2 -->
+								<div class="pdp-review-item">
+									<div class="pdp-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+									<div class="pdp-review-author"><strong>Elena R.</strong> <span class="pdp-verified-badge">&#10004; Verified Purchase</span> &bull; <span class="text-muted">12 Oct 2026</span></div>
+									<div class="pdp-review-content">one of the best product that I have bought. The taste is very rich in flavor with chicken bit. Little product look 4 ml to spicy but it is not, perfect heat level!</div>
+									<div class="pdp-review-photos">
+										<div class="pdp-review-photo"><img src="{% static 'web/' %}images/1-105-500x500.jpg" alt="Customer review photo"></div>
+									</div>
+									<div class="pdp-review-helpful"><i class="klb-icon-thumbs-up"></i> 6</div>
+								</div>
+
+								<!-- Review 3 -->
+								<div class="pdp-review-item">
+									<div class="pdp-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+									<div class="pdp-review-author"><strong>David M.</strong> <span class="pdp-verified-badge">&#10004; Verified Purchase</span> &bull; <span class="text-muted">08 Oct 2026</span></div>
+									<div class="pdp-review-content">ya it's yum momo achar sauce gonno make soy, its packing very nice, delivery boy is always fast and polite. Will order another 2 jars next week!</div>
+									<div class="pdp-review-photos">
+										<div class="pdp-review-photo"><img src="{% static 'web/' %}images/1-30-500x500.jpg" alt="Parcel received photo"></div>
+									</div>
+									<div class="pdp-review-helpful"><i class="klb-icon-thumbs-up"></i> 4</div>
+								</div>
+
+							</div>
+
+							<!-- Pagination -->
+							<div class="pdp-pagination">
+								<a class="pdp-page-btn">&lt;</a>
+								<a class="pdp-page-btn active">1</a>
+								<a class="pdp-page-btn">2</a>
+								<a class="pdp-page-btn">3</a>
+								<a class="pdp-page-btn">4</a>
+								<span class="text-muted px-1">...</span>
+								<a class="pdp-page-btn">12</a>
+								<a class="pdp-page-btn">&gt;</a>
+							</div>
+						</div>
+
+						<!-- 5. Section: Questions about this product (Q&A) -->
+						<div class="pdp-section-card" id="qa-section">
+							<h2 class="pdp-section-title">Questions about this product</h2>
+							<div class="pdp-qa-box">
+								<div class="pdp-qa-icon"><i class="klb-icon-message-square"></i></div>
+								<div class="mb-2">There are no questions yet.</div>
+								<div><a href="#" class="text-primary fw-bold text-decoration-none">Login</a> or <a href="#" class="text-primary fw-bold text-decoration-none">Register</a> to ask the seller now and get answers right away.</div>
+							</div>
+						</div>
+
+						<!-- 6. Section: You May Also Like (Matching Shop 4-Card Border-Touching Grid) -->
+						<div class="pdp-section-card">
+							<h2 class="pdp-section-title">You may also like</h2>
+							<div class="pdp-related-grid">
+
+								<!-- Related Card 1: Great Value Frozen Pizza -->
+								<div class="shop-product-card">
+									<div class="card-top-row">
+										<span class="badge-discount">11%</span>
+										<div class="card-top-icons">
+											<button class="btn-card-icon" title="Wishlist"><i class="klb-icon-heart"></i></button>
+											<button class="btn-card-icon" title="Quick view"><i class="klb-icon-eye"></i></button>
+										</div>
+									</div>
+									<div class="product-thumb-wrap">
+										<a href="{% url 'web:product-detail' %}"><img src="{% static 'web/' %}images/1-87-500x500.jpg" alt="Great Value Rising Crust Frozen Pizza, Supreme" class="product-img"></a>
+									</div>
+									<div class="product-info-block">
+										<div class="product-cat-tag">COLD SALE</div>
+										<h3 class="product-title"><a href="{% url 'web:product-detail' %}">Great Value Rising Crust Frozen Pizza, Supreme</a></h3>
+										<div class="product-rating-row">
+											<div class="star-rating" role="img"><span style="width: 100%"></span></div>
+											<span class="rating-count">3</span>
+										</div>
+										<div class="product-price-row">
+											<span class="price-current">&pound;8.99</span>
+											<del class="price-old">&pound;9.99</del>
+										</div>
+										<a href="#" class="btn-cart-pill">
+											<span class="btn-cart-label">Add to cart</span>
+											<span class="btn-cart-plus">+</span>
+										</a>
+									</div>
+								</div>
+
+								<!-- Related Card 2: Simply Orange Pulp Free Juice -->
+								<div class="shop-product-card">
+									<div class="card-top-row">
+										<span class="badge-discount">41%</span>
+										<div class="card-top-icons">
+											<button class="btn-card-icon" title="Wishlist"><i class="klb-icon-heart"></i></button>
+											<button class="btn-card-icon" title="Quick view"><i class="klb-icon-eye"></i></button>
+										</div>
+									</div>
+									<div class="product-thumb-wrap">
+										<a href="{% url 'web:product-detail' %}"><img src="{% static 'web/' %}images/1-12-500x500.jpg" alt="Simply Orange Pulp Free Juice – 52 fl oz" class="product-img"></a>
+									</div>
+									<div class="product-info-block">
+										<div class="product-cat-tag" style="visibility: hidden;">BEVERAGE</div>
+										<h3 class="product-title"><a href="{% url 'web:product-detail' %}">Simply Orange Pulp Free Juice &ndash; 52 fl oz</a></h3>
+										<div class="product-rating-row">
+											<div class="star-rating" role="img"><span style="width: 80%"></span></div>
+											<span class="rating-count">2</span>
+										</div>
+										<div class="product-price-row">
+											<span class="price-current">&pound;2.45</span>
+											<del class="price-old">&pound;4.13</del>
+										</div>
+										<a href="#" class="btn-cart-pill">
+											<span class="btn-cart-label">Add to cart</span>
+											<span class="btn-cart-plus">+</span>
+										</a>
+									</div>
+								</div>
+
+								<!-- Related Card 3: California Pizza Kitchen Margherita -->
+								<div class="shop-product-card">
+									<div class="card-top-row">
+										<span class="badge-discount">21%</span>
+										<div class="card-top-icons">
+											<button class="btn-card-icon" title="Wishlist"><i class="klb-icon-heart"></i></button>
+											<button class="btn-card-icon" title="Quick view"><i class="klb-icon-eye"></i></button>
+										</div>
+									</div>
+									<div class="product-thumb-wrap">
+										<a href="{% url 'web:product-detail' %}"><img src="{% static 'web/' %}images/1-30-500x500.jpg" alt="California Pizza Kitchen Margherita" class="product-img"></a>
+									</div>
+									<div class="product-info-block">
+										<div class="product-cat-tag">COLD SALE</div>
+										<h3 class="product-title"><a href="{% url 'web:product-detail' %}">California Pizza Kitchen Margherita, Crispy Thin Crust Pizza</a></h3>
+										<div class="product-rating-row">
+											<div class="star-rating" role="img"><span style="width: 100%"></span></div>
+											<span class="rating-count">3</span>
+										</div>
+										<div class="product-price-row">
+											<span class="price-current">&pound;11.77</span>
+											<del class="price-old">&pound;14.77</del>
+										</div>
+										<a href="#" class="btn-cart-pill">
+											<span class="btn-cart-label">Add to cart</span>
+											<span class="btn-cart-plus">+</span>
+										</a>
+									</div>
+								</div>
+
+								<!-- Related Card 4: Cantaloupe Melon Fresh Organic Cut -->
+								<div class="shop-product-card">
+									<div class="card-top-row">
+										<span class="badge-discount">22%</span>
+										<div class="card-top-icons">
+											<button class="btn-card-icon" title="Wishlist"><i class="klb-icon-heart"></i></button>
+											<button class="btn-card-icon" title="Quick view"><i class="klb-icon-eye"></i></button>
+										</div>
+									</div>
+									<div class="product-thumb-wrap">
+										<a href="{% url 'web:product-detail' %}"><img src="{% static 'web/' %}images/1-500x500.jpg" alt="Cantaloupe Melon Fresh Organic Cut" class="product-img"></a>
+									</div>
+									<div class="product-info-block">
+										<div class="product-cat-tag text-success">ORGANIC</div>
+										<h3 class="product-title"><a href="{% url 'web:product-detail' %}">Cantaloupe Melon Fresh Organic Cut</a></h3>
+										<div class="product-rating-row">
+											<div class="star-rating" role="img"><span style="width: 100%"></span></div>
+											<span class="rating-count">3</span>
+										</div>
+										<div class="product-price-row">
+											<span class="price-current">&pound;1.25 &ndash; &pound;1.50</span>
+										</div>
+										<a href="#" class="btn-cart-pill">
+											<span class="btn-cart-label">Select options</span>
+											<span class="btn-cart-plus">+</span>
+										</a>
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</main>
+		<!-- Site Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:shop' %}" class="text-primary fw-semibold">Shop Catalog</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-gray-600 hover-primary">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Supports</a></li>
+								<li class="mb-2"><a href="{% url 'web:track-order' %}" class="text-gray-600 hover-primary">Track Order</a></li>
+								<li class="mb-2"><a href="{% url 'web:bulk-order' %}" class="text-gray-600 hover-primary">Bulk Order PO</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Support</a></li>
+								<li class="mb-2"><a href="{% url 'web:track-order' %}" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Terms of Service</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<div class="widget widget-newsletter">
+								<h4 class="text-14 fw-bold text-dark text-uppercase mb-2">Join our newsletter</h4>
+								<p class="text-12 text-gray-500 mb-2">Register now to get latest updates on promotions &amp; recipes.</p>
+								<div class="site-newsletter-form">
+									<form class="mc4wp-form" method="post" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Terai Food newsletter!');">
+										<div class="mc4wp-form-fields position-relative d-flex">
+											<input class="subscribe-input form-control text-12" type="email" placeholder="Enter your email" required style="height: 32px; border-radius: 0; padding-right: 60px;">
+											<button class="btn btn-primary" type="submit" style="position: absolute; right: 0; top: 0; height: 32px; font-size: 11px; font-weight: 700; border-radius: 0; background: #634c9f; border-color: #634c9f; padding: 0 10px;">SEND</button>
+										</div>
+										<p class="text-11 text-gray-400 mt-1 mb-0">By subscribing you agree to our Terms &amp; Privacy.</p>
+									</form>
+								</div>
+								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
+								<div class="site-social d-flex gap-2">
+									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
+									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
+									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
+									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Interactive Client-side Script for Live Categories Filtering, Sorting, and Cart Steppers -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Categories Menu Toggle (for tablet/mobile < 1200px)
+			const catToggleBtn = document.getElementById('shop-categories-toggle-btn');
+			const siteCatMenu = document.getElementById('shop-site-categories-menu');
+			if (catToggleBtn && siteCatMenu) {
+				catToggleBtn.addEventListener('click', function (e) {
+					if (window.innerWidth < 1200) {
+						e.preventDefault();
+						siteCatMenu.classList.toggle('show');
+					}
+				});
+				// Close dropdown on click outside for mobile/tablet
+				document.addEventListener('click', function (e) {
+					if (window.innerWidth < 1200 && !catToggleBtn.contains(e.target) && !siteCatMenu.contains(e.target)) {
+						siteCatMenu.classList.remove('show');
+					}
+				});
+			}
+
+			// Storefront Elements
+			const productCols = Array.from(document.querySelectorAll('.shop-product-card'));
+			const catNavLinks = document.querySelectorAll('.cat-nav-link');
+			const sortSelect = document.getElementById('shop-sort-select');
+			const productsGrid = document.getElementById('shop-products-container');
+			const headerSearchInput = document.getElementById('shop-header-search-input');
+
+			let selectedCategory = 'all';
+
+			// Filter Function
+			function applyFilters() {
+				const searchQuery = (headerSearchInput ? headerSearchInput.value : '').toLowerCase().trim();
+
+				productCols.forEach(col => {
+					const colCat = col.getAttribute('data-category');
+					const colName = (col.getAttribute('data-name') || '').toLowerCase();
+
+					const matchCat = (selectedCategory === 'all' || colCat === selectedCategory);
+					const matchSearch = (!searchQuery || colName.includes(searchQuery));
+
+					if (matchCat && matchSearch) {
+						col.style.display = 'flex';
+					} else {
+						col.style.display = 'none';
+					}
+				});
+
+				// Synchronize active states on left categories menu
+				document.querySelectorAll('#category-menu > li').forEach(li => {
+					const link = li.querySelector('.cat-nav-link');
+					if (link && link.getAttribute('data-category') === selectedCategory) {
+						li.classList.add('active');
+					} else {
+						li.classList.remove('active');
+					}
+				});
+			}
+
+			// Handle Clicks from Extended Categories Menu
+			catNavLinks.forEach(link => {
+				link.addEventListener('click', function (e) {
+					e.preventDefault();
+					const cat = this.getAttribute('data-category');
+					if (!cat) return;
+					selectedCategory = cat;
+
+					applyFilters();
+
+					// If on mobile/tablet, close the menu drawer after selection
+					if (window.innerWidth < 1200 && siteCatMenu) {
+						siteCatMenu.classList.remove('show');
+					}
+				});
+			});
+
+			// Header Search Filtering
+			if (headerSearchInput) {
+				headerSearchInput.addEventListener('input', applyFilters);
+			}
+
+			// Sorting
+			if (sortSelect && productsGrid) {
+				sortSelect.addEventListener('change', function () {
+					const val = this.value;
+					const sorted = [...productCols].sort((a, b) => {
+						const priceA = parseFloat(a.getAttribute('data-price')) || 0;
+						const priceB = parseFloat(b.getAttribute('data-price')) || 0;
+						const ratingA = parseFloat(a.getAttribute('data-rating')) || 0;
+						const ratingB = parseFloat(b.getAttribute('data-rating')) || 0;
+						const nameA = a.getAttribute('data-name') || '';
+						const nameB = b.getAttribute('data-name') || '';
+
+						if (val === 'price-asc') return priceA - priceB;
+						if (val === 'price-desc') return priceB - priceA;
+						if (val === 'rating') return ratingB - ratingA;
+						if (val === 'name') return nameA.localeCompare(nameB);
+						return 0;
+					});
+
+					sorted.forEach(col => productsGrid.appendChild(col));
+				});
+			}
+
+			// Initial filter execution
+			applyFilters();
+		});
+	</script>
+
+	<!-- Main Theme and Interactive Engine -->
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// 1. Gallery Thumbnail Switcher
+			const mainImg = document.getElementById('pdp-active-image');
+			const thumbs = document.querySelectorAll('.pdp-thumb-item');
+			thumbs.forEach(thumb => {
+				thumb.addEventListener('click', function () {
+					thumbs.forEach(t => t.classList.remove('active'));
+					this.classList.add('active');
+					const newSrc = this.getAttribute('data-img');
+					if (newSrc && mainImg) {
+						mainImg.style.opacity = '0.3';
+						setTimeout(() => {
+							mainImg.src = newSrc;
+							mainImg.style.opacity = '1';
+						}, 120);
+					}
+				});
+			});
+
+			// 2. Quantity Stepper
+			const qtyInput = document.getElementById('pdp-qty-input');
+			const btnMinus = document.getElementById('pdp-qty-minus');
+			const btnPlus = document.getElementById('pdp-qty-plus');
+			if (qtyInput && btnMinus && btnPlus) {
+				btnMinus.addEventListener('click', function () {
+					let val = parseInt(qtyInput.value) || 1;
+					if (val > 1) qtyInput.value = val - 1;
+				});
+				btnPlus.addEventListener('click', function () {
+					let val = parseInt(qtyInput.value) || 1;
+					if (val < 14) qtyInput.value = val + 1;
+				});
+			}
+
+			// 3. Add to Cart & Buy Now Feedback
+			const btnCart = document.getElementById('pdp-btn-cart');
+			const btnBuy = document.getElementById('pdp-btn-buy');
+			if (btnCart) {
+				btnCart.addEventListener('click', function () {
+					const qty = qtyInput ? qtyInput.value : 1;
+					alert('Added ' + qty + ' bottle(s) of Lao Gan Ma Chicken Chilli Sauce to your cart!');
+				});
+			}
+			if (btnBuy) {
+				btnBuy.addEventListener('click', function () {
+					window.location.href = '/checkout/';
+				});
+			}
+
+			// 4. Countdown Timer Simulation
+			const countdownEl = document.getElementById('pdp-countdown-timer');
+			if (countdownEl) {
+				let totalSeconds = (2 * 24 * 3600) + (14 * 3600) + (32 * 60) + 45;
+				setInterval(() => {
+					if (totalSeconds > 0) {
+						totalSeconds--;
+						const d = Math.floor(totalSeconds / (24 * 3600));
+						const h = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+						const m = Math.floor((totalSeconds % 3600) / 60);
+						const s = totalSeconds % 60;
+						countdownEl.textContent = 
+							String(d).padStart(2, '0') + 'd ' +
+							String(h).padStart(2, '0') + 'h ' +
+							String(m).padStart(2, '0') + 'm ' +
+							String(s).padStart(2, '0') + 's';
+					}
+				}, 1000);
+			}
+
+			// 5. View More Toggle
+			const btnViewMore = document.getElementById('pdp-btn-viewmore');
+			if (btnViewMore) {
+				btnViewMore.addEventListener('click', function () {
+					alert('All product specifications and culinary details are already fully expanded.');
+				});
+			}
+		});
+	</script>
+
+</body>
+</html>

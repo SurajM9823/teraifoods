@@ -1,0 +1,106 @@
+.klb-notice-ajax {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    z-index: 999999;
+	color: #fff;
+    max-width: 400px;
+}
+
+@media(max-width:600px){
+	.klb-notice-ajax {
+		left: 15px;
+		right: 15px;
+	}	
+}
+
+.klb-notice-ajax a.button,
+.klb-notice-ajax .wc-block-components-notice-banner>.wc-block-components-notice-banner__content .wc-forward {
+	text-decoration: underline !important;
+    padding: 0;
+    height: auto;
+    margin-top: 5px;
+    background-color: transparent !important;
+    font-size: 0.875rem;
+    letter-spacing: -0.03px;
+    font-weight: 600;
+    color: #fff !important;
+    line-height: 1.5rem !important;
+    opacity: 1;
+    float: none;
+}
+
+.klb-notice-ajax .woocommerce-error li,
+.klb-notice-ajax .woocommerce-message {
+	display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: start;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-right: 3rem;
+}
+
+.single-product .klb-notice-ajax .woocommerce-error li,
+.single-product .klb-notice-ajax .woocommerce-message  {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: start;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.klb-notice-ajax ul.woocommerce-error,
+.klb-notice-ajax .wc-block-components-notice-banner__content.is-error {
+    border: none;
+    margin: 0;
+    background: var(--color-red-600);
+	position: relative;
+	border-radius: 7px;
+}
+
+.klb-notice-ajax .woocommerce-message,
+.klb-notice-ajax .wc-block-components-notice-banner__content {
+    border: none;
+    margin: 0;
+    background: #29843B;
+	position: relative;
+	border-radius: 7px;
+}
+
+.klb-notice-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+}
+
+.klb-notice-ajax > * + * {
+    margin-top: 15px !important;
+}
+
+.klb-notice-ajax .woocommerce-message p {
+    margin-bottom: 8px;
+}
+
+.klb-notice-ajax .woocommerce-message a.button:hover {
+    opacity: 1;
+}
+
+.klb-notice-ajax .wc-block-components-notice-banner>.wc-block-components-notice-banner__content {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: start;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    padding-right: 3rem !important;
+    color: #fff;
+}

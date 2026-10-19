@@ -1,0 +1,354 @@
+/* UK Address & Map Confirmation Styles - Terai Food */
+.teraifood-map-container {
+  width: 100%;
+  height: 260px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  z-index: 1;
+  background-color: #f3f4f6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.teraifood-map-container.checkout-map {
+  height: 290px;
+  margin-top: 10px;
+}
+
+.teraifood-map-pin-wrapper {
+  background: transparent !important;
+  border: none !important;
+}
+
+.teraifood-map-pin {
+  position: relative;
+  width: 32px;
+  height: 40px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+  cursor: grab;
+  transition: transform 0.15s ease;
+}
+
+.teraifood-map-pin:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.teraifood-pin-pulse {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(99, 76, 159, 0.35);
+  animation: pinPulse 2s infinite ease-out;
+}
+
+@keyframes pinPulse {
+  0% { transform: translateX(-50%) scale(0.8); opacity: 0.8; }
+  50% { transform: translateX(-50%) scale(1.6); opacity: 0.2; }
+  100% { transform: translateX(-50%) scale(0.8); opacity: 0.8; }
+}
+
+.map-helper-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #4b5563;
+  background: #f9fafb;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  margin-top: 8px;
+}
+
+.map-helper-badge i {
+  color: #634c9f;
+  font-size: 14px;
+}
+
+.lookup-status {
+  font-size: 12px;
+  margin-top: 4px;
+  min-height: 18px;
+  transition: all 0.2s ease;
+}
+
+.lookup-status.success {
+  color: #059669;
+  font-weight: 500;
+}
+
+.lookup-status.error {
+  color: #dc2626;
+}
+
+.lookup-status.loading {
+  color: #634c9f;
+}
+
+.btn-delivery-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none !important;
+}
+
+.btn-delivery-option:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+.btn-delivery-option.active {
+  background: #f5f3ff;
+  border-color: #634c9f;
+  color: #634c9f;
+  font-weight: 600;
+}
+
+.btn-delivery-option i {
+  font-size: 13px;
+}
+
+/* Modal styling adjustments */
+#location-selector .site-modal-body {
+  max-width: 580px;
+  width: 95%;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+#location-selector .site-modal-header {
+  border-bottom: 1px solid #f1f5f9;
+  background: #fafafa;
+}
+
+#location-selector .site-modal-inner {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.address-form-group {
+  margin-bottom: 12px;
+}
+
+.address-form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #4b5563;
+  margin-bottom: 5px;
+}
+
+.address-form-control {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f2937;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.address-form-control:focus {
+  border-color: #634c9f;
+  box-shadow: 0 0 0 3px rgba(99, 76, 159, 0.12);
+}
+
+.btn-confirm-address {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #634c9f;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-confirm-address:hover {
+  background-color: #523e85;
+}
+
+.btn-confirm-address:active {
+  transform: scale(0.99);
+}
+
+/* Checkout Page Specific Styles */
+.checkout-wrapper {
+  padding: 40px 0 70px 0;
+  background: #f8fafc;
+}
+
+.checkout-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.checkout-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.checkout-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #634c9f;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkout-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.order-summary-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  position: sticky;
+  top: 100px;
+}
+
+.order-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.order-item-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.order-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 2px 0;
+  line-height: 1.3;
+}
+
+.order-item-meta {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.order-item-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #634c9f;
+  margin-left: auto;
+}
+
+.checkout-payment-option {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkout-payment-option:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.checkout-payment-option.selected {
+  border-color: #634c9f;
+  background: #fdfcff;
+}
+
+.checkout-payment-option input[type="radio"] {
+  accent-color: #634c9f;
+  width: 16px;
+  height: 16px;
+}
+
+.order-success-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-success-modal.show {
+  display: flex;
+}
+
+.order-success-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 36px 30px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+

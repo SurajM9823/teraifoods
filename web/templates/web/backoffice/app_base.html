@@ -1,0 +1,26 @@
+{% extends 'web/backoffice/base.html' %}{% load static %}
+{% block body_class %}dashboard-page{% endblock %}
+{% block content %}
+<a class="skip-link" href="#main-content">Skip to content</a>
+{% include 'web/backoffice/sidebar.html' %}
+<button class="sidebar-backdrop" aria-label="Close navigation" tabindex="-1" hidden></button>
+<div class="workspace">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="mobile-menu icon-button" aria-label="Open navigation" aria-controls="admin-sidebar" aria-expanded="false">
+        {% include 'web/backoffice/icon.html' with name='menu' %}
+      </button>
+      <span class="breadcrumb">Workspace <span>/</span> <strong>{% block breadcrumb %}{{ page_title|default:'Overview' }}{% endblock %}</strong></span>
+    </div>
+    <div class="topbar-right">
+      <a href="{% url 'web:home-root' %}" class="store-link">View store {% include 'web/backoffice/icon.html' with name='external' %}</a>
+      <span class="topbar-divider"></span>
+      <span class="avatar small">{{ request.user.get_username|slice:':1'|upper }}</span>
+    </div>
+  </header>
+  <main id="main-content" class="dashboard-content" tabindex="-1">
+    {% block main_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
+

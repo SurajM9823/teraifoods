@@ -1,0 +1,86 @@
+@-webkit-keyframes dot-keyframes {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  25% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  75% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+}
+@keyframes dot-keyframes {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  25% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  75% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+}
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+/* --- Promo text styles --- */
+.site-promo .column {
+  height: 100%;
+}
+@media screen and (max-width: 991.98px) {
+  .site-promo .column {
+    width: 100%;
+    text-align: center;
+  }
+}
+.site-promo .sale-count {
+  letter-spacing: -8px !important;
+  top: -8%;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+@media screen and (min-width: 992px) {
+  .site-promo .sale-count {
+    top: -67%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .site-promo .promo-image {
+    position: absolute;
+    width: 100%;
+    height: auto;
+  }
+}
+@media screen and (max-width: 991.98px) {
+  .site-promo .promo-image {
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    max-width: 80%;
+    margin-bottom: -1.25rem;
+  }
+}

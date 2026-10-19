@@ -1,0 +1,3 @@
+{% extends "allauth/layouts/base.html" %}
+{% block head_title %}Please wait{% endblock %}
+{% block content %}<h1>A moment, please.</h1><p>There have been too many attempts. Wait a few minutes before trying again.</p><a href="{% url 'account_login' %}">Back to sign in</a>{% endblock %}

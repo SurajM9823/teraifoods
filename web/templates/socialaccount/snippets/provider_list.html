@@ -1,0 +1,4 @@
+{% load socialaccount %}
+{% if google_login_enabled %}
+<form method="post" action="{% provider_login_url 'google' process=process %}">{% csrf_token %}<button class="google-button" type="submit">{% if process == 'connect' %}Connect Google{% else %}Continue with Google{% endif %}</button></form>
+{% endif %}

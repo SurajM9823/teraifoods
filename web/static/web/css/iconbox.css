@@ -1,0 +1,74 @@
+@-webkit-keyframes dot-keyframes {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  25% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  75% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+}
+@keyframes dot-keyframes {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  25% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  75% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+}
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+/* --- Iconbox styles --- */
+.site-iconbox {
+  position: relative;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+@media screen and (min-width: 1024px) {
+  .site-iconbox {
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+  }
+}
+.site-iconbox-icon {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+          flex: 1 0 auto;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-right: 1.25rem;
+}
+.site-iconbox-detail .entry-title {
+  margin-bottom: 0.3125rem;
+}
+.site-iconbox-detail p {
+  line-height: 1.4;
+}

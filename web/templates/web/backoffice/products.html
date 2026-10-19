@@ -1,0 +1,117 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Products{% endblock %}
+{% block breadcrumb %}Products{% endblock %}
+{% block main_content %}
+<!-- Filters above the datatable -->
+<div class="filter-strip">
+  <div class="filter-group">
+    <label for="date_from">From:</label>
+    <input type="date" id="date_from" class="filter-control" value="{% now 'Y-01-01' %}">
+  </div>
+  <div class="filter-group">
+    <label for="date_to">To:</label>
+    <input type="date" id="date_to" class="filter-control" value="{% now 'Y-m-d' %}">
+  </div>
+  <div class="filter-group">
+    <label for="filter_cat">Category:</label>
+    <select id="filter_cat" class="filter-control">
+      <option value="">All Categories</option>
+      <option value="rice">Rice &amp; Grains</option>
+      <option value="lentils">Lentils &amp; Pulses</option>
+      <option value="spices">Spices</option>
+      <option value="oils">Oils &amp; Ghee</option>
+      <option value="tea">Tea &amp; Beverages</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="filter_stock">Stock:</label>
+    <select id="filter_stock" class="filter-control">
+      <option value="">All Statuses</option>
+      <option value="in_stock">In Stock</option>
+      <option value="low_stock">Low Stock</option>
+      <option value="out_of_stock">Out of Stock</option>
+    </select>
+  </div>
+  <input type="text" class="filter-control filter-search" placeholder="Search catalog by title, SKU..." aria-label="Search catalog">
+  <button type="button" class="btn btn-primary btn-sm">Filter</button>
+  <button type="button" class="btn btn-outline btn-sm">Reset</button>
+
+  <div class="filter-actions-right">
+    <button class="btn btn-outline btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='file' %} Export Catalog</button>
+    <button class="btn btn-primary btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='plus' %} Add Product</button>
+  </div>
+</div>
+
+<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
+<div class="summary-strip">
+  <span class="summary-item">Total Products: <strong>{{ stats.total }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">In Stock: <strong>59</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Low Stock: <strong style="color: #996600;">{{ stats.low_stock }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Out of Stock: <strong style="color: #aa0000;">{{ stats.out_of_stock }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Categories: <strong>{{ stats.categories }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Inventory Value: <strong>£14,290.00</strong></span>
+</div>
+
+<!-- Clean, dense datatable -->
+<div class="table-responsive">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Stock Units</th>
+        <th>Retail Price</th>
+        <th>Wholesale Tier</th>
+        <th>Status</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products_list %}
+      <tr>
+        <td class="table-cell-muted"><code>{{ product.sku }}</code></td>
+        <td class="table-cell-bold">{{ product.name }}</td>
+        <td><span class="badge badge-neutral">{{ product.category }}</span></td>
+        <td class="table-cell-bold">{{ product.stock }} units</td>
+        <td class="table-cell-bold">{{ product.retail_price }}</td>
+        <td class="table-cell-muted">{{ product.wholesale_price }}</td>
+        <td>
+          {% if product.status == 'In Stock' %}
+            <span class="badge badge-success"><span class="badge-dot"></span> In Stock</span>
+          {% elif product.status == 'Low Stock' %}
+            <span class="badge badge-warning"><span class="badge-dot"></span> Low Stock</span>
+          {% else %}
+            <span class="badge badge-danger"><span class="badge-dot"></span> Out of Stock</span>
+          {% endif %}
+        </td>
+        <td style="text-align: right;">
+          <button class="btn btn-outline btn-sm" type="button">Edit</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination 1 2 3 >> -->
+<div class="pagination-bar">
+  <span>Showing 1 to {{ products_list|length }} of {{ stats.total }} products</span>
+  <div class="pagination-links">
+    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
+    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
+    <a href="#" class="page-link active">1</a>
+    <a href="#" class="page-link">2</a>
+    <a href="#" class="page-link">3</a>
+    <a href="#" class="page-link">4</a>
+    <a href="#" class="page-link">5</a>
+    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
+    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+  </div>
+</div>
+{% endblock %}

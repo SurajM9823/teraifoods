@@ -1,0 +1,3 @@
+{% extends "allauth/layouts/base.html" %}
+{% block head_title %}Please try again shortly{% endblock %}
+{% block content %}<h1>Please try again shortly.</h1><p>We couldn’t complete your request. Please wait a minute and try again. If you already registered, sign in to request a fresh verification code.</p><a href="{% url 'account_login' %}">Back to sign in</a>{% endblock %}

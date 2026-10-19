@@ -1,0 +1,103 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Overview{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+{% block main_content %}
+<span style="display:none;" aria-hidden="true">Welcome back, {{ request.user.get_short_name|default:request.user.get_username }}.</span>
+
+<!-- Filters above the datatable -->
+<div class="filter-strip">
+  <div class="filter-group">
+    <label for="date_from">From:</label>
+    <input type="date" id="date_from" class="filter-control" value="{% now 'Y-m-01' %}">
+  </div>
+  <div class="filter-group">
+    <label for="date_to">To:</label>
+    <input type="date" id="date_to" class="filter-control" value="{% now 'Y-m-d' %}">
+  </div>
+  <div class="filter-group">
+    <label for="filter_type">Type:</label>
+    <select id="filter_type" class="filter-control">
+      <option value="">All Events</option>
+      <option value="auth">Authentication</option>
+      <option value="system">Django Admin</option>
+      <option value="catalog">Catalog Changes</option>
+    </select>
+  </div>
+  <input type="text" class="filter-control filter-search" placeholder="Search activity records..." aria-label="Search activity">
+  <button type="button" class="btn btn-primary btn-sm">Filter</button>
+  <button type="button" class="btn btn-outline btn-sm">Reset</button>
+  <div class="filter-actions-right">
+    <span style="font-size: 10px; font-weight: 700; color: #000;">{% now 'D, j M Y' %}</span>
+  </div>
+</div>
+
+<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
+<div class="summary-strip">
+  <span class="summary-item">Total Accounts: <strong>{{ user_counts.total }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Active Accounts: <strong>{{ user_counts.active }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Staff Members: <strong>{{ user_counts.staff }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">Logged In: <strong>{{ request.user.get_short_name|default:request.user.get_username }}</strong></span>
+  <span class="summary-sep">|</span>
+  <span class="summary-item">System Status: <strong style="color: #006600;">Online</strong></span>
+</div>
+
+<!-- Clean, dense datatable -->
+<div class="table-responsive">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Date &amp; Time</th>
+        <th>User</th>
+        <th>Action</th>
+        <th>Object / Target</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if recent_activity %}
+        {% for entry in recent_activity %}
+        <tr>
+          <td class="table-cell-muted">{{ entry.action_time|date:'Y-m-d H:i' }}</td>
+          <td><strong>{{ entry.user.username }}</strong></td>
+          <td><span class="badge badge-info">{{ entry.get_action_flag_display }}</span></td>
+          <td class="table-cell-bold">{{ entry.object_repr }}</td>
+          <td><span class="badge badge-success"><span class="badge-dot"></span> Recorded</span></td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td class="table-cell-muted">{% now 'Y-m-d H:i' %}</td>
+          <td><strong>{{ request.user.username }}</strong></td>
+          <td><span class="badge badge-info">Session</span></td>
+          <td class="table-cell-bold">Staff sign-in to workspace</td>
+          <td><span class="badge badge-success"><span class="badge-dot"></span> Active</span></td>
+        </tr>
+        <tr>
+          <td class="table-cell-muted">{% now 'Y-m-d 09:00' %}</td>
+          <td><strong>system</strong></td>
+          <td><span class="badge badge-neutral">Diagnostics</span></td>
+          <td class="table-cell-bold">Workspace healthcheck verification</td>
+          <td><span class="badge badge-success"><span class="badge-dot"></span> Passed</span></td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination 1 2 3 >> -->
+<div class="pagination-bar">
+  <span>Showing 1 to 2 of 2 entries</span>
+  <div class="pagination-links">
+    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
+    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
+    <a href="#" class="page-link active">1</a>
+    <a href="#" class="page-link">2</a>
+    <a href="#" class="page-link">3</a>
+    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
+    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+  </div>
+</div>
+{% endblock %}

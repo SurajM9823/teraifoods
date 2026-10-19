@@ -1,0 +1,1238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Track Order &bull; My Orders – Terai Food UK | Live Grocery Delivery</title>
+	<meta name="description" content="Track your Terai Food order status in real time. View dispatch, transit, and delivery updates across UK postcodes.">
+	<link rel="canonical" href="{% url 'web:track-order' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		/* Global Zero Radius & Congested Sharp Modern Styling */
+		body.terai-track-order-page,
+		.terai-track-order-page *,
+		.terai-track-order-page *::before,
+		.terai-track-order-page *::after {
+			border-radius: 0 !important;
+		}
+		body.terai-track-order-page {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f8fafc;
+			color: #0f172a;
+		}
+
+		/* Clean Breadcrumbs (In-content) */
+		.track-breadcrumbs {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+			margin-bottom: 14px;
+		}
+		.track-breadcrumbs a {
+			color: #64748b;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.15s ease;
+		}
+		.track-breadcrumbs a:hover {
+			color: #634c9f;
+		}
+		.track-breadcrumbs .breadcrumb-separator {
+			color: #94a3b8;
+			font-size: 10px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.track-breadcrumbs .breadcrumb-current {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		/* Top Navigation Bulk Order CTA */
+		.nav-bulk-order-cta {
+			background: #f5f3ff;
+			color: #634c9f !important;
+			border: 1px solid #ede9fe;
+			padding: 7px 14px !important;
+			font-weight: 700 !important;
+			transition: all 0.2s ease;
+		}
+		.nav-bulk-order-cta:hover {
+			background: #634c9f !important;
+			color: #ffffff !important;
+		}
+
+		/* ========================================================
+		   TRACK ORDER PAGE: Inherited Shop Page Layout, Size, Width & Scroll Effect
+		   Sticky Header-Nav & 280px Flush Left Sidebar (0 space, 0 radius)
+		   ======================================================== */
+		.terai-track-order-page .header-nav {
+			position: sticky !important;
+			top: 0 !important;
+			z-index: 1000 !important;
+			background: #ffffff !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+		}
+		.terai-track-order-page .categories-menu {
+			position: relative;
+			width: 280px !important;
+			flex: 0 0 280px !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		.terai-track-order-page .categories-menu .categories-toggle {
+			width: 280px !important;
+			height: 48px;
+			justify-content: flex-start;
+			padding: 0 20px;
+			background: #ffffff;
+			border: none !important;
+			border-right: 1px solid #e2e8f0 !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+			border-left: none !important;
+			border-top: none !important;
+			border-radius: 0 !important;
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+		}
+		.terai-track-order-page .categories-menu .categories-toggle i {
+			font-size: 16px;
+			color: #634c9f;
+		}
+
+		/* Desktop Layout (>= 1200px): Flush left (0 space), sticky on scroll, 0 radius */
+		@media (min-width: 1200px) {
+			.terai-track-order-page .track-main-layout {
+				padding: 0 0 0 0 !important;
+				margin: 0 !important;
+			}
+			.terai-track-order-page .track-main-container {
+				padding-left: 0 !important;
+				max-width: 100% !important;
+				width: 100% !important;
+			}
+			.terai-track-order-page .track-main-row {
+				margin: 0 !important;
+				display: flex !important;
+				align-items: flex-start !important; /* Required for sticky child */
+			}
+			.terai-track-order-page .track-sidebar-col {
+				width: 280px !important;
+				flex: 0 0 280px !important;
+				position: sticky !important;
+				top: 48px !important; /* Flush right beneath sticky sub-nav */
+				height: auto !important;
+				min-height: calc(100vh - 48px) !important;
+				background: #ffffff !important;
+				border-right: 1px solid #e2e8f0 !important;
+				border-left: none !important;
+				border-top: none !important;
+				border-bottom: none !important;
+				border-radius: 0 !important;
+				padding: 0 !important;
+				margin: 0 !important;
+				z-index: 100 !important;
+				align-self: flex-start !important;
+				display: flex !important;
+				flex-direction: column !important;
+				gap: 0 !important;
+				overflow-y: auto !important;
+				max-height: calc(100vh - 48px) !important;
+				scrollbar-width: thin;
+			}
+			.terai-track-order-page .track-content-col {
+				flex: 1 !important;
+				min-width: 0 !important;
+				padding: 20px 32px 50px !important; /* Exact match to shop & blog pages */
+			}
+		}
+
+		/* Mobile & Tablet (< 1200px) */
+		@media (max-width: 1199px) {
+			.terai-track-order-page .track-sidebar-col {
+				width: 100% !important;
+				flex: 0 0 100% !important;
+				position: static !important;
+				border-right: none !important;
+				border-bottom: 1px solid #e2e8f0 !important;
+				margin-bottom: 20px !important;
+			}
+			.terai-track-order-page .track-content-col {
+				padding: 16px !important;
+			}
+			.terai-track-order-page .categories-menu {
+				width: auto !important;
+			}
+		}
+
+		/* Sidebar Widgets: Seamless continuous column matching shop & blog pages */
+		.track-sidebar-widget {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 14px 16px;
+			box-sizing: border-box;
+		}
+		.track-sidebar-widget:last-child {
+			border-bottom: none;
+		}
+		.sidebar-widget-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 2px solid #0f172a;
+			padding-bottom: 6px;
+			margin-bottom: 12px;
+		}
+		.sidebar-widget-title {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0;
+		}
+		.sidebar-widget-title i {
+			color: #634c9f;
+			margin-right: 4px;
+		}
+
+		/* Sidebar Topics & Status Links */
+		.sidebar-cat-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.sidebar-cat-item + .sidebar-cat-item {
+			border-top: 1px solid #f1f5f9;
+		}
+		.sidebar-cat-link {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 6px 6px;
+			font-size: 11.5px;
+			font-weight: 600;
+			color: #0f172a;
+			text-decoration: none;
+			transition: all 0.15s ease;
+		}
+		.sidebar-cat-link:hover,
+		.sidebar-cat-link.active {
+			background: #f8fafc;
+			color: #634c9f;
+			padding-left: 10px;
+		}
+		.sidebar-cat-link .cat-count {
+			font-size: 10px;
+			font-weight: 700;
+			color: #64748b;
+			background: #f1f5f9;
+			padding: 1px 5px;
+			border: 1px solid #e2e8f0;
+		}
+		.sidebar-cat-link.active .cat-count {
+			background: #634c9f;
+			color: #ffffff;
+			border-color: #634c9f;
+		}
+
+		/* User Profile Details in Sidebar */
+		.user-avatar-circle {
+			width: 38px;
+			height: 38px;
+			background: #ede9fe;
+			color: #634c9f;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 13px;
+			font-weight: 800;
+			border: 1px solid #ddd6fe;
+			flex-shrink: 0;
+		}
+		.user-verified-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 11px;
+			color: #059669;
+			font-weight: 600;
+			margin-top: 2px;
+		}
+
+		/* Main Panel: Single-Row Compact Filter Bar (Congested, Refined) */
+		.order-filter-bar-compact {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			padding: 0 10px 0 0;
+			margin-bottom: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			min-height: 38px;
+			gap: 8px;
+		}
+		.order-tabs-group {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+		.order-tab-btn {
+			height: 38px;
+			padding: 0 14px;
+			font-size: 12px;
+			font-weight: 600;
+			color: #475569;
+			background: transparent;
+			border: none;
+			border-bottom: 2px solid transparent;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			transition: all 0.15s ease;
+		}
+		.order-tab-btn:hover {
+			color: #634c9f;
+			background: #fafafa;
+		}
+		.order-tab-btn.active {
+			color: #634c9f;
+			border-bottom-color: #634c9f;
+			font-weight: 700;
+			background: #ffffff;
+		}
+		.order-tab-count {
+			background: #f1f5f9;
+			color: #334155;
+			font-size: 10px;
+			padding: 1px 6px;
+			font-weight: 700;
+			border: 1px solid #e2e8f0;
+			line-height: 1.2;
+		}
+		.order-tab-btn.active .order-tab-count {
+			background: #ede9fe;
+			color: #634c9f;
+			border-color: #ddd6fe;
+		}
+		.order-search-compact {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			background: #f8fafc;
+			border: 1px solid #cbd5e1;
+			padding: 0 8px;
+			height: 26px;
+			width: 220px;
+			max-width: 100%;
+			margin-left: auto;
+			margin-right: 8px;
+		}
+		.order-search-compact i {
+			font-size: 11px;
+			color: #64748b;
+		}
+		.order-search-compact input {
+			border: none !important;
+			outline: none !important;
+			box-shadow: none !important;
+			background: transparent !important;
+			font-size: 11.5px !important;
+			color: #0f172a !important;
+			width: 100% !important;
+			height: 24px !important;
+			line-height: 24px !important;
+			padding: 0 !important;
+			margin: 0 !important;
+		}
+		.order-search-compact input::placeholder {
+			color: #94a3b8;
+		}
+		.order-search-compact:focus-within {
+			background: #ffffff;
+			border-color: #634c9f;
+		}
+
+		/* Order Item Card (Daraz / Amazon Clean Market Layout) */
+		.order-group-card {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			margin-bottom: 12px;
+			overflow: hidden;
+			transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		}
+		.order-group-card:hover {
+			border-color: #94a3b8;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+		}
+		.order-group-header {
+			background: #f8fafc;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 7px 12px;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 12px;
+			gap: 8px;
+		}
+		.store-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			font-weight: 700;
+			color: #0f172a;
+		}
+		.store-badge i {
+			color: #634c9f;
+			font-size: 13px;
+		}
+		.order-status-pill {
+			font-size: 11px;
+			font-weight: 700;
+			padding: 2px 8px;
+			border: 1px solid transparent;
+			text-transform: capitalize;
+		}
+		.status-in-transit {
+			background: #e0f2fe;
+			color: #0369a1;
+			border-color: #bae6fd;
+		}
+		.status-completed {
+			background: #ecfdf5;
+			color: #047857;
+			border-color: #a7f3d0;
+		}
+		.status-processing {
+			background: #fef3c7;
+			color: #b45309;
+			border-color: #fde68a;
+		}
+		.status-cancelled {
+			background: #f1f5f9;
+			color: #475569;
+			border-color: #e2e8f0;
+		}
+
+		.order-item-row {
+			padding: 10px 12px;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 12px;
+			border-bottom: 1px solid #f1f5f9;
+		}
+		.order-item-row:last-child {
+			border-bottom: none;
+		}
+		.order-item-thumb {
+			width: 56px;
+			height: 56px;
+			object-fit: cover;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			flex-shrink: 0;
+		}
+		.order-item-info {
+			flex: 1;
+			min-width: 180px;
+		}
+		.order-item-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-bottom: 2px;
+			line-height: 1.3;
+		}
+		.order-item-meta {
+			font-size: 11.5px;
+			color: #64748b;
+			margin-bottom: 0;
+		}
+		.order-item-price {
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			min-width: 90px;
+			text-align: right;
+		}
+		.order-item-qty {
+			font-size: 12px;
+			color: #64748b;
+			margin-left: 10px;
+			min-width: 50px;
+		}
+
+		/* Live Tracking Progress Bar */
+		.order-tracking-stepper {
+			background: #f8fafc;
+			border-top: 1px solid #e2e8f0;
+			padding: 10px 12px;
+		}
+		.stepper-progress-wrap {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+			margin: 12px 0 6px;
+		}
+		.stepper-progress-bar {
+			position: absolute;
+			top: 14px;
+			left: 20px;
+			right: 20px;
+			height: 3px;
+			background: #e2e8f0;
+			z-index: 1;
+		}
+		.stepper-progress-active {
+			height: 100%;
+			background: #634c9f;
+			width: 66%;
+		}
+		.step-node {
+			position: relative;
+			z-index: 2;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			width: 90px;
+		}
+		.step-dot {
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			background: #ffffff;
+			border: 2px solid #cbd5e1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 12px;
+			color: #94a3b8;
+			margin-bottom: 6px;
+		}
+		.step-node.completed .step-dot {
+			background: #634c9f;
+			border-color: #634c9f;
+			color: #ffffff;
+		}
+		.step-node.active .step-dot {
+			background: #ffffff;
+			border-color: #634c9f;
+			color: #634c9f;
+			box-shadow: 0 0 0 4px #ede9fe;
+		}
+		.step-label {
+			font-size: 11px;
+			font-weight: 600;
+			color: #64748b;
+		}
+		.step-node.completed .step-label,
+		.step-node.active .step-label {
+			color: #0f172a;
+			font-weight: 700;
+		}
+
+		/* Footer Actions */
+		.order-group-footer {
+			background: #ffffff;
+			border-top: 1px solid #f1f5f9;
+			padding: 8px 12px;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 8px;
+			font-size: 11.5px;
+		}
+		.btn-track-action {
+			font-size: 11.5px;
+			font-weight: 600;
+			padding: 4px 10px;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			color: #334155;
+			text-decoration: none;
+			transition: all 0.15s ease;
+		}
+		.btn-track-action:hover {
+			border-color: #634c9f;
+			color: #634c9f;
+			background: #f5f3ff;
+		}
+		.btn-track-primary {
+			background: #634c9f;
+			border-color: #634c9f;
+			color: #ffffff;
+		}
+		.btn-track-primary:hover {
+			background: #503d82;
+			border-color: #503d82;
+			color: #ffffff;
+		}
+
+		/* Pagination */
+		.pagination-daraz {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 4px;
+			margin-top: 14px;
+			font-size: 12px;
+		}
+		.page-btn {
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			color: #475569;
+			text-decoration: none;
+			font-weight: 600;
+			font-size: 11.5px;
+		}
+		.page-btn.active {
+			background: #634c9f;
+			border-color: #634c9f;
+			color: #ffffff;
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-track-order-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
+									<input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1 border-top">
+				<div class="container-fluid ps-0 pe-4 pe-xl-5">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+
+							<!-- Header All Categories Button -->
+							<div class="categories-menu">
+								<a href="{% url 'web:shop' %}" class="categories-toggle" id="track-sidebar-toggle-btn">
+									<i class="klb-icon-layout-grid me-2"></i>All Categories
+								</a>
+							</div>
+
+							<!-- Primary Menu with Updated Nav Items -->
+							<nav class="site-menu horizontal menu-shadow primary-menu ms-4">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:shop' %}">Shops</a></li>
+									<li class="menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:contact' %}">Supports</a></li>
+									<li class="menu-item current-menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- ========================================================
+		     MAIN TRACK ORDER LAYOUT: Desktop Extended Categories / Orders Hub
+		     Flush Left (ps-0), Zero Border Radius, Sticky Sidebar & Scroll Effect
+		     ======================================================== -->
+		<main id="main" class="site-primary track-main-layout">
+			<div class="container-fluid ps-0 pe-4 pe-xl-5 track-main-container">
+				<div class="track-main-row">
+
+					<!-- Left Column: Exactly 280px, Sticky on Scroll, Flush Left (0 Space), No Radius -->
+					<aside class="track-sidebar-col" id="track-sidebar">
+
+
+						<!-- Widget 2: Order Status Filters -->
+						<div class="track-sidebar-widget">
+							<div class="sidebar-widget-header">
+								<h4 class="sidebar-widget-title"><i class="klb-icon-truck"></i> Track Shipments</h4>
+							</div>
+							<ul class="sidebar-cat-list">
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link active" onclick="filterOrders('all', document.querySelectorAll('.order-tab-btn')[0]); return false;">
+										<span><i class="klb-icon-package me-2 text-primary"></i>All Orders</span>
+										<span class="cat-count">5</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" onclick="filterOrders('in-transit', document.querySelectorAll('.order-tab-btn')[1]); return false;">
+										<span><i class="klb-icon-truck me-2 text-primary"></i>To Receive / In Transit</span>
+										<span class="cat-count" style="background: #e0f2fe; color: #0369a1;">1</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" onclick="filterOrders('processing', document.querySelectorAll('.order-tab-btn')[2]); return false;">
+										<span><i class="klb-icon-clock me-2 text-primary"></i>To Ship / Packing</span>
+										<span class="cat-count" style="background: #fef3c7; color: #b45309;">1</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" onclick="filterOrders('completed', document.querySelectorAll('.order-tab-btn')[3]); return false;">
+										<span><i class="klb-icon-check-circle me-2 text-primary"></i>Delivered</span>
+										<span class="cat-count" style="background: #ecfdf5; color: #047857;">2</span>
+									</a>
+								</li>
+								<li class="sidebar-cat-item">
+									<a href="#" class="sidebar-cat-link" onclick="filterOrders('cancelled', document.querySelectorAll('.order-tab-btn')[4]); return false;">
+										<span><i class="klb-icon-rotate-ccw me-2 text-primary"></i>Returns &amp; Cancelled</span>
+										<span class="cat-count">1</span>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</aside>
+
+					<!-- Right Content Column: In-Content Breadcrumbs, Filters, & Orders Feed -->
+					<div class="track-content-col">
+						<!-- In-content Breadcrumbs -->
+						<nav class="track-breadcrumbs" aria-label="breadcrumb">
+							<a href="{% url 'web:home' %}">Home</a>
+							<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+							<span class="breadcrumb-current">My Orders &amp; Delivery Tracking</span>
+						</nav>
+						<!-- Status Tabs & Quick Filter (Compact Single-Row Bar) -->
+						<div class="order-filter-bar-compact">
+							<div class="order-tabs-group">
+								<button class="order-tab-btn active" onclick="filterOrders('all', this)">All <span class="order-tab-count">5</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('in-transit', this)">To Receive <span class="order-tab-count">1</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('processing', this)">To Ship <span class="order-tab-count">1</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('completed', this)">Delivered <span class="order-tab-count">2</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('cancelled', this)">Cancelled <span class="order-tab-count">1</span></button>
+							</div>
+							<div class="order-search-compact">
+								<i class="klb-icon-search"></i>
+								<input type="text" id="quick-filter-input" onkeyup="filterByKeyword(this.value)" placeholder="Search order ID or item...">
+							</div>
+						</div>
+
+						<!-- Order Card 1: IN TRANSIT (With Visual Stepper) -->
+						<div class="order-group-card order-item-card" data-status="in-transit" data-keywords="terai organic produce tf-784920 fresh crisp apple gala honeycrisp">
+							<div class="order-group-header">
+								<div class="d-flex align-items-center gap-3">
+									<span class="store-badge"><i class="klb-icon-store"></i> Terai Fresh Farm Hub London</span>
+									<span class="text-gray-400">|</span>
+									<span class="text-gray-500">Order <strong class="text-dark">#TF-784920</strong></span>
+									<span class="text-gray-400 d-none d-md-inline">&bull; Placed on Oct 15, 2026</span>
+								</div>
+								<span class="order-status-pill status-in-transit"><i class="klb-icon-truck me-1"></i> In Transit &bull; Out for Delivery</span>
+							</div>
+
+							<!-- Stepper -->
+							<div class="order-tracking-stepper">
+								<div class="d-flex justify-content-between align-items-center mb-1">
+									<span class="text-12 fw-bold text-primary"><i class="klb-icon-clock me-1"></i> Estimated Arrival Today: 4:30 PM &ndash; 6:00 PM</span>
+									<span class="text-12 text-gray-500">Carrier: <strong>Terai Express Van #14</strong></span>
+								</div>
+								<div class="stepper-progress-wrap">
+									<div class="stepper-progress-bar">
+										<div class="stepper-progress-active" style="width: 75%;"></div>
+									</div>
+
+									<div class="step-node completed">
+										<div class="step-dot"><i class="klb-icon-check"></i></div>
+										<span class="step-label">Order Placed</span>
+									</div>
+
+									<div class="step-node completed">
+										<div class="step-dot"><i class="klb-icon-check"></i></div>
+										<span class="step-label">Farm Packed</span>
+									</div>
+
+									<div class="step-node active">
+										<div class="step-dot"><i class="klb-icon-truck"></i></div>
+										<span class="step-label">Out for Delivery</span>
+									</div>
+
+									<div class="step-node">
+										<div class="step-dot"><i class="klb-icon-map-pin"></i></div>
+										<span class="step-label">Delivered</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Products in Order -->
+							<div class="order-item-row">
+								<img src="{% static 'web/' %}images/1-9-700x700.jpg" alt="Organic Gala Apples" class="order-item-thumb">
+								<div class="order-item-info">
+									<h6 class="order-item-title">100% Organic Honeycrisp &amp; Gala Apples &ndash; 1.5kg Family Pack</h6>
+									<p class="order-item-meta">Category: Fresh Fruits &bull; Origin: Organic Bio-Orchard Kent</p>
+									<span class="badge bg-light text-success border border-success-subtle text-11 mt-1">Temperature Chilled</span>
+								</div>
+								<div class="order-item-price">&pound;4.25</div>
+								<div class="order-item-qty">Qty: 2</div>
+							</div>
+
+							<div class="order-item-row">
+								<img src="{% static 'web/' %}images/1-16-700x700.jpg" alt="Himalayan Stone-Ground Turmeric" class="order-item-thumb">
+								<div class="order-item-info">
+									<h6 class="order-item-title">Single-Origin Himalayan High-Curcumin Turmeric Powder (250g)</h6>
+									<p class="order-item-meta">Category: Spices &amp; Seasonings &bull; Stone-Ground</p>
+								</div>
+								<div class="order-item-price">&pound;3.99</div>
+								<div class="order-item-qty">Qty: 1</div>
+							</div>
+
+							<div class="order-group-footer">
+								<div>
+									<span class="text-gray-500">Total Amount:</span> <strong class="text-dark text-15">&pound;12.49</strong> <span class="text-gray-400 text-12">(Paid via Visa ending in 4119)</span>
+								</div>
+								<div class="d-flex gap-2">
+									<button class="btn-track-action" onclick="alert('Driver Contact: +44 7700 900821 (Dave &ndash; Terai Van 14)');">
+										<i class="klb-icon-phone me-1"></i> Call Driver
+									</button>
+									<button class="btn-track-action btn-track-primary" onclick="alert('Map updated: Van is 1.4 miles away near Westminster bridge.');">
+										<i class="klb-icon-map-pin me-1"></i> Live Van Map
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 2: PROCESSING (To Ship) -->
+						<div class="order-group-card order-item-card" data-status="processing" data-keywords="himalayan organic grains tf-782104 lentils masoor yellow moong">
+							<div class="order-group-header">
+								<div class="d-flex align-items-center gap-3">
+									<span class="store-badge"><i class="klb-icon-store"></i> Terai Organic Pantry Hub</span>
+									<span class="text-gray-400">|</span>
+									<span class="text-gray-500">Order <strong class="text-dark">#TF-782104</strong></span>
+									<span class="text-gray-400 d-none d-md-inline">&bull; Placed on Oct 14, 2026</span>
+								</div>
+								<span class="order-status-pill status-processing"><i class="klb-icon-package me-1"></i> Processing &bull; Packaging</span>
+							</div>
+
+							<div class="order-item-row">
+								<img src="{% static 'web/' %}images/1-38-700x700.jpg" alt="Organic Yellow Moong Lentils" class="order-item-thumb">
+								<div class="order-item-info">
+									<h6 class="order-item-title">Split Yellow Moong Lentils (Dhal) &ndash; 1kg Vacuum Bag</h6>
+									<p class="order-item-meta">Category: Organic Staples &bull; Zero Additives</p>
+								</div>
+								<div class="order-item-price">&pound;2.80</div>
+								<div class="order-item-qty">Qty: 3</div>
+							</div>
+
+							<div class="order-group-footer">
+								<div>
+									<span class="text-gray-500">Total Amount:</span> <strong class="text-dark text-15">&pound;8.40</strong>
+								</div>
+								<div class="d-flex gap-2">
+									<button class="btn-track-action" onclick="alert('Order TF-782104 is being packed at London Fulfillment Center 2.');">
+										<i class="klb-icon-file-text me-1"></i> View Invoice
+									</button>
+									<button class="btn-track-action" onclick="alert('Order cancellation window has closed as items are in packaging.');">
+										Cancel Order
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 3: COMPLETED (Delivered) -->
+						<div class="order-group-card order-item-card" data-status="completed" data-keywords="minimalist cold pressed oil tf-779811 mustard oil">
+							<div class="order-group-header">
+								<div class="d-flex align-items-center gap-3">
+									<span class="store-badge"><i class="klb-icon-store"></i> Terai Specialty Mills</span>
+									<span class="text-gray-400">|</span>
+									<span class="text-gray-500">Order <strong class="text-dark">#TF-779811</strong></span>
+									<span class="text-gray-400 d-none d-md-inline">&bull; Delivered on Oct 08, 2026</span>
+								</div>
+								<span class="order-status-pill status-completed"><i class="klb-icon-check-circle me-1"></i> Delivered</span>
+							</div>
+
+							<div class="order-item-row">
+								<img src="{% static 'web/' %}images/1-12-700x700.jpg" alt="Cold Pressed Pure Mustard Oil" class="order-item-thumb">
+								<div class="order-item-info">
+									<h6 class="order-item-title">Raw Cold-Pressed Himalayan Yellow Mustard Oil &ndash; 1L Glass Bottle</h6>
+									<p class="order-item-meta">Category: Oils &amp; Ghee &bull; 100% Virgin Pressed</p>
+								</div>
+								<div class="order-item-price">&pound;6.50</div>
+								<div class="order-item-qty">Qty: 1</div>
+							</div>
+
+							<div class="order-group-footer">
+								<div>
+									<span class="text-gray-500">Delivered to:</span> <strong>SW1A 1AA, London</strong>
+								</div>
+								<div class="d-flex gap-2">
+									<button class="btn-track-action" onclick="alert('Thank you for rating 5 stars!');">
+										<i class="klb-icon-star me-1"></i> Write Review
+									</button>
+									<a href="{% url 'web:home' %}" class="btn-track-action btn-track-primary">
+										<i class="klb-icon-repeat me-1"></i> Buy Again
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 4: COMPLETED (Delivered) -->
+						<div class="order-group-card order-item-card" data-status="completed" data-keywords="fresh bakery artisanal sourdough bread tf-765402">
+							<div class="order-group-header">
+								<div class="d-flex align-items-center gap-3">
+									<span class="store-badge"><i class="klb-icon-store"></i> Terai Artisan Bakery</span>
+									<span class="text-gray-400">|</span>
+									<span class="text-gray-500">Order <strong class="text-dark">#TF-765402</strong></span>
+									<span class="text-gray-400 d-none d-md-inline">&bull; Delivered on Oct 01, 2026</span>
+								</div>
+								<span class="order-status-pill status-completed"><i class="klb-icon-check-circle me-1"></i> Delivered</span>
+							</div>
+
+							<div class="order-item-row">
+								<img src="{% static 'web/' %}images/1-30-700x700.jpg" alt="Organic Wholewheat Sourdough" class="order-item-thumb">
+								<div class="order-item-info">
+									<h6 class="order-item-title">Heritage Stoneground Wholewheat Sourdough Loaf (800g)</h6>
+									<p class="order-item-meta">Category: Breads &amp; Bakery &bull; Fresh Baked Morning Dispatch</p>
+								</div>
+								<div class="order-item-price">&pound;3.50</div>
+								<div class="order-item-qty">Qty: 2</div>
+							</div>
+
+							<div class="order-group-footer">
+								<div>
+									<span class="text-gray-500">Total:</span> <strong class="text-dark text-15">&pound;7.00</strong>
+								</div>
+								<div class="d-flex gap-2">
+									<button class="btn-track-action" onclick="alert('Invoice downloaded for Order #TF-765402.');">
+										<i class="klb-icon-download me-1"></i> Receipt
+									</button>
+									<a href="{% url 'web:home' %}" class="btn-track-action btn-track-primary">
+										<i class="klb-icon-repeat me-1"></i> Buy Again
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 5: CANCELLED -->
+						<div class="order-group-card order-item-card" data-status="cancelled" data-keywords="wild timur pepper berries cancelled refund tf-751094">
+							<div class="order-group-header">
+								<div class="d-flex align-items-center gap-3">
+									<span class="store-badge"><i class="klb-icon-store"></i> Himalayan Foraged Spices</span>
+									<span class="text-gray-400">|</span>
+									<span class="text-gray-500">Order <strong class="text-dark">#TF-751094</strong></span>
+									<span class="text-gray-400 d-none d-md-inline">&bull; Cancelled on Sep 24, 2026</span>
+								</div>
+								<span class="order-status-pill status-cancelled"><i class="klb-icon-x-circle me-1"></i> Cancelled &bull; Refunded</span>
+							</div>
+
+							<div class="order-item-row">
+								<img src="{% static 'web/' %}images/1-27-700x700.jpg" alt="Wild Timur Pepper" class="order-item-thumb">
+								<div class="order-item-info">
+									<h6 class="order-item-title">Wild Foraged Timur Pepper Berries (100g Pouch)</h6>
+									<p class="order-item-meta">Reason: Customer requested cancellation before dispatch &bull; Refund of &pound;4.50 processed</p>
+								</div>
+								<div class="order-item-price text-muted text-decoration-line-through">&pound;4.50</div>
+								<div class="order-item-qty">Qty: 1</div>
+							</div>
+
+							<div class="order-group-footer">
+								<span class="text-success text-13"><i class="klb-icon-check-circle me-1"></i> &pound;4.50 Refund credited to original card</span>
+								<a href="{% url 'web:home' %}" class="btn-track-action">Explore Catalog</a>
+							</div>
+						</div>
+
+						<!-- Pagination Bar -->
+						<div class="pagination-daraz">
+							<span class="text-gray-400 text-12 me-2">1 &ndash; 5 of 5 Orders</span>
+							<a href="#" class="page-btn active">1</a>
+							<span class="text-gray-400">&bull;</span>
+							<span class="text-12 text-gray-500">Go to page:</span>
+							<input type="number" value="1" min="1" max="1" style="width: 44px; height: 32px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-size: 13px;">
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-gray-600 hover-primary">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Contact</a></li>
+								<li class="mb-2"><a href="{% url 'web:track-order' %}" class="text-primary fw-semibold">Track Order</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Support</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<div class="widget widget-newsletter">
+								<h4 class="text-14 fw-bold text-dark text-uppercase mb-2">Join our newsletter</h4>
+								<p class="text-12 text-gray-500 mb-2">Register now to get latest updates on promotions &amp; recipes.</p>
+								<div class="site-newsletter-form">
+									<form class="mc4wp-form" method="post" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Terai Food newsletter!');">
+										<div class="mc4wp-form-fields position-relative d-flex">
+											<input class="subscribe-input form-control text-12" type="email" placeholder="Enter your email" required style="height: 32px; border-radius: 0; padding-right: 60px;">
+											<button class="btn btn-primary" type="submit" style="position: absolute; right: 0; top: 0; height: 32px; font-size: 11px; font-weight: 700; border-radius: 0; background: #634c9f; border-color: #634c9f; padding: 0 10px;">SEND</button>
+										</div>
+										<p class="text-11 text-gray-400 mt-1 mb-0">By subscribing you agree to our Terms &amp; Privacy.</p>
+									</form>
+								</div>
+								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
+								<div class="site-social d-flex gap-2">
+									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
+									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
+									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
+									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Interactive Filtering & Tracking Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+	<script>
+		// Tab Filtering Logic
+		function filterOrders(status, btnElem) {
+			if (btnElem) {
+				document.querySelectorAll('.order-tab-btn').forEach(b => b.classList.remove('active'));
+				btnElem.classList.add('active');
+			}
+
+			const cards = document.querySelectorAll('.order-item-card');
+			cards.forEach(card => {
+				const cardStatus = card.getAttribute('data-status');
+				if (status === 'all' || cardStatus === status) {
+					card.style.display = 'block';
+				} else {
+					card.style.display = 'none';
+				}
+			});
+		}
+
+		// Search Input Filter
+		function filterByKeyword(query) {
+			const q = query.toLowerCase().trim();
+			const cards = document.querySelectorAll('.order-item-card');
+			cards.forEach(card => {
+				const text = (card.getAttribute('data-keywords') + ' ' + card.innerText).toLowerCase();
+				if (!q || text.includes(q)) {
+					card.style.display = 'block';
+				} else {
+					card.style.display = 'none';
+				}
+			});
+		}
+
+		// Direct Order ID Lookup
+		function runOrderSearch() {
+			const inputEl = document.getElementById('quick-filter-input') || document.getElementById('order-search-input');
+			const orderId = inputEl ? inputEl.value.trim() : '';
+			filterByKeyword(orderId);
+			const firstMatch = document.querySelector('.order-item-card[style*="display: block"], .order-item-card:not([style*="display: none"])');
+			if (firstMatch) {
+				firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				firstMatch.style.borderColor = '#634c9f';
+				firstMatch.style.boxShadow = '0 0 0 2px rgba(99, 76, 159, 0.25)';
+			}
+		}
+
+
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+</body>
+</html>
+

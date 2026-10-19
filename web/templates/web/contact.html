@@ -1,0 +1,1306 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Supports &amp; Contact – Terai Food UK | Customer Help, Delivery Hubs &amp; FAQ</title>
+	<meta name="description" content="Contact Terai Food UK. Direct support phone numbers, email departments, physical delivery hubs across the UK, interactive map, online inquiry form, and comprehensive FAQs.">
+	<meta name="keywords" content="contact Terai Food, grocery customer support UK, Terai Food phone number, UK delivery hubs map, grocery FAQ">
+	<link rel="canonical" href="{% url 'web:contact' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="leaflet-css" href="{% static 'web/' %}css/leaflet.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		/* Global Zero Border Radius & High Contrast Sharp Styling */
+		.terai-contact-page,
+		.terai-contact-page *,
+		.terai-contact-page .btn,
+		.terai-contact-page .form-control,
+		.terai-contact-page .badge,
+		.terai-contact-page .alert,
+		.terai-contact-page input,
+		.terai-contact-page select,
+		.terai-contact-page textarea {
+			border-radius: 0 !important;
+		}
+
+		body.terai-contact-page {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #f8fafc;
+			color: #0f172a;
+		}
+
+		/* Top Navigation Bulk Order CTA */
+		.nav-bulk-order-cta {
+			background: #f5f3ff;
+			color: #634c9f !important;
+			border: 1px solid #ede9fe;
+			padding: 7px 14px !important;
+			font-weight: 700 !important;
+			transition: all 0.2s ease;
+		}
+		.nav-bulk-order-cta:hover {
+			background: #634c9f !important;
+			color: #ffffff !important;
+		}
+
+		/* Clean Breadcrumbs (In-content) */
+		.contact-breadcrumbs {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+			margin-bottom: 14px;
+		}
+		.contact-breadcrumbs a {
+			color: #64748b;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.15s ease;
+		}
+		.contact-breadcrumbs a:hover {
+			color: #634c9f;
+		}
+		.contact-breadcrumbs .breadcrumb-separator {
+			color: #94a3b8;
+			font-size: 10px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.contact-breadcrumbs .breadcrumb-current {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		/* ========================================================
+		   SUPPORTS PAGE: Inherited Shop Page Layout, Size, Width & Scroll Effect
+		   Sticky Header-Nav & 280px Flush Left Sidebar (0 space, 0 radius)
+		   ======================================================== */
+		.terai-contact-page .header-nav {
+			position: sticky !important;
+			top: 0 !important;
+			z-index: 1000 !important;
+			background: #ffffff !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+		}
+		.terai-contact-page .categories-menu {
+			position: relative;
+			width: 280px !important;
+			flex: 0 0 280px !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		.terai-contact-page .categories-menu .categories-toggle {
+			width: 280px !important;
+			height: 48px;
+			justify-content: flex-start;
+			padding: 0 20px;
+			background: #ffffff;
+			border: none !important;
+			border-right: 1px solid #e2e8f0 !important;
+			border-bottom: 1px solid #e2e8f0 !important;
+			border-left: none !important;
+			border-top: none !important;
+			border-radius: 0 !important;
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+		}
+		.terai-contact-page .categories-menu .categories-toggle i {
+			font-size: 16px;
+			color: #634c9f;
+		}
+
+		/* Desktop Layout (>= 1200px): Flush left (0 space), sticky on scroll, 0 radius */
+		@media (min-width: 1200px) {
+			.terai-contact-page .contact-main-layout {
+				padding: 0 0 0 0 !important;
+				margin: 0 !important;
+			}
+			.terai-contact-page .contact-main-container {
+				padding-left: 0 !important;
+				max-width: 100% !important;
+				width: 100% !important;
+			}
+			.terai-contact-page .contact-main-row {
+				margin: 0 !important;
+				display: flex !important;
+				align-items: flex-start !important; /* Required for sticky child */
+			}
+			.terai-contact-page .contact-sidebar-col {
+				width: 280px !important;
+				flex: 0 0 280px !important;
+				position: sticky !important;
+				top: 48px !important; /* Flush right beneath sticky sub-nav */
+				height: auto !important;
+				min-height: calc(100vh - 48px) !important;
+				background: #ffffff !important;
+				border-right: 1px solid #e2e8f0 !important;
+				border-left: none !important;
+				border-top: none !important;
+				border-bottom: none !important;
+				border-radius: 0 !important;
+				padding: 0 !important;
+				margin: 0 !important;
+				z-index: 100 !important;
+				align-self: flex-start !important;
+				display: flex !important;
+				flex-direction: column !important;
+				gap: 0 !important;
+				overflow-y: auto !important;
+				max-height: calc(100vh - 48px) !important;
+				scrollbar-width: thin;
+			}
+			.terai-contact-page .contact-content-col {
+				flex: 1 !important;
+				min-width: 0 !important;
+				padding: 20px 32px 50px !important; /* Exact match to shop.html & blogs.html */
+			}
+		}
+
+		/* Mobile & Tablet (< 1200px) */
+		@media (max-width: 1199px) {
+			.terai-contact-page .contact-sidebar-col {
+				width: 100% !important;
+				flex: 0 0 100% !important;
+				position: static !important;
+				border-right: none !important;
+				border-bottom: 1px solid #e2e8f0 !important;
+				margin-bottom: 20px !important;
+			}
+			.terai-contact-page .contact-content-col {
+				padding: 16px !important;
+			}
+			.terai-contact-page .categories-menu {
+				width: auto !important;
+			}
+		}
+
+		/* Sidebar Widgets: Seamless continuous column matching shop page */
+		.contact-sidebar-widget {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 14px 16px;
+			box-sizing: border-box;
+		}
+		.contact-sidebar-widget:last-child {
+			border-bottom: none;
+		}
+		.sidebar-widget-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 2px solid #0f172a;
+			padding-bottom: 5px;
+			margin-bottom: 8px;
+		}
+		.sidebar-widget-title {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+		.sidebar-widget-title i {
+			color: #634c9f;
+			font-size: 13px;
+		}
+
+		/* Live Indicator Dot */
+		.live-indicator {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 10px;
+			font-weight: 700;
+			color: #16a34a;
+			background: #ecfdf5;
+			border: 1px solid #a7f3d0;
+			padding: 1px 6px;
+		}
+		.live-indicator .pulse-dot {
+			width: 6px;
+			height: 6px;
+			background: #16a34a;
+			display: inline-block;
+			animation: pulse 1.8s infinite;
+		}
+		@keyframes pulse {
+			0% { opacity: 1; transform: scale(1); }
+			50% { opacity: 0.4; transform: scale(0.85); }
+			100% { opacity: 1; transform: scale(1); }
+		}
+
+		/* Contact Detail List */
+		.contact-detail-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.contact-detail-item {
+			padding: 7px 0;
+		}
+		.contact-detail-item + .contact-detail-item {
+			border-top: 1px solid #f1f5f9;
+		}
+		.contact-detail-label {
+			font-size: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #64748b;
+			font-weight: 700;
+			margin-bottom: 2px;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+		}
+		.contact-detail-val {
+			font-size: 12px;
+			font-weight: 700;
+			color: #0f172a;
+			line-height: 1.35;
+			word-break: break-word;
+		}
+		.contact-detail-val a {
+			color: #0f172a;
+			text-decoration: none;
+			transition: color 0.15s ease;
+		}
+		.contact-detail-val a:hover {
+			color: #634c9f;
+		}
+		.contact-detail-sub {
+			font-size: 10.5px;
+			color: #64748b;
+			margin-top: 2px;
+			font-weight: normal;
+		}
+
+		/* Social Links Grid */
+		.sidebar-social-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 6px;
+			margin-top: 4px;
+		}
+		.sidebar-social-btn {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 8px;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			color: #0f172a;
+			font-size: 11px;
+			font-weight: 700;
+			text-decoration: none;
+			transition: all 0.15s ease;
+		}
+		.sidebar-social-btn:hover {
+			background: #634c9f;
+			color: #ffffff;
+			border-color: #634c9f;
+		}
+		.sidebar-social-btn i {
+			font-size: 13px;
+		}
+
+		/* WhatsApp CTA Banner in Sidebar */
+		.whatsapp-cta-card {
+			background: #f0fdf4;
+			border: 1px solid #86efac;
+			padding: 9px 10px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			text-decoration: none;
+			color: #166534;
+			transition: all 0.15s ease;
+			margin-top: 8px;
+		}
+		.whatsapp-cta-card:hover {
+			background: #dcfce7;
+			border-color: #4ade80;
+			color: #14532d;
+		}
+		.whatsapp-icon-circle {
+			width: 28px;
+			height: 28px;
+			background: #22c55e;
+			color: #ffffff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 14px;
+			flex-shrink: 0;
+		}
+
+		/* MAIN CONTENT: Top 50/50 Split (Map & Inquiry Form) */
+		.contact-top-split {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 14px;
+		}
+		.split-card-box {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
+		}
+		.split-card-header {
+			padding: 9px 12px;
+			border-bottom: 2px solid #0f172a;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			background: #ffffff;
+		}
+		.split-card-title {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+		.split-card-title i {
+			color: #634c9f;
+			font-size: 13px;
+		}
+		.split-card-body {
+			padding: 12px;
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+		}
+
+		/* Interactive Leaflet Map */
+		#contact-delivery-map {
+			width: 100%;
+			height: 380px;
+			border: 1px solid #cbd5e1;
+			background: #e2e8f0;
+			z-index: 1;
+		}
+		.map-hub-legend {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+			margin-top: 8px;
+			padding-top: 6px;
+			border-top: 1px solid #f1f5f9;
+		}
+		.map-hub-pill {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 10px;
+			font-weight: 700;
+			padding: 2px 6px;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			color: #0f172a;
+		}
+		.map-hub-pill .hub-dot {
+			width: 6px;
+			height: 6px;
+			background: #634c9f;
+			display: inline-block;
+		}
+
+		/* Inquiry Form Controls: Dense, Congested, Sharp */
+		.contact-form-dense .form-label {
+			display: block;
+			font-size: 11px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-bottom: 3px;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+		}
+		.contact-form-dense .form-control,
+		.contact-form-dense .form-select {
+			height: 32px;
+			font-size: 12px;
+			color: #0f172a;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			padding: 4px 8px;
+			box-sizing: border-box;
+		}
+		.contact-form-dense .form-control:focus,
+		.contact-form-dense .form-select:focus {
+			border-color: #634c9f;
+			box-shadow: none;
+			outline: none;
+		}
+		.contact-form-dense textarea.form-control {
+			height: 95px;
+			resize: vertical;
+		}
+		.contact-submit-btn {
+			height: 34px;
+			font-size: 11.5px;
+			font-weight: 800;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			padding: 0 16px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			cursor: pointer;
+			transition: background 0.15s ease;
+			width: 100%;
+		}
+		.contact-submit-btn:hover {
+			background: #4f3984;
+			border-color: #4f3984;
+			color: #ffffff;
+		}
+
+		/* FAQ SECTION: Single Column Collapsible / Expandable Accordion */
+		.faq-wrapper-box {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			padding: 12px 14px;
+			box-sizing: border-box;
+		}
+		.faq-section-header {
+			border-bottom: 2px solid #0f172a;
+			padding-bottom: 6px;
+			margin-bottom: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+		.faq-main-title {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+		.faq-main-title i {
+			color: #634c9f;
+			font-size: 13px;
+		}
+
+		/* Accordion Stack: Single Column List */
+		.faq-accordion-stack {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+		.faq-accordion-item {
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			transition: border-color 0.15s ease;
+		}
+		.faq-accordion-item.is-open {
+			border-color: #634c9f;
+		}
+		.faq-accordion-header {
+			width: 100%;
+			background: #f8fafc;
+			border: none;
+			padding: 9px 12px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
+			text-align: left;
+			transition: background-color 0.15s ease, color 0.15s ease;
+		}
+		.faq-accordion-header:hover {
+			background: #f1f5f9;
+		}
+		.faq-accordion-item.is-open .faq-accordion-header {
+			background: #ffffff;
+			border-bottom: 1px solid #f1f5f9;
+		}
+		.faq-q-text {
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin: 0;
+			line-height: 1.35;
+		}
+		.faq-q-text i {
+			color: #634c9f;
+			font-size: 13px;
+			flex-shrink: 0;
+		}
+		.faq-toggle-icon {
+			width: 18px;
+			height: 18px;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			color: #64748b;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 9px;
+			font-weight: 800;
+			flex-shrink: 0;
+			margin-left: 10px;
+			transition: all 0.2s ease;
+		}
+		.faq-accordion-item.is-open .faq-toggle-icon {
+			background: #634c9f;
+			color: #ffffff;
+			border-color: #634c9f;
+			transform: rotate(180deg);
+		}
+		.faq-accordion-body {
+			display: none;
+			padding: 10px 14px 12px 33px;
+			background: #ffffff;
+		}
+		.faq-accordion-item.is-open .faq-accordion-body {
+			display: block;
+		}
+		.faq-a-text {
+			font-size: 11.5px;
+			color: #475569;
+			line-height: 1.55;
+			margin: 0;
+		}
+
+		/* Responsive Breakdown */
+		@media (max-width: 991px) {
+			.contact-layout-row {
+				flex-direction: column;
+			}
+			.contact-sidebar-col {
+				width: 100%;
+				flex: 0 0 100%;
+			}
+			.contact-top-split {
+				grid-template-columns: 1fr;
+			}
+			#contact-delivery-map {
+				height: 300px;
+			}
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-contact-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
+									<input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1 border-top">
+				<div class="container-fluid ps-0 pe-4 pe-xl-5">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+
+							<!-- Header All Categories Button -->
+							<div class="categories-menu">
+								<a href="{% url 'web:shop' %}" class="categories-toggle" id="support-sidebar-toggle-btn">
+									<i class="klb-icon-layout-grid me-2"></i>All Categories
+								</a>
+							</div>
+
+							<!-- Primary Menu with Updated Nav Items -->
+							<nav class="site-menu horizontal menu-shadow primary-menu ms-4">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:shop' %}">Shops</a></li>
+									<li class="menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item current-menu-item"><a href="{% url 'web:contact' %}">Supports</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- ========================================================
+		     MAIN SUPPORTS LAYOUT: Desktop Extended Categories / Support Desk + Help Hub
+		     Flush Left (ps-0), Zero Border Radius, Sticky Sidebar & Scroll Effect
+		     ======================================================== -->
+		<main id="main" class="site-primary contact-main-layout">
+			<div class="container-fluid ps-0 pe-4 pe-xl-5 contact-main-container">
+				<div class="contact-main-row">
+
+					<!-- Left Column: Exactly 280px, Sticky on Scroll, Flush Left (0 Space), No Radius -->
+					<aside class="contact-sidebar-col" id="contact-sidebar-help">
+						<!-- Widget 1: Direct Hotline & Phone Numbers -->
+						<div class="contact-sidebar-widget">
+							<ul class="contact-detail-list">
+								<li class="contact-detail-item">
+									<div class="contact-detail-label"><i class="klb-icon-phone text-primary"></i> Direct Office Line</div>
+									<div class="contact-detail-val"><a href="tel:+442079460912">+44 20 7946 0912</a></div>
+								</li>
+								<li class="contact-detail-item">
+									<div class="contact-detail-label"><i class="klb-icon-clock text-primary"></i> Operating Hours</div>
+									<div class="contact-detail-val" style="font-size: 11.5px; font-weight: 700; color: #0f172a;">24/7 Support</div>
+								</li>
+							</ul>
+
+							<!-- WhatsApp Direct Help -->
+							<a href="https://wa.me/447700900077" target="_blank" rel="noopener" class="whatsapp-cta-card">
+								<div class="whatsapp-icon-circle">
+									<i class="klb-social-icon-whatsapp"></i>
+								</div>
+								<div>
+									<div style="font-size: 11px; font-weight: 800; line-height: 1.2;">WhatsApp Fast Support</div>
+									<div style="font-size: 10px; opacity: 0.85;">Chat live with dispatch rep</div>
+								</div>
+							</a>
+						</div>
+
+						<!-- Widget 2: Department Emails -->
+						<div class="contact-sidebar-widget">
+							<div class="sidebar-widget-header">
+								<h4 class="sidebar-widget-title"><i class="klb-icon-mail"></i> Email Inquiries</h4>
+								<span class="text-10 text-gray-500 fw-bold">&lt; 2 HR SLA</span>
+							</div>
+							<ul class="contact-detail-list">
+								<li class="contact-detail-item">
+									<div class="contact-detail-label">Customer Support</div>
+									<div class="contact-detail-val"><a href="mailto:support@teraifood.co.uk">support@teraifood.co.uk</a></div>
+									<div class="contact-detail-sub">Orders, tracking, returns &amp; refunds</div>
+								</li>
+								<li class="contact-detail-item">
+									<div class="contact-detail-label">Wholesale &amp; Catering</div>
+									<div class="contact-detail-val"><a href="mailto:wholesale@teraifood.co.uk">wholesale@teraifood.co.uk</a></div>
+									<div class="contact-detail-sub">Bulk purchase orders &amp; commercial B2B</div>
+								</li>
+							</ul>
+						</div>
+
+						<!-- Widget 3: Physical Address & Head Office Location -->
+						<div class="contact-sidebar-widget">
+							<div class="sidebar-widget-header">
+								<h4 class="sidebar-widget-title"><i class="klb-icon-map-pin"></i> Head Office Location</h4>
+							</div>
+							<ul class="contact-detail-list">
+								<li class="contact-detail-item">
+									<div class="contact-detail-label">London HQ &amp; Central Depot</div>
+									<div class="contact-detail-val" style="font-size: 11.5px; line-height: 1.4;">Unit 4B Peninsula Park, London SE10 0ER, UK</div>
+								</li>
+							</ul>
+						</div>
+
+						<!-- Widget 4: Social Media Channels & Links -->
+						<div class="contact-sidebar-widget">
+							<div class="sidebar-widget-header">
+								<h4 class="sidebar-widget-title"><i class="klb-icon-share-2"></i> Social Channels</h4>
+								<span class="text-10 text-gray-500 fw-bold">CONNECT</span>
+							</div>
+							<p class="text-11 text-gray-600 mb-2" style="line-height: 1.35;">Follow us for new harvest arrivals, seasonal promotions, and rapid customer messaging.</p>
+							<div class="sidebar-social-grid">
+								<a href="https://www.facebook.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+									<i class="klb-social-icon-facebook text-primary"></i> Facebook
+								</a>
+								<a href="https://www.twitter.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+									<i class="klb-social-icon-twitter text-info"></i> Twitter / X
+								</a>
+								<a href="https://www.instagram.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+									<i class="klb-social-icon-instagram text-danger"></i> Instagram
+								</a>
+								<a href="https://www.linkedin.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+									<i class="klb-social-icon-linkedin text-primary"></i> LinkedIn
+								</a>
+							</div>
+						</div>
+					</aside>
+
+					<!-- RIGHT COLUMN: Rest ~70% Content Area -->
+					<div class="contact-content-col">
+
+						<!-- Clean In-Content Breadcrumbs Bar -->
+						<nav class="contact-breadcrumbs" aria-label="breadcrumb">
+							<a href="{% url 'web:home' %}">Home</a>
+							<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+							<span class="breadcrumb-current">Supports &amp; Contact</span>
+						</nav>
+
+						<!-- TOP SECTION: 50/50 Split (Map & Inquiry Form) -->
+						<div class="contact-top-split">
+
+							<!-- LEFT HALF (50%): Interactive Map -->
+							<div class="split-card-box">
+								<div class="split-card-header">
+									<h3 class="split-card-title">
+										<i class="klb-icon-map-pin"></i> UK Delivery Network Map
+									</h3>
+									<span class="text-10 text-success fw-bold">
+										<i class="klb-icon-check-circle"></i> 4 HUBS ACTIVE
+									</span>
+								</div>
+								<div class="split-card-body">
+									<div id="contact-delivery-map"></div>
+									<div class="map-hub-legend">
+										<span class="map-hub-pill"><span class="hub-dot"></span> London Central HQ</span>
+										<span class="map-hub-pill"><span class="hub-dot"></span> Birmingham Midlands</span>
+										<span class="map-hub-pill"><span class="hub-dot"></span> Manchester North</span>
+										<span class="map-hub-pill"><span class="hub-dot"></span> Glasgow Scotland</span>
+									</div>
+									<p class="text-10 text-gray-500 mt-2 mb-0" style="line-height: 1.35;">
+										<i class="klb-icon-truck text-primary me-1"></i> Temperature-controlled fleet operates out of all 4 key hubs to guarantee next-day delivery across mainland UK.
+									</p>
+								</div>
+							</div>
+
+							<!-- RIGHT HALF (50%): Inquiry Form -->
+							<div class="split-card-box">
+								<div class="split-card-header">
+									<h3 class="split-card-title">
+										<i class="klb-icon-mail"></i> Direct Support Inquiry
+									</h3>
+									<span class="text-10 text-primary fw-bold">FAST DISPATCH REPLY</span>
+								</div>
+								<div class="split-card-body">
+									<div id="contact-success-alert" class="alert alert-success d-none py-2 px-3 mb-2 d-flex align-items-center gap-2" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px;">
+										<i class="klb-icon-check-circle text-16"></i>
+										<div><strong>Inquiry received!</strong> A customer advisor will reply within 45 minutes.</div>
+									</div>
+
+									<form id="terai-contact-form" class="contact-form-dense" onsubmit="event.preventDefault(); document.getElementById('contact-success-alert').classList.remove('d-none'); this.reset();">
+										<div class="row g-2 mb-2">
+											<div class="col-sm-6">
+												<label class="form-label" for="contact-name">Full Name *</label>
+												<input type="text" id="contact-name" class="form-control" placeholder="e.g. David Campbell" required>
+											</div>
+											<div class="col-sm-6">
+												<label class="form-label" for="contact-email">Email Address *</label>
+												<input type="email" id="contact-email" class="form-control" placeholder="e.g. david@example.co.uk" required>
+											</div>
+										</div>
+
+										<div class="row g-2 mb-2">
+											<div class="col-sm-6">
+												<label class="form-label" for="contact-phone">Contact Phone</label>
+												<input type="tel" id="contact-phone" class="form-control" placeholder="e.g. +44 7700 900077">
+											</div>
+											<div class="col-sm-6">
+												<label class="form-label" for="contact-subject">Inquiry Topic *</label>
+												<select id="contact-subject" class="form-select" required>
+													<option value="" disabled selected>Choose Topic</option>
+													<option value="order-status">Live Order Status &amp; Tracking</option>
+													<option value="produce-quality">Produce Freshness Guarantee</option>
+													<option value="wholesale-quote">Wholesale &amp; Bulk Quote</option>
+													<option value="delivery-postcode">Postcode Cold-Chain Query</option>
+													<option value="refund-request">Refund or Replacement</option>
+													<option value="other">General Customer Question</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="mb-2">
+											<label class="form-label" for="contact-message">Your Message / Query *</label>
+											<textarea id="contact-message" class="form-control" placeholder="Please detail your request, include order number or delivery postcode..." required></textarea>
+										</div>
+
+										<div>
+											<button type="submit" class="contact-submit-btn">
+												<i class="klb-icon-send"></i> Submit Support Inquiry
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+
+						<!-- BOTTOM SECTION: Single-Column Collapsible & Expandable FAQs Accordion -->
+						<div class="faq-wrapper-box">
+							<div class="faq-section-header">
+								<h3 class="faq-main-title">
+									<i class="klb-icon-help-circle"></i> Frequently Asked Questions &amp; Support Knowledgebase
+								</h3>
+								<span class="text-10 text-gray-500 fw-bold">8 EXPANDABLE ANSWERS</span>
+							</div>
+
+							<div class="faq-accordion-stack" id="faq-accordion">
+								<!-- FAQ 1 (Open by default) -->
+								<div class="faq-accordion-item is-open">
+									<button type="button" class="faq-accordion-header" aria-expanded="true">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> When will my grocery order be delivered?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											Orders placed before 1:00 PM (Monday through Friday) are packed same-day and delivered next day across mainland UK. Standard delivery timeline is 24 to 48 hours with real-time 1-hour carrier tracking windows via SMS.
+										</p>
+									</div>
+								</div>
+
+								<!-- FAQ 2 -->
+								<div class="faq-accordion-item">
+									<button type="button" class="faq-accordion-header" aria-expanded="false">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> How do you guarantee fresh produce cold-chain?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											All perishable goods are packed in 100% recyclable wool-cool thermal liners with dry food-grade frozen gel chill packs. Internal parcel temperatures are maintained strictly below 4&deg;C for up to 48 hours in transit.
+										</p>
+									</div>
+								</div>
+
+								<!-- FAQ 3 -->
+								<div class="faq-accordion-item">
+									<button type="button" class="faq-accordion-header" aria-expanded="false">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> What happens if an item is damaged or missing?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											We offer an unconditional 100% Freshness Guarantee. Take a quick photo and email support@teraifood.co.uk or message our WhatsApp line. We issue an immediate refund or dispatch a priority replacement within 2 hours.
+										</p>
+									</div>
+								</div>
+
+								<!-- FAQ 4 -->
+								<div class="faq-accordion-item">
+									<button type="button" class="faq-accordion-header" aria-expanded="false">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> Can businesses place wholesale or bulk trade orders?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											Yes! We supply restaurants, caterers, grocery retailers, and institutions with commercial discounts and pallet dispatch. Use our navbar Bulk Order button or choose "Wholesale &amp; Bulk Quote" in the inquiry form.
+										</p>
+									</div>
+								</div>
+
+								<!-- FAQ 5 -->
+								<div class="faq-accordion-item">
+									<button type="button" class="faq-accordion-header" aria-expanded="false">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> Which payment methods and currencies do you accept?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											We accept all major UK debit/credit cards (Visa, Mastercard, Amex), PayPal, Apple Pay, and Google Pay. All transactions are securely processed in GBP (£) with end-to-end 256-bit SSL encryption.
+										</p>
+									</div>
+								</div>
+
+								<!-- FAQ 6 -->
+								<div class="faq-accordion-item">
+									<button type="button" class="faq-accordion-header" aria-expanded="false">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> How can I track my live order dispatch status?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											Visit our <a href="{% url 'web:track-order' %}" class="text-primary fw-bold text-decoration-none">Track Order</a> page and enter your 5-digit Order ID and billing email. You will see courier assignments, dispatch timestamps, and live route status.
+										</p>
+									</div>
+								</div>
+
+								<!-- FAQ 7 -->
+								<div class="faq-accordion-item">
+									<button type="button" class="faq-accordion-header" aria-expanded="false">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> Do you ship to Scotland, Wales &amp; Northern Ireland?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											Yes. Ambient pantry goods and spices ship to all UK postcodes including Highlands and Islands. Chilled produce delivers next-day across central Scotland and all of Wales through our Glasgow and Midlands hubs.
+										</p>
+									</div>
+								</div>
+
+								<!-- FAQ 8 -->
+								<div class="faq-accordion-item">
+									<button type="button" class="faq-accordion-header" aria-expanded="false">
+										<span class="faq-q-text">
+											<i class="klb-icon-help-circle"></i> Are your Himalayan spices certified organic and natural?
+										</span>
+										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
+									</button>
+									<div class="faq-accordion-body">
+										<p class="faq-a-text">
+											Every spice blend, herb, and grain lot is ethically sourced directly from smallholder Himalayan farms and independently batch-tested in the UK for zero synthetic pesticides, heavy metals, and artificial preservatives.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:shop' %}" class="text-gray-600 hover-primary">Shop Catalog</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-gray-600 hover-primary">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-primary fw-semibold">Contact Support</a></li>
+								<li class="mb-2"><a href="{% url 'web:track-order' %}" class="text-gray-600 hover-primary">Track Order</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-primary fw-semibold">Help &amp; Support</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#terms" class="text-gray-600 hover-primary">Terms of Service</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<div class="widget widget-newsletter">
+								<h4 class="text-14 fw-bold text-dark text-uppercase mb-2">Join our newsletter</h4>
+								<p class="text-12 text-gray-500 mb-2">Register now to get latest updates on promotions &amp; recipes.</p>
+								<div class="site-newsletter-form">
+									<form class="mc4wp-form" method="post" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Terai Food newsletter!');">
+										<div class="mc4wp-form-fields position-relative d-flex">
+											<input class="subscribe-input form-control text-12" type="email" placeholder="Enter your email" required style="height: 32px; border-radius: 0; padding-right: 60px;">
+											<button class="btn btn-primary" type="submit" style="position: absolute; right: 0; top: 0; height: 32px; font-size: 11px; font-weight: 700; border-radius: 0; background: #634c9f; border-color: #634c9f; padding: 0 10px;">SEND</button>
+										</div>
+										<p class="text-11 text-gray-400 mt-1 mb-0">By subscribing you agree to our Terms &amp; Privacy.</p>
+									</form>
+								</div>
+								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
+								<div class="site-social d-flex gap-2">
+									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
+									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
+									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
+									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+	<script src="{% static 'web/' %}js/leaflet.js"></script>
+
+	<!-- Interactive Leaflet Delivery Map Initialization -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			if (typeof L === 'undefined') return;
+
+			// Initialize Leaflet Map centered on UK
+			const map = L.map('contact-delivery-map', {
+				center: [53.5, -2.0],
+				zoom: 6,
+				scrollWheelZoom: false,
+				attributionControl: false
+			});
+
+			// OpenStreetMap Tile Layer
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: '&copy; OpenStreetMap'
+			}).addTo(map);
+
+			// Define Custom Sharp Square Pin Icon
+			const createPinIcon = function(label) {
+				return L.divIcon({
+					className: 'terai-map-marker',
+					html: '<div style="background: #634c9f; color: #ffffff; padding: 3px 6px; font-size: 10px; font-weight: 800; border: 1px solid #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.35); text-transform: uppercase; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><i class="klb-icon-map-pin" style="font-size: 10px;"></i> ' + label + '</div>',
+					iconSize: [80, 24],
+					iconAnchor: [40, 12]
+				});
+			};
+
+			// Key UK Hub Locations
+			const hubs = [
+				{
+					name: 'London Central HQ & Depot',
+					lat: 51.501,
+					lng: -0.007,
+					tag: 'London HQ',
+					desc: 'Unit 4B Peninsula Park, London SE10 0ER.<br><strong>Dispatch SLA:</strong> Same-day packing for Greater London &amp; South East.'
+				},
+				{
+					name: 'Birmingham Midlands Hub',
+					lat: 52.486,
+					lng: -1.890,
+					tag: 'Midlands Hub',
+					desc: 'Duddeston Central B7.<br><strong>Dispatch SLA:</strong> Overnight cold-chain for Midlands, Wales &amp; West.'
+				},
+				{
+					name: 'Manchester Northern Depot',
+					lat: 53.480,
+					lng: -2.242,
+					tag: 'Manchester Hub',
+					desc: 'Trafford Logistics Park.<br><strong>Dispatch SLA:</strong> Northern England next-morning express.'
+				},
+				{
+					name: 'Glasgow Scotland Distribution',
+					lat: 55.864,
+					lng: -4.251,
+					tag: 'Glasgow Hub',
+					desc: 'Shieldhall Distribution G51.<br><strong>Dispatch SLA:</strong> Scottish Central Belt cold-chain reach.'
+				}
+			];
+
+			hubs.forEach(function(hub) {
+				const marker = L.marker([hub.lat, hub.lng], { icon: createPinIcon(hub.tag) }).addTo(map);
+				marker.bindPopup(
+					'<div style="font-family: Inter, sans-serif; font-size: 11.5px; padding: 2px;">' +
+					'<strong style="color: #0f172a; font-size: 12px; display: block; margin-bottom: 3px;">' + hub.name + '</strong>' +
+					'<span style="color: #475569; font-size: 11px; line-height: 1.4;">' + hub.desc + '</span>' +
+					'</div>'
+				);
+			});
+
+			// Fix map rendering within responsive layout
+			setTimeout(function() {
+				map.invalidateSize();
+			}, 300);
+
+			// FAQ Single-Column Collapsible / Expandable Accordion
+			const faqHeaders = document.querySelectorAll('.faq-accordion-header');
+			faqHeaders.forEach(function(header) {
+				header.addEventListener('click', function() {
+					const item = this.closest('.faq-accordion-item');
+					const isOpen = item.classList.contains('is-open');
+
+					// Toggle current item
+					if (isOpen) {
+						item.classList.remove('is-open');
+						this.setAttribute('aria-expanded', 'false');
+					} else {
+						item.classList.add('is-open');
+						this.setAttribute('aria-expanded', 'true');
+					}
+				});
+			});
+
+
+		});
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+</body>
+</html>

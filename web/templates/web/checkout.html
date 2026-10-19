@@ -1,0 +1,1214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Checkout – Terai Food UK | Order Confirmation &amp; Payment</title>
+	<meta name="description" content="Secure checkout for Terai Food UK. Confirm delivery address, review package dispatch options, apply voucher promotions, and proceed to payment.">
+	<link rel="canonical" href="{% url 'web:checkout' %}">
+
+	<link rel="icon" href="{% static 'web/' %}images/teraifood-icon.svg" type="image/svg+xml">
+
+	<!-- Preconnect Google Fonts with secure HTTPS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		/* Global Zero Border Radius & High Contrast Sharp Styling */
+		.terai-checkout-page,
+		.terai-checkout-page *,
+		.terai-checkout-page .btn,
+		.terai-checkout-page .form-control,
+		.terai-checkout-page .badge,
+		.terai-checkout-page .alert,
+		.terai-checkout-page input,
+		.terai-checkout-page select,
+		.terai-checkout-page textarea {
+			border-radius: 0 !important;
+		}
+
+		body.terai-checkout-page {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: #eff0f5;
+			color: #0f172a;
+		}
+
+		/* Top Navigation Bulk Order CTA */
+		.nav-bulk-order-cta {
+			background: #f5f3ff;
+			color: #634c9f !important;
+			border: 1px solid #ede9fe;
+			padding: 7px 14px !important;
+			font-weight: 700 !important;
+			transition: all 0.2s ease;
+		}
+		.nav-bulk-order-cta:hover {
+			background: #634c9f !important;
+			color: #ffffff !important;
+		}
+
+		/* Clean Breadcrumbs Bar */
+		.checkout-breadcrumbs-wrapper {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 8px 0;
+		}
+		.checkout-breadcrumbs {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+		}
+		.checkout-breadcrumbs a {
+			color: #64748b;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.15s ease;
+		}
+		.checkout-breadcrumbs a:hover {
+			color: #634c9f;
+		}
+		.checkout-breadcrumbs .breadcrumb-separator {
+			color: #94a3b8;
+			font-size: 10px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.checkout-breadcrumbs .breadcrumb-current {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		/* Main Layout Area */
+		.checkout-main-layout {
+			padding: 16px 0 45px;
+		}
+		.checkout-layout-row {
+			display: flex;
+			align-items: flex-start;
+			gap: 14px;
+			margin: 0;
+		}
+
+		/* Left Column: ~70% */
+		.checkout-main-col {
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		/* Right Column: ~30% */
+		.checkout-sidebar-col {
+			width: 340px;
+			flex: 0 0 340px;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		/* ========================================================
+		   DARAZ-STYLE WHITE CONTENT CARDS
+		   ======================================================== */
+		.daraz-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			padding: 14px 18px;
+			box-sizing: border-box;
+		}
+
+		/* Card 1: Shipping Address */
+		.address-card-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 10px;
+		}
+		.address-card-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #212121;
+			margin: 0;
+		}
+		.card-edit-link {
+			color: #0089a7;
+			text-decoration: none;
+			font-size: 11.5px;
+			font-weight: 700;
+			cursor: pointer;
+			text-transform: uppercase;
+			transition: color 0.15s ease;
+		}
+		.card-edit-link:hover {
+			color: #02667d;
+			text-decoration: underline;
+		}
+		.address-recipient-row {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			font-size: 13px;
+			font-weight: 700;
+			color: #212121;
+			margin-bottom: 6px;
+		}
+		.address-tag-badge {
+			display: inline-flex;
+			align-items: center;
+			background: #0089a7;
+			color: #ffffff;
+			font-size: 10px;
+			font-weight: 800;
+			padding: 1px 6px;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-right: 8px;
+			vertical-align: middle;
+		}
+		.address-details-text {
+			font-size: 12px;
+			color: #424242;
+			line-height: 1.45;
+			margin: 0 0 4px;
+		}
+		.address-landmark-text {
+			font-size: 11.5px;
+			color: #757575;
+			margin: 0;
+		}
+
+		/* Card 2: Package Details */
+		.package-card-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #f1f5f9;
+			padding-bottom: 8px;
+			margin-bottom: 12px;
+		}
+		.package-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #212121;
+			margin: 0;
+		}
+		.package-shipped-by {
+			font-size: 11px;
+			color: #757575;
+		}
+		.package-shipped-by strong {
+			color: #212121;
+		}
+
+		/* Delivery Option Radio Box */
+		.delivery-section-label {
+			font-size: 11px;
+			color: #757575;
+			margin-bottom: 8px;
+		}
+		.delivery-section-label strong {
+			color: #212121;
+		}
+		.delivery-option-box {
+			border: 1.5px solid #0089a7;
+			background: #ffffff;
+			padding: 10px 14px;
+			width: 240px;
+			max-width: 100%;
+			margin-bottom: 16px;
+			position: relative;
+			box-sizing: border-box;
+		}
+		.delivery-option-price-row {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 13px;
+			font-weight: 800;
+			color: #212121;
+			margin-bottom: 2px;
+		}
+		.delivery-option-price-row i {
+			color: #0089a7;
+			font-size: 14px;
+		}
+		.delivery-option-type {
+			font-size: 11px;
+			color: #757575;
+			margin-bottom: 10px;
+			padding-left: 20px;
+		}
+		.delivery-guaranteed-date {
+			font-size: 11px;
+			color: #424242;
+			padding-left: 20px;
+			font-weight: 600;
+		}
+
+		/* Item Row inside Package */
+		.checkout-item-row {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			padding-top: 10px;
+			border-top: 1px solid #f1f5f9;
+		}
+		.checkout-item-thumb {
+			width: 64px;
+			height: 64px;
+			border: 1px solid #e2e8f0;
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #fafafa;
+			overflow: hidden;
+		}
+		.checkout-item-thumb img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.checkout-item-info {
+			flex: 1;
+			min-width: 0;
+		}
+		.checkout-item-title {
+			font-size: 12.5px;
+			font-weight: 700;
+			color: #212121;
+			margin: 0 0 3px;
+			line-height: 1.35;
+		}
+		.checkout-item-meta {
+			font-size: 11px;
+			color: #757575;
+			margin: 0;
+		}
+		.checkout-item-price-col {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			gap: 6px;
+		}
+		.checkout-item-price {
+			font-size: 14px;
+			font-weight: 800;
+			color: #634c9f;
+			margin: 0;
+		}
+		.checkout-item-trash-btn {
+			background: none;
+			border: none;
+			padding: 0;
+			color: #9e9e9e;
+			font-size: 13px;
+			cursor: pointer;
+			transition: color 0.15s ease;
+		}
+		.checkout-item-trash-btn:hover {
+			color: #634c9f;
+		}
+		.checkout-item-qty {
+			font-size: 11.5px;
+			color: #424242;
+			margin-left: 14px;
+			white-space: nowrap;
+		}
+
+		/* ========================================================
+		   RIGHT SIDEBAR: PROMOTION, INVOICE, ORDER DETAIL
+		   ======================================================== */
+		/* Promotion Card */
+		.promotion-card-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #212121;
+			margin: 0 0 10px;
+		}
+		.promo-input-group {
+			display: flex;
+			height: 32px;
+		}
+		.promo-input {
+			flex: 1;
+			border: 1px solid #cbd5e1;
+			border-right: none;
+			padding: 0 8px;
+			font-size: 11.5px;
+			color: #212121;
+			text-transform: uppercase;
+		}
+		.promo-input:focus {
+			border-color: #0284c7;
+			outline: none;
+		}
+		.promo-apply-btn {
+			background: #0089a7;
+			border: 1px solid #0089a7;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 800;
+			padding: 0 16px;
+			cursor: pointer;
+			text-transform: uppercase;
+			transition: background 0.15s ease;
+		}
+		.promo-apply-btn:hover {
+			background: #02667d;
+			border-color: #02667d;
+		}
+
+		/* Invoice & Contact Info Card */
+		.invoice-card-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 6px;
+		}
+		.invoice-card-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #212121;
+			margin: 0;
+		}
+		.invoice-card-email {
+			font-size: 12px;
+			color: #424242;
+			margin: 0 0 2px;
+			font-weight: 600;
+		}
+		.invoice-card-sub {
+			font-size: 11px;
+			color: #757575;
+			margin: 0;
+		}
+
+		/* Order Detail Card */
+		.order-detail-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #212121;
+			margin: 0 0 12px;
+		}
+		.order-detail-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 12px;
+			color: #424242;
+			margin-bottom: 10px;
+		}
+		.order-detail-val {
+			font-weight: 700;
+			color: #212121;
+		}
+		.order-detail-total-row {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			padding-top: 10px;
+			border-top: 1px solid #f1f5f9;
+			margin-top: 6px;
+			margin-bottom: 14px;
+		}
+		.order-total-label {
+			font-size: 13px;
+			font-weight: 700;
+			color: #212121;
+		}
+		.order-total-val-box {
+			text-align: right;
+		}
+		.order-total-price {
+			font-size: 18px;
+			font-weight: 800;
+			color: #634c9f;
+			line-height: 1.1;
+		}
+		.order-total-tax-note {
+			font-size: 10.5px;
+			color: #757575;
+			margin-top: 2px;
+		}
+
+		/* Proceed to Pay Button (Wishlist Purple Button) */
+		.btn-proceed-pay {
+			width: 100%;
+			height: 40px;
+			background: #634c9f;
+			border: 1px solid #634c9f;
+			color: #ffffff;
+			font-size: 13px;
+			font-weight: 800;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			text-decoration: none;
+			transition: background 0.15s ease;
+		}
+		.btn-proceed-pay:hover {
+			background: #503d82;
+			border-color: #503d82;
+			color: #ffffff;
+		}
+
+		/* Floating Messages Pill */
+		.floating-message-btn {
+			position: fixed;
+			bottom: 24px;
+			right: 24px;
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+			padding: 7px 14px;
+			font-size: 12px;
+			font-weight: 800;
+			color: #0f172a;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			text-decoration: none;
+			z-index: 999;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.floating-message-btn:hover {
+			background: #0f172a;
+			color: #ffffff;
+			border-color: #0f172a;
+		}
+		.floating-message-btn i {
+			color: #634c9f;
+			font-size: 14px;
+		}
+		.floating-message-btn:hover i {
+			color: #a7f3d0;
+		}
+
+		/* Modal Address Editor */
+		.custom-modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1050;
+		}
+		.custom-modal-card {
+			background: #ffffff;
+			width: 480px;
+			max-width: 90%;
+			border: 1px solid #cbd5e1;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+			box-sizing: border-box;
+		}
+		.custom-modal-header {
+			padding: 12px 16px;
+			border-bottom: 1px solid #e2e8f0;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-weight: 800;
+			font-size: 13px;
+		}
+		.custom-modal-body {
+			padding: 16px;
+		}
+		.custom-modal-footer {
+			padding: 10px 16px;
+			border-top: 1px solid #e2e8f0;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 8px;
+			background: #fafafa;
+		}
+
+		/* Responsive Breakdown */
+		@media (max-width: 991px) {
+			.checkout-layout-row {
+				flex-direction: column;
+			}
+			.checkout-sidebar-col {
+				width: 100%;
+				flex: 0 0 100%;
+			}
+		}
+	</style>
+</head>
+<body class="page-template-default page terai-checkout-page">
+
+	<div id="page" class="site">
+		<!-- Site Header -->
+		<header id="masthead" class="site-header header-type-1 position-relative" role="banner">
+			<!-- Main Header Row -->
+			<div class="header-row header-main position-relative header-row-white border-bottom">
+				<div class="container">
+					<div class="header-inner d-flex flex-wrap align-items-center justify-content-between gap-3 gap-sm-4 py-3">
+						<!-- Mobile Toggle -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1">
+								<a href="#" class="action-link menu-drawer-toggle" data-drawer="site-menu-drawer">
+									<div class="action-icon">
+										<i class="klb-icon-menu"></i>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Brand Logo -->
+						<div class="col d-inline-flex align-items-center flex-auto">
+							<div class="site-brand">
+								<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="200" height="48">
+								</a>
+							</div>
+						</div>
+
+						<!-- Deliver to UK Badge, Currency Selector & Search -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-fill">
+							<div class="quick-button style-1 location-selector-button">
+								<a href="#" class="action-link modal-button" data-modal="location-selector">
+									<div class="action-icon">
+										<i class="klb-icon-map-pin"></i>
+									</div>
+									<div class="action-text">
+										<span>Deliver to</span>
+										<p>all</p>
+									</div>
+								</a>
+							</div>
+
+							<!-- Currency Selector -->
+							<div class="quick-button style-1 currency-selector-button position-relative ms-3">
+								<a href="#" class="action-link" id="currency-toggle-btn" role="button" aria-expanded="false" title="Select Currency">
+									<div class="action-icon">
+										<i class="klb-icon-credit-card"></i>
+									</div>
+									<div class="action-text">
+										<span>Currency</span>
+										<p id="header-currency-label">GBP (£)</p>
+									</div>
+								</a>
+								<div class="currency-dropdown-card" id="currency-dropdown-card">
+									<a href="#" class="currency-item active" data-currency="GBP" data-symbol="£" data-rate="1">
+										<span class="currency-flag">🇬🇧</span>
+										<span class="currency-code">GBP (£)</span>
+										<span class="currency-name">British Pound</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="USD" data-symbol="$" data-rate="1.28">
+										<span class="currency-flag">🇺🇸</span>
+										<span class="currency-code">USD ($)</span>
+										<span class="currency-name">US Dollar</span>
+									</a>
+									<a href="#" class="currency-item" data-currency="EUR" data-symbol="€" data-rate="1.17">
+										<span class="currency-flag">🇪🇺</span>
+										<span class="currency-code">EUR (€)</span>
+										<span class="currency-name">Euro</span>
+									</a>
+								</div>
+							</div>
+
+							<div class="header-search search-overlay flex-fill ms-3">
+								<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
+									<input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+									<button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+									<input type="hidden" name="post_type" value="product">
+								</form>
+							</div>
+						</div>
+
+						<!-- Header Actions (Sign In, Wishlist & Cart) -->
+						<div class="col d-none d-xl-inline-flex align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
+									</div>
+									<div class="action-text">
+										<span>Sign In</span>
+										<p>Account</p>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link">
+									<div class="action-icon">
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+
+						<!-- Mobile Cart Button -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
+							<div class="quick-button style-1 mini-cart-button">
+								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+									<div class="action-icon">
+										<i class="klb-icon-shopping-cart-3"></i>
+										<span class="action-count cart-count count">0</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Navigation Bar -->
+			<div class="header-row header-nav position-relative d-none d-xl-block header-row-white z-1">
+				<div class="container">
+					<div class="header-inner position-relative d-flex flex-wrap align-items-center justify-content-between">
+						<div class="col d-inline-flex align-items-center justify-content-start">
+							<div class="categories-menu me-4">
+								<a href="{% url 'web:shop' %}" class="categories-toggle d-flex align-items-center fw-bold text-dark text-decoration-none py-2">
+									<i class="klb-icon-layout-grid me-2 text-primary"></i>All Categories
+								</a>
+							</div>
+							<nav class="site-menu horizontal menu-shadow primary-menu">
+								<ul id="menu-menu-2" class="menu">
+									<li class="menu-item"><a href="{% url 'web:home' %}">Home</a></li>
+									<li class="menu-item"><a href="{% url 'web:shop' %}">Shops</a></li>
+									<li class="menu-item"><a href="{% url 'web:blogs' %}">Blogs</a></li>
+									<li class="menu-item"><a href="{% url 'web:contact' %}">Supports</a></li>
+									<li class="menu-item menu-item-track-order"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
+									<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- Clean Breadcrumbs Bar -->
+		<div class="checkout-breadcrumbs-wrapper">
+			<div class="container-fluid px-3 px-xl-4">
+				<nav class="checkout-breadcrumbs" aria-label="breadcrumb">
+					<a href="{% url 'web:home' %}">Home</a>
+					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+					<a href="{% url 'web:cart' %}">Shopping Cart</a>
+					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
+					<span class="breadcrumb-current">Checkout</span>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Main Checkout Body (Exact Daraz Reference Screen Layout) -->
+		<main class="checkout-main-layout">
+			<div class="container-fluid px-3 px-xl-4">
+				<div class="checkout-layout-row">
+
+					<!-- LEFT COLUMN: ~70% Content Area -->
+					<div class="checkout-main-col">
+
+						<!-- CARD 1: Shipping Address -->
+						<div class="daraz-card" id="address-card">
+							<div class="address-card-header">
+								<h3 class="address-card-title">Shipping Address</h3>
+								<a href="#" class="card-edit-link" id="edit-address-btn">EDIT</a>
+							</div>
+							<div class="address-recipient-row">
+								<span id="display-recipient-name">Suraj Mahato</span>
+								<span id="display-recipient-phone">07700 900077</span>
+							</div>
+							<p class="address-details-text">
+								<span class="address-tag-badge" id="display-address-tag">OFFICE</span>
+								<span id="display-address-full">Unit 4B Peninsula Business Park, Greenwich, Greater London, SE10 0ER, United Kingdom</span>
+							</p>
+							<p class="address-landmark-text" id="display-address-landmark">
+								Opposite River Thames Pier &bull; Leave with reception if unattended
+							</p>
+						</div>
+
+						<!-- CARD 2: Package 1 of 1 -->
+						<div class="daraz-card" id="package-card">
+							<div class="package-card-header">
+								<h4 class="package-title">Package 1 of 1</h4>
+								<span class="package-shipped-by">Shipped by <strong>TERAI-EDWIN LOGISTICS</strong></span>
+							</div>
+
+							<!-- Delivery or Pickup Option -->
+							<div class="delivery-section-label">
+								<span>Delivery or Pickup</span>
+							</div>
+
+							<!-- Selected Delivery Card -->
+							<div class="delivery-option-box">
+								<div class="delivery-option-price-row">
+									<i class="klb-icon-check-circle"></i>
+									<span>&pound;3.99</span>
+								</div>
+								<div class="delivery-option-type">
+									Standard Cold-Chain Delivery
+								</div>
+								<div class="delivery-guaranteed-date">
+									Guaranteed by <span id="delivery-date-text">Tomorrow by 1:00 PM</span>
+								</div>
+							</div>
+
+							<!-- Item Row inside Package -->
+							<div class="checkout-item-row" id="checkout-product-item">
+								<div class="checkout-item-thumb">
+									<img src="{% static 'web/' %}images/1-500x500.jpg" alt="Cantaloupe Melon Fresh Organic Cut">
+								</div>
+
+								<div class="checkout-item-info">
+									<h4 class="checkout-item-title">
+										Cantaloupe Melon Fresh Organic Cut &ndash; 1kg Farm Sliced
+									</h4>
+									<p class="checkout-item-meta">
+										Brand: Terai Bio, Pack: Chilled 4&deg;C Thermal Sealed
+									</p>
+								</div>
+
+								<div class="checkout-item-price-col">
+									<span class="checkout-item-price">&pound;<span id="item-price-text">35.68</span></span>
+									<button type="button" class="checkout-item-trash-btn" id="delete-checkout-item-btn" title="Remove item">
+										<i class="klb-icon-trash-2"></i>
+									</button>
+								</div>
+
+								<div class="checkout-item-qty">
+									Qty: <strong>1</strong>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- RIGHT COLUMN: ~30% Sidebar Area -->
+					<aside class="checkout-sidebar-col">
+
+						<!-- Promotion Box -->
+						<div class="daraz-card">
+							<h4 class="promotion-card-title">Promotion</h4>
+							<div class="promo-input-group">
+								<input type="text" class="promo-input" id="promo-code-input" placeholder="Enter Store/Terai Code">
+								<button type="button" class="promo-apply-btn" id="promo-apply-btn">APPLY</button>
+							</div>
+							<div id="promo-status-msg" style="display: none; font-size: 11px; margin-top: 6px; font-weight: 700;"></div>
+						</div>
+
+						<!-- Invoice and Contact Info Box -->
+						<div class="daraz-card">
+							<div class="invoice-card-header">
+								<h4 class="invoice-card-title">Invoice and Contact Info</h4>
+								<a href="#" class="card-edit-link" id="edit-invoice-btn">Edit</a>
+							</div>
+							<p class="invoice-card-email" id="display-invoice-email">suraj.mahato@teraifood.co.uk</p>
+							<p class="invoice-card-sub">Standard UK VAT Invoice will be issued and emailed upon dispatch.</p>
+						</div>
+
+						<!-- Order Detail Box -->
+						<div class="daraz-card">
+							<h4 class="order-detail-title">Order Detail</h4>
+
+							<div class="order-detail-row">
+								<span>Items Total (1 Items)</span>
+								<span class="order-detail-val">&pound;<span id="summary-items-total">35.68</span></span>
+							</div>
+
+							<div class="order-detail-row">
+								<span>Delivery Fee</span>
+								<span class="order-detail-val">&pound;<span id="summary-delivery-fee">3.99</span></span>
+							</div>
+
+							<div class="order-detail-row" id="summary-discount-row" style="display: none; color: #16a34a;">
+								<span>Promotion Discount</span>
+								<span class="order-detail-val" style="color: #16a34a;">-&pound;<span id="summary-discount-val">3.57</span></span>
+							</div>
+
+							<div class="order-detail-total-row">
+								<span class="order-total-label">Total:</span>
+								<div class="order-total-val-box">
+									<div class="order-total-price">&pound;<span id="summary-total-val">39.67</span></div>
+									<div class="order-total-tax-note">All taxes included</div>
+								</div>
+							</div>
+
+							<a href="{% url 'web:payment' %}" class="btn-proceed-pay" id="btn-proceed-pay">
+								Proceed to Pay
+							</a>
+						</div>
+
+					</aside>
+
+				</div>
+			</div>
+		</main>
+
+		<!-- Floating Messages Pill (as in reference image) -->
+		<a href="{% url 'web:contact' %}" class="floating-message-btn" title="Messages">
+			<i class="klb-icon-message-circle"></i>
+			<span>Messages</span>
+		</a>
+
+		<!-- Footer -->
+		<footer class="site-footer" role="contentinfo">
+			<div class="footer-row footer-widgets py-5 border-top bg-white">
+				<div class="container">
+					<div class="row g-4">
+						<div class="col-lg-4 col-md-6">
+							<div class="site-brand mb-3">
+								<a href="{% url 'web:home' %}">
+									<img src="{% static 'web/' %}images/teraifood-logo.svg" alt="Terai Food" width="180">
+								</a>
+							</div>
+							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
+							<div class="text-13 text-gray-700">
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+							</div>
+						</div>
+
+						<div class="col-lg-2 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
+								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
+								<li class="mb-2"><a href="{% url 'web:shop' %}" class="text-gray-600 hover-primary">Shop Catalog</a></li>
+								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-gray-600 hover-primary">Blogs &amp; Journal</a></li>
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Help &amp; Supports</a></li>
+								<li class="mb-2"><a href="{% url 'web:cart' %}" class="text-gray-600 hover-primary">Shopping Cart</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-3 col-6">
+							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
+							<ul class="list-unstyled text-13 mb-0">
+								<li class="mb-2"><a href="{% url 'web:contact' %}" class="text-gray-600 hover-primary">Customer Care</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
+								<li class="mb-2"><a href="{% url 'web:home' %}#terms" class="text-gray-600 hover-primary">Terms of Service</a></li>
+							</ul>
+						</div>
+
+						<div class="col-lg-3 col-md-6">
+							<div class="widget widget-newsletter">
+								<h4 class="text-14 fw-bold text-dark text-uppercase mb-2">Join our newsletter</h4>
+								<p class="text-12 text-gray-500 mb-2">Register now to get latest updates on promotions &amp; recipes.</p>
+								<div class="site-newsletter-form">
+									<form class="mc4wp-form" method="post" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Terai Food newsletter!');">
+										<div class="mc4wp-form-fields position-relative d-flex">
+											<input class="subscribe-input form-control text-12" type="email" placeholder="Enter your email" required style="height: 32px; border-radius: 0; padding-right: 60px;">
+											<button class="btn btn-primary" type="submit" style="position: absolute; right: 0; top: 0; height: 32px; font-size: 11px; font-weight: 700; border-radius: 0; background: #634c9f; border-color: #634c9f; padding: 0 10px;">SEND</button>
+										</div>
+										<p class="text-11 text-gray-400 mt-1 mb-0">By subscribing you agree to our Terms &amp; Privacy.</p>
+									</form>
+								</div>
+								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
+								<div class="site-social d-flex gap-2">
+									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
+									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
+									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
+									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-row footer-copyright py-3 bg-light border-top">
+				<div class="container">
+					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
+						<div>
+							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<span>Secure Payment:</span>
+							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+		<!-- Address Edit Modal -->
+		<div class="custom-modal-backdrop" id="address-modal">
+			<div class="custom-modal-card">
+				<div class="custom-modal-header">
+					<span>Edit Shipping Address</span>
+					<button type="button" class="btn-close" id="close-address-modal-btn" aria-label="Close"></button>
+				</div>
+				<div class="custom-modal-body">
+					<div class="mb-2">
+						<label class="form-label text-11 fw-bold">Full Name *</label>
+						<input type="text" id="modal-name-input" class="form-control" value="Suraj Mahato" required style="height: 32px; font-size: 12px;">
+					</div>
+					<div class="mb-2">
+						<label class="form-label text-11 fw-bold">Contact Phone Number *</label>
+						<input type="text" id="modal-phone-input" class="form-control" value="07700 900077" required style="height: 32px; font-size: 12px;">
+					</div>
+					<div class="mb-2">
+						<label class="form-label text-11 fw-bold">Address Tag</label>
+						<select id="modal-tag-input" class="form-select" style="height: 32px; font-size: 12px;">
+							<option value="OFFICE" selected>OFFICE</option>
+							<option value="HOME">HOME</option>
+						</select>
+					</div>
+					<div class="mb-2">
+						<label class="form-label text-11 fw-bold">Street Address *</label>
+						<textarea id="modal-address-input" class="form-control" rows="2" style="font-size: 12px;" required>Unit 4B Peninsula Business Park, Greenwich, Greater London, SE10 0ER, United Kingdom</textarea>
+					</div>
+					<div class="mb-2">
+						<label class="form-label text-11 fw-bold">Delivery Landmark / Note</label>
+						<input type="text" id="modal-landmark-input" class="form-control" value="Opposite River Thames Pier • Leave with reception if unattended" style="height: 32px; font-size: 12px;">
+					</div>
+				</div>
+				<div class="custom-modal-footer">
+					<button type="button" class="btn btn-secondary text-11 fw-bold px-3 py-1" id="cancel-address-modal-btn">Cancel</button>
+					<button type="button" class="btn btn-primary text-11 fw-bold px-3 py-1" id="save-address-modal-btn" style="background: #0089a7; border-color: #0089a7;">Save Address</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Payment Confirmation Modal -->
+		<div class="custom-modal-backdrop" id="payment-modal">
+			<div class="custom-modal-card">
+				<div class="custom-modal-header">
+					<span>Select Payment Method</span>
+					<button type="button" class="btn-close" id="close-payment-modal-btn" aria-label="Close"></button>
+				</div>
+				<div class="custom-modal-body">
+					<p class="text-12 text-gray-600 mb-3">Please choose your preferred secure checkout method:</p>
+
+					<div class="form-check p-3 mb-2 border" style="background: #f8fafc; cursor: pointer;">
+						<input class="form-check-input" type="radio" name="payMethod" id="payCard" checked>
+						<label class="form-check-label fw-bold text-12 text-dark ms-2" for="payCard">
+							Credit / Debit Card (Visa, MasterCard, Amex)
+						</label>
+					</div>
+
+					<div class="form-check p-3 mb-2 border" style="background: #f8fafc; cursor: pointer;">
+						<input class="form-check-input" type="radio" name="payMethod" id="payApple">
+						<label class="form-check-label fw-bold text-12 text-dark ms-2" for="payApple">
+							Apple Pay / Google Pay Instant
+						</label>
+					</div>
+
+					<div class="form-check p-3 mb-2 border" style="background: #f8fafc; cursor: pointer;">
+						<input class="form-check-input" type="radio" name="payMethod" id="payCOD">
+						<label class="form-check-label fw-bold text-12 text-dark ms-2" for="payCOD">
+							Cash on Cold-Chain Delivery (UK Postcodes)
+						</label>
+					</div>
+				</div>
+				<div class="custom-modal-footer">
+					<button type="button" class="btn btn-secondary text-11 fw-bold px-3 py-1" id="cancel-payment-modal-btn">Cancel</button>
+					<button type="button" class="btn btn-primary text-11 fw-bold px-3 py-1" id="confirm-pay-btn" style="background: #634c9f; border-color: #634c9f;">Confirm &amp; Pay &pound;<span id="modal-pay-amount">39.67</span></button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Success Confirmation Modal -->
+		<div class="custom-modal-backdrop" id="success-modal">
+			<div class="custom-modal-card text-center p-4">
+				<div class="mb-3">
+					<div style="width: 56px; height: 56px; background: #ecfdf5; border: 1px solid #a7f3d0; display: inline-flex; align-items: center; justify-content: center;">
+						<i class="klb-icon-check text-success" style="font-size: 28px;"></i>
+					</div>
+				</div>
+				<h3 class="fw-bold text-18 text-dark mb-1">Order Placed Successfully!</h3>
+				<p class="text-12 text-gray-500 mb-3">Thank you for your order! Your grocery delivery has been logged for fast dispatch.</p>
+				<div class="bg-light p-2 mb-3 text-12 border text-start">
+					<div class="d-flex justify-content-between mb-1">
+						<span class="text-gray-500">Order ID:</span>
+						<strong class="text-dark">#TF-924182</strong>
+					</div>
+					<div class="d-flex justify-content-between mb-1">
+						<span class="text-gray-500">Estimated Delivery:</span>
+						<strong class="text-success">Tomorrow by 1:00 PM</strong>
+					</div>
+					<div class="d-flex justify-content-between">
+						<span class="text-gray-500">Invoice:</span>
+						<span class="text-dark">Sent to suraj.mahato@teraifood.co.uk</span>
+					</div>
+				</div>
+				<a href="{% url 'web:home' %}" class="btn-proceed-pay" style="text-decoration: none;">Back to Home</a>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="{% static 'web/' %}js/jquery.min.js"></script>
+	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
+
+	<!-- Interactive Checkout Script -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			let itemsTotal = 35.68;
+			let deliveryFee = 3.99;
+			let discount = 0;
+
+			function updateTotal() {
+				const total = Math.max(0, itemsTotal + deliveryFee - discount);
+				document.getElementById('summary-items-total').textContent = itemsTotal.toFixed(2);
+				document.getElementById('summary-delivery-fee').textContent = deliveryFee.toFixed(2);
+				document.getElementById('summary-total-val').textContent = total.toFixed(2);
+				document.getElementById('modal-pay-amount').textContent = total.toFixed(2);
+			}
+
+			// Promotion Code Apply
+			const promoInput = document.getElementById('promo-code-input');
+			const promoBtn = document.getElementById('promo-apply-btn');
+			const promoMsg = document.getElementById('promo-status-msg');
+			const discountRow = document.getElementById('summary-discount-row');
+			const discountVal = document.getElementById('summary-discount-val');
+
+			promoBtn.addEventListener('click', function() {
+				const code = promoInput.value.trim().toUpperCase();
+				if (!code) {
+					alert('Please enter a voucher code');
+					return;
+				}
+				if (code === 'TERAI10' || code === 'DARAZ10' || code === 'DISCOUNT10') {
+					discount = itemsTotal * 0.10;
+					discountVal.textContent = discount.toFixed(2);
+					discountRow.style.display = 'flex';
+					promoMsg.style.display = 'block';
+					promoMsg.style.color = '#16a34a';
+					promoMsg.textContent = 'Promotion applied: 10% OFF (-£' + discount.toFixed(2) + ')';
+					updateTotal();
+				} else {
+					promoMsg.style.display = 'block';
+					promoMsg.style.color = '#dc2626';
+					promoMsg.textContent = 'Invalid promo code. Try "TERAI10"';
+				}
+			});
+
+			// Address Edit Modal Logic
+			const editAddressBtn = document.getElementById('edit-address-btn');
+			const addressModal = document.getElementById('address-modal');
+			const closeAddressModalBtn = document.getElementById('close-address-modal-btn');
+			const cancelAddressModalBtn = document.getElementById('cancel-address-modal-btn');
+			const saveAddressModalBtn = document.getElementById('save-address-modal-btn');
+
+			editAddressBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+				addressModal.style.display = 'flex';
+			});
+
+			function closeAddressModal() {
+				addressModal.style.display = 'none';
+			}
+			closeAddressModalBtn.addEventListener('click', closeAddressModal);
+			cancelAddressModalBtn.addEventListener('click', closeAddressModal);
+
+			saveAddressModalBtn.addEventListener('click', function() {
+				const name = document.getElementById('modal-name-input').value.trim();
+				const phone = document.getElementById('modal-phone-input').value.trim();
+				const tag = document.getElementById('modal-tag-input').value;
+				const address = document.getElementById('modal-address-input').value.trim();
+				const landmark = document.getElementById('modal-landmark-input').value.trim();
+
+				if (!name || !phone || !address) {
+					alert('Please complete all required fields.');
+					return;
+				}
+
+				document.getElementById('display-recipient-name').textContent = name;
+				document.getElementById('display-recipient-phone').textContent = phone;
+				document.getElementById('display-address-tag').textContent = tag;
+				document.getElementById('display-address-full').textContent = address;
+				document.getElementById('display-address-landmark').textContent = landmark;
+
+				closeAddressModal();
+			});
+
+			// Invoice Edit Link
+			const editInvoiceBtn = document.getElementById('edit-invoice-btn');
+			editInvoiceBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+				const newEmail = prompt('Enter billing invoice email address:', document.getElementById('display-invoice-email').textContent);
+				if (newEmail && newEmail.includes('@')) {
+					document.getElementById('display-invoice-email').textContent = newEmail.trim();
+				}
+			});
+
+			// Remove item
+			const deleteItemBtn = document.getElementById('delete-checkout-item-btn');
+			deleteItemBtn.addEventListener('click', function() {
+				if (confirm('Are you sure you want to remove this package item?')) {
+					document.getElementById('checkout-product-item').innerHTML = '<div class="p-3 text-12 text-muted w-100 text-center">Package item removed. Return to <a href="{% url 'web:shop' %}" class="text-primary fw-bold">Shop</a> to select produce.</div>';
+					itemsTotal = 0;
+					deliveryFee = 0;
+					discount = 0;
+					discountRow.style.display = 'none';
+					updateTotal();
+					document.getElementById('btn-proceed-pay').classList.add('disabled');
+					document.getElementById('btn-proceed-pay').setAttribute('disabled', 'disabled');
+				}
+			});
+
+			// Proceed to Pay
+			const proceedPayBtn = document.getElementById('btn-proceed-pay');
+			const paymentModal = document.getElementById('payment-modal');
+			const closePaymentModalBtn = document.getElementById('close-payment-modal-btn');
+			const cancelPaymentModalBtn = document.getElementById('cancel-payment-modal-btn');
+			const confirmPayBtn = document.getElementById('confirm-pay-btn');
+			const successModal = document.getElementById('success-modal');
+
+			proceedPayBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+				if (itemsTotal === 0) {
+					alert('Your basket is empty. Please add items to proceed.');
+					return;
+				}
+				window.location.href = '/payment/';
+			});
+
+			function closePaymentModal() {
+				paymentModal.style.display = 'none';
+			}
+			closePaymentModalBtn.addEventListener('click', closePaymentModal);
+			cancelPaymentModalBtn.addEventListener('click', closePaymentModal);
+
+			confirmPayBtn.addEventListener('click', function() {
+				closePaymentModal();
+				successModal.style.display = 'flex';
+			});
+
+			updateTotal();
+		});
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js"></script>
+</body>
+</html>

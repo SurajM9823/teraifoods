@@ -1,0 +1,11 @@
+.location-item a {
+    color: var(--theme-body-color);
+}
+
+.location-item.active a {
+    color: var(--theme-primary-color);
+}
+
+.modal-location .site-modal-body .location-items ul li label {
+    align-items: center;
+}
