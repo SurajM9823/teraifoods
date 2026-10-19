@@ -4303,15 +4303,133 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
 }
 
 /* ==========================================================================
-   Mobile Responsive Optimizations
-   Hide the 4 feature items (Payment only online, New stocks and sales,
-   Quality assurance, Delivery from 1 hour) and adjacent divider on mobile only.
+   Mobile Responsive Optimizations (Mobile Only: max-width: 767.98px)
    ========================================================================== */
 @media (max-width: 767.98px) {
+  /* 1. Hide the 4 feature items (Payment only online, etc.) and divider */
   .elementor-element.elementor-element-bf0a5c8,
   .elementor-element.elementor-element-5e387b8 {
     display: none !important;
   }
+
+  /* 2. Re-order sections on mobile:
+        1: Hero Slider
+        2: New Arrivals Header
+        3: New Arrivals Product Carousel
+        4: "Only This Week" (3 Cards Horizontal Slider)
+        5: Featured Products Header
+        6: Featured Products Grid
+        7: Best Sellers Header
+        8: Best Sellers Grid
+        9: Wholesale / Bulk Banner
+  */
+  .elementor.elementor-3074 {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* 1. Hero Slider */
+  .elementor-3074 > .elementor-element-0f7981c {
+    order: 1 !important;
+  }
+
+  /* 2. New Arrivals Header & Carousel - Placed above the 3 cards */
+  .elementor-3074 > .elementor-element-4b2256e {
+    order: 2 !important;
+    margin-top: 14px !important;
+    margin-bottom: 2px !important;
+  }
+  .elementor-3074 > .elementor-element-d6f7202 {
+    order: 3 !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* 3. "Only This Week" (3 Cards) - Placed below New Arrivals and converted to horizontal slider */
+  .elementor-3074 > .elementor-element-4415f94,
+  .elementor-3074 > .mobile-cards-slider {
+    order: 4 !important;
+    margin-top: 4px !important;
+    margin-bottom: 22px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow: visible !important;
+  }
+
+  .elementor-element.elementor-element-4415f94 > .e-con-inner,
+  .mobile-cards-slider > .e-con-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 12px !important;
+    padding: 4px 16px 14px 16px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .elementor-element.elementor-element-4415f94 > .e-con-inner::-webkit-scrollbar,
+  .mobile-cards-slider > .e-con-inner::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Each of the 3 "Only This Week" cards in the slider (82% width gives peek of next card) */
+  .elementor-element.elementor-element-4415f94 > .e-con-inner > .elementor-element,
+  .mobile-cards-slider > .e-con-inner > .elementor-element {
+    flex: 0 0 82% !important;
+    width: 82% !important;
+    min-width: 270px !important;
+    max-width: 330px !important;
+    scroll-snap-align: start !important;
+    scroll-snap-stop: always !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .elementor-element.elementor-element-4415f94 .site-banner,
+  .mobile-cards-slider .site-banner {
+    width: 100% !important;
+    min-height: 180px !important;
+    height: auto !important;
+    border-radius: 8px !important;
+  }
+
+  /* 4. Featured Products Header & Grid - Shown after the 3 cards slider */
+  .elementor-3074 > .elementor-element-358331b {
+    order: 5 !important;
+    margin-top: 6px !important;
+    margin-bottom: 2px !important;
+  }
+  .elementor-3074 > .elementor-element-6356865 {
+    order: 6 !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* 5. Best Sellers Header & Grid */
+  .elementor-3074 > .elementor-element-12144b6 {
+    order: 7 !important;
+    margin-top: 6px !important;
+    margin-bottom: 2px !important;
+  }
+  .elementor-3074 > .elementor-element-d642835 {
+    order: 8 !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* 6. Wholesale / Bulk Orders Banner */
+  .elementor-3074 > .elementor-element-a8ecbbc {
+    order: 9 !important;
+    margin-bottom: 24px !important;
+  }
 }
+
 
 

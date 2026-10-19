@@ -55,4 +55,7 @@ class AuthenticationProtectionMiddleware(MiddlewareMixin):
         if request.path.startswith(("/accounts/", "/manage-profile/")):
             patch_cache_control(response, no_store=True, private=True)
             response["Referrer-Policy"] = "same-origin"
+            # Account forms can be shown in our own storefront popup only.
+            response["X-Frame-Options"] = "SAMEORIGIN"
+            response["Content-Security-Policy"] = "frame-ancestors 'self'"
         return response

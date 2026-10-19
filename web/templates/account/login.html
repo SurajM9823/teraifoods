@@ -1,9 +1,15 @@
 {% extends "account/base_entrance.html" %}
-{% block head_title %}Sign in{% endblock %}
+{% block head_title %}Log in{% endblock %}
 {% block content %}
-<span class="eyebrow">WELCOME BACK</span><h1>Sign in</h1><p>New here? <a href="{{ signup_url }}">Create an account</a></p>
-<form method="post" action="{% url 'account_login' %}">{% csrf_token %}{{ form.as_p }}{{ redirect_field }}<button type="submit">Sign in</button></form>
-<div class="auth-divider">or</div>
-<a class="secondary-button" href="{{ request_login_code_url }}">Email me a one-time code</a>
+<h1>Log in</h1>
+<form method="post" action="{% url 'account_login' %}">{% csrf_token %}
+{{ form.non_field_errors }}
+<div class="form-field"><label for="{{ form.login.id_for_label }}">Email address *</label>{{ form.login }}{{ form.login.errors }}</div>
+<div class="form-field"><label for="{{ form.password.id_for_label }}">Password *</label>{{ form.password }}{{ form.password.errors }}</div>
+<div class="login-options"><a href="{% url 'account_reset_password' %}">Lost your password?</a></div>
+{{ redirect_field }}<button type="submit">Log in</button></form>
+<a class="code-login-link" href="{{ request_login_code_url }}">Sign in with an email code</a>
+<div class="auth-divider">Or login with</div>
 {% include "socialaccount/snippets/login.html" %}
+<p class="auth-bottom">You don't have an account yet? <a href="{{ signup_url }}">Register Now</a></p>
 {% endblock %}

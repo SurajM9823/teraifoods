@@ -1,8 +1,8 @@
 {% extends "account/base_entrance.html" %}
 {% block head_title %}Create your account{% endblock %}
 {% block content %}
-<span class="eyebrow">JOIN TERAI FOOD</span><h1>Create your account</h1><p>We’ll email a six-digit code to verify it’s you.</p>
+<h1>Create Account</h1><p>We’ll email a six-digit code to verify it’s you.</p>
 <form method="post" action="{% url 'account_signup' %}">{% csrf_token %}{{ form.as_p }}{{ redirect_field }}<button type="submit">Create account & send code</button></form>
-<p>Already registered? <a href="{{ login_url }}">Sign in</a></p>
+<p class="auth-bottom">Already registered? <a href="{{ login_url }}">Sign in</a></p>
 {% include "socialaccount/snippets/login.html" %}
 {% endblock %}

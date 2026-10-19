@@ -2556,8 +2556,53 @@
     localStorage.removeItem('terai_auth_user_session');
     localStorage.removeItem('teraifood_auth_user');
   } catch (error) {}
-  function openLoginModal() { window.location.assign('/manage-profile/'); }
-  function closeLoginModal() {}
+  let accountDialog;
+  let accountFrame;
+  let accountReturnFocus;
+  let previousBodyOverflow;
+  function closeLoginModal() {
+    if (!accountDialog?.open) return;
+    accountDialog.close();
+  }
+  function openLoginModal() {
+    accountReturnFocus = document.activeElement;
+    if (!accountDialog) {
+      const style = document.createElement('style');
+      style.textContent = '#terai-account-dialog{width:360px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 32px);padding:0;border:0;border-radius:0;background:#fff;box-shadow:0 15px 55px #0003;overflow:hidden}#terai-account-dialog::backdrop{background:rgba(15,23,42,.48)}#terai-account-dialog iframe{display:block;width:100%;height:440px;max-height:calc(100dvh - 32px);border:0;background:#fff}';
+      document.head.append(style);
+      accountDialog = document.createElement('dialog');
+      accountDialog.id = 'terai-account-dialog';
+      accountDialog.setAttribute('aria-label', 'Terai Food account');
+      accountFrame = document.createElement('iframe');
+      accountFrame.title = 'Sign in or create your Terai Food account';
+      accountDialog.append(accountFrame);
+      document.body.append(accountDialog);
+      accountDialog.addEventListener('click', event => {
+        if (event.target !== accountDialog) return;
+        const bounds = accountDialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeLoginModal();
+      });
+      accountDialog.addEventListener('close', () => {
+        document.body.style.overflow = previousBodyOverflow;
+        accountReturnFocus?.focus();
+        accountFrame.src = 'about:blank';
+      });
+      window.addEventListener('message', event => {
+        if (event.origin !== window.location.origin || event.source !== accountFrame.contentWindow || !accountDialog.open) return;
+        if (event.data?.type === 'terai-auth-close') closeLoginModal();
+        if (event.data?.type === 'terai-auth-size' && Number.isFinite(event.data.height)) {
+          accountFrame.style.height = Math.max(160, Math.min(event.data.height, window.innerHeight - 32)) + 'px';
+        }
+        if (event.data?.type === 'terai-auth-complete') window.location.assign('/manage-profile/');
+      });
+    }
+    if (accountDialog.open) return;
+    previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    accountFrame.src = '/accounts/login/';
+    accountDialog.showModal();
+    accountFrame.focus();
+  }
   window.teraiOpenLoginModal = openLoginModal;
   window.teraiCloseLoginModal = closeLoginModal;
   window.teraiShowToast = showToast;
@@ -2573,12 +2618,12 @@
       });
     });
 
-    // Route all account triggers to the session-protected account page.
+    // Keep the original popup interaction; forms and verification run on the server.
     document.querySelectorAll('.login-form-button, .user, .header-account, [data-modal="login"]').forEach(button => {
       button.addEventListener('click', event => {
         event.preventDefault();
         event.stopPropagation();
-        window.location.assign('/manage-profile/');
+        openLoginModal();
       });
     });
 

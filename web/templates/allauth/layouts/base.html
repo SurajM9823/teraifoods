@@ -3,21 +3,20 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>{% block head_title %}Your account{% endblock %} · Terai Food</title>
+  <title>{% block head_title %}Your account{% endblock %} ? Terai Food</title>
   <link rel="icon" href="{% static 'web/images/teraifood-icon.svg' %}">
-  <link rel="stylesheet" href="{% static 'web/css/customer-auth.css' %}?v=1">
+  <link rel="stylesheet" href="{% static 'web/css/customer-auth.css' %}?v=original-popup-2">
+  <script src="{% static 'web/js/customer-auth.js' %}?v=2" defer></script>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
-  <header class="account-header"><a class="account-brand" href="{% url 'web:home-root' %}"><img src="{% static 'web/images/teraifood-icon.svg' %}" alt="">teraifood</a><a href="{% url 'web:shop' %}">Back to shop ↗</a></header>
   <main class="auth-layout">
-    <section class="auth-story"><span class="eyebrow">FRESH FOOD. FAMILIAR FACES.</span><h1>A little closer<br>to good food.</h1><p>Your Terai Food account brings everything together. Sign in your way and make yourself at home.</p><div class="story-note"><span>01</span><p>One account.<br>More ways to sign in.</p></div></section>
-    <section class="auth-card" aria-label="Your account">
+    <section class="auth-card klb-authentication-modal" aria-label="Your account">
+      <a class="auth-close" href="{% url 'web:home-root' %}" aria-label="Close account form">&times;</a>
       {% if messages %}<div class="messages" role="status">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}
       {% block body %}{% block content %}{% endblock %}{% endblock %}
     </section>
   </main>
-  <footer class="account-footer">© {% now 'Y' %} Terai Food · We never ask you to share your password or email code.</footer>
   {% block extra_body %}{% endblock %}
 </body>
 </html>
