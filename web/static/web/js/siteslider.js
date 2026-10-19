@@ -12,6 +12,14 @@
 			for( var i = 0; i < container.length; i++ ) {
 			  const self = container[i];
 
+			  // On mobile screens (<= 767.98px), New Arrivals slider uses native smooth CSS free-scroll matching packages slider below
+			  if (window.innerWidth <= 767.98 && (self.closest('.elementor-element-d6f7202') || self.closest('.elementor-element-2bdf9e6'))) {
+			    if ($(self).hasClass('slick-initialized')) {
+			      $(self).slick('unslick');
+			    }
+			    continue;
+			  }
+
 			  let slide_items = Number(self.dataset.items);
 			  let slide_itemsTablet = Number(self.dataset.itemstablet);
 			  let slide_itemsMobile = Number(self.dataset.itemsmobile);
@@ -92,6 +100,17 @@
 	
 	$(document).ready(function() {
 		groginThemeModule.siteslider();
+
+		$(window).on('resize', function() {
+			const isMobile = window.innerWidth <= 767.98;
+			$('.elementor-element-d6f7202 .site-slider, .elementor-element-2bdf9e6 .site-slider').each(function() {
+				if (isMobile && $(this).hasClass('slick-initialized')) {
+					$(this).slick('unslick');
+				} else if (!isMobile && !$(this).hasClass('slick-initialized')) {
+					groginThemeModule.siteslider();
+				}
+			});
+		});
 	});
 
 })(jQuery);

@@ -36,7 +36,7 @@ const path = require('path');
         for(let i=0;i<15;i++){if(await evaluate('document.readyState === "complete"')) break; await new Promise(r=>setTimeout(r,200));}
         const info=await evaluate(`({title:document.title,overflow:document.documentElement.scrollWidth>innerWidth+2,broken:[...document.images].filter(i=>i.complete && !i.naturalWidth).map(i=>i.getAttribute('src')),links:[...document.querySelectorAll('a[href]')].map(a=>a.href).filter(u=>u.includes('127.0.0.1')&&u.includes('.html'))})`);
         results.push({width,route:route.url,...info,errors:[...errors]});
-        if(['home','shop','cart','blogs-himalayan-spices-guide'].includes(route.slug)) {
+        if(['home','shop','cart','blogs-himalayan-spices-guide','product-detail'].includes(route.slug)) {
           const screenshot=(await page('Page.captureScreenshot',{format:'png'})).result.data;
           fs.writeFileSync(path.join('scratch',`django-${route.slug}-${width}.png`),Buffer.from(screenshot,'base64'));
         }

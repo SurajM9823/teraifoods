@@ -4444,25 +4444,27 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   /* 1. Hero Slider */
   .elementor-3074 > .elementor-element-0f7981c {
     order: 1 !important;
+    margin-bottom: 4px !important;
   }
 
   /* 2. New Arrivals Header & Carousel - Placed above the 3 cards */
   .elementor-3074 > .elementor-element-4b2256e {
     order: 2 !important;
-    margin-top: 14px !important;
+    margin-top: 4px !important;
     margin-bottom: 2px !important;
   }
   .elementor-3074 > .elementor-element-d6f7202 {
     order: 3 !important;
-    margin-bottom: 16px !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
   }
 
   /* 3. "Only This Week" (3 Cards) - Placed below New Arrivals and converted to horizontal slider */
   .elementor-3074 > .elementor-element-4415f94,
   .elementor-3074 > .mobile-cards-slider {
     order: 4 !important;
-    margin-top: 4px !important;
-    margin-bottom: 22px !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
     width: 100% !important;
     max-width: 100% !important;
     padding-left: 0 !important;
@@ -4479,8 +4481,8 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
     overflow-y: hidden !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
-    gap: 12px !important;
-    padding: 4px 16px 14px 16px !important;
+    gap: 10px !important;
+    padding: 2px 16px 4px 16px !important;
     margin: 0 !important;
     width: 100% !important;
     max-width: 100vw !important;
@@ -4518,23 +4520,25 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   /* 4. Featured Products Header & Grid - Shown after the 3 cards slider */
   .elementor-3074 > .elementor-element-358331b {
     order: 5 !important;
-    margin-top: 6px !important;
+    margin-top: 4px !important;
     margin-bottom: 2px !important;
   }
   .elementor-3074 > .elementor-element-6356865 {
     order: 6 !important;
-    margin-bottom: 20px !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
   }
 
   /* 5. Best Sellers Header & Grid */
   .elementor-3074 > .elementor-element-12144b6 {
     order: 7 !important;
-    margin-top: 6px !important;
+    margin-top: 4px !important;
     margin-bottom: 2px !important;
   }
   .elementor-3074 > .elementor-element-d642835 {
     order: 8 !important;
-    margin-bottom: 20px !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
   }
 
   /* 6. For You Header & Grid (Directly below Best Sellers on Mobile) */
@@ -4542,20 +4546,35 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   .elementor-3074 > .elementor-element-for-you-header {
     order: 9 !important;
     --order: 9 !important;
-    margin-top: 6px !important;
+    margin-top: 4px !important;
     margin-bottom: 2px !important;
   }
   .elementor-3074 > .for-you-grid-container,
   .elementor-3074 > .elementor-element-for-you-grid {
     order: 10 !important;
     --order: 10 !important;
-    margin-bottom: 20px !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
   }
 
   /* 7. Wholesale / Bulk Orders Banner */
   .elementor-3074 > .elementor-element-a8ecbbc {
     order: 11 !important;
-    margin-bottom: 24px !important;
+    margin-top: 0 !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Global tight spacing on mobile homepage to eliminate excessive gaps between sections */
+  .elementor-3074 .elementor-widget:not(:last-child) {
+    margin-block-end: 0 !important;
+  }
+  .elementor-3074 .site-module-header {
+    margin-bottom: 2px !important;
+    padding-bottom: 0 !important;
+  }
+  .elementor-3074 > .e-con {
+    --padding-top: 0px !important;
+    --padding-bottom: 0px !important;
   }
 }
 
@@ -5034,5 +5053,278 @@ svg rect[fill="#634c9f"] {
   display: block !important;
 }
 
+/* ========================================================
+   MOBILE PRODUCT DETAIL PAGE (PDP) - FULL WIDTH & ZERO UNWANTED BOX BEZELS
+   ======================================================== */
+@media (max-width: 768px) {
+  /* 1. Flush Edge-to-Edge Layout: Strip bootstrap gutters and outer layout padding */
+  body.terai-shop-page .shop-main-layout,
+  .shop-main-layout {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
 
+  body.terai-shop-page .shop-main-container,
+  .shop-main-container,
+  .shop-main-container.pe-4,
+  .shop-main-container.pe-xl-5 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
 
+  body.terai-shop-page .shop-main-row,
+  .shop-main-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
+
+  /* 2. Full-Width PDP Container without outer side padding */
+  body.terai-shop-page .pdp-container,
+  .shop-main-layout .pdp-container,
+  .pdp-container {
+    padding: 0 0 36px 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background-color: #ffffff !important;
+    overflow-x: hidden !important;
+  }
+
+  /* 3. Sleek edge-to-edge breadcrumb */
+  .pdp-breadcrumb-wrapper {
+    padding: 8px 12px !important;
+    margin-bottom: 0 !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    scrollbar-width: none !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+  }
+  .pdp-breadcrumb-wrapper::-webkit-scrollbar {
+    display: none !important;
+  }
+  .pdp-breadcrumb {
+    flex-wrap: nowrap !important;
+    font-size: 11.5px !important;
+  }
+
+  /* 4. Remove the Constrictive Outer Box Card Border & Heavy Padding */
+  .pdp-main-card {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 10px 12px 18px 12px !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .pdp-main-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* 5. Edge-to-edge Gallery on Mobile */
+  .pdp-gallery-col {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .pdp-main-img-box {
+    width: 100% !important;
+    height: 320px !important;
+    max-height: 85vw !important;
+    border: 1px solid #f1f5f9 !important;
+    border-radius: 6px !important;
+    margin-bottom: 10px !important;
+    background: #ffffff !important;
+  }
+
+  .pdp-main-img-box img {
+    max-width: 95% !important;
+    max-height: 95% !important;
+    object-fit: contain !important;
+  }
+
+  .pdp-thumbs-wrapper {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .pdp-thumbs-list {
+    gap: 6px !important;
+  }
+
+  .pdp-thumb-item {
+    width: 48px !important;
+    height: 48px !important;
+    flex: 0 0 48px !important;
+  }
+
+  /* 6. Uncongested Info Column: Use Full Width */
+  .pdp-info-col {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .pdp-flash-strip {
+    padding: 6px 10px !important;
+    border-radius: 4px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .pdp-product-title {
+    font-size: 16px !important;
+    line-height: 1.35 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .pdp-meta-row {
+    padding-bottom: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .pdp-price-box {
+    padding: 10px 12px !important;
+    margin-bottom: 12px !important;
+    background: #f8fafc !important;
+    border-radius: 4px !important;
+  }
+
+  .pdp-main-price {
+    font-size: 22px !important;
+    color: #1547A8 !important;
+  }
+
+  .pdp-promo-row {
+    margin-bottom: 12px !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .pdp-promo-label {
+    width: auto !important;
+    font-weight: 600 !important;
+    margin-right: 4px !important;
+  }
+
+  .pdp-qty-row {
+    margin-bottom: 16px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .pdp-qty-label {
+    width: auto !important;
+    font-weight: 600 !important;
+    margin-right: 4px !important;
+  }
+
+  .pdp-actions-row {
+    display: flex !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .pdp-btn-buynow {
+    flex: 1 !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 14px !important;
+    border-radius: 4px !important;
+  }
+
+  .pdp-btn-addcart {
+    flex: 1 !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 14px !important;
+    border-radius: 4px !important;
+    background: #1547A8 !important;
+  }
+  .pdp-btn-addcart:hover {
+    background: #0f357f !important;
+  }
+
+  /* 7. Delivery / Seller Section on Mobile */
+  .pdp-delivery-col {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    padding: 14px 0 0 0 !important;
+    margin-top: 14px !important;
+    border-left: none !important;
+    border-top: 1px solid #f1f5f9 !important;
+  }
+
+  /* 8. Description & Reviews: Convert boxed cards to clean full-width divided sections */
+  .pdp-section-card {
+    border: none !important;
+    border-top: 8px solid #f8fafc !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 16px 12px !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .pdp-section-title {
+    font-size: 15px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .pdp-specs-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .pdp-spec-item {
+    font-size: 12.5px !important;
+  }
+
+  .pdp-ratings-overview {
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 10px 0 !important;
+  }
+
+  .pdp-bars-block {
+    width: 100% !important;
+  }
+
+  .pdp-related-grid {
+    border: none !important;
+    border-top: 1px solid #e5e7eb !important;
+    border-radius: 0 !important;
+  }
+
+  .pdp-related-grid .shop-product-card {
+    width: 50% !important;
+    padding: 8px !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1199px) {
+  body.terai-shop-page .shop-main-container,
+  .shop-main-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .pdp-container {
+    padding: 16px 12px 40px !important;
+  }
+}
