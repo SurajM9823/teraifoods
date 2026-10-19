@@ -9,6 +9,12 @@
   </button>
   <div class="nav-caption sidebar-label">WORKSPACE</div>
   <nav aria-label="Main navigation">
+    {% if perms.cms.view_banner and perms.cms.view_informationblock %}
+    <a href="{% url 'cms:dashboard' %}" class="nav-item {% if active_page == 'cms' %}active{% endif %}" title="Website content">
+      {% include 'web/backoffice/icon.html' with name='file' %}
+      <span class="sidebar-label">Website content</span>
+    </a>
+    {% endif %}
     <a href="{% url 'backoffice:dashboard' %}" class="nav-item {% if active_page == 'overview' %}active{% endif %}" {% if active_page == 'overview' %}aria-current="page"{% endif %} title="Overview">
       {% include 'web/backoffice/icon.html' with name='grid' %}
       <span class="sidebar-label">Overview</span>

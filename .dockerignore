@@ -11,3 +11,5 @@ scratch
 backups
 deploy/certs
 node_modules
+
+media

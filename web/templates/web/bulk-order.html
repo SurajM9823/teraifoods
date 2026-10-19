@@ -773,13 +773,20 @@
 							</div>
 						</div>
 
-						<!-- Mobile Cart Button -->
-						<div class="col d-inline-flex d-xl-none align-items-center flex-auto">
-							<div class="quick-button style-1 mini-cart-button">
-								<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
+						<!-- Mobile Header Actions (Wishlist & Account) -->
+						<div class="col d-inline-flex d-xl-none align-items-center flex-auto gap-2">
+							<div class="quick-button style-1 wishlist-button">
+								<a href="#wishlist" class="action-link" title="Wishlist">
 									<div class="action-icon">
-										<i class="klb-icon-shopping-cart-3"></i>
-										<span class="action-count cart-count count">0</span>
+										<i class="klb-icon-heart-4"></i>
+										<span class="action-count klbwl-wishlist-count">4</span>
+									</div>
+								</a>
+							</div>
+							<div class="quick-button style-1 login-form-button">
+								<a href="{% url 'customer-profile' %}" class="action-link" title="Account">
+									<div class="action-icon">
+										<i class="klb-icon-user-cut"></i>
 									</div>
 								</a>
 							</div>
@@ -1295,5 +1302,49 @@
 		}
 	</script>
 	<script src="{% static 'web/' %}js/terai-interactive.js?v=original-popup-2"></script>
+
+	<!-- Mobile Bottom Navbar -->
+	<div class="klb-mobile-bottom site-mobile-navbar">
+		<div class="mobile-navbar-inner">
+			<nav class="site-menu horizontal mobile-nav">
+				<ul>
+					<li>
+						<a href="{% url 'web:home' %}" class="store" id="mobile-nav-store">
+							<i class="klb-icon-store"></i>
+							<span class="menu-text">STORE</span>
+						</a>
+					</li>
+					<li>
+						<div class="search-holder-button menu-drawer-toggle" data-drawer="site-search-drawer">
+							<a href="#" class="search">
+								<i class="klb-icon-search"></i>
+								<span class="menu-text">SEARCH</span>
+							</a>
+						</div>
+					</li>
+					<li>
+						<a href="{% url 'web:shop' %}" class="shop">
+							<i class="klb-icon-shopping-bag-2"></i>
+							<span class="menu-text">SHOP</span>
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'web:cart' %}" class="cart mini-cart-button">
+							<i class="klb-icon-shopping-cart-3"></i>
+							<span class="count cart-count">0</span>
+							<span class="menu-text">CART</span>
+						</a>
+					</li>
+					<li>  
+						<a href="#" class="menu-drawer-toggle" data-drawer="site-categories-drawer">
+							<i class="klb-icon-layout-list"></i>
+							<span class="menu-text">CATEGORIES</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+
 </body>
 </html>

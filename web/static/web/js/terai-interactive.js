@@ -2621,6 +2621,16 @@
       });
     });
 
+    // Mobile bottom bar Store button -> Refresh homepage on click if already on home
+    document.querySelectorAll('.site-mobile-navbar a.store, #mobile-nav-store').forEach(link => {
+      link.addEventListener('click', (e) => {
+        if (window.location.pathname === '/' || window.location.pathname === '') {
+          e.preventDefault();
+          window.location.reload();
+        }
+      });
+    });
+
     // Keep the original popup interaction; forms and verification run on the server.
     document.querySelectorAll('.login-form-button, .user, .header-account, [data-modal="login"]').forEach(button => {
       button.addEventListener('click', event => {

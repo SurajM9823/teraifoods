@@ -17,6 +17,7 @@ x-app: &app
     CELERY_BROKER_URL: redis://redis:6379/0
   volumes:
     - static_files:/app/staticfiles
+    - media_files:/app/media
   networks:
     - backend
 
@@ -101,6 +102,7 @@ services:
       - ./deploy/nginx/proxy.conf:/etc/nginx/proxy_params_terai.conf:ro
       - ./deploy/certs:/etc/nginx/certs:ro
       - static_files:/var/www/static:ro
+      - media_files:/var/www/media:ro
     networks:
       - backend
       - edge
@@ -117,3 +119,4 @@ networks:
 volumes:
   postgres_data:
   static_files:
+  media_files:
