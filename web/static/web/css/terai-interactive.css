@@ -1544,120 +1544,191 @@ header.site-header .col {
 }
 
 /* Smooth animated transitions for compacting on scroll */
+header#masthead.site-header,
 header.site-header,
-header.site-header .header-main .header-inner,
-header.site-header .site-brand,
-header.site-header .site-brand a,
-header.site-header .site-brand img,
-header.site-header .header-search .search-input,
-header.site-header .header-search button,
-header.site-header .quick-button.style-1,
-header.site-header .quick-button.style-1 .action-link,
-header.site-header .quick-button.style-1 .action-icon,
-header.site-header .quick-button.style-1 .action-text,
-header.site-header .header-row.header-nav,
-header.site-header .header-row.header-nav .header-inner,
-header.site-header .categories-menu,
-header.site-header .categories-menu .categories-toggle,
-header.site-header .primary-menu > ul > li > a {
+header#masthead.site-header .header-row.header-main,
+header#masthead.site-header .header-main .header-inner,
+header#masthead.site-header .site-brand,
+header#masthead.site-header .site-brand a,
+header#masthead.site-header .site-brand img,
+header#masthead.site-header .header-search .search-input,
+header#masthead.site-header .header-search button,
+header#masthead.site-header .quick-button.style-1,
+header#masthead.site-header .quick-button.style-1 .action-link,
+header#masthead.site-header .quick-button.style-1 .action-icon,
+header#masthead.site-header .quick-button.style-1 .action-text,
+header#masthead.site-header .header-row.header-nav,
+header#masthead.site-header .header-row.header-nav .header-inner,
+header#masthead.site-header .categories-menu,
+header#masthead.site-header .categories-menu .categories-toggle,
+header#masthead.site-header .primary-menu > ul > li > a {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Compact sticky header state on scroll (contrast elevation & half height) */
+html body header#masthead.site-header.sticky-header,
+html body.home header#masthead.site-header.sticky-header,
+header#masthead.site-header.sticky-header,
 header.site-header.sticky-header {
   box-shadow: 0 4px 22px rgba(0, 0, 0, 0.1) !important;
   border-bottom: 1px solid #e2e8f0 !important;
 }
 
-/* 1. Header Main: cut from 78px to ~40px */
+html body header#masthead.site-header.sticky-header .header-row.header-main,
+html body.home header#masthead.site-header.sticky-header .header-row.header-main,
+header#masthead.site-header.sticky-header .header-row.header-main,
+header.site-header.sticky-header .header-row.header-main {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 44px !important;
+  height: auto !important;
+}
+
+html body header#masthead.site-header.sticky-header .header-row.header-main > .container,
+html body.home header#masthead.site-header.sticky-header .header-row.header-main > .container,
+header#masthead.site-header.sticky-header .header-row.header-main > .container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* 1. Header Main: cut from 78px to ~44px compact height */
+html body header#masthead.site-header.sticky-header .header-main .header-inner,
+html body.home header#masthead.site-header.sticky-header .header-main .header-inner,
+header#masthead.site-header.sticky-header .header-main .header-inner,
 header.site-header.sticky-header .header-main .header-inner {
   padding-top: 4px !important;
   padding-bottom: 4px !important;
-  min-height: 40px !important;
-  height: 40px !important;
+  min-height: 44px !important;
+  height: 44px !important;
 }
 
-header.site-header.sticky-header .site-brand,
-header.site-header.sticky-header .site-brand a {
-  max-height: 26px !important;
+html body header#masthead.site-header.sticky-header .site-brand,
+html body.home header#masthead.site-header.sticky-header .site-brand,
+html body header#masthead.site-header.sticky-header .site-brand a,
+html body.home header#masthead.site-header.sticky-header .site-brand a,
+header#masthead.site-header.sticky-header .site-brand,
+header#masthead.site-header.sticky-header .site-brand a {
+  max-height: 28px !important;
+  height: 28px !important;
   display: inline-flex !important;
   align-items: center !important;
 }
 
+html body header#masthead.site-header.sticky-header .site-brand img,
+html body.home header#masthead.site-header.sticky-header .site-brand img,
+header#masthead.site-header.sticky-header .site-brand img,
 header.site-header.sticky-header .site-brand img {
-  height: 26px !important;
-  max-height: 26px !important;
+  height: 28px !important;
+  max-height: 28px !important;
   width: auto !important;
   max-width: 140px !important;
+  object-fit: contain !important;
 }
 
+html body header#masthead.site-header.sticky-header .header-search .search-input,
+html body.home header#masthead.site-header.sticky-header .header-search .search-input,
+header#masthead.site-header.sticky-header .header-search .search-input,
 header.site-header.sticky-header .header-search .search-input {
-  height: 32px !important;
-  min-height: 32px !important;
+  height: 34px !important;
+  min-height: 34px !important;
   font-size: 13px !important;
   padding-top: 3px !important;
   padding-bottom: 3px !important;
   padding-left: 14px !important;
 }
 
+html body header#masthead.site-header.sticky-header .header-search button,
+html body.home header#masthead.site-header.sticky-header .header-search button,
+header#masthead.site-header.sticky-header .header-search button,
 header.site-header.sticky-header .header-search button {
-  height: 32px !important;
-  line-height: 32px !important;
+  height: 34px !important;
+  line-height: 34px !important;
   font-size: 14px !important;
   width: 34px !important;
 }
 
-header.site-header.sticky-header .quick-button.style-1 .action-link {
+html body header#masthead.site-header.sticky-header .quick-button.style-1 .action-link,
+html body.home header#masthead.site-header.sticky-header .quick-button.style-1 .action-link,
+header#masthead.site-header.sticky-header .quick-button.style-1 .action-link {
   gap: 6px !important;
 }
 
-header.site-header.sticky-header .quick-button.style-1 .action-icon {
+html body header#masthead.site-header.sticky-header .quick-button.style-1 .action-icon,
+html body.home header#masthead.site-header.sticky-header .quick-button.style-1 .action-icon,
+header#masthead.site-header.sticky-header .quick-button.style-1 .action-icon {
   width: 28px !important;
   height: 28px !important;
   font-size: 14px !important;
 }
 
-header.site-header.sticky-header .quick-button.style-1 .action-text span {
+html body header#masthead.site-header.sticky-header .quick-button.style-1 .action-text span,
+html body.home header#masthead.site-header.sticky-header .quick-button.style-1 .action-text span,
+header#masthead.site-header.sticky-header .quick-button.style-1 .action-text span {
   font-size: 9.5px !important;
   line-height: 1 !important;
 }
 
-header.site-header.sticky-header .quick-button.style-1 .action-text p {
+html body header#masthead.site-header.sticky-header .quick-button.style-1 .action-text p,
+html body.home header#masthead.site-header.sticky-header .quick-button.style-1 .action-text p,
+header#masthead.site-header.sticky-header .quick-button.style-1 .action-text p {
   font-size: 11.5px !important;
   line-height: 1.1 !important;
   margin-bottom: 0 !important;
 }
 
-/* 2. Header Nav: comfortable compact height (38px) with generous breathing room */
+/* 2. Header Nav: comfortable compact height (36px) with clean borders */
+html body header#masthead.site-header.sticky-header .header-row.header-nav,
+html body.home header#masthead.site-header.sticky-header .header-row.header-nav,
+header#masthead.site-header.sticky-header .header-row.header-nav,
 header.site-header.sticky-header .header-row.header-nav {
-  min-height: 38px !important;
-  height: 38px !important;
+  min-height: 36px !important;
+  height: 36px !important;
   border-top: 1px solid #f1f5f9 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
+html body header#masthead.site-header.sticky-header .header-row.header-nav > .container,
+html body.home header#masthead.site-header.sticky-header .header-row.header-nav > .container,
+html body header#masthead.site-header.sticky-header .header-row.header-nav > .container-fluid,
+html body.home header#masthead.site-header.sticky-header .header-row.header-nav > .container-fluid {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html body header#masthead.site-header.sticky-header .header-row.header-nav .header-inner,
+html body.home header#masthead.site-header.sticky-header .header-row.header-nav .header-inner,
+header#masthead.site-header.sticky-header .header-row.header-nav .header-inner,
 header.site-header.sticky-header .header-row.header-nav .header-inner {
-  min-height: 38px !important;
-  height: 38px !important;
+  min-height: 36px !important;
+  height: 36px !important;
   display: flex !important;
   align-items: center !important;
 }
 
-header.site-header.sticky-header .header-row.header-nav .column {
+html body header#masthead.site-header.sticky-header .header-row.header-nav .column,
+html body.home header#masthead.site-header.sticky-header .header-row.header-nav .column {
   display: flex !important;
   align-items: center !important;
 }
 
+html body header#masthead.site-header.sticky-header .categories-menu,
+html body.home header#masthead.site-header.sticky-header .categories-menu,
+header#masthead.site-header.sticky-header .categories-menu,
 header.site-header.sticky-header .categories-menu {
   width: 15rem !important;
   margin-right: 1.25rem !important;
-  height: 38px !important;
+  height: 36px !important;
   display: flex !important;
   align-items: center !important;
 }
 
+html body header#masthead.site-header.sticky-header .categories-menu .categories-toggle,
+html body.home header#masthead.site-header.sticky-header .categories-menu .categories-toggle,
+header#masthead.site-header.sticky-header .categories-menu .categories-toggle,
 header.site-header.sticky-header .categories-menu .categories-toggle {
-  line-height: 38px !important;
-  height: 38px !important;
+  line-height: 36px !important;
+  height: 36px !important;
   font-size: 13px !important;
   padding: 0 14px !important;
   display: inline-flex !important;
@@ -1666,20 +1737,23 @@ header.site-header.sticky-header .categories-menu .categories-toggle {
   box-sizing: border-box !important;
 }
 
-header.site-header.sticky-header .categories-menu .categories-toggle::before {
+html body header#masthead.site-header.sticky-header .categories-menu .categories-toggle::before,
+html body.home header#masthead.site-header.sticky-header .categories-menu .categories-toggle::before {
   border: 1px solid #e2e8f0 !important;
   border-bottom: 0 !important;
   border-radius: 6px 6px 0 0 !important;
 }
 
-header.site-header.sticky-header .categories-menu .categories-toggle i {
+html body header#masthead.site-header.sticky-header .categories-menu .categories-toggle i,
+html body.home header#masthead.site-header.sticky-header .categories-menu .categories-toggle i {
   font-size: 15px !important;
   margin-right: 10px !important;
   display: inline-flex !important;
   align-items: center !important;
 }
 
-header.site-header.sticky-header .categories-menu .categories-toggle::after {
+html body header#masthead.site-header.sticky-header .categories-menu .categories-toggle::after,
+html body.home header#masthead.site-header.sticky-header .categories-menu .categories-toggle::after {
   margin-left: auto !important;
   margin-right: 2px !important;
   font-size: 10px !important;
@@ -1687,25 +1761,30 @@ header.site-header.sticky-header .categories-menu .categories-toggle::after {
   align-items: center !important;
 }
 
-header.site-header.sticky-header .primary-menu {
+html body header#masthead.site-header.sticky-header .primary-menu,
+html body.home header#masthead.site-header.sticky-header .primary-menu {
   display: flex !important;
   align-items: center !important;
 }
 
-header.site-header.sticky-header .primary-menu > ul {
+html body header#masthead.site-header.sticky-header .primary-menu > ul,
+html body.home header#masthead.site-header.sticky-header .primary-menu > ul {
   display: flex !important;
   align-items: center !important;
   margin-bottom: 0 !important;
 }
 
-header.site-header.sticky-header .primary-menu > ul > li {
+html body header#masthead.site-header.sticky-header .primary-menu > ul > li,
+html body.home header#masthead.site-header.sticky-header .primary-menu > ul > li {
   display: inline-flex !important;
   align-items: center !important;
 }
 
-header.site-header.sticky-header .primary-menu > ul > li > a {
-  line-height: 38px !important;
-  height: 38px !important;
+html body header#masthead.site-header.sticky-header .primary-menu > ul > li > a,
+html body.home header#masthead.site-header.sticky-header .primary-menu > ul > li > a,
+header#masthead.site-header.sticky-header .primary-menu > ul > li > a {
+  line-height: 36px !important;
+  height: 36px !important;
   font-size: 13px !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -1716,18 +1795,23 @@ header.site-header.sticky-header .primary-menu > ul > li > a {
 }
 
 /* Bulk Order CTA on sticky navbar on scroll: perfectly centered with padding from borders */
-header.site-header.sticky-header #menu-menu-2 > li.menu-item-bulk-order,
-header.site-header.sticky-header .primary-menu .menu > li.menu-item-bulk-order {
+html body header#masthead.site-header.sticky-header #menu-menu-2 > li.menu-item-bulk-order,
+html body.home header#masthead.site-header.sticky-header #menu-menu-2 > li.menu-item-bulk-order,
+html body header#masthead.site-header.sticky-header .primary-menu .menu > li.menu-item-bulk-order,
+html body.home header#masthead.site-header.sticky-header .primary-menu .menu > li.menu-item-bulk-order {
   display: inline-flex !important;
   align-items: center !important;
   margin-left: 10px !important;
 }
 
-header.site-header.sticky-header #menu-menu-2 > li.menu-item-bulk-order > a,
-header.site-header.sticky-header .primary-menu .menu > li.menu-item-bulk-order > a,
-header.site-header.sticky-header .nav-bulk-order-cta {
-  height: 28px !important;
-  line-height: 28px !important;
+html body header#masthead.site-header.sticky-header #menu-menu-2 > li.menu-item-bulk-order > a,
+html body.home header#masthead.site-header.sticky-header #menu-menu-2 > li.menu-item-bulk-order > a,
+html body header#masthead.site-header.sticky-header .primary-menu .menu > li.menu-item-bulk-order > a,
+html body.home header#masthead.site-header.sticky-header .primary-menu .menu > li.menu-item-bulk-order > a,
+html body header#masthead.site-header.sticky-header .nav-bulk-order-cta,
+html body.home header#masthead.site-header.sticky-header .nav-bulk-order-cta {
+  height: 26px !important;
+  line-height: 26px !important;
   font-size: 12px !important;
   padding: 0 13px !important;
   border-radius: 6px !important;
@@ -1738,9 +1822,38 @@ header.site-header.sticky-header .nav-bulk-order-cta {
   justify-content: center !important;
 }
 
-header.site-header.sticky-header .nav-bulk-order-cta i {
+html body header#masthead.site-header.sticky-header .nav-bulk-order-cta i,
+html body.home header#masthead.site-header.sticky-header .nav-bulk-order-cta i {
   font-size: 10px !important;
   margin-left: 4px !important;
+}
+
+/* Mobile responsive refinements for sticky header */
+@media screen and (max-width: 1199.98px) {
+  html body header#masthead.site-header.sticky-header .header-main .header-inner,
+  html body.home header#masthead.site-header.sticky-header .header-main .header-inner,
+  header#masthead.site-header.sticky-header .header-main .header-inner {
+    min-height: 44px !important;
+    height: 44px !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+  }
+
+  html body header#masthead.site-header.sticky-header .site-brand img,
+  html body.home header#masthead.site-header.sticky-header .site-brand img,
+  header#masthead.site-header.sticky-header .site-brand img {
+    height: 26px !important;
+    max-height: 26px !important;
+    max-width: 125px !important;
+  }
+
+  html body header#masthead.site-header.sticky-header .quick-button.style-1 .action-icon,
+  html body.home header#masthead.site-header.sticky-header .quick-button.style-1 .action-icon,
+  header#masthead.site-header.sticky-header .quick-button.style-1 .action-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+  }
 }
 
 /* Ensure categories dropdown floats cleanly over content with solid white background */
@@ -4424,9 +4537,20 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
     margin-bottom: 20px !important;
   }
 
-  /* 6. Wholesale / Bulk Orders Banner */
-  .elementor-3074 > .elementor-element-a8ecbbc {
+  /* 6. For You Header & Grid (Directly below Best Sellers on Mobile) */
+  .elementor-3074 > .for-you-header-container {
     order: 9 !important;
+    margin-top: 6px !important;
+    margin-bottom: 2px !important;
+  }
+  .elementor-3074 > .for-you-grid-container {
+    order: 10 !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* 7. Wholesale / Bulk Orders Banner */
+  .elementor-3074 > .elementor-element-a8ecbbc {
+    order: 11 !important;
     margin-bottom: 24px !important;
   }
 }
@@ -4684,3 +4808,77 @@ svg rect[fill="#634c9f"] {
     font-size: 10.5px !important;
   }
 }
+
+/* ==========================================================================
+   For You Section Container & Edge Alignments
+   Ensures side margins/paddings inline-match Best Sellers & New Arrivals
+   ========================================================================== */
+.for-you-header-container,
+.for-you-grid-container {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  --display: flex;
+  --flex-direction: row;
+  --container-widget-width: initial;
+  --container-widget-height: 100%;
+  --container-widget-flex-grow: 1;
+  --container-widget-align-self: stretch;
+  --flex-wrap-mobile: wrap;
+  --gap: 0px 0px;
+  --row-gap: 0px;
+  --column-gap: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+  --padding-left: 0px;
+  --padding-right: 0px;
+}
+
+.for-you-header-container {
+  margin-top: 24px !important;
+  margin-bottom: 2px !important;
+}
+
+.for-you-grid-container {
+  margin-top: 0 !important;
+  margin-bottom: 24px !important;
+}
+
+.for-you-header-container > .e-con-inner,
+.for-you-grid-container > .e-con-inner {
+  width: 100% !important;
+  max-width: var(--container-max-width, 1440px) !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+@media screen and (min-width: 1280px) {
+  .for-you-header-container > .e-con-inner,
+  .for-you-grid-container > .e-con-inner {
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+  }
+}
+
+@media screen and (max-width: 1279px) and (min-width: 993px) {
+  .for-you-header-container > .e-con-inner,
+  .for-you-grid-container > .e-con-inner {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .for-you-header-container > .e-con-inner,
+  .for-you-grid-container > .e-con-inner {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+}
+
+.for-you-header-container .e-child,
+.for-you-grid-container .e-child {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 100% !important;
+}
+
