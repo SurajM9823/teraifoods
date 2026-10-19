@@ -1,5 +1,52 @@
 # Customer accounts
 
+## Investigating missing emails on a Linux server
+
+The browser acknowledgement means the email was queued, not that it reached an
+inbox. `customers.email` logs `email_queued`, `email_delivery_started`,
+`email_smtp_accepted`, `email_delivery_retry`, and `email_delivery_failed`, correlated
+by task ID. SMTP acceptance is not proof of inbox delivery. Failure logs include
+the exception class and SMTP status number, but omit the provider's raw error
+message, recipients, credentials and OTPs. An expired/encryption-key-mismatched
+message produces `email_discarded`. Web and worker must share the same secret key.
+
+First identify the actual deployment; installing Docker does not attach it to an
+already running systemd/Supervisor app:
+
+```sh
+systemctl list-units --type=service --all | grep -Ei 'gunicorn|uvicorn|waitress|django|terai|celery|redis|supervisor'
+ss -ltnp | grep -E ':(80|443|8000|8080|6379)\b'
+```
+
+For systemd, substitute the service name found above:
+
+```sh
+journalctl -u YOUR_CELERY_SERVICE -n 100 -f
+```
+
+For the supplied Docker production deployment:
+
+```sh
+docker compose --env-file .env.production -f compose.production.yaml logs --tail=100 -f web worker
+```
+
+Example files are templates and are never loaded automatically. Non-Docker runs
+load `.env` by default; exported process variables take precedence. After deploying
+this version, explicitly select `.env.production` with `DJANGO_ENV_FILE` in both
+web and worker services. Use their same Unix user, virtualenv, environment and
+settings when diagnosing. For example, from the project directory:
+
+```sh
+DJANGO_ENV_FILE=/opt/teraifoods/.env.production .venv/bin/python manage.py check_email_setup --settings=config.settings.production --smtp
+```
+
+This reports whether credentials are present without displaying them, checks the
+cache, Celery broker and worker responses, and tests SMTP connection/authentication
+without sending email. For a non-Docker deployment, database and Redis hostnames
+must identify your real services; Docker-only names such as `db` and `redis` may
+not resolve. Restart the actual web and worker services after configuration changes.
+Do not enable Django DEBUG or SMTP protocol debugging on a public server.
+
 Customer authentication uses Django sessions, django-allauth, PostgreSQL, Redis,
 Celery and SMTP. The old browser-only login/Google/OTP simulation and stored PIN
 have been removed. Existing browser demo accounts were never real accounts: sign

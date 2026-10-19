@@ -97,3 +97,12 @@ CELERY_BROKER_CONNECTION_TIMEOUT = 2
 CELERY_BROKER_TRANSPORT_OPTIONS = {"socket_connect_timeout": 2, "socket_timeout": 2}
 CELERY_TASK_PUBLISH_RETRY = False
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# Emit redacted email lifecycle events to stderr (journalctl / container logs).
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"email": {"format": "{asctime} {levelname} {name} {message}", "style": "{"}},
+    "handlers": {"email_console": {"class": "logging.StreamHandler", "formatter": "email"}},
+    "loggers": {"customers.email": {"handlers": ["email_console"], "level": "INFO", "propagate": False}},
+}

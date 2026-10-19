@@ -1,4 +1,5 @@
 import re
+import smtplib
 from types import SimpleNamespace
 from unittest.mock import patch
 from urllib.parse import parse_qs, urlsplit
@@ -179,6 +180,21 @@ class CustomerAuthenticationTests(TestCase):
         self.assertIn(b"987654", mail_cipher().decrypt(payload.encode()))
         deliver_email.run(payload)
         self.assertEqual(mail.outbox[-1].body, "Code 987654")
+
+    def test_smtp_failure_logs_reason_without_credentials_or_otp(self):
+        message = mail.EmailMultiAlternatives("OTP", "Code 987654", "sender@example.com", ["recipient@example.com"])
+        with patch("customers.tasks.deliver_email.apply_async") as enqueue:
+            QueuedEmailBackend().send_messages([message])
+        payload = enqueue.call_args.kwargs["args"][0]
+        error = smtplib.SMTPAuthenticationError(535, b"secret-app-password 987654 recipient@example.com")
+        with patch("customers.tasks.EmailMultiAlternatives.send", side_effect=error), patch.object(deliver_email, "retry", side_effect=RuntimeError("retry")), self.assertLogs("customers.email", level="INFO") as logs:
+            with self.assertRaises(RuntimeError):
+                deliver_email.run(payload)
+        output = "\n".join(logs.output)
+        self.assertIn("SMTPAuthenticationError", output)
+        self.assertIn("smtp_code=535", output)
+        for private_value in ("secret-app-password", "987654", "recipient@example.com"):
+            self.assertNotIn(private_value, output)
 
     def test_google_email_matching_requires_verified_customer_and_authoritative_google(self):
         user = self.verified_user("customer@gmail.com")

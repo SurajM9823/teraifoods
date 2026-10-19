@@ -3,10 +3,13 @@ import base64
 import hashlib
 import hmac
 import json
+import logging
 
 from cryptography.fernet import Fernet
 from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
+
+logger = logging.getLogger("customers.email")
 
 
 def mail_cipher():
@@ -26,7 +29,8 @@ class QueuedEmailBackend(BaseEmailBackend):
                        "from_email": message.from_email, "to": message.to,
                        "alternatives": list(getattr(message, "alternatives", []))}
             encrypted = mail_cipher().encrypt(json.dumps(payload).encode()).decode()
-            deliver_email.apply_async(args=[encrypted], expires=300,
+            task = deliver_email.apply_async(args=[encrypted], expires=300,
                                       argsrepr="[<encrypted account email>]")
+            logger.info("email_queued task_id=%s", task.id)
             count += 1
         return count
