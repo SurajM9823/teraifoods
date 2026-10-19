@@ -82,14 +82,17 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 100
 
 EMAIL_BACKEND = "customers.email_backend.QueuedEmailBackend"
 EMAIL_DELIVERY_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_HOST", "127.0.0.1")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "127.0.0.1").strip()
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "1025"))
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "").strip()
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+# Google displays app passwords in groups separated by spaces.
+if EMAIL_HOST.lower() == "smtp.gmail.com":
+    EMAIL_HOST_PASSWORD = "".join(EMAIL_HOST_PASSWORD.split())
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "false").lower() == "true"
 EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
 EMAIL_TIMEOUT = 15
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Terai Food <noreply@teraifood.local>")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL") or f"Terai Food <{EMAIL_HOST_USER or 'noreply@teraifood.local'}>"
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://127.0.0.1:6379/0")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
