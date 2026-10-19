@@ -107,7 +107,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 <link rel="stylesheet" id="elementor-post-3074-css" href="{% static 'web/' %}css/post-3074.css" media="all">
 <link rel="stylesheet" id="elementor-gf-local-roboto-css" href="{% static 'web/' %}css/roboto.css" media="all">
 <link rel="stylesheet" id="elementor-gf-local-robotoslab-css" href="{% static 'web/' %}css/robotoslab.css" media="all">
-<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=foryou-order-fix" media="all">
 {% verbatim %}<script type="text/template" id="tmpl-variation-template">
 	<div class="woocommerce-variation-description">{{{ data.variation.variation_description }}}</div>
 	<div class="woocommerce-variation-price">{{{ data.variation.price_html }}}</div>
@@ -1258,7 +1258,7 @@ body.home header.site-header.sticky-header .categories-menu .categories-toggle {
 			</div><!-- e-con-inner -->
 		</div><!-- bestsellers-grid-container -->
 		<!-- For You Section Header -->
-		<div class="elementor-element for-you-header-container e-flex e-con-boxed e-con e-parent" data-element_type="container" data-e-type="container">
+		<div class="elementor-element for-you-header-container elementor-element-for-you-header e-flex e-con-boxed e-con e-parent" data-id="for-you-header" data-element_type="container" data-e-type="container" style="--order: 9; order: 9;">
 			<div class="e-con-inner">
 				<div class="elementor-element e-con-full e-flex e-con e-child" data-element_type="container" data-e-type="container">
 					<div class="elementor-element elementor-widget elementor-widget-grogin-custom-title" data-element_type="widget" data-widget_type="grogin-custom-title.default">
@@ -1278,7 +1278,7 @@ body.home header.site-header.sticky-header .categories-menu .categories-toggle {
 		</div>
 
 		<!-- For You Product Grid (All Products) -->
-		<div class="elementor-element for-you-grid-container bestsellers-grid-container e-flex e-con-boxed e-con e-parent" data-element_type="container" data-e-type="container">
+		<div class="elementor-element for-you-grid-container elementor-element-for-you-grid bestsellers-grid-container e-flex e-con-boxed e-con e-parent" data-id="for-you-grid" data-element_type="container" data-e-type="container" style="--order: 10; order: 10;">
 			<div class="e-con-inner">
 				<div class="elementor-element e-con-full e-flex e-con e-child" data-element_type="container" data-e-type="container">
 					<div class="elementor-element elementor-widget elementor-widget-grogin-product-grid" data-element_type="widget" data-widget_type="grogin-product-grid.default">

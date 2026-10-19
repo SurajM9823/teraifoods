@@ -4538,13 +4538,17 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   }
 
   /* 6. For You Header & Grid (Directly below Best Sellers on Mobile) */
-  .elementor-3074 > .for-you-header-container {
+  .elementor-3074 > .for-you-header-container,
+  .elementor-3074 > .elementor-element-for-you-header {
     order: 9 !important;
+    --order: 9 !important;
     margin-top: 6px !important;
     margin-bottom: 2px !important;
   }
-  .elementor-3074 > .for-you-grid-container {
+  .elementor-3074 > .for-you-grid-container,
+  .elementor-3074 > .elementor-element-for-you-grid {
     order: 10 !important;
+    --order: 10 !important;
     margin-bottom: 20px !important;
   }
 
@@ -5023,6 +5027,11 @@ svg rect[fill="#634c9f"] {
 #location-selector,
 .modal-location {
   display: none !important;
+}
+
+/* Ensure mobile categories drawer contents are always visible when drawer is opened */
+.site-categories-drawer .site-drawer-inner .site-categories {
+  display: block !important;
 }
 
 

@@ -9,6 +9,5 @@
 {% if kind == 'subcategory' %}<p class="category-hint">An inactive parent hides this subcategory even when its own Active box is checked.</p>{% endif %}
 <button class="category-primary" type="submit">Save {{ kind }}</button> <a href="{% url 'catalog:index' %}">Cancel</a>
 </form>
-<script src="{% static 'web/js/categories.js' %}" defer></script>
 {% endif %}
 {% endblock %}
