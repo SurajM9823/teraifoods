@@ -18,6 +18,15 @@ class AuthenticationProtectionMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if not request.path.startswith("/accounts/"):
             return None
+        if request.path == "/accounts/login/" and hasattr(request, "user") and request.user.is_authenticated:
+            if request.headers.get("Sec-Fetch-Dest") == "iframe" or request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                from django.http import HttpResponse
+                res = HttpResponse(
+                    "<!doctype html><script>window.parent.postMessage({type:'terai-auth-complete',next:'/manage-profile/'},window.location.origin);</script>",
+                    content_type="text/html",
+                )
+                res["X-Frame-Options"] = "SAMEORIGIN"
+                return res
         if request.path.startswith("/accounts/google/") and not settings.GOOGLE_LOGIN_ENABLED:
             return render(request, "customers/google_unavailable.html", status=503)
         if request.method == "POST":
@@ -52,6 +61,10 @@ class AuthenticationProtectionMiddleware(MiddlewareMixin):
         return response
 
     def process_response(self, request, response):
+        if hasattr(request, "user") and request.user.is_authenticated:
+            response.set_cookie("terai_customer_logged_in", "1", httponly=False, samesite="Lax")
+        elif request.COOKIES.get("terai_customer_logged_in"):
+            response.delete_cookie("terai_customer_logged_in")
         if request.path.startswith(("/accounts/", "/manage-profile/")):
             patch_cache_control(response, no_store=True, private=True)
             response["Referrer-Policy"] = "same-origin"

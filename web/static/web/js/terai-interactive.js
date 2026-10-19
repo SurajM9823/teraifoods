@@ -2556,6 +2556,31 @@
     localStorage.removeItem('terai_auth_user_session');
     localStorage.removeItem('teraifood_auth_user');
   } catch (error) {}
+  // If loaded inside an auth iframe (e.g. from an auth redirect to storefront), notify parent immediately
+  if (window.self !== window.top) {
+    try {
+      window.parent.postMessage({ type: 'terai-auth-complete', next: '/manage-profile/' }, window.location.origin);
+    } catch (e) {}
+  }
+
+  function isUserAuthenticated() {
+    const meta = document.querySelector('meta[name="customer-authenticated"]');
+    if (meta) {
+      if (meta.content === 'true') return true;
+      if (meta.content === 'false') return false;
+    }
+    if (/(?:^|;\s*)terai_customer_logged_in=1/.test(document.cookie)) {
+      return true;
+    }
+    const loginBtns = document.querySelectorAll('.login-form-button, .header-account, .user');
+    for (const btn of loginBtns) {
+      if (btn.textContent && /my account/i.test(btn.textContent)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   let accountDialog;
   let accountFrame;
   let accountReturnFocus;
@@ -2565,7 +2590,7 @@
     accountDialog.close();
   }
   function openLoginModal() {
-    if (document.querySelector('meta[name="customer-authenticated"]')?.content === 'true') {
+    if (isUserAuthenticated()) {
       window.location.assign('/manage-profile/');
       return;
     }
@@ -2599,7 +2624,8 @@
         }
         if (event.data?.type === 'terai-auth-complete') {
           closeLoginModal();
-          window.location.assign('/');
+          const target = event.data?.next || '/';
+          window.location.assign(target);
         }
       });
     }
@@ -2635,11 +2661,17 @@
       });
     });
 
-    // Keep the original popup interaction; forms and verification run on the server.
+    // User profile and authentication handling:
+    // If logged in -> navigate straight to /manage-profile/
+    // If not logged in -> open login modal
     document.querySelectorAll('.login-form-button, .user, .header-account, [data-modal="login"]').forEach(button => {
       button.addEventListener('click', event => {
         event.preventDefault();
         event.stopPropagation();
+        if (isUserAuthenticated()) {
+          window.location.assign('/manage-profile/');
+          return;
+        }
         openLoginModal();
       });
     });

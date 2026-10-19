@@ -1,5 +1,6 @@
 {% load static %}
 <!DOCTYPE html><html lang="en-US"><head>
+<meta name="customer-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
