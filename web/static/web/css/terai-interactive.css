@@ -4882,3 +4882,139 @@ svg rect[fill="#634c9f"] {
   flex: 1 1 100% !important;
 }
 
+/* ==========================================================================
+   For You Section Fixed Image Container & Uniform Card Height
+   Prevents varying image dimensions/aspect-ratios from altering card/box sizes
+   ========================================================================== */
+.for-you-grid-container .products,
+.for-you-grid-container .products.column-2 {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+}
+
+.for-you-grid-container .products .product {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.for-you-grid-container .products .product .product-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background-color: #ffffff !important;
+}
+
+.for-you-grid-container .products .product .product-inner {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fixed, uniform 1:1 square image container */
+.for-you-grid-container .thumbnail-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  padding: 8px !important;
+  margin-bottom: 8px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.for-you-grid-container .thumbnail-wrapper .entry-media,
+.for-you-grid-container .thumbnail-wrapper .product-thumbnail {
+  width: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.for-you-grid-container .thumbnail-wrapper a.product-thumbnail,
+.for-you-grid-container .thumbnail-wrapper .product-thumbnail a {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
+  background-color: #fafafa !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* Image containment inside fixed square */
+.for-you-grid-container .thumbnail-wrapper img,
+.for-you-grid-container .thumbnail-wrapper .wp-post-image {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  margin: 0 auto !important;
+  padding: 6px !important;
+  box-sizing: border-box !important;
+  transition: transform 0.25s ease !important;
+}
+
+.for-you-grid-container .product:hover .thumbnail-wrapper img {
+  transform: scale(1.05) !important;
+}
+
+/* Uniform card content body */
+.for-you-grid-container .content-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.for-you-grid-container .product-heading {
+  margin-bottom: 6px !important;
+}
+
+.for-you-grid-container .product-title {
+  height: 2.6em !important;
+  line-height: 1.3 !important;
+  max-height: 2.6em !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+}
+
+.for-you-grid-container .product-rating {
+  min-height: 16px !important;
+  margin-top: 2px !important;
+}
+
+.for-you-grid-container .product-price-wrapper {
+  min-height: 24px !important;
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
+}
+
+.for-you-grid-container .product-cart {
+  margin-top: auto !important;
+  width: 100% !important;
+}
+
+.for-you-grid-container .product-cart .button {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+
