@@ -1,3 +1,6 @@
+> Current IP-based server deployment: see [native/README.md](native/README.md).
+> The Docker/TLS instructions below describe an alternative domain deployment.
+
 # Docker and Nginx deployment
 
 `compose.production.yaml` runs PostgreSQL 17, a one-off migration/static collection

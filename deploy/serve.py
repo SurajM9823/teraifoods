@@ -9,7 +9,7 @@ from waitress import serve
 
 serve(
     application,
-    host="0.0.0.0",
+    host=os.getenv("WEB_BIND_HOST", "0.0.0.0"),
     port=8000,
     threads=int(os.getenv("WEB_THREADS", "8")),
     connection_limit=int(os.getenv("WEB_CONNECTION_LIMIT", "200")),

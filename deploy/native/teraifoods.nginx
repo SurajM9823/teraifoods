@@ -1,0 +1,56 @@
+limit_req_zone $binary_remote_addr zone=terai_auth:1m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=terai_site:1m rate=20r/s;
+server {
+    listen 80;
+    server_name 178.105.139.193 teraifoods.co.uk www.teraifoods.co.uk;
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/letsencrypt;
+        default_type text/plain;
+        try_files $uri =404;
+    }
+    location / { return 301 https://teraifoods.co.uk$request_uri; }
+}
+server {
+    listen 443 ssl;
+    server_name teraifoods.co.uk www.teraifoods.co.uk;
+    ssl_certificate /etc/letsencrypt/live/teraifoods.co.uk/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/teraifoods.co.uk/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_cache shared:terai_tls:10m;
+    ssl_session_timeout 1d;
+    server_tokens off;
+    client_max_body_size 10m;
+    client_body_timeout 10s;
+    client_header_timeout 10s;
+    keepalive_timeout 30s;
+    access_log /var/log/nginx/teraifoods-access.log;
+    error_log /var/log/nginx/teraifoods-error.log;
+    gzip on;
+    gzip_vary on;
+    gzip_types text/css application/javascript application/json image/svg+xml;
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options DENY always;
+    location /static/ {
+        alias /opt/teraifoods/staticfiles/;
+        expires 7d;
+        access_log off;
+        autoindex off;
+    }
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/letsencrypt;
+        default_type text/plain;
+        try_files $uri =404;
+    }
+    location ~ /\. { deny all; }
+    location ~ ^/(accounts/|admin/(login|system/login)) {
+        limit_req zone=terai_auth burst=20 nodelay;
+        limit_req_status 429;
+        access_log off;
+        include /etc/nginx/teraifoods-proxy.conf;
+    }
+    location / {
+        limit_req zone=terai_site burst=60 nodelay;
+        limit_req_status 429;
+        include /etc/nginx/teraifoods-proxy.conf;
+    }
+}

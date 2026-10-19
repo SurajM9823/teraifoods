@@ -1,0 +1,23 @@
+[Unit]
+Description=Terai Foods WSGI application
+After=network.target postgresql.service redis-server.service
+
+[Service]
+User=teraifoods
+Group=teraifoods
+WorkingDirectory=/opt/teraifoods
+EnvironmentFile=/opt/teraifoods/.env.server
+ExecStart=/opt/teraifoods/.venv/bin/python deploy/serve.py
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+MemoryHigh=384M
+MemoryMax=512M
+TasksMax=64
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

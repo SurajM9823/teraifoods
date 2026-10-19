@@ -1,0 +1,6 @@
+[Unit]
+Description=Back up Terai Foods PostgreSQL database
+[Service]
+Type=oneshot
+ExecStart=/opt/teraifoods/deploy/native/backup.sh
+UMask=0077

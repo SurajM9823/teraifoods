@@ -13,3 +13,6 @@ staticfiles/
 media/
 scratch/
 .pytest_cache/
+
+backups/
+scratch/
