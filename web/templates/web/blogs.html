@@ -7,10 +7,52 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<title>Food &amp; Wellness Journal – Terai Food UK | Recipes, Organic Living &amp; Guides</title>
-	<meta name="description" content="Explore healthy recipes, authentic Himalayan spice guides, cold-chain grocery tips, and organic nutrition guides on the Terai Food UK Journal.">
-	<meta name="keywords" content="organic recipes UK, Himalayan spices blog, healthy cooking London, fresh vegetable guide UK, Terai Food articles">
-	<link rel="canonical" href="{% url 'web:blogs' %}">
+	<title>Himalayan Food &amp; Organic Living Journal – Recipes &amp; Nutrition Guides | Terai Food</title>
+	<meta name="description" content="Discover authentic Himalayan recipes, organic cooking techniques, nutrition guides, and seasonal UK produce tips from the Terai Food culinary team.">
+	<meta name="keywords" content="organic food blog UK, Himalayan recipes London, lentil dhal recipes, organic vs conventional food, UK seasonal vegetables calendar, Terai Food journal">
+	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+	<link rel="canonical" href="https://teraifoods.co.uk/blogs/">
+
+	<!-- Geo & Regional Meta Tags -->
+	<meta name="geo.region" content="GB">
+	<meta name="geo.placename" content="United Kingdom">
+
+	<!-- Open Graph -->
+	<meta property="og:type" content="blog">
+	<meta property="og:url" content="https://teraifoods.co.uk/blogs/">
+	<meta property="og:title" content="Himalayan Food &amp; Organic Living Journal | Terai Food UK">
+	<meta property="og:description" content="Discover authentic Himalayan recipes, organic cooking techniques, nutrition guides, and seasonal UK produce tips.">
+	<meta property="og:image" content="https://teraifoods.co.uk/static/web/images/terai_food_logo.png">
+	<meta property="og:site_name" content="Terai Food UK">
+	<meta property="og:locale" content="en_GB">
+
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Food &amp; Wellness Journal – Terai Food UK">
+	<meta name="twitter:description" content="Recipes, organic living tips, and nutrition guides from Terai Food UK.">
+	<meta name="twitter:image" content="https://teraifoods.co.uk/static/web/images/terai_food_logo.png">
+
+	<script type="application/ld+json">
+	{
+	  "@context": "https://schema.org",
+	  "@graph": [
+	    {
+	      "@type": "Blog",
+	      "name": "Terai Food Journal",
+	      "url": "https://teraifoods.co.uk/blogs/",
+	      "description": "Authentic Himalayan recipes, organic cooking techniques, and grocery guides.",
+	      "publisher": { "@type": "Organization", "name": "Terai Food UK", "url": "https://teraifoods.co.uk/" }
+	    },
+	    {
+	      "@type": "BreadcrumbList",
+	      "itemListElement": [
+	        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://teraifoods.co.uk/" },
+	        { "@type": "ListItem", "position": 2, "name": "Journal", "item": "https://teraifoods.co.uk/blogs/" }
+	      ]
+	    }
+	  ]
+	}
+	</script>
 
 	<link rel="icon" href="{% static 'web/' %}images/terai_food_logo.png" type="image/png">
 
@@ -1158,7 +1200,7 @@
 
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=buynow-v1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=dyn-checkout-v2"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

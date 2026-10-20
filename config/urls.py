@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import include, path
 from web.backoffice.views import AdminLoginView
 from web.views import health
+from web import seo_views
 from customers.views import profile
 from catalog import api as product_api
 from catalog import admin_api
@@ -36,6 +37,9 @@ urlpatterns = [
     path("admin/", include("web.backoffice.urls")),
     path("accounts/", include("allauth.urls")),
     path("manage-profile/", profile, name="customer-profile"),
+    path("robots.txt", seo_views.robots_txt, name="robots-txt"),
+    path("sitemap.xml", seo_views.sitemap_index, name="sitemap-index"),
+    path("sitemap-<str:section>.xml", seo_views.sitemap_section, name="sitemap-section"),
     path("", include("web.urls")),
 ]
 

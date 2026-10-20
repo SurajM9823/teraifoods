@@ -798,313 +798,10 @@
 							</button>
 						</div>
 
-						<!-- VENDOR STORE 1: Himalayan Farm Direct Organic -->
-						<div class="vendor-group-card" data-vendor="himalayan-farms">
-							<div class="vendor-group-header">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="vendor-group-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-								<a href="{% url 'web:shop' %}" class="vendor-title-link">
-									<i class="klb-icon-store-2 vendor-icon"></i>
-									<span>Himalayan Farm Direct Organic</span>
-									<i class="klb-icon-arrow-right arrow-icon"></i>
-								</a>
-							</div>
-
-							<!-- Item 1: Cantaloupe Melon Fresh Organic Cut -->
-							<div class="cart-item-row" data-id="item-101" data-price="3.49" data-unit-price="3.49">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="item-select-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-
-								<div class="cart-item-thumb-box">
-									<a href="{% url 'web:product-detail' %}">
-										<img src="{% static 'web/' %}images/1-500x500.jpg" alt="Cantaloupe Melon Fresh Organic Cut">
-									</a>
-								</div>
-
-								<div class="cart-item-info">
-									<h4 class="cart-item-title">
-										<a href="{% url 'web:product-detail' %}">Cantaloupe Melon Fresh Organic Cut &ndash; 1kg Farm Sliced</a>
-									</h4>
-									<p class="cart-item-meta">Origin: High Valley Organic Orchards | Fresh Chilled 4&deg;C</p>
-									<span class="cart-item-badge badge-fresh"><i class="klb-icon-shield-check me-1"></i>ORGANIC HARVEST</span>
-								</div>
-
-								<div class="cart-item-pricing">
-									<span class="cart-item-price">&pound;<span class="item-display-price">3.49</span></span>
-									<span class="cart-item-old-price">&pound;4.99</span>
-									<div class="cart-item-actions">
-										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
-										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
-									</div>
-								</div>
-
-								<div class="cart-stepper">
-									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
-									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
-									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
-								</div>
-							</div>
-
-							<!-- Item 2: Simply Orange Pulp Free Juice -->
-							<div class="cart-item-row" data-id="item-102" data-price="2.45" data-unit-price="2.45">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="item-select-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-
-								<div class="cart-item-thumb-box">
-									<a href="{% url 'web:product-detail' %}">
-										<img src="{% static 'web/' %}images/1-12-500x500.jpg" alt="Simply Orange Pulp Free Juice">
-									</a>
-								</div>
-
-								<div class="cart-item-info">
-									<h4 class="cart-item-title">
-										<a href="{% url 'web:product-detail' %}">Simply Orange Pulp Free Juice &ndash; 52 fl oz Pure Vitamin C</a>
-									</h4>
-									<p class="cart-item-meta">Brand: Terai Pure Juices | No Added Sugar | Pasteurized</p>
-									<span class="cart-item-badge badge-fresh"><i class="klb-icon-check me-1"></i>FRESH COLD-PRESSED</span>
-								</div>
-
-								<div class="cart-item-pricing">
-									<span class="cart-item-price">&pound;<span class="item-display-price">4.90</span></span>
-									<span class="cart-item-old-price">&pound;7.98</span>
-									<div class="cart-item-actions">
-										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
-										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
-									</div>
-								</div>
-
-								<div class="cart-stepper">
-									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
-									<input type="text" class="stepper-input" value="2" min="1" max="99" readonly>
-									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
-								</div>
-							</div>
+						<!-- Dynamic Active Cart Items Container -->
+						<div id="active-cart-vendor-groups">
+							<!-- Rendered dynamically from real localStorage cart -->
 						</div>
-
-						<!-- VENDOR STORE 2: Terai Artisan Bakery & Dairy Hub -->
-						<div class="vendor-group-card" data-vendor="terai-bakery">
-							<div class="vendor-group-header">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="vendor-group-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-								<a href="{% url 'web:shop' %}" class="vendor-title-link">
-									<i class="klb-icon-store-2 vendor-icon"></i>
-									<span>Terai Artisan Bakery &amp; Dairy Hub</span>
-									<i class="klb-icon-arrow-right arrow-icon"></i>
-								</a>
-							</div>
-
-							<!-- Item 3: Great Value Rising Crust Supreme Pizza -->
-							<div class="cart-item-row" data-id="item-103" data-price="8.99" data-unit-price="8.99">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="item-select-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-
-								<div class="cart-item-thumb-box">
-									<a href="{% url 'web:product-detail' %}">
-										<img src="{% static 'web/' %}images/1-87-500x500.jpg" alt="Great Value Rising Crust Frozen Pizza">
-									</a>
-								</div>
-
-								<div class="cart-item-info">
-									<h4 class="cart-item-title">
-										<a href="{% url 'web:product-detail' %}">Great Value Rising Crust Frozen Pizza &ndash; Supreme Oven Bake 780g</a>
-									</h4>
-									<p class="cart-item-meta">Category: {% category_label storefront_categories 'frozen' %} | Sealed Thermal Cold-Chain Liner</p>
-									<span class="cart-item-badge"><i class="klb-icon-snowflake me-1"></i>COLD SALE</span>
-								</div>
-
-								<div class="cart-item-pricing">
-									<span class="cart-item-price">&pound;<span class="item-display-price">8.99</span></span>
-									<span class="cart-item-old-price">&pound;9.99</span>
-									<div class="cart-item-actions">
-										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
-										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
-									</div>
-								</div>
-
-								<div class="cart-stepper">
-									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
-									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
-									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
-								</div>
-							</div>
-
-							<!-- Item 4: Pure Himalayan Raw Honey & Wild Herb Infusion -->
-							<div class="cart-item-row" data-id="item-104" data-price="12.50" data-unit-price="12.50">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="item-select-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-
-								<div class="cart-item-thumb-box">
-									<a href="{% url 'web:product-detail' %}">
-										<img src="{% static 'web/' %}images/1-105-500x500.jpg" alt="Pure Himalayan Raw Honey & Wild Herb Infusion">
-									</a>
-								</div>
-
-								<div class="cart-item-info">
-									<h4 class="cart-item-title">
-										<a href="{% url 'web:product-detail' %}">Pure Himalayan Raw Honey &amp; Wild Herb Infusion &ndash; 450g Glass Jar</a>
-									</h4>
-									<p class="cart-item-meta">High Altitude Beekeeper Harvest | 100% Unpasteurized &amp; Natural</p>
-									<span class="cart-item-badge badge-fresh"><i class="klb-icon-shield-check me-1"></i>WILD HONEY</span>
-								</div>
-
-								<div class="cart-item-pricing">
-									<span class="cart-item-price">&pound;<span class="item-display-price">12.50</span></span>
-									<span class="cart-item-old-price">&pound;15.00</span>
-									<div class="cart-item-actions">
-										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
-										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
-									</div>
-								</div>
-
-								<div class="cart-stepper">
-									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
-									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
-									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
-								</div>
-							</div>
-						</div>
-
-						<!-- VENDOR STORE 3: Spices, Tea & Herbal Kitchen -->
-						<div class="vendor-group-card" data-vendor="himalayan-spices">
-							<div class="vendor-group-header">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="vendor-group-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-								<a href="{% url 'web:shop' %}" class="vendor-title-link">
-									<i class="klb-icon-store-2 vendor-icon"></i>
-									<span>Spices, Tea &amp; Herbal Kitchen</span>
-									<i class="klb-icon-arrow-right arrow-icon"></i>
-								</a>
-							</div>
-
-							<!-- Item 5: Authentic Sun-Dried Timut Himalayan Pepper Pods -->
-							<div class="cart-item-row" data-id="item-105" data-price="5.80" data-unit-price="5.80">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" class="item-select-checkbox" checked>
-									<span class="checkbox-box"></span>
-								</label>
-
-								<div class="cart-item-thumb-box">
-									<a href="{% url 'web:product-detail' %}">
-										<img src="{% static 'web/' %}images/1-30-500x500.jpg" alt="Authentic Sun-Dried Timut Himalayan Pepper">
-									</a>
-								</div>
-
-								<div class="cart-item-info">
-									<h4 class="cart-item-title">
-										<a href="{% url 'web:product-detail' %}">Authentic Sun-Dried Timut Himalayan Pepper Pods &ndash; 200g Pouch</a>
-									</h4>
-									<p class="cart-item-meta">Grapefruit Citrus Aroma | Whole Dried Wild Peppercorns</p>
-									<span class="cart-item-badge badge-fresh"><i class="klb-icon-tag me-1"></i>STONE SOURCED</span>
-								</div>
-
-								<div class="cart-item-pricing">
-									<span class="cart-item-price">&pound;<span class="item-display-price">5.80</span></span>
-									<span class="cart-item-old-price">&pound;7.20</span>
-									<div class="cart-item-actions">
-										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
-										<button type="button" class="cart-icon-btn btn-delete" title="Remove item"><i class="klb-icon-trash-2"></i></button>
-									</div>
-								</div>
-
-								<div class="cart-stepper">
-									<button type="button" class="stepper-btn btn-minus" aria-label="Decrease">&minus;</button>
-									<input type="text" class="stepper-input" value="1" min="1" max="99" readonly>
-									<button type="button" class="stepper-btn btn-plus" aria-label="Increase">&#43;</button>
-								</div>
-							</div>
-						</div>
-
-						<!-- UNAVAILABLE ITEMS SECTION (Out of stock items like Daraz screenshot) -->
-						<div class="unavailable-section-card">
-							<div class="unavailable-header">
-								<span>Unavailable items (2)</span>
-								<div class="unavailable-header-actions">
-									<span class="unavailable-action-link" id="delete-unavailable-all-btn"><i class="klb-icon-trash-2"></i> Delete all</span>
-									<span class="unavailable-action-link" id="move-wishlist-all-btn"><i class="klb-icon-heart-4"></i> Move all to wishlist</span>
-								</div>
-							</div>
-
-							<!-- Unavailable Item 1 -->
-							<div class="cart-item-row is-unavailable" id="unavail-1">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" disabled>
-									<span class="checkbox-box"></span>
-								</label>
-
-								<div class="cart-item-thumb-box">
-									<img src="{% static 'web/' %}images/1-109-500x500.jpg" alt="Aged Himalayan Yak Hard Cheese Churpi">
-								</div>
-
-								<div class="cart-item-info">
-									<h4 class="cart-item-title" style="color: #64748b;">Aged Himalayan Yak Hard Cheese (Churpi) Chews &ndash; 250g</h4>
-									<p class="cart-item-meta">Traditional Pastoral Recipe | High-Protein Artisan Snack</p>
-									<span class="badge-out-of-stock">Out of stock &bull; Restocking in 2 days</span>
-								</div>
-
-								<div class="cart-item-pricing">
-									<span class="cart-item-price" style="color: #64748b;">&pound;6.90</span>
-									<span class="cart-item-old-price">&pound;8.50</span>
-									<div class="cart-item-actions">
-										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
-										<button type="button" class="cart-icon-btn btn-delete" onclick="document.getElementById('unavail-1').remove();" title="Remove item"><i class="klb-icon-trash-2"></i></button>
-									</div>
-								</div>
-
-								<div class="cart-stepper" style="opacity: 0.5;">
-									<button type="button" class="stepper-btn" disabled>&minus;</button>
-									<input type="text" class="stepper-input" value="1" readonly disabled>
-									<button type="button" class="stepper-btn" disabled>&#43;</button>
-								</div>
-							</div>
-
-							<!-- Unavailable Item 2 -->
-							<div class="cart-item-row is-unavailable" id="unavail-2">
-								<label class="cart-custom-checkbox">
-									<input type="checkbox" disabled>
-									<span class="checkbox-box"></span>
-								</label>
-
-								<div class="cart-item-thumb-box">
-									<img src="{% static 'web/' %}images/1-2-500x500.jpg" alt="Cold-Pressed Himalayan Walnut Kernel Oil">
-								</div>
-
-								<div class="cart-item-info">
-									<h4 class="cart-item-title" style="color: #64748b;">Cold-Pressed Himalayan Walnut Kernel Oil &ndash; 250ml Extra Virgin</h4>
-									<p class="cart-item-meta">Omega-3 Rich | First Cold Expeller Pressed</p>
-									<span class="badge-out-of-stock">Out of stock</span>
-								</div>
-
-								<div class="cart-item-pricing">
-									<span class="cart-item-price" style="color: #64748b;">&pound;9.99</span>
-									<span class="cart-item-old-price">&pound;12.50</span>
-									<div class="cart-item-actions">
-										<button type="button" class="cart-icon-btn btn-wishlist" title="Save to wishlist"><i class="klb-icon-heart-4"></i></button>
-										<button type="button" class="cart-icon-btn btn-delete" onclick="document.getElementById('unavail-2').remove();" title="Remove item"><i class="klb-icon-trash-2"></i></button>
-									</div>
-								</div>
-
-								<div class="cart-stepper" style="opacity: 0.5;">
-									<button type="button" class="stepper-btn" disabled>&minus;</button>
-									<input type="text" class="stepper-input" value="1" readonly disabled>
-									<button type="button" class="stepper-btn" disabled>&#43;</button>
-								</div>
-							</div>
-						</div>
-
 					</section>
 
 					<!-- RIGHT COLUMN: ~28% Sticky Order Summary -->
@@ -1246,66 +943,252 @@
 	<!-- Advanced Cart Interaction & Calculation Script -->
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-			const masterSelectAll = document.getElementById('master-select-all');
-			const vendorGroupCheckboxes = document.querySelectorAll('.vendor-group-checkbox');
-			const itemCheckboxes = document.querySelectorAll('.item-select-checkbox');
-			const summarySubtotalEl = document.getElementById('summary-subtotal');
-			const summaryShippingFeeEl = document.getElementById('summary-shipping-fee');
-			const summaryGrandTotalEl = document.getElementById('summary-grand-total');
-			const summaryItemsCountEl = document.getElementById('summary-items-count');
-			const checkoutBtnCountEl = document.getElementById('checkout-btn-count');
-			const totalCartItemsCountEl = document.getElementById('total-cart-items-count');
-			const headerCartBadgeEl = document.getElementById('header-cart-badge');
-			const shippingThresholdBox = document.getElementById('shipping-threshold-box');
-			const shippingNoticeText = document.getElementById('shipping-notice-text');
-			const checkoutButton = document.getElementById('checkout-button');
-
-			let appliedDiscount = 0;
-			let appliedVoucherName = null;
-
-			// Free shipping threshold
+			const STORAGE_CART = 'teraifood_cart';
 			const FREE_SHIPPING_THRESHOLD = 40.0;
 			const BASE_SHIPPING_FEE = 3.99;
 
-			// Recalculate Subtotal, Shipping, Vouchers, and Total
-			function recalculateCart() {
-				const activeRows = document.querySelectorAll('.cart-item-row:not(.is-unavailable)');
-				let selectedCount = 0;
-				let subtotal = 0;
-				let totalActiveItems = activeRows.length;
+			let appliedDiscount = 0;
+			let appliedVoucherName = null;
+			let unselectedIds = new Set();
 
-				activeRows.forEach(row => {
-					const cb = row.querySelector('.item-select-checkbox');
-					const qtyInput = row.querySelector('.stepper-input');
-					const unitPrice = parseFloat(row.getAttribute('data-unit-price')) || 0;
-					const qty = parseInt(qtyInput.value, 10) || 1;
-					const itemTotal = unitPrice * qty;
+			function escapeHTML(str) {
+				const p = document.createElement('p');
+				p.textContent = str || '';
+				return p.innerHTML;
+			}
 
-					// Update row price display
-					const priceSpan = row.querySelector('.item-display-price');
-					if (priceSpan) {
-						priceSpan.textContent = itemTotal.toFixed(2);
+			function getCart() {
+				try {
+					const data = localStorage.getItem(STORAGE_CART);
+					return data ? JSON.parse(data) : [];
+				} catch (e) {
+					return [];
+				}
+			}
+
+			function saveCart(cart) {
+				try {
+					localStorage.setItem(STORAGE_CART, JSON.stringify(cart));
+				} catch (e) {}
+				updateHeaderCart();
+			}
+
+			function updateHeaderCart() {
+				const cart = getCart();
+				const totalCount = cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+				const subtotal = cart.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+
+				document.querySelectorAll('.cart-count, .mini-cart-count, .count, .cart-button .badge').forEach(el => {
+					el.textContent = totalCount;
+				});
+				document.querySelectorAll('.cart-total, .cart-subtotal, .mini-cart-total, .cart-price').forEach(el => {
+					el.textContent = '£' + subtotal.toFixed(2);
+				});
+			}
+
+			function renderCart() {
+				const container = document.getElementById('active-cart-vendor-groups');
+				const topBar = document.querySelector('.cart-top-bar');
+				const checkoutBtn = document.getElementById('checkout-button');
+				const cart = getCart();
+
+				if (!container) return;
+
+				if (cart.length === 0) {
+					if (topBar) topBar.style.display = 'none';
+					container.innerHTML = `
+						<div class="p-5 text-center bg-white border">
+							<div style="font-size: 42px; color: #94a3b8; margin-bottom: 12px;">
+								<i class="klb-icon-shopping-cart-3"></i>
+							</div>
+							<h4 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Your Shopping Cart is Empty</h4>
+							<p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Explore our organic groceries, fresh produce, and Himalayan specialties.</p>
+							<a href="/shop/" class="btn btn-primary text-12 fw-bold px-4 py-2" style="background: #634c9f; border-color: #634c9f; border-radius: 0; text-decoration: none;">
+								Start Shopping
+							</a>
+						</div>
+					`;
+
+					document.getElementById('summary-items-count').textContent = '0';
+					document.getElementById('summary-subtotal').textContent = '0.00';
+					document.getElementById('summary-shipping-fee').textContent = '£0.00';
+					document.getElementById('summary-grandTotal').textContent = '0.00';
+					const discountBox = document.getElementById('summary-discount-box');
+					if (discountBox) discountBox.style.display = 'none';
+
+					if (checkoutBtn) {
+						checkoutBtn.classList.add('disabled');
+						checkoutBtn.setAttribute('disabled', 'disabled');
+						checkoutBtn.textContent = 'SELECT ITEMS TO CHECKOUT (0)';
 					}
+					return;
+				}
 
-					if (cb && cb.checked) {
-						selectedCount += 1;
-						subtotal += itemTotal;
-						row.classList.remove('is-unselected');
-					} else {
-						row.classList.add('is-unselected');
-					}
+				if (topBar) topBar.style.display = 'flex';
+				const totalItemsCountEl = document.getElementById('total-cart-items-count');
+				if (totalItemsCountEl) totalItemsCountEl.textContent = cart.length;
+
+				// Render Items in Vendor Card
+				const itemsHtml = cart.map(item => {
+					const price = Number(item.price) || 0;
+					const qty = Number(item.quantity) || 1;
+					const lineTotal = (price * qty).toFixed(2);
+					const isChecked = !unselectedIds.has(String(item.id));
+					const imgSrc = item.image || '/static/web/images/1-16-500x500.jpg';
+
+					return `
+						<div class="cart-item-row ${isChecked ? '' : 'is-unselected'}" data-id="${item.id}" data-unit-price="${price}">
+							<label class="cart-custom-checkbox">
+								<input type="checkbox" class="item-select-checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''}>
+								<span class="checkbox-box"></span>
+							</label>
+
+							<div class="cart-item-thumb-box">
+								<a href="/shop/">
+									<img src="${escapeHTML(imgSrc)}" alt="${escapeHTML(item.title)}">
+								</a>
+							</div>
+
+							<div class="cart-item-info">
+								<h4 class="cart-item-title">
+									<a href="/shop/">${escapeHTML(item.title)}</a>
+								</h4>
+								<p class="cart-item-meta">Fresh Farm Harvest &bull; Cold-Chain Dispatched</p>
+								<span class="cart-item-badge badge-fresh"><i class="klb-icon-shield-check me-1"></i>IN STOCK</span>
+							</div>
+
+							<div class="cart-item-pricing">
+								<span class="cart-item-price">&pound;<span class="item-display-price">${lineTotal}</span></span>
+								<div class="cart-item-actions">
+									<button type="button" class="cart-icon-btn btn-delete btn-del-cart-item" data-id="${item.id}" title="Remove item"><i class="klb-icon-trash-2"></i></button>
+								</div>
+							</div>
+
+							<div class="cart-stepper">
+								<button type="button" class="stepper-btn btn-minus btn-cart-qty-minus" data-id="${item.id}" aria-label="Decrease">&minus;</button>
+								<input type="text" class="stepper-input" value="${qty}" min="1" max="99" readonly>
+								<button type="button" class="stepper-btn btn-plus btn-cart-qty-plus" data-id="${item.id}" aria-label="Increase">&#43;</button>
+							</div>
+						</div>
+					`;
+				}).join('');
+
+				container.innerHTML = `
+					<div class="vendor-group-card" data-vendor="terai-farm-direct">
+						<div class="vendor-group-header">
+							<label class="cart-custom-checkbox">
+								<input type="checkbox" class="vendor-group-checkbox" id="vendor-store-cb" ${unselectedIds.size === 0 ? 'checked' : ''}>
+								<span class="checkbox-box"></span>
+							</label>
+							<a href="/shop/" class="vendor-title-link">
+								<i class="klb-icon-store-2 vendor-icon"></i>
+								<span>Terai Food Store &ndash; Direct Farm Fresh</span>
+								<i class="klb-icon-arrow-right arrow-icon"></i>
+							</a>
+						</div>
+						<div class="vendor-items-list">
+							${itemsHtml}
+						</div>
+					</div>
+				`;
+
+				// Wire up item events
+				container.querySelectorAll('.btn-cart-qty-plus').forEach(btn => {
+					btn.addEventListener('click', function(e) {
+						e.stopPropagation();
+						const id = this.getAttribute('data-id');
+						let currentCart = getCart();
+						const target = currentCart.find(i => String(i.id) === String(id));
+						if (target && target.quantity < 99) {
+							target.quantity = (Number(target.quantity) || 1) + 1;
+							saveCart(currentCart);
+							renderCart();
+						}
+					});
 				});
 
-				// Update item counts
+				container.querySelectorAll('.btn-cart-qty-minus').forEach(btn => {
+					btn.addEventListener('click', function(e) {
+						e.stopPropagation();
+						const id = this.getAttribute('data-id');
+						let currentCart = getCart();
+						const target = currentCart.find(i => String(i.id) === String(id));
+						if (target && target.quantity > 1) {
+							target.quantity = (Number(target.quantity) || 1) - 1;
+							saveCart(currentCart);
+							renderCart();
+						}
+					});
+				});
+
+				container.querySelectorAll('.btn-del-cart-item').forEach(btn => {
+					btn.addEventListener('click', function(e) {
+						e.stopPropagation();
+						const id = this.getAttribute('data-id');
+						if (confirm('Are you sure you want to remove this item from your cart?')) {
+							let currentCart = getCart();
+							currentCart = currentCart.filter(i => String(i.id) !== String(id));
+							unselectedIds.delete(String(id));
+							saveCart(currentCart);
+							renderCart();
+						}
+					});
+				});
+
+				container.querySelectorAll('.item-select-checkbox').forEach(cb => {
+					cb.addEventListener('change', function() {
+						const id = this.getAttribute('data-id');
+						if (this.checked) {
+							unselectedIds.delete(String(id));
+						} else {
+							unselectedIds.add(String(id));
+						}
+						recalculateCart();
+					});
+				});
+
+				const vendorCb = document.getElementById('vendor-store-cb');
+				if (vendorCb) {
+					vendorCb.addEventListener('change', function() {
+						const checked = this.checked;
+						cart.forEach(item => {
+							if (checked) {
+								unselectedIds.delete(String(item.id));
+							} else {
+								unselectedIds.add(String(item.id));
+							}
+						});
+						renderCart();
+					});
+				}
+
+				recalculateCart();
+			}
+
+			function recalculateCart() {
+				const cart = getCart();
+				const selectedItems = cart.filter(item => !unselectedIds.has(String(item.id)));
+				const selectedCount = selectedItems.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+				const subtotal = selectedItems.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+
+				const summaryItemsCountEl = document.getElementById('summary-items-count');
+				const summarySubtotalEl = document.getElementById('summary-subtotal');
+				const summaryShippingFeeEl = document.getElementById('summary-shipping-fee');
+				const summaryGrandTotalEl = document.getElementById('summary-grand-total');
+				const checkoutBtnCountEl = document.getElementById('checkout-btn-count');
+				const shippingThresholdBox = document.getElementById('shipping-threshold-box');
+				const shippingNoticeText = document.getElementById('shipping-notice-text');
+				const checkoutButton = document.getElementById('checkout-button');
+
 				if (summaryItemsCountEl) summaryItemsCountEl.textContent = selectedCount;
+				if (summarySubtotalEl) summarySubtotalEl.textContent = subtotal.toFixed(2);
 				if (checkoutBtnCountEl) checkoutBtnCountEl.textContent = selectedCount;
-				if (totalCartItemsCountEl) totalCartItemsCountEl.textContent = totalActiveItems;
-				if (headerCartBadgeEl) headerCartBadgeEl.textContent = totalActiveItems;
 
 				// Calculate Shipping Fee
 				let shippingFee = 0;
 				if (selectedCount === 0) {
 					shippingFee = 0;
+					if (summaryShippingFeeEl) summaryShippingFeeEl.textContent = '£0.00';
 					if (shippingThresholdBox) shippingThresholdBox.style.display = 'none';
 				} else if (subtotal >= FREE_SHIPPING_THRESHOLD) {
 					shippingFee = 0;
@@ -1330,7 +1213,7 @@
 
 				// Voucher Calculation
 				let discountVal = 0;
-				if (appliedVoucherName === 'TERAI10') {
+				if (appliedVoucherName === 'TERAI10' || appliedVoucherName === 'DARAZ10') {
 					discountVal = subtotal * 0.10;
 				} else if (appliedVoucherName === 'FREESHIP') {
 					discountVal = shippingFee;
@@ -1343,8 +1226,6 @@
 				}
 
 				const grandTotal = Math.max(0, subtotal + shippingFee - discountVal);
-
-				if (summarySubtotalEl) summarySubtotalEl.textContent = subtotal.toFixed(2);
 				if (summaryGrandTotalEl) summaryGrandTotalEl.textContent = grandTotal.toFixed(2);
 
 				// Enable / Disable checkout button
@@ -1353,197 +1234,54 @@
 						checkoutButton.classList.add('disabled');
 						checkoutButton.setAttribute('disabled', 'disabled');
 						checkoutButton.textContent = 'SELECT ITEMS TO CHECKOUT (0)';
+						checkoutButton.style.pointerEvents = 'none';
+						checkoutButton.style.opacity = '0.5';
 					} else {
 						checkoutButton.classList.remove('disabled');
 						checkoutButton.removeAttribute('disabled');
 						checkoutButton.textContent = 'PROCEED TO CHECKOUT (' + selectedCount + ')';
+						checkoutButton.style.pointerEvents = 'auto';
+						checkoutButton.style.opacity = '1';
 					}
 				}
 
-				// Update Master Select All state
-				updateMasterState();
-				updateVendorStates();
-			}
-
-			// Update Master Checkbox state
-			function updateMasterState() {
-				const activeCheckboxes = Array.from(document.querySelectorAll('.cart-item-row:not(.is-unavailable) .item-select-checkbox'));
-				if (activeCheckboxes.length === 0) {
-					masterSelectAll.checked = false;
-					masterSelectAll.indeterminate = false;
-					return;
+				// Master checkbox state
+				const masterCb = document.getElementById('master-select-all');
+				if (masterCb) {
+					masterCb.checked = (cart.length > 0 && unselectedIds.size === 0);
 				}
-				const allChecked = activeCheckboxes.every(cb => cb.checked);
-				const noneChecked = activeCheckboxes.every(cb => !cb.checked);
-
-				if (allChecked) {
-					masterSelectAll.checked = true;
-					masterSelectAll.indeterminate = false;
-				} else if (noneChecked) {
-					masterSelectAll.checked = false;
-					masterSelectAll.indeterminate = false;
-				} else {
-					masterSelectAll.checked = false;
-					masterSelectAll.indeterminate = true;
-				}
-			}
-
-			// Update Vendor Group Checkbox states
-			function updateVendorStates() {
-				const vendorCards = document.querySelectorAll('.vendor-group-card');
-				vendorCards.forEach(card => {
-					const vendorCb = card.querySelector('.vendor-group-checkbox');
-					const itemCbs = Array.from(card.querySelectorAll('.item-select-checkbox'));
-					if (!vendorCb || itemCbs.length === 0) return;
-
-					const allChecked = itemCbs.every(cb => cb.checked);
-					const noneChecked = itemCbs.every(cb => !cb.checked);
-
-					if (allChecked) {
-						vendorCb.checked = true;
-						vendorCb.indeterminate = false;
-					} else if (noneChecked) {
-						vendorCb.checked = false;
-						vendorCb.indeterminate = false;
-					} else {
-						vendorCb.checked = false;
-						vendorCb.indeterminate = true;
-					}
-				});
 			}
 
 			// Master Select All Click
+			const masterSelectAll = document.getElementById('master-select-all');
 			if (masterSelectAll) {
 				masterSelectAll.addEventListener('change', function() {
-					const targetState = this.checked;
-					const allItemCbs = document.querySelectorAll('.cart-item-row:not(.is-unavailable) .item-select-checkbox');
-					allItemCbs.forEach(cb => {
-						cb.checked = targetState;
-					});
-					const allVendorCbs = document.querySelectorAll('.vendor-group-checkbox');
-					allVendorCbs.forEach(vcb => {
-						vcb.checked = targetState;
-						vcb.indeterminate = false;
-					});
-					recalculateCart();
+					const cart = getCart();
+					if (this.checked) {
+						unselectedIds.clear();
+					} else {
+						cart.forEach(item => unselectedIds.add(String(item.id)));
+					}
+					renderCart();
 				});
 			}
-
-			// Vendor Group Checkbox Click
-			document.querySelectorAll('.vendor-group-checkbox').forEach(vcb => {
-				vcb.addEventListener('change', function() {
-					const card = this.closest('.vendor-group-card');
-					const itemCbs = card.querySelectorAll('.item-select-checkbox');
-					itemCbs.forEach(cb => {
-						cb.checked = this.checked;
-					});
-					recalculateCart();
-				});
-			});
-
-			// Individual Item Checkbox Click
-			document.querySelectorAll('.item-select-checkbox').forEach(cb => {
-				cb.addEventListener('change', function() {
-					recalculateCart();
-				});
-			});
-
-			// Stepper Plus / Minus
-			document.querySelectorAll('.cart-stepper').forEach(stepper => {
-				const minusBtn = stepper.querySelector('.btn-minus');
-				const plusBtn = stepper.querySelector('.btn-plus');
-				const input = stepper.querySelector('.stepper-input');
-
-				if (minusBtn && plusBtn && input) {
-					minusBtn.addEventListener('click', function() {
-						let val = parseInt(input.value, 10) || 1;
-						if (val > 1) {
-							val -= 1;
-							input.value = val;
-							recalculateCart();
-						}
-					});
-
-					plusBtn.addEventListener('click', function() {
-						let val = parseInt(input.value, 10) || 1;
-						if (val < 99) {
-							val += 1;
-							input.value = val;
-							recalculateCart();
-						}
-					});
-				}
-			});
-
-			// Delete Single Item Row
-			document.querySelectorAll('.cart-icon-btn.btn-delete').forEach(btn => {
-				btn.addEventListener('click', function() {
-					const row = this.closest('.cart-item-row');
-					const vendorCard = this.closest('.vendor-group-card');
-					if (row) {
-						row.remove();
-						if (vendorCard && vendorCard.querySelectorAll('.cart-item-row').length === 0) {
-							vendorCard.remove();
-						}
-						recalculateCart();
-					}
-				});
-			});
-
-			// Toggle Wishlist Heart
-			document.querySelectorAll('.cart-icon-btn.btn-wishlist').forEach(btn => {
-				btn.addEventListener('click', function() {
-					this.classList.toggle('active');
-					const icon = this.querySelector('i');
-					if (this.classList.contains('active')) {
-						icon.className = 'klb-icon-heart-3 text-danger';
-					} else {
-						icon.className = 'klb-icon-heart-4';
-					}
-				});
-			});
 
 			// Delete Selected Button
 			const deleteSelectedBtn = document.getElementById('delete-selected-btn');
 			if (deleteSelectedBtn) {
 				deleteSelectedBtn.addEventListener('click', function() {
-					const selectedRows = document.querySelectorAll('.cart-item-row:not(.is-unavailable) .item-select-checkbox:checked');
-					if (selectedRows.length === 0) {
+					let cart = getCart();
+					const selectedItems = cart.filter(item => !unselectedIds.has(String(item.id)));
+					if (selectedItems.length === 0) {
 						alert('No items are currently selected to delete.');
 						return;
 					}
-					if (confirm('Are you sure you want to remove ' + selectedRows.length + ' item(s) from your shopping cart?')) {
-						selectedRows.forEach(cb => {
-							const row = cb.closest('.cart-item-row');
-							const vendorCard = cb.closest('.vendor-group-card');
-							if (row) row.remove();
-							if (vendorCard && vendorCard.querySelectorAll('.cart-item-row').length === 0) {
-								vendorCard.remove();
-							}
-						});
-						recalculateCart();
+					if (confirm('Are you sure you want to remove ' + selectedItems.length + ' item(s) from your shopping cart?')) {
+						cart = cart.filter(item => unselectedIds.has(String(item.id)));
+						unselectedIds.clear();
+						saveCart(cart);
+						renderCart();
 					}
-				});
-			}
-
-			// Delete All Unavailable Items
-			const deleteUnavailableBtn = document.getElementById('delete-unavailable-all-btn');
-			if (deleteUnavailableBtn) {
-				deleteUnavailableBtn.addEventListener('click', function() {
-					const unavailSection = document.querySelector('.unavailable-section-card');
-					if (unavailSection) {
-						unavailSection.remove();
-					}
-				});
-			}
-
-			// Move All Unavailable to Wishlist
-			const moveWishlistAllBtn = document.getElementById('move-wishlist-all-btn');
-			if (moveWishlistAllBtn) {
-				moveWishlistAllBtn.addEventListener('click', function() {
-					alert('All out of stock items have been moved to your Wishlist for restocking alerts!');
-					const unavailSection = document.querySelector('.unavailable-section-card');
-					if (unavailSection) unavailSection.remove();
 				});
 			}
 
@@ -1560,16 +1298,18 @@
 						alert('Please enter a voucher code.');
 						return;
 					}
-					if (code === 'TERAI10') {
-						appliedVoucherName = 'TERAI10';
-						voucherAppliedBox.style.display = 'flex';
-						document.getElementById('applied-code-name').textContent = 'TERAI10 (10% OFF)';
+					if (code === 'TERAI10' || code === 'DARAZ10') {
+						appliedVoucherName = code;
+						if (voucherAppliedBox) voucherAppliedBox.style.display = 'flex';
+						const nameEl = document.getElementById('applied-code-name');
+						if (nameEl) nameEl.textContent = `${code} (10% OFF)`;
 						voucherInput.value = '';
 						recalculateCart();
 					} else if (code === 'FREESHIP') {
 						appliedVoucherName = 'FREESHIP';
-						voucherAppliedBox.style.display = 'flex';
-						document.getElementById('applied-code-name').textContent = 'FREESHIP (FREE SHIPPING)';
+						if (voucherAppliedBox) voucherAppliedBox.style.display = 'flex';
+						const nameEl = document.getElementById('applied-code-name');
+						if (nameEl) nameEl.textContent = 'FREESHIP (FREE SHIPPING)';
 						voucherInput.value = '';
 						recalculateCart();
 					} else {
@@ -1582,16 +1322,16 @@
 				removeVoucherBtn.addEventListener('click', function() {
 					appliedVoucherName = null;
 					appliedDiscount = 0;
-					voucherAppliedBox.style.display = 'none';
+					if (voucherAppliedBox) voucherAppliedBox.style.display = 'none';
 					recalculateCart();
 				});
 			}
 
-			// Initial Calculation
-			recalculateCart();
+			// Initial Render
+			renderCart();
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=buynow-v1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=dyn-checkout-v2"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

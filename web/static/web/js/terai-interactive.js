@@ -1140,13 +1140,14 @@
   function renderDrawerSummaries() {
     const quoted = currentDeliveryQuote();
     const subtotal = quoted ? Number(quoted.subtotal) : calculateDrawerSubtotal();
-    const shipping = calculateDrawerShipping();
-    const discount = 0;
-    const total = quoted ? Number(quoted.total) : null;
+    const quoteShipping = calculateDrawerShipping();
+    const shipping = quoteShipping !== null ? quoteShipping : (subtotal >= 40 || subtotal === 0 ? 0 : 3.99);
+    const discount = voucherDiscountPercent > 0 ? (subtotal * (voucherDiscountPercent / 100)) : 0;
+    const total = quoted && quoted.total ? Number(quoted.total) : Math.max(0, subtotal + shipping - discount);
     const cart = getCart();
     window.dispatchEvent(new CustomEvent('delivery:request', {detail:cart.filter(i => !unselectedItemIds.has(String(i.id)))}));
-    const shippingText = shipping === null ? 'Calculated at checkout' : shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2);
-    const totalText = total === null ? '—' : '£' + total.toFixed(2);
+    const shippingText = shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2);
+    const totalText = '£' + total.toFixed(2);
     const estimate = document.getElementById('checkout-delivery-eta-text');
     if (estimate) estimate.textContent = 'Estimated delivery: ' + (quoted?.delivery?.estimate || '2–4 days');
     const activeCount = cart.filter(i => !unselectedItemIds.has(String(i.id))).length;

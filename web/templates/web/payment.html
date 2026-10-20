@@ -770,9 +770,45 @@
 						<!-- Payment Detail Form Container -->
 						<div class="payment-form-card">
 
-							<!-- PANEL 1: Credit / Debit Card (Compact 2-Cards-in-a-Row + Add More Card) -->
-							<div class="payment-detail-panel is-visible" id="panel-card"><h3>Secure card payment</h3><p>Continue to Stripe to enter your test card details securely.</p></div>
-<div class="payment-detail-panel" id="panel-applepay">
+							<!-- PANEL 1: Credit / Debit Card -->
+							<div class="payment-detail-panel is-visible" id="panel-card">
+								<div class="form-card-title">
+									<span>Credit or Debit Card</span>
+									<div class="d-flex gap-2">
+										<span class="badge border bg-light text-dark font-monospace text-11">VISA</span>
+										<span class="badge border bg-light text-dark font-monospace text-11">MASTERCARD</span>
+										<span class="badge border bg-light text-dark font-monospace text-11">AMEX</span>
+									</div>
+								</div>
+								<p class="text-12 text-gray-600 mb-3">Pay securely with your credit or debit card via encrypted 256-bit SSL checkout.</p>
+								<form id="card-payment-form" onsubmit="event.preventDefault(); window.submitPayment();">
+									<div class="row g-2 mb-2">
+										<div class="col-12">
+											<label class="pay-form-label-compact">Cardholder Name *</label>
+											<input type="text" class="pay-form-input-compact" id="pay-card-name" placeholder="Full name as printed on card" required value="Suraj Mahato">
+										</div>
+										<div class="col-12">
+											<label class="pay-form-label-compact">Card Number *</label>
+											<input type="text" class="pay-form-input-compact" id="pay-card-num" placeholder="4xxx xxxx xxxx xxxx" required value="4532 8920 1284 9912">
+										</div>
+										<div class="col-6">
+											<label class="pay-form-label-compact">Expiry Date *</label>
+											<input type="text" class="pay-form-input-compact" id="pay-card-exp" placeholder="MM/YY" required value="12/28">
+										</div>
+										<div class="col-6">
+											<label class="pay-form-label-compact">CVV / CVC *</label>
+											<input type="password" class="pay-form-input-compact" id="pay-card-cvv" placeholder="123" maxlength="4" required value="892">
+										</div>
+									</div>
+									<div class="form-check text-11 text-muted mb-3">
+										<input class="form-check-input" type="checkbox" id="save-card-check" checked>
+										<label class="form-check-label" for="save-card-check">Save card securely for 1-click future orders</label>
+									</div>
+								</form>
+							</div>
+
+							<!-- PANEL 2: Apple Pay / GPay -->
+							<div class="payment-detail-panel" id="panel-applepay">
 								<div class="form-card-title">
 									<span>Instant UK Mobile Payment</span>
 									<span class="text-11 text-success fw-bold"><i class="klb-icon-check-circle me-1"></i>BIOMETRIC SECURE</span>
@@ -780,8 +816,8 @@
 								<p class="text-12 text-gray-600 mb-3" style="line-height: 1.5;">
 									Complete your order in one second using Touch ID, Face ID, or your UK bank account linked with Apple Pay / Google Pay.
 								</p>
-								<button type="button" class="wallet-pay-btn-apple" onclick="document.getElementById('payment-success-modal').style.display = 'flex';">
-									<span>Pay</span> &nbsp; Pay Calculated at checkout with Apple Pay
+								<button type="button" class="wallet-pay-btn-apple" id="btn-applepay-pay" onclick="window.submitPayment();">
+									<span>Pay</span> &nbsp; Pay &pound;<span class="dyn-pay-total">0.00</span> with Apple Pay
 								</button>
 							</div>
 
@@ -791,10 +827,10 @@
 									<span>PayPal Checkout &amp; Pay in 3</span>
 								</div>
 								<p class="text-12 text-gray-600 mb-3" style="line-height: 1.5;">
-									You will be safely routed to PayPal to log in and confirm. You can also split this purchase into 3 interest-free monthly installments of &pound;13.22.
+									You will be safely routed to PayPal to log in and confirm. You can also split this purchase into 3 interest-free monthly installments.
 								</p>
-								<button type="button" class="wallet-pay-btn-paypal" onclick="document.getElementById('payment-success-modal').style.display = 'flex';">
-									<i>PayPal</i> &nbsp; Continue with PayPal UK
+								<button type="button" class="wallet-pay-btn-paypal" id="btn-paypal-pay" onclick="window.submitPayment();">
+									<i>PayPal</i> &nbsp; Continue with PayPal UK (&pound;<span class="dyn-pay-total">0.00</span>)
 								</button>
 							</div>
 
@@ -806,12 +842,12 @@
 								<div class="p-3 mb-3 border" style="background: #fff5f7;">
 									<div class="d-flex align-items-center justify-content-between text-12 fw-bold text-dark mb-2">
 										<span>3 Interest-free payments:</span>
-										<strong class="text-dark">&pound;13.22 / month</strong>
+										<strong class="text-dark">&pound;<span id="klarna-slice-val">0.00</span> / month</strong>
 									</div>
 									<p class="text-11 text-gray-600 mb-0" style="line-height: 1.4;">
-										&bull; <strong>1st payment (&pound;13.22):</strong> Charged today upon order dispatch.<br>
-										&bull; <strong>2nd payment (&pound;13.22):</strong> Charged in 30 days automatically.<br>
-										&bull; <strong>3rd payment (&pound;13.23):</strong> Charged in 60 days. No fees, no interest.
+										&bull; <strong>1st payment (&pound;<span class="klarna-slice-text">0.00</span>):</strong> Charged today upon order dispatch.<br>
+										&bull; <strong>2nd payment (&pound;<span class="klarna-slice-text">0.00</span>):</strong> Charged in 30 days automatically.<br>
+										&bull; <strong>3rd payment (&pound;<span class="klarna-slice-text">0.00</span>):</strong> Charged in 60 days. No fees, no interest.
 									</p>
 								</div>
 								<p class="text-11 text-gray-500 mb-0">18+, UK residents only. Subject to status. Terms apply.</p>
@@ -823,7 +859,7 @@
 									<span>Cash on Cold-Chain Delivery (UK Postcodes)</span>
 								</div>
 								<p class="text-12 text-gray-600 mb-3" style="line-height: 1.5;">
-									Pay <strong>Calculated at checkout</strong> directly to our refrigerated transport courier upon arrival. Our drivers carry contactless card terminals as well as accept exact British sterling banknotes (£).
+									Pay <strong>&pound;<span class="dyn-pay-total">0.00</span></strong> directly to our refrigerated transport courier upon arrival. Our drivers carry contactless card terminals as well as accept exact British sterling banknotes (£).
 								</p>
 								<div class="d-flex align-items-center gap-2 text-11 text-primary fw-bold">
 									<i class="klb-icon-shield-check"></i> Safe doorstep hand-off with temperature verification guarantee (&lt;4&deg;C).
@@ -834,23 +870,23 @@
 
 					</div>
 
-					<!-- RIGHT COLUMN: ~32% Order Summary (Matches Reference Image) -->
+					<!-- RIGHT COLUMN: ~32% Order Summary -->
 					<aside class="payment-summary-col">
 						<div class="payment-summary-card">
 							<h3 class="summary-header-title">Order Summary</h3>
 
 							<div class="summary-line-item">
-								<span>Subtotal(1 items and shipping fee included)</span>
-								<span class="summary-line-val">Calculated at checkout</span>
+								<span id="payment-summary-subtotal-label">Subtotal (0 items and delivery included)</span>
+								<span class="summary-line-val" id="payment-summary-subtotal-val">&pound;0.00</span>
 							</div>
 
 							<div class="summary-total-container">
 								<span class="summary-total-text">Total Amount</span>
-								<span class="summary-total-amount">Calculated at checkout</span>
+								<span class="summary-total-amount" id="payment-summary-total-val">&pound;0.00</span>
 							</div>
 
-							<button type="button" class="btn-pay-confirm" id="btn-final-pay">
-								Confirm &amp; Pay Calculated at checkout
+							<button type="button" class="btn-pay-confirm" id="btn-final-pay" onclick="window.submitPayment();">
+								Confirm &amp; Pay &pound;<span id="btn-final-pay-amt">0.00</span>
 							</button>
 
 							<div class="security-trust-box">
@@ -971,12 +1007,12 @@
 					</div>
 				</div>
 				<h3 class="fw-bold text-18 text-dark mb-1">Payment Successful!</h3>
-				<p class="text-12 text-gray-500 mb-3">Your payment of <strong>Calculated at checkout</strong> has been securely authorized. Your cold-chain grocery order is now confirmed for dispatch.</p>
+				<p class="text-12 text-gray-500 mb-3">Your payment of <strong>&pound;<span id="payment-success-amount">0.00</span></strong> has been securely authorized. Your cold-chain grocery order is now confirmed for dispatch.</p>
 
 				<div class="bg-light p-3 mb-3 text-12 border text-start">
 					<div class="d-flex justify-content-between mb-1">
 						<span class="text-gray-500">Order ID:</span>
-						<strong class="text-dark">#TF-984210</strong>
+						<strong class="text-dark" id="payment-success-order-id">#TF-984210</strong>
 					</div>
 					<div class="d-flex justify-content-between mb-1">
 						<span class="text-gray-500">Payment Reference:</span>
@@ -988,7 +1024,7 @@
 					</div>
 					<div class="d-flex justify-content-between">
 						<span class="text-gray-500">Delivery Address:</span>
-						<span class="text-dark text-end">Greenwich, London SE10 0ER</span>
+						<span class="text-dark text-end" id="payment-success-address">Greenwich, London SE10 0ER</span>
 					</div>
 				</div>
 
@@ -1006,8 +1042,137 @@
 	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
 
 	<!-- Interactive Payment Method Switching Script -->
-	
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=buynow-v1"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const STORAGE_CART = 'teraifood_cart';
+			const STORAGE_ADDRESS = 'teraifood_uk_address';
+
+			function getCart() {
+				try {
+					const data = localStorage.getItem(STORAGE_CART);
+					return data ? JSON.parse(data) : [];
+				} catch (e) {
+					return [];
+				}
+			}
+
+			function getAddress() {
+				try {
+					const data = localStorage.getItem(STORAGE_ADDRESS);
+					if (data) return JSON.parse(data);
+				} catch (e) {}
+				return {
+					name: 'Suraj Mahato',
+					phone: '9805996874',
+					tag: 'OFFICE',
+					address: 'Bagmati, Kathmandu, Kathmandu Inside Ring Road, Kathmandu Thamel, Ward 29, Tridevi Sadak',
+					note: 'Opposite Himalayan Bank • Leave with reception if unattended'
+				};
+			}
+
+			// Read session summary or calculate fresh from cart
+			let checkoutSummary = null;
+			try {
+				const raw = sessionStorage.getItem('teraifood_checkout_summary');
+				if (raw) checkoutSummary = JSON.parse(raw);
+			} catch (e) {}
+
+			const cart = getCart();
+			let subtotal = 0;
+			let deliveryFee = 3.99;
+			let discount = 0;
+			let totalCount = 0;
+			let grandTotal = 0;
+
+			if (checkoutSummary && typeof checkoutSummary.grandTotal === 'number') {
+				subtotal = checkoutSummary.subtotal;
+				deliveryFee = checkoutSummary.deliveryFee;
+				discount = checkoutSummary.discount;
+				grandTotal = checkoutSummary.grandTotal;
+				totalCount = checkoutSummary.totalCount;
+			} else {
+				subtotal = cart.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+				totalCount = cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+				deliveryFee = (subtotal >= 40.0 || subtotal === 0) ? 0.0 : 3.99;
+				grandTotal = Math.max(0, subtotal + deliveryFee - discount);
+			}
+
+			// Populate UI Amounts
+			const subtotalLabel = document.getElementById('payment-summary-subtotal-label');
+			const subtotalVal = document.getElementById('payment-summary-subtotal-val');
+			const totalVal = document.getElementById('payment-summary-total-val');
+			const btnFinalPayAmt = document.getElementById('btn-final-pay-amt');
+			const klarnaSliceVal = document.getElementById('klarna-slice-val');
+
+			if (subtotalLabel) {
+				subtotalLabel.textContent = `Subtotal (${totalCount} item${totalCount === 1 ? '' : 's'} and delivery included)`;
+			}
+			if (subtotalVal) subtotalVal.textContent = '£' + grandTotal.toFixed(2);
+			if (totalVal) totalVal.textContent = '£' + grandTotal.toFixed(2);
+			if (btnFinalPayAmt) btnFinalPayAmt.textContent = grandTotal.toFixed(2);
+
+			document.querySelectorAll('.dyn-pay-total').forEach(el => {
+				el.textContent = grandTotal.toFixed(2);
+			});
+
+			const slice = (grandTotal / 3).toFixed(2);
+			if (klarnaSliceVal) klarnaSliceVal.textContent = slice;
+			document.querySelectorAll('.klarna-slice-text').forEach(el => {
+				el.textContent = slice;
+			});
+
+			// Tab Switching
+			const tiles = document.querySelectorAll('.payment-tile-card');
+			const panels = document.querySelectorAll('.payment-detail-panel');
+
+			tiles.forEach(tile => {
+				tile.addEventListener('click', function() {
+					tiles.forEach(t => t.classList.remove('is-active'));
+					this.classList.add('is-active');
+
+					const method = this.getAttribute('data-method');
+					panels.forEach(p => p.classList.remove('is-visible'));
+
+					const targetPanel = document.getElementById('panel-' + method);
+					if (targetPanel) {
+						targetPanel.classList.add('is-visible');
+					}
+				});
+			});
+
+			// Submit Payment Function
+			window.submitPayment = function() {
+				const orderId = '#TF-' + Math.floor(100000 + Math.random() * 900000);
+				const addr = getAddress();
+
+				const modalOrderId = document.getElementById('payment-success-order-id');
+				const modalAmount = document.getElementById('payment-success-amount');
+				const modalAddress = document.getElementById('payment-success-address');
+				const successModal = document.getElementById('payment-success-modal');
+
+				if (modalOrderId) modalOrderId.textContent = orderId;
+				if (modalAmount) modalAmount.textContent = grandTotal.toFixed(2);
+				if (modalAddress) modalAddress.textContent = addr.address || 'London, United Kingdom';
+
+				// Clear cart
+				localStorage.removeItem(STORAGE_CART);
+				sessionStorage.removeItem('teraifood_checkout_summary');
+
+				// Update header badges
+				document.querySelectorAll('.cart-count, .mini-cart-count, .count, .cart-button .badge').forEach(el => {
+					el.textContent = '0';
+				});
+				document.querySelectorAll('.cart-total, .cart-subtotal, .mini-cart-total, .cart-price').forEach(el => {
+					el.textContent = '£0.00';
+				});
+
+				if (successModal) {
+					successModal.style.display = 'flex';
+				}
+			};
+		});
+	</script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=dyn-checkout-v2"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

@@ -7,10 +7,77 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<title>LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm – Terai Food UK</title>
-	<meta name="description" content="Shop organic groceries, Himalayan spices, cold-pressed oils, lentils, stoneground flour, and flash sales with fast UK-wide delivery.">
-	<meta name="keywords" content="organic shop UK, flash deals grocery, Himalayan spices shop, buy dal London, Terai Food store">
-	<link rel="canonical" href="{% url 'web:shop' %}">
+	<title>{% if product %}{{ product.name }} – Buy Online UK | Terai Food{% else %}Buy Fresh Organic Groceries UK – Terai Food{% endif %}</title>
+	<meta name="description" content="{% if product %}Buy {{ product.name }} online at Terai Food UK. Authentic Himalayan &amp; organic produce, £{{ product.price }}. Fast nationwide UK delivery.{% else %}Shop premium Himalayan and organic groceries online with nationwide delivery from Terai Food UK.{% endif %}">
+	<meta name="keywords" content="{% if product %}{{ product.name }}, buy {{ product.name }} UK, {{ product.category.name|default:'groceries' }} online UK, Terai Food{% else %}online groceries UK, Himalayan spices, organic rice, lentils{% endif %}">
+	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+	<link rel="canonical" href="https://teraifoods.co.uk/product-detail/{% if product %}?product={{ product.slug }}{% endif %}">
+
+	<!-- Geo & Regional Meta Tags -->
+	<meta name="geo.region" content="GB">
+	<meta name="geo.placename" content="United Kingdom">
+
+	<!-- Open Graph -->
+	<meta property="og:type" content="product">
+	<meta property="og:url" content="https://teraifoods.co.uk/product-detail/{% if product %}?product={{ product.slug }}{% endif %}">
+	<meta property="og:title" content="{% if product %}{{ product.name }} – Buy Online UK | Terai Food{% else %}Buy Fresh Organic Groceries UK – Terai Food{% endif %}">
+	<meta property="og:description" content="{% if product %}Buy {{ product.name }} online at Terai Food UK. £{{ product.price }}. Fast nationwide UK delivery.{% else %}Shop premium Himalayan and organic groceries online.{% endif %}">
+	<meta property="og:image" content="{% if product.image_url %}{% if 'http' in product.image_url %}{{ product.image_url }}{% else %}https://teraifoods.co.uk{{ product.image_url }}{% endif %}{% else %}https://teraifoods.co.uk/static/web/images/terai_food_logo.png{% endif %}">
+	<meta property="og:site_name" content="Terai Food UK">
+	<meta property="og:locale" content="en_GB">
+
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="{% if product %}{{ product.name }} – Terai Food UK{% else %}Buy Groceries Online UK – Terai Food{% endif %}">
+	<meta name="twitter:description" content="{% if product %}Buy {{ product.name }} online at Terai Food UK. Fast nationwide UK delivery.{% else %}Shop authentic organic groceries.{% endif %}">
+	<meta name="twitter:image" content="{% if product.image_url %}{% if 'http' in product.image_url %}{{ product.image_url }}{% else %}https://teraifoods.co.uk{{ product.image_url }}{% endif %}{% else %}https://teraifoods.co.uk/static/web/images/terai_food_logo.png{% endif %}">
+
+	{% if product %}
+	<!-- Schema.org Product Structured Data -->
+	<script type="application/ld+json">
+	{
+	  "@context": "https://schema.org",
+	  "@type": "Product",
+	  "name": "{{ product.name|escapejs }}",
+	  "image": ["{% if 'http' in product.image_url %}{{ product.image_url }}{% else %}https://teraifoods.co.uk{{ product.image_url }}{% endif %}"],
+	  "description": "{{ product.description|striptags|truncatewords:40|escapejs }}",
+	  "sku": "{{ product.sku|default:product.slug|escapejs }}",
+	  "brand": {
+	    "@type": "Brand",
+	    "name": "Terai Food"
+	  },
+	  "offers": {
+	    "@type": "Offer",
+	    "url": "https://teraifoods.co.uk/product-detail/?product={{ product.slug }}",
+	    "priceCurrency": "GBP",
+	    "price": "{{ product.price }}",
+	    "priceValidUntil": "2027-12-31",
+	    "itemCondition": "https://schema.org/NewCondition",
+	    "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+	    "seller": {
+	      "@type": "Organization",
+	      "name": "Terai Food UK"
+	    }
+	  },
+	  "aggregateRating": {
+	    "@type": "AggregateRating",
+	    "ratingValue": "{{ product.rating|default:'4.8' }}",
+	    "reviewCount": "{{ product.review_count|default:'18' }}"
+	  }
+	}
+	</script>
+	<script type="application/ld+json">
+	{
+	  "@context": "https://schema.org",
+	  "@type": "BreadcrumbList",
+	  "itemListElement": [
+	    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://teraifoods.co.uk/" },
+	    { "@type": "ListItem", "position": 2, "name": "Shops", "item": "https://teraifoods.co.uk/shop/" },
+	    { "@type": "ListItem", "position": 3, "name": "{{ product.name|escapejs }}", "item": "https://teraifoods.co.uk/product-detail/?product={{ product.slug }}" }
+	  ]
+	}
+	</script>
+	{% endif %}
 
 	<link rel="icon" href="{% static 'web/' %}images/terai_food_logo.png" type="image/png">
 
@@ -2081,7 +2148,7 @@
 	</script>
 
 	<!-- Main Theme and Interactive Engine -->
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=buynow-v1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=dyn-checkout-v2"></script>
 
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {

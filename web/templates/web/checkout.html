@@ -611,7 +611,7 @@
 						<!-- CARD 2: Package 1 of 1 -->
 						<div class="daraz-card" id="package-card">
 							<div class="package-card-header">
-								<h4 class="package-title">Package 1 of 1</h4>
+								<h4 class="package-title" id="checkout-package-heading">Package 1 of 1</h4>
 								<span class="package-shipped-by">Shipped by <strong>TERAI-EDWIN LOGISTICS</strong></span>
 							</div>
 
@@ -624,7 +624,7 @@
 							<div class="delivery-option-box">
 								<div class="delivery-option-price-row">
 									<i class="klb-icon-check-circle"></i>
-									<span>&pound;3.99</span>
+									<span id="package-delivery-price-badge">&pound;3.99</span>
 								</div>
 								<div class="delivery-option-type">
 									Standard Cold-Chain Delivery
@@ -634,31 +634,9 @@
 								</div>
 							</div>
 
-							<!-- Item Row inside Package -->
-							<div class="checkout-item-row" id="checkout-product-item">
-								<div class="checkout-item-thumb">
-									<img src="{% static 'web/' %}images/1-500x500.jpg" alt="Cantaloupe Melon Fresh Organic Cut">
-								</div>
-
-								<div class="checkout-item-info">
-									<h4 class="checkout-item-title">
-										Cantaloupe Melon Fresh Organic Cut &ndash; 1kg Farm Sliced
-									</h4>
-									<p class="checkout-item-meta">
-										Brand: Terai Bio, Pack: Chilled 4&deg;C Thermal Sealed
-									</p>
-								</div>
-
-								<div class="checkout-item-price-col">
-									<span class="checkout-item-price">&pound;<span id="item-price-text">35.68</span></span>
-									<button type="button" class="checkout-item-trash-btn" id="delete-checkout-item-btn" title="Remove item">
-										<i class="klb-icon-trash-2"></i>
-									</button>
-								</div>
-
-								<div class="checkout-item-qty">
-									Qty: <strong>1</strong>
-								</div>
+							<!-- Dynamic Package Items List -->
+							<div id="checkout-package-items-container">
+								<!-- Populated dynamically via JavaScript from real cart -->
 							</div>
 						</div>
 
@@ -692,24 +670,24 @@
 							<h4 class="order-detail-title">Order Detail</h4>
 
 							<div class="order-detail-row">
-								<span>Items Total (1 Items)</span>
-								<span class="order-detail-val">&pound;<span id="summary-items-total">35.68</span></span>
+								<span>Items Total (<span id="summary-items-count">0</span> Items)</span>
+								<span class="order-detail-val">&pound;<span id="summary-items-total">0.00</span></span>
 							</div>
 
 							<div class="order-detail-row">
 								<span>Delivery Fee</span>
-								<span class="order-detail-val">&pound;<span id="summary-delivery-fee">3.99</span></span>
+								<span class="order-detail-val"><span id="summary-delivery-fee">&pound;3.99</span></span>
 							</div>
 
 							<div class="order-detail-row" id="summary-discount-row" style="display: none; color: #16a34a;">
 								<span>Promotion Discount</span>
-								<span class="order-detail-val" style="color: #16a34a;">-&pound;<span id="summary-discount-val">3.57</span></span>
+								<span class="order-detail-val" style="color: #16a34a;">-&pound;<span id="summary-discount-val">0.00</span></span>
 							</div>
 
 							<div class="order-detail-total-row">
 								<span class="order-total-label">Total:</span>
 								<div class="order-total-val-box">
-									<div class="order-total-price">&pound;<span id="summary-total-val">39.67</span></div>
+									<div class="order-total-price">&pound;<span id="summary-total-val">0.00</span></div>
 									<div class="order-total-tax-note">All taxes included</div>
 								</div>
 							</div>
@@ -927,45 +905,250 @@
 	<!-- Interactive Checkout Script -->
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-			let itemsTotal = 35.68;
-			let deliveryFee = 3.99;
-			let discount = 0;
+			const STORAGE_CART = 'teraifood_cart';
+			const STORAGE_ADDRESS = 'teraifood_uk_address';
 
-			function updateTotal() {
-				const total = Math.max(0, itemsTotal + deliveryFee - discount);
-				document.getElementById('summary-items-total').textContent = itemsTotal.toFixed(2);
-				document.getElementById('summary-delivery-fee').textContent = deliveryFee.toFixed(2);
-				document.getElementById('summary-total-val').textContent = total.toFixed(2);
-				document.getElementById('modal-pay-amount').textContent = total.toFixed(2);
+			const DEFAULT_ADDRESS = {
+				name: 'Suraj Mahato',
+				phone: '9805996874',
+				tag: 'OFFICE',
+				address: 'Bagmati, Kathmandu, Kathmandu Inside Ring Road, Kathmandu Thamel, Ward 29, Tridevi Sadak',
+				note: 'Opposite Himalayan Bank • Leave with reception if unattended'
+			};
+
+			function escapeHTML(str) {
+				const p = document.createElement('p');
+				p.textContent = str || '';
+				return p.innerHTML;
+			}
+
+			function getCart() {
+				try {
+					const data = localStorage.getItem(STORAGE_CART);
+					return data ? JSON.parse(data) : [];
+				} catch (e) {
+					return [];
+				}
+			}
+
+			function saveCart(cart) {
+				try {
+					localStorage.setItem(STORAGE_CART, JSON.stringify(cart));
+				} catch (e) {}
+				updateHeaderCart();
+			}
+
+			function updateHeaderCart() {
+				const cart = getCart();
+				const totalCount = cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+				const subtotal = cart.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+
+				document.querySelectorAll('.cart-count, .mini-cart-count, .count, .cart-button .badge').forEach(el => {
+					el.textContent = totalCount;
+				});
+				document.querySelectorAll('.cart-total, .cart-subtotal, .mini-cart-total, .cart-price').forEach(el => {
+					el.textContent = '£' + subtotal.toFixed(2);
+				});
+			}
+
+			function getAddress() {
+				try {
+					const data = localStorage.getItem(STORAGE_ADDRESS);
+					if (data) return JSON.parse(data);
+				} catch (e) {}
+				return DEFAULT_ADDRESS;
+			}
+
+			function renderAddress() {
+				const addr = getAddress();
+				const nameEl = document.getElementById('display-recipient-name');
+				const phoneEl = document.getElementById('display-recipient-phone');
+				const tagEl = document.getElementById('display-address-tag');
+				const fullEl = document.getElementById('display-address-full');
+				const landmarkEl = document.getElementById('display-address-landmark');
+
+				if (nameEl) nameEl.textContent = addr.name || DEFAULT_ADDRESS.name;
+				if (phoneEl) phoneEl.textContent = addr.phone || DEFAULT_ADDRESS.phone;
+				if (tagEl) tagEl.textContent = addr.tag || 'OFFICE';
+				if (fullEl) fullEl.textContent = addr.address || DEFAULT_ADDRESS.address;
+				if (landmarkEl) landmarkEl.textContent = addr.note || DEFAULT_ADDRESS.note;
+
+				// Pre-fill modal
+				const modalName = document.getElementById('modal-name-input');
+				const modalPhone = document.getElementById('modal-phone-input');
+				const modalTag = document.getElementById('modal-tag-input');
+				const modalAddress = document.getElementById('modal-address-input');
+				const modalLandmark = document.getElementById('modal-landmark-input');
+
+				if (modalName) modalName.value = addr.name || DEFAULT_ADDRESS.name;
+				if (modalPhone) modalPhone.value = addr.phone || DEFAULT_ADDRESS.phone;
+				if (modalTag) modalTag.value = addr.tag || 'OFFICE';
+				if (modalAddress) modalAddress.value = addr.address || DEFAULT_ADDRESS.address;
+				if (modalLandmark) modalLandmark.value = addr.note || DEFAULT_ADDRESS.note;
+			}
+
+			let voucherPercent = 0;
+			let appliedVoucherCode = '';
+
+			function renderCheckout() {
+				const container = document.getElementById('checkout-package-items-container');
+				const proceedBtn = document.getElementById('btn-proceed-pay');
+				const cart = getCart();
+
+				if (!container) return;
+
+				if (cart.length === 0) {
+					container.innerHTML = `
+						<div class="p-4 text-center" style="background: #fafafa; border: 1px dashed #cbd5e1;">
+							<div style="font-size: 32px; color: #94a3b8; margin-bottom: 8px;">
+								<i class="klb-icon-shopping-cart-3"></i>
+							</div>
+							<h5 style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Your Basket is Empty</h5>
+							<p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Add items to your cart before proceeding to checkout.</p>
+							<a href="/shop/" class="btn btn-primary text-12 fw-bold px-4 py-2" style="background: #634c9f; border-color: #634c9f; border-radius: 0; text-decoration: none;">
+								Browse Shop Catalog
+							</a>
+						</div>
+					`;
+
+					document.getElementById('summary-items-count').textContent = '0';
+					document.getElementById('summary-items-total').textContent = '0.00';
+					document.getElementById('summary-delivery-fee').textContent = '£0.00';
+					document.getElementById('summary-total-val').textContent = '0.00';
+					document.getElementById('package-delivery-price-badge').textContent = '£0.00';
+					document.getElementById('summary-discount-row').style.display = 'none';
+
+					if (proceedBtn) {
+						proceedBtn.classList.add('disabled');
+						proceedBtn.setAttribute('disabled', 'disabled');
+						proceedBtn.style.pointerEvents = 'none';
+						proceedBtn.style.opacity = '0.5';
+					}
+					return;
+				}
+
+				if (proceedBtn) {
+					proceedBtn.classList.remove('disabled');
+					proceedBtn.removeAttribute('disabled');
+					proceedBtn.style.pointerEvents = 'auto';
+					proceedBtn.style.opacity = '1';
+				}
+
+				// Render real package items
+				container.innerHTML = cart.map(item => {
+					const price = Number(item.price) || 0;
+					const qty = Number(item.quantity) || 1;
+					const lineTotal = (price * qty).toFixed(2);
+					const imgSrc = item.image || '/static/web/images/1-16-500x500.jpg';
+
+					return `
+						<div class="checkout-item-row" data-id="${item.id}">
+							<div class="checkout-item-thumb">
+								<img src="${escapeHTML(imgSrc)}" alt="${escapeHTML(item.title)}">
+							</div>
+
+							<div class="checkout-item-info">
+								<h4 class="checkout-item-title">${escapeHTML(item.title)}</h4>
+								<p class="checkout-item-meta">
+									Fresh Farm Harvest &bull; Chilled Cold-Chain Packed &bull; In Stock
+								</p>
+							</div>
+
+							<div class="checkout-item-price-col">
+								<span class="checkout-item-price">&pound;${lineTotal}</span>
+								<button type="button" class="checkout-item-trash-btn btn-del-item" data-id="${item.id}" title="Remove item from order">
+									<i class="klb-icon-trash-2"></i>
+								</button>
+							</div>
+
+							<div class="checkout-item-qty">
+								Qty: <strong>${qty}</strong>
+							</div>
+						</div>
+					`;
+				}).join('');
+
+				// Calculate Totals
+				const subtotal = cart.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+				const totalCount = cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+				const isFreeDelivery = subtotal >= 40.0;
+				const deliveryFee = isFreeDelivery ? 0.0 : 3.99;
+				const deliveryText = isFreeDelivery ? 'FREE' : '£3.99';
+				const discount = voucherPercent > 0 ? (subtotal * (voucherPercent / 100)) : 0;
+				const grandTotal = Math.max(0, subtotal + deliveryFee - discount);
+
+				// Update Summary Elements
+				document.getElementById('summary-items-count').textContent = totalCount;
+				document.getElementById('summary-items-total').textContent = subtotal.toFixed(2);
+				document.getElementById('summary-delivery-fee').textContent = deliveryText;
+				document.getElementById('package-delivery-price-badge').textContent = deliveryText;
+				document.getElementById('summary-total-val').textContent = grandTotal.toFixed(2);
+
+				const modalPayAmount = document.getElementById('modal-pay-amount');
+				if (modalPayAmount) modalPayAmount.textContent = grandTotal.toFixed(2);
+
+				const discountRow = document.getElementById('summary-discount-row');
+				const discountVal = document.getElementById('summary-discount-val');
+				if (discount > 0) {
+					discountRow.style.display = 'flex';
+					discountVal.textContent = discount.toFixed(2);
+				} else {
+					discountRow.style.display = 'none';
+				}
+
+				// Attach trash remove listeners
+				container.querySelectorAll('.btn-del-item').forEach(btn => {
+					btn.addEventListener('click', function() {
+						const id = this.getAttribute('data-id');
+						if (confirm('Are you sure you want to remove this item from your package?')) {
+							let currentCart = getCart();
+							currentCart = currentCart.filter(item => String(item.id) !== String(id));
+							saveCart(currentCart);
+							renderCheckout();
+						}
+					});
+				});
+
+				// Save summary for payment screen
+				try {
+					sessionStorage.setItem('teraifood_checkout_summary', JSON.stringify({
+						subtotal: subtotal,
+						deliveryFee: deliveryFee,
+						deliveryText: deliveryText,
+						discount: discount,
+						grandTotal: grandTotal,
+						totalCount: totalCount,
+						appliedVoucher: appliedVoucherCode
+					}));
+				} catch (e) {}
 			}
 
 			// Promotion Code Apply
 			const promoInput = document.getElementById('promo-code-input');
 			const promoBtn = document.getElementById('promo-apply-btn');
 			const promoMsg = document.getElementById('promo-status-msg');
-			const discountRow = document.getElementById('summary-discount-row');
-			const discountVal = document.getElementById('summary-discount-val');
 
-			promoBtn.addEventListener('click', function() {
-				const code = promoInput.value.trim().toUpperCase();
-				if (!code) {
-					alert('Please enter a voucher code');
-					return;
-				}
-				if (code === 'TERAI10' || code === 'DARAZ10' || code === 'DISCOUNT10') {
-					discount = itemsTotal * 0.10;
-					discountVal.textContent = discount.toFixed(2);
-					discountRow.style.display = 'flex';
-					promoMsg.style.display = 'block';
-					promoMsg.style.color = '#16a34a';
-					promoMsg.textContent = 'Promotion applied: 10% OFF (-£' + discount.toFixed(2) + ')';
-					updateTotal();
-				} else {
-					promoMsg.style.display = 'block';
-					promoMsg.style.color = '#dc2626';
-					promoMsg.textContent = 'Invalid promo code. Try "TERAI10"';
-				}
-			});
+			if (promoBtn && promoInput) {
+				promoBtn.addEventListener('click', function() {
+					const code = promoInput.value.trim().toUpperCase();
+					if (!code) {
+						alert('Please enter a voucher code');
+						return;
+					}
+					if (code === 'TERAI10' || code === 'DARAZ10' || code === 'DISCOUNT10' || code === 'SAVE10') {
+						voucherPercent = 10;
+						appliedVoucherCode = code;
+						promoMsg.style.display = 'block';
+						promoMsg.style.color = '#16a34a';
+						promoMsg.textContent = '✓ Promotion applied: 10% OFF';
+						renderCheckout();
+					} else {
+						promoMsg.style.display = 'block';
+						promoMsg.style.color = '#dc2626';
+						promoMsg.textContent = 'Invalid promo code. Try "TERAI10" for 10% off!';
+					}
+				});
+			}
 
 			// Address Edit Modal Logic
 			const editAddressBtn = document.getElementById('edit-address-btn');
@@ -974,95 +1157,74 @@
 			const cancelAddressModalBtn = document.getElementById('cancel-address-modal-btn');
 			const saveAddressModalBtn = document.getElementById('save-address-modal-btn');
 
-			editAddressBtn.addEventListener('click', function(e) {
-				e.preventDefault();
-				addressModal.style.display = 'flex';
-			});
+			if (editAddressBtn && addressModal) {
+				editAddressBtn.addEventListener('click', function(e) {
+					e.preventDefault();
+					addressModal.style.display = 'flex';
+				});
 
-			function closeAddressModal() {
-				addressModal.style.display = 'none';
-			}
-			closeAddressModalBtn.addEventListener('click', closeAddressModal);
-			cancelAddressModalBtn.addEventListener('click', closeAddressModal);
-
-			saveAddressModalBtn.addEventListener('click', function() {
-				const name = document.getElementById('modal-name-input').value.trim();
-				const phone = document.getElementById('modal-phone-input').value.trim();
-				const tag = document.getElementById('modal-tag-input').value;
-				const address = document.getElementById('modal-address-input').value.trim();
-				const landmark = document.getElementById('modal-landmark-input').value.trim();
-
-				if (!name || !phone || !address) {
-					alert('Please complete all required fields.');
-					return;
+				function closeAddressModal() {
+					addressModal.style.display = 'none';
 				}
+				if (closeAddressModalBtn) closeAddressModalBtn.addEventListener('click', closeAddressModal);
+				if (cancelAddressModalBtn) cancelAddressModalBtn.addEventListener('click', closeAddressModal);
 
-				document.getElementById('display-recipient-name').textContent = name;
-				document.getElementById('display-recipient-phone').textContent = phone;
-				document.getElementById('display-address-tag').textContent = tag;
-				document.getElementById('display-address-full').textContent = address;
-				document.getElementById('display-address-landmark').textContent = landmark;
+				if (saveAddressModalBtn) {
+					saveAddressModalBtn.addEventListener('click', function() {
+						const name = document.getElementById('modal-name-input').value.trim();
+						const phone = document.getElementById('modal-phone-input').value.trim();
+						const tag = document.getElementById('modal-tag-input').value;
+						const address = document.getElementById('modal-address-input').value.trim();
+						const landmark = document.getElementById('modal-landmark-input').value.trim();
 
-				closeAddressModal();
-			});
+						if (!name || !phone || !address) {
+							alert('Please complete all required fields.');
+							return;
+						}
+
+						const newAddr = { name, phone, tag, address, note: landmark };
+						try {
+							localStorage.setItem(STORAGE_ADDRESS, JSON.stringify(newAddr));
+						} catch (e) {}
+
+						renderAddress();
+						closeAddressModal();
+					});
+				}
+			}
 
 			// Invoice Edit Link
 			const editInvoiceBtn = document.getElementById('edit-invoice-btn');
-			editInvoiceBtn.addEventListener('click', function(e) {
-				e.preventDefault();
-				const newEmail = prompt('Enter billing invoice email address:', document.getElementById('display-invoice-email').textContent);
-				if (newEmail && newEmail.includes('@')) {
-					document.getElementById('display-invoice-email').textContent = newEmail.trim();
-				}
-			});
-
-			// Remove item
-			const deleteItemBtn = document.getElementById('delete-checkout-item-btn');
-			deleteItemBtn.addEventListener('click', function() {
-				if (confirm('Are you sure you want to remove this package item?')) {
-					document.getElementById('checkout-product-item').innerHTML = '<div class="p-3 text-12 text-muted w-100 text-center">Package item removed. Return to <a href="{% url 'web:shop' %}" class="text-primary fw-bold">Shop</a> to select produce.</div>';
-					itemsTotal = 0;
-					deliveryFee = 0;
-					discount = 0;
-					discountRow.style.display = 'none';
-					updateTotal();
-					document.getElementById('btn-proceed-pay').classList.add('disabled');
-					document.getElementById('btn-proceed-pay').setAttribute('disabled', 'disabled');
-				}
-			});
+			if (editInvoiceBtn) {
+				editInvoiceBtn.addEventListener('click', function(e) {
+					e.preventDefault();
+					const newEmail = prompt('Enter billing invoice email address:', document.getElementById('display-invoice-email').textContent);
+					if (newEmail && newEmail.includes('@')) {
+						document.getElementById('display-invoice-email').textContent = newEmail.trim();
+					}
+				});
+			}
 
 			// Proceed to Pay
 			const proceedPayBtn = document.getElementById('btn-proceed-pay');
-			const paymentModal = document.getElementById('payment-modal');
-			const closePaymentModalBtn = document.getElementById('close-payment-modal-btn');
-			const cancelPaymentModalBtn = document.getElementById('cancel-payment-modal-btn');
-			const confirmPayBtn = document.getElementById('confirm-pay-btn');
-			const successModal = document.getElementById('success-modal');
-
-			proceedPayBtn.addEventListener('click', function(e) {
-				e.preventDefault();
-				if (itemsTotal === 0) {
-					alert('Your basket is empty. Please add items to proceed.');
-					return;
-				}
-				window.location.href = '/payment/';
-			});
-
-			function closePaymentModal() {
-				paymentModal.style.display = 'none';
+			if (proceedPayBtn) {
+				proceedPayBtn.addEventListener('click', function(e) {
+					const cart = getCart();
+					if (cart.length === 0) {
+						e.preventDefault();
+						alert('Your basket is empty. Please add items to proceed.');
+						return;
+					}
+					// Will navigate naturally to {% url 'web:payment' %}
+				});
 			}
-			closePaymentModalBtn.addEventListener('click', closePaymentModal);
-			cancelPaymentModalBtn.addEventListener('click', closePaymentModal);
 
-			confirmPayBtn.addEventListener('click', function() {
-				closePaymentModal();
-				successModal.style.display = 'flex';
-			});
-
-			updateTotal();
+			// Initialize
+			renderAddress();
+			renderCheckout();
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=buynow-v1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=dyn-checkout-v2"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 
