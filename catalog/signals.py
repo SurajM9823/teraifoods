@@ -24,11 +24,25 @@ def categories_changed(sender, **kwargs):
 @receiver(post_delete, sender=Category)
 @receiver(post_save, sender=Subcategory)
 @receiver(post_delete, sender=Subcategory)
-def product_cache_changed(sender, **kwargs):
+def product_cache_changed(sender, instance=None, **kwargs):
     revision, _ = CatalogRevision.objects.get_or_create(pk=1)
     CatalogRevision.objects.filter(pk=revision.pk).update(version=F('version') + 1)
+    
+    product_id = None
+    if sender == Product and instance:
+        product_id = instance.pk
+    elif sender == ProductImage and instance:
+        product_id = instance.product_id
+
     try:
         cache.delete('catalog:revision:version')
+        if product_id:
+            recent = cache.get('catalog:revision:changed_ids')
+            if not isinstance(recent, list):
+                recent = []
+            if product_id not in recent:
+                recent.append(product_id)
+            cache.set('catalog:revision:changed_ids', recent[-50:], 300)
     except CACHE_ERRORS:
         pass
     def update_redis_revision():

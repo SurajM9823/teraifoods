@@ -221,8 +221,10 @@ def cart_quote(request):
 def catalog_revision(request):
     try:
         version = cache.get('catalog:revision:version')
+        changed_ids = cache.get('catalog:revision:changed_ids') or []
     except CACHE_ERRORS:
         version = None
+        changed_ids = []
     if version is None:
         from .models import CatalogRevision
         revision, _ = CatalogRevision.objects.get_or_create(pk=1)
@@ -231,5 +233,5 @@ def catalog_revision(request):
             cache.set('catalog:revision:version', version, 86400)
         except CACHE_ERRORS:
             pass
-    return JsonResponse({'version': version})
+    return JsonResponse({'version': version, 'changed_ids': changed_ids})
 

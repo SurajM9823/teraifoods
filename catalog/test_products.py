@@ -270,6 +270,7 @@ class ProductTests(TestCase):
         self.assertEqual(res2.status_code, 200)
         v2 = res2.json()['version']
         self.assertGreater(v2, v1)
+        self.assertIn(self.product.pk, res2.json().get('changed_ids', []))
 
         # Test querying products by ids
         res_ids = self.client.get(f'/api/products/?ids={self.product.pk}')

@@ -166,79 +166,110 @@
 
     /* --- Real-Time Reflection without Page Refresh --- */
     function updateCard(card, product) {
-      if (!card || !product) return;
-      card.dataset.price = product.price;
-      card.dataset.name = product.name;
-      card.dataset.available = product.available ? 'true' : 'false';
+      if (!card || !product) return false;
+      const pId = String(product.id);
+      if (String(card.dataset.catalogProduct) !== pId) return false;
+
+      const oldPrice = card.dataset.price;
+      const oldRegPrice = card.dataset.regularPrice || '';
+      const newRegPrice = product.sale_price ? String(product.regular_price) : '';
+      const oldName = card.dataset.name;
+      const oldAvail = card.dataset.available;
+
+      let changed = false;
 
       // Title
-      const titleLink = card.querySelector('.product-title a, .woocommerce-loop-product__title a, h2.product-title a, h2 a');
-      if (titleLink) {
-        titleLink.textContent = product.name;
-        if (product.url) titleLink.href = product.url;
-      }
-
-      // Shop card prices
-      const saleEl = card.querySelector('.sale-price');
-      const regEl = card.querySelector('.regular-price, del.regular-price');
-      if (saleEl) {
-        saleEl.innerHTML = '&pound;' + product.price;
-        if (regEl) regEl.innerHTML = product.sale_price ? ('&pound;' + product.regular_price) : '';
-      }
-
-      // WooCommerce / Homepage style prices
-      const insBdi = card.querySelector('.price ins .woocommerce-Price-amount bdi, .price ins .amount bdi');
-      const delBdi = card.querySelector('.price del .woocommerce-Price-amount bdi, .price del .amount bdi');
-      if (insBdi) {
-        insBdi.innerHTML = '<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.price;
-        if (delBdi) {
-          delBdi.innerHTML = product.sale_price ? ('<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.regular_price) : '';
+      if (oldName !== product.name) {
+        card.dataset.name = product.name;
+        const titleLink = card.querySelector('.product-title a, .woocommerce-loop-product__title a, h2.product-title a, h2 a');
+        if (titleLink && titleLink.textContent !== product.name) {
+          titleLink.textContent = product.name;
+          if (product.url && titleLink.tagName === 'A') titleLink.href = product.url;
+          changed = true;
         }
-      } else {
-        const singleBdi = card.querySelector('.price .woocommerce-Price-amount bdi, .price .amount bdi');
-        if (singleBdi) {
-          singleBdi.innerHTML = '<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.price;
+      }
+
+      // Price
+      if (oldPrice !== String(product.price) || oldRegPrice !== newRegPrice) {
+        card.dataset.price = product.price;
+        card.dataset.regularPrice = newRegPrice;
+        changed = true;
+
+        // Shop card prices
+        const saleEl = card.querySelector('.sale-price');
+        const regEl = card.querySelector('.regular-price, del.regular-price');
+        if (saleEl) saleEl.innerHTML = '&pound;' + product.price;
+        if (regEl) regEl.innerHTML = newRegPrice ? ('&pound;' + newRegPrice) : '';
+
+        // WooCommerce / Homepage style prices
+        const insBdi = card.querySelector('.price ins .woocommerce-Price-amount bdi, .price ins .amount bdi');
+        const delBdi = card.querySelector('.price del .woocommerce-Price-amount bdi, .price del .amount bdi');
+        if (insBdi) {
+          insBdi.innerHTML = '<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.price;
+          if (delBdi) {
+            delBdi.innerHTML = newRegPrice ? ('<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + newRegPrice) : '';
+          }
+        } else {
+          const singleBdi = card.querySelector('.price .woocommerce-Price-amount bdi, .price .amount bdi');
+          if (singleBdi) {
+            singleBdi.innerHTML = '<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.price;
+          }
         }
       }
 
       // Discount badges
+      const expectedDiscount = product.discount ? (product.discount + '%') : '';
       const discountPill = card.querySelector('.badge-discount');
-      if (discountPill) {
-        if (product.discount) {
-          discountPill.textContent = product.discount + '%';
-          discountPill.style.display = '';
-        } else {
-          discountPill.style.display = 'none';
-        }
+      if (discountPill && discountPill.textContent !== expectedDiscount) {
+        discountPill.textContent = expectedDiscount;
+        discountPill.style.display = expectedDiscount ? '' : 'none';
+        changed = true;
       }
       const saleBadge = card.querySelector('.thumbnail-badges .badge.sale, .badge.sale');
-      if (saleBadge) {
-        if (product.discount) {
-          saleBadge.textContent = product.discount + '%';
-          saleBadge.style.display = '';
-        } else {
-          saleBadge.style.display = 'none';
-        }
+      if (saleBadge && saleBadge.textContent !== expectedDiscount) {
+        saleBadge.textContent = expectedDiscount;
+        saleBadge.style.display = expectedDiscount ? '' : 'none';
+        changed = true;
       }
 
-      // Images
+      // Images: ONLY update if src actually differs!
       if (product.image) {
         const img = card.querySelector('.product-thumbnail img, .thumbnail-wrapper img, img.wp-post-image, img');
-        if (img) img.src = product.image;
+        if (img && img.getAttribute('src') !== product.image) {
+          img.src = product.image;
+          changed = true;
+        }
         if (product.images && product.images[0]) {
           const avif = card.querySelector('picture source[type="image/avif"]');
-          if (avif && product.images[0].avif) avif.srcset = product.images[0].avif;
+          if (avif && avif.getAttribute('srcset') !== product.images[0].avif) {
+            avif.srcset = product.images[0].avif;
+            changed = true;
+          }
           const webp = card.querySelector('picture source[type="image/webp"]');
-          if (webp && product.images[0].webp) webp.srcset = product.images[0].webp;
+          if (webp && webp.getAttribute('srcset') !== product.images[0].webp) {
+            webp.srcset = product.images[0].webp;
+            changed = true;
+          }
         }
       }
 
       // Availability state
-      if (!product.available) {
-        card.classList.add('out-of-stock');
-      } else {
-        card.classList.remove('out-of-stock');
+      const availStr = product.available ? 'true' : 'false';
+      if (oldAvail !== availStr) {
+        card.dataset.available = availStr;
+        changed = true;
+        if (!product.available) {
+          card.classList.add('out-of-stock');
+          const addBtn = card.querySelector('.add_to_cart_button, .btn-cart-pill');
+          if (addBtn) addBtn.setAttribute('aria-disabled', 'true');
+        } else {
+          card.classList.remove('out-of-stock');
+          const addBtn = card.querySelector('.add_to_cart_button, .btn-cart-pill');
+          if (addBtn) addBtn.removeAttribute('aria-disabled');
+        }
       }
+
+      return changed;
     }
 
     async function syncProductDetail(slug) {
@@ -267,9 +298,13 @@
         }
 
         // Title and Breadcrumb
-        document.querySelectorAll('.pdp-product-title, .single-product-title').forEach(el => el.textContent = prod.name);
+        document.querySelectorAll('.pdp-product-title, .single-product-title').forEach(el => {
+          if (el.textContent !== prod.name) el.textContent = prod.name;
+        });
         document.querySelectorAll('.current').forEach(el => {
-          if (el.closest('.breadcrumbs, .woocommerce-breadcrumb, .breadcrumb')) el.textContent = prod.name;
+          if (el.closest('.breadcrumbs, .woocommerce-breadcrumb, .breadcrumb') && el.textContent !== prod.name) {
+            el.textContent = prod.name;
+          }
         });
 
         // Prices
@@ -287,7 +322,9 @@
 
         // Image
         const activeImg = document.getElementById('pdp-active-image');
-        if (activeImg && prod.image) activeImg.src = prod.image;
+        if (activeImg && prod.image && activeImg.getAttribute('src') !== prod.image) {
+          activeImg.src = prod.image;
+        }
 
         // Action buttons
         const actionBtns = document.querySelectorAll('#btn-pdp-add-cart, #btn-pdp-buy-now, .btn-add-cart-detail');
@@ -299,15 +336,24 @@
       } catch {}
     }
 
-    async function syncCardsOnPage() {
+    async function syncCardsOnPage(changedIds = null) {
       const cards = document.querySelectorAll('[data-catalog-product]');
       if (!cards.length) return;
-      const ids = [...new Set([...cards].map(c => c.dataset.catalogProduct).filter(Boolean))];
-      if (!ids.length) return;
+      const allIds = [...new Set([...cards].map(c => c.dataset.catalogProduct).filter(Boolean))];
+      if (!allIds.length) return;
+
+      // If specific product IDs were updated, ONLY target those IDs that exist on this page!
+      let targetIds = allIds;
+      if (Array.isArray(changedIds) && changedIds.length > 0) {
+        const changedSet = new Set(changedIds.map(String));
+        targetIds = allIds.filter(id => changedSet.has(String(id)));
+        if (!targetIds.length) return;
+      }
+
       try {
-        const found = new Set();
-        for (let i = 0; i < ids.length; i += 50) {
-          const chunk = ids.slice(i, i + 50);
+        let anyCardChanged = false;
+        for (let i = 0; i < targetIds.length; i += 50) {
+          const chunk = targetIds.slice(i, i + 50);
           const res = await fetch(`/api/products/?ids=${chunk.join(',')}&limit=50&_v=${currentRevision}`, {
             headers: { Accept: 'application/json' },
             cache: 'no-store'
@@ -315,33 +361,38 @@
           if (!res.ok) continue;
           const data = await res.json();
           if (Array.isArray(data.products)) {
+            const returnedIds = new Set(data.products.map(p => String(p.id)));
             data.products.forEach(prod => {
-              found.add(String(prod.id));
               document.querySelectorAll(`[data-catalog-product="${prod.id}"]`).forEach(card => {
-                updateCard(card, prod);
+                if (updateCard(card, prod)) anyCardChanged = true;
               });
+            });
+            chunk.forEach(id => {
+              if (!returnedIds.has(String(id))) {
+                document.querySelectorAll(`[data-catalog-product="${id}"]`).forEach(card => {
+                  card.classList.add('out-of-stock');
+                  card.dataset.available = 'false';
+                  const addBtn = card.querySelector('.add_to_cart_button, .btn-cart-pill');
+                  if (addBtn) addBtn.setAttribute('aria-disabled', 'true');
+                  anyCardChanged = true;
+                });
+              }
             });
           }
         }
-        ids.forEach(id => {
-          if (!found.has(String(id))) {
-            document.querySelectorAll(`[data-catalog-product="${id}"]`).forEach(card => {
-              card.classList.add('out-of-stock');
-              card.dataset.available = 'false';
-              const addBtn = card.querySelector('.add_to_cart_button, .btn-cart-pill');
-              if (addBtn) addBtn.setAttribute('aria-disabled', 'true');
-            });
-          }
-        });
-        document.dispatchEvent(new Event('catalog:updated'));
+        if (anyCardChanged) {
+          document.dispatchEvent(new Event('catalog:updated'));
+        }
       } catch {}
     }
 
-    async function syncStorefront() {
-      await syncCardsOnPage();
+    async function syncStorefront(changedIds = null) {
+      await syncCardsOnPage(changedIds);
       const pdpSlug = detail?.slug || new URLSearchParams(location.search).get('product');
       if (pdpSlug) {
-        syncProductDetail(pdpSlug);
+        if (!changedIds || !detail?.id || changedIds.map(String).includes(String(detail.id))) {
+          syncProductDetail(pdpSlug);
+        }
       }
       if (window.TeraiCatalog?.getCart()?.length > 0) {
         window.TeraiCatalog.validateCart();
@@ -361,7 +412,7 @@
           const data = await res.json();
           if (typeof data.version === 'number' && data.version > currentRevision) {
             currentRevision = data.version;
-            syncStorefront();
+            syncStorefront(data.changed_ids);
           }
         }
       } catch {} finally {
