@@ -12,7 +12,6 @@
     if (filters.has('s') && !filters.has('q')) filters.set('q', filters.get('s'));
     let detail = read('catalog-detail');
     let currentRevision = Number(read('catalog-revision') || 1);
-    let reloadShopGrid = null;
     const notify = message => window.TeraiCatalog?.showToast('Product availability', message, 'warning');
 
     if (window.TeraiCatalog) window.TeraiCatalog.validateCart = async (cart = window.TeraiCatalog.getCart()) => {
@@ -109,7 +108,6 @@
           if (run === generation) { busy = false; update(); }
         }
       }
-      reloadShopGrid = () => load(true);
       more.addEventListener('click', () => load());
       if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => {
@@ -307,29 +305,40 @@
       const ids = [...new Set([...cards].map(c => c.dataset.catalogProduct).filter(Boolean))];
       if (!ids.length) return;
       try {
-        const res = await fetch(`/api/products/?ids=${ids.join(',')}&limit=100&_v=${currentRevision}`, {
-          headers: { Accept: 'application/json' },
-          cache: 'no-store'
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (Array.isArray(data.products)) {
-          const byId = new Map(data.products.map(p => [String(p.id), p]));
-          cards.forEach(card => {
-            const prod = byId.get(String(card.dataset.catalogProduct));
-            if (prod) updateCard(card, prod);
+        const found = new Set();
+        for (let i = 0; i < ids.length; i += 50) {
+          const chunk = ids.slice(i, i + 50);
+          const res = await fetch(`/api/products/?ids=${chunk.join(',')}&limit=50&_v=${currentRevision}`, {
+            headers: { Accept: 'application/json' },
+            cache: 'no-store'
           });
-          document.dispatchEvent(new Event('catalog:updated'));
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (Array.isArray(data.products)) {
+            data.products.forEach(prod => {
+              found.add(String(prod.id));
+              document.querySelectorAll(`[data-catalog-product="${prod.id}"]`).forEach(card => {
+                updateCard(card, prod);
+              });
+            });
+          }
         }
+        ids.forEach(id => {
+          if (!found.has(String(id))) {
+            document.querySelectorAll(`[data-catalog-product="${id}"]`).forEach(card => {
+              card.classList.add('out-of-stock');
+              card.dataset.available = 'false';
+              const addBtn = card.querySelector('.add_to_cart_button, .btn-cart-pill');
+              if (addBtn) addBtn.setAttribute('aria-disabled', 'true');
+            });
+          }
+        });
+        document.dispatchEvent(new Event('catalog:updated'));
       } catch {}
     }
 
     async function syncStorefront() {
-      if (reloadShopGrid) {
-        reloadShopGrid();
-      } else {
-        await syncCardsOnPage();
-      }
+      await syncCardsOnPage();
       const pdpSlug = detail?.slug || new URLSearchParams(location.search).get('product');
       if (pdpSlug) {
         syncProductDetail(pdpSlug);
