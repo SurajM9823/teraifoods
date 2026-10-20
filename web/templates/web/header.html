@@ -80,15 +80,6 @@
 						</a>
 					</div>
 
-					<div class="quick-button style-1 wishlist-button">
-						<a href="#wishlist" class="action-link" title="Wishlist">
-							<div class="action-icon">
-								<i class="klb-icon-heart-4"></i>
-								<span class="action-count klbwl-wishlist-count">0</span>
-							</div>
-						</a>
-					</div>
-
 					<div class="quick-button style-1 mini-cart-button">
 						<a href="{% url 'web:cart' %}" class="action-link" title="Shopping Cart">
 							<div class="action-icon">
@@ -99,20 +90,12 @@
 					</div>
 				</div>
 
-				<!-- Mobile Header Actions (Right): Search, Wishlist & Account -->
+				<!-- Mobile Header Actions (Right): Search & Account -->
 				<div class="col d-inline-flex d-xl-none align-items-center flex-auto gap-2">
 					<div class="mobile-search-button style-1">
 						<a href="{% url 'web:shop' %}?focus_search=true" class="mobile-search-link" id="mobile-search-toggle-btn" title="Search Products" aria-label="Search Products">
 							<div class="action-icon">
 								<i class="klb-icon-search"></i>
-							</div>
-						</a>
-					</div>
-					<div class="quick-button style-1 wishlist-button">
-						<a href="#wishlist" class="action-link" title="Wishlist">
-							<div class="action-icon">
-								<i class="klb-icon-heart-4"></i>
-								<span class="action-count klbwl-wishlist-count">0</span>
 							</div>
 						</a>
 					</div>
@@ -152,7 +135,7 @@
 							<li class="menu-item {% if active_page == 'blogs' %}current-menu-item{% endif %}"><a href="{% url 'web:blogs' %}" id="nav-blog-btn">Blogs</a></li>
 							<li class="menu-item {% if active_page == 'contact' %}current-menu-item{% endif %}"><a href="{% url 'web:contact' %}" id="nav-contact-btn">Supports</a></li>
 							<li class="menu-item menu-item-track-order {% if active_page == 'track-order' %}current-menu-item{% endif %}"><a href="{% url 'web:track-order' %}" id="nav-track-order-btn"><i class="klb-icon-truck" style="margin-right: 5px;"></i>Track Order</a></li>
-							<li class="menu-item menu-item-bulk-order {% if active_page == 'bulk-order' %}current-menu-item{% endif %}"><a href="{% url 'web:bulk-order' %}" id="nav-bulk-order-btn" class="nav-bulk-order-cta">Bulk Order &raquo; Request Quote <i class="klb-icon-move-right"></i></a></li>
+							<li class="menu-item menu-item-bulk-order {% if active_page == 'bulk-order' %}current-menu-item{% endif %}"><a href="{% url 'web:bulk-order' %}" id="nav-bulk-order-btn" class="nav-bulk-order-cta">Bulk Order <i class="klb-icon-move-right"></i></a></li>
 						</ul>
 					</nav>
 

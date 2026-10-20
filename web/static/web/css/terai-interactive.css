@@ -6673,3 +6673,108 @@ a.klbwl-btn::after,
 .action-buttons-vertical a.klbcp-btn.klbcp-added svg {
   stroke: #16a34a !important;
 }
+
+/* ==========================================================================
+   Header Search & Clean Store Search Customization
+   - Eliminates expanding ::before frame on search focus
+   - Eliminates blue glowing/lighting focus box-shadow
+   - Reduces navbar search height to compact, clean 38px
+   - Eliminates wishlist buttons from navigation across all pages
+   ========================================================================== */
+
+/* 1. Eliminate the expanding search border pseudo-elements */
+.site-header .header-search.search-overlay .search-form::before,
+.site-header .header-search.search-overlay.is-searchable .search-form::before,
+.site-header .header-search.search-overlay::before,
+.site-header .header-search.search-overlay.is-searchable::before {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 2. Sleek, clean navbar search form */
+.site-header .header-search .search-form {
+  position: relative !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  transition: border-color 0.15s ease !important;
+}
+
+.site-header .header-search .search-form:focus-within,
+.site-header .header-search.search-overlay.is-searchable .search-form {
+  border-color: #634c9f !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 3. Navbar search input: compact, no blue focus glow */
+.site-header .header-search .search-form input.form-control,
+.site-header .header-search .search-form input.search-input {
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  line-height: 36px !important;
+  font-size: 13.5px !important;
+  padding: 0 42px 0 14px !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #0f172a !important;
+}
+
+.site-header .header-search .search-form input.form-control:focus,
+.site-header .header-search .search-form input.search-input:focus,
+.header-search input:focus,
+.search-form input:focus,
+.shop-live-search-input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* 4. Navbar search submit button: neatly centered inside 38px container */
+.site-header .header-search .search-form button {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 40px !important;
+  height: 100% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #64748b !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  transition: color 0.15s ease !important;
+}
+
+.site-header .header-search .search-form button:hover {
+  color: #634c9f !important;
+}
+
+/* 5. Hide wishlist icon everywhere in the navbar & header on all pages */
+.quick-button.wishlist-button,
+.header-wishlist,
+.site-header .wishlist-button,
+.site-header a[href*="wishlist"],
+.quick-button.wishlist {
+  display: none !important;
+}
+

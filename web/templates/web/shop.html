@@ -27,7 +27,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=sidebar-80w-v3" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=clean-search-v1" media="all">
 
 	<style>
 		body {
@@ -636,7 +636,7 @@
 			font-weight: 600;
 		}
 	</style>
-  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=20261020-search-v2">
+  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=clean-search-v10261020-search-v2">
 <link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-shop-page">
@@ -687,11 +687,12 @@
 										<span class="shop-search-spinner" id="shop-search-spinner" style="display: none;" aria-hidden="true"></span>
 									</div>
 								</form>
-								<div class="shop-search-status-bar" id="shop-search-status-bar" style="display: none;">
-									<span class="shop-search-feedback-text" id="shop-search-feedback-text"></span>
-									<button type="button" class="shop-search-reset-link" id="shop-search-reset-link">Clear search</button>
-								</div>
 							</div>
+						</div>
+						<!-- Search results count / status shown below search bar without expanding search box border -->
+						<div class="shop-search-status-bar" id="shop-search-status-bar" style="display: none;">
+							<span class="shop-search-feedback-text" id="shop-search-feedback-text"></span>
+							<button type="button" class="shop-search-reset-link" id="shop-search-reset-link">Clear search</button>
 						</div>
 
 
