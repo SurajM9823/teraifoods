@@ -16,5 +16,5 @@ urlpatterns += [
 urlpatterns += [
     path(page.legacy_path, RedirectView.as_view(
         pattern_name=f"web:{page.key}", permanent=True, query_string=True,
-    )) for page in list_pages()
+    )) for page in {page.legacy_path:page for page in list_pages()}.values()
 ]

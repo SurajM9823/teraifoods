@@ -1,5 +1,6 @@
 {% load static %}
 <script src="{% static 'web/js/storefront-categories.js' %}" defer></script>
+<script src="{% static 'web/js/catalog-storefront.js' %}" defer></script>
 <template id="storefront-category-menu"><nav class="site-categories collapse">{% include 'catalog/storefront/menu.html' with menu_class='menu' %}</nav></template>
 <template id="storefront-category-options">{% for category in storefront_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}</template>
 {% if include_drawer %}
@@ -7,4 +8,22 @@
   <div class="site-drawer-inner site-scroll"><nav class="site-categories">{% include 'catalog/storefront/menu.html' %}</nav></div>
   <div class="site-drawer-overlay position-absolute strech"></div>
 </div>
+<div id="search-drawer" class="site-drawer site-search-drawer get-header-height get-mobile-nav-height">
+  <div class="site-drawer-inner site-scroll">
+    <div class="site-drawer-row">
+      <div class="header-search search-overlay flex-fill">
+        <form action="{% url 'web:shop' %}" class="search-form" role="search" method="get">
+          <input class="form-control search-input filled" type="search" name="s" value="" placeholder="Search for products, categories or brands..." autocomplete="off">
+          <button type="submit" class="unset"><i class="klb-icon-search"></i></button>
+          <input type="hidden" name="post_type" value="product">
+        </form>
+        <div class="header-search-result"></div>
+      </div>
+      <span class="d-block text-12 text-center text-gray-400 mt-6">Type the product you want to search for and press enter.</span>
+    </div>
+  </div>
+  <div class="site-drawer-overlay position-absolute strech"></div>
+</div>
+{% include 'web/includes/menu-drawer.html' %}
 {% endif %}
+

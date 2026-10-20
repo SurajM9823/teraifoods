@@ -1,0 +1,29 @@
+{% load static %}
+<div class="shop-product-card" data-catalog-product="{{ product.pk }}" data-available="{{ product.available|yesno:'true,false' }}" data-product-url="/product-detail/?product={{ product.slug }}">
+									<div class="card-top-row">
+										<span class="badge-discount">{{ product.discount_percent }}%</span>
+										<div class="card-top-icons">
+											<button class="btn-card-icon" title="Wishlist"><i class="klb-icon-heart"></i></button>
+											<button class="btn-card-icon" title="Quick view"><i class="klb-icon-eye"></i></button>
+										</div>
+									</div>
+									<div class="product-thumb-wrap">
+										<a href="/product-detail/?product={{ product.slug }}"><picture><source type="image/avif" srcset="{{ product.main_image.avif_srcset }}" sizes="(max-width: 500px) 50vw, 250px"><source type="image/webp" srcset="{{ product.main_image.webp_srcset }}" sizes="(max-width: 500px) 50vw, 250px"><img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy" decoding="async"></picture></a>
+									</div>
+									<div class="product-info-block">
+										<div class="product-cat-tag" style="visibility: hidden;">BEVERAGE</div>
+										<h3 class="product-title"><a href="/product-detail/?product={{ product.slug }}">{{ product.name }}</a></h3>
+										<div class="product-rating-row">
+											<div class="star-rating" role="img"><span style="width: 80%"></span></div>
+											<span class="rating-count">2</span>
+										</div>
+										<div class="product-price-row">
+											<span class="price-current">&pound;2.45</span>
+											<del class="price-old">&pound;4.13</del>
+										</div>
+										<a href="#" class="btn-cart-pill">
+											<span class="btn-cart-label">Add to cart</span>
+											<span class="btn-cart-plus">+</span>
+										</a>
+									</div>
+								</div>

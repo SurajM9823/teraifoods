@@ -1,0 +1,31 @@
+{% load static %}
+<div class="shop-product-card" data-category="{{ product.category.legacy_key|default:product.category.slug }}" data-price="{{ product.price }}" data-rating="3.7" data-name="{{ product.name }}" data-catalog-product="{{ product.pk }}" data-available="{{ product.available|yesno:'true,false' }}" data-product-url="/product-detail/?product={{ product.slug }}">
+								<div class="card-wrapper">
+									<div class="thumbnail-wrapper">
+										<span class="badge-discount">{{ product.discount_percent }}%</span>
+										<div class="action-icons">
+											<a href="#wishlist" class="action-icon-link" title="Add to wishlist"><i class="klb-icon-heart-4"></i></a>
+											<a href="#" class="action-icon-link eye-link quickview-button" data-product_id="{{ product.pk }}" title="Quick view"><i class="klb-icon-eye"></i></a>
+										</div>
+										<div class="product-thumbnail"><a href="/product-detail/?product={{ product.slug }}"><picture><source type="image/avif" srcset="{{ product.main_image.avif_srcset }}" sizes="(max-width: 500px) 50vw, 250px"><source type="image/webp" srcset="{{ product.main_image.webp_srcset }}" sizes="(max-width: 500px) 50vw, 250px"><img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy"></picture></a>
+										</div>
+									</div>
+									<div class="content-area">
+										<div>
+											<span class="tag-badge organic"><i class="klb-icon-sprout"></i> ORGANIC</span>
+										</div>
+										<h2 class="product-title"><a href="/product-detail/?product={{ product.slug }}">{{ product.name }}</a></h2>
+										<div class="rating-row">
+											<div class="star-rating" role="img" aria-label="Rated 3.67 out of 5"><span style="width:73.4%">Rated 3.67</span></div>
+											<span class="review-count">3</span>
+										</div>
+										<div class="price-row">
+											<span class="range-price">&pound;{{ product.price }}</span>
+										</div>
+										<a href="?add-to-cart={{ product.pk }}" class="btn-cart-pill">
+											<span>Select options</span>
+											<span class="plus-symbol">+</span>
+										</a>
+									</div>
+								</div>
+							</div>

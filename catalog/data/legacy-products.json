@@ -1,0 +1,2522 @@
+{
+  "products": [
+    {
+      "key": "legacy-f58c242f4b7764b394ea26cc",
+      "name": "100 Percent Apple Juice – 64 fl oz Bottle",
+      "regular_price": "1.99",
+      "sale_price": "0.50",
+      "images": [
+        "/static/web/images/1-2-500x500.jpg"
+      ],
+      "category": "beverages",
+      "category_candidates": [
+        "beverages",
+        "breaksfast-dairy",
+        "drink-boxes-pouches",
+        "fruits-and-vegetables",
+        "grocery-staples",
+        "healthcare",
+        "water"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "23"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "0.50"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "0.50"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "0.50"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "1.99",
+          "sale_price": "0.50"
+        }
+      ],
+      "metadata": {
+        "rating": "4.00",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_0.html",
+          "index_2": "catalog/storefront/card_index_2_0.html",
+          "index_3": "catalog/storefront/card_index_3_13.html",
+          "shop_0": "catalog/storefront/card_shop_0_4.html"
+        },
+        "positions": {
+          "index_0": 0,
+          "index_2": 0,
+          "index_3": 13,
+          "shop_0": 4
+        }
+      }
+    },
+    {
+      "key": "legacy-52c99633ee538f6db3b3e6fc",
+      "name": "Great Value Rising Crust Frozen Pizza, Supreme",
+      "regular_price": "9.99",
+      "sale_price": "8.99",
+      "images": [
+        "/static/web/images/1-87-500x500.jpg"
+      ],
+      "category": "bakery",
+      "category_candidates": [
+        "breads-bakery",
+        "frozen-foods",
+        "pizza-and-flatbreads"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "323"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/product-detail.html",
+        "web/templates/web/product.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "9.99",
+          "sale_price": "8.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "9.99",
+          "sale_price": "8.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "9.99",
+          "sale_price": "8.99"
+        },
+        {
+          "source": "web\\templates\\web\\product-detail.html",
+          "regular_price": "9.99",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\product.html",
+          "regular_price": "9.99",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "9.99",
+          "sale_price": "8.99"
+        }
+      ],
+      "metadata": {
+        "rating": "4.00",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_1.html",
+          "index_2": "catalog/storefront/card_index_2_1.html",
+          "index_3": "catalog/storefront/card_index_3_14.html",
+          "product_detail_0": "catalog/storefront/card_product_detail_0_0.html",
+          "product_0": "catalog/storefront/card_product_0_0.html",
+          "shop_0": "catalog/storefront/card_shop_0_0.html"
+        },
+        "positions": {
+          "index_0": 1,
+          "index_2": 1,
+          "index_3": 14,
+          "product_detail_0": 0,
+          "product_0": 0,
+          "shop_0": 0
+        }
+      }
+    },
+    {
+      "key": "legacy-b5f1b1c1df7dea4dbe381321",
+      "name": "Simply Orange Pulp Free Juice – 52 fl oz",
+      "regular_price": "4.13",
+      "sale_price": "2.45",
+      "images": [
+        "/static/web/images/1-12-500x500.jpg"
+      ],
+      "category": "beverages",
+      "category_candidates": [
+        "beverages",
+        "drink-boxes-pouches"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "668"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/product-detail.html",
+        "web/templates/web/product.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.13",
+          "sale_price": "2.45"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.13",
+          "sale_price": "2.45"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.13",
+          "sale_price": "2.45"
+        },
+        {
+          "source": "web\\templates\\web\\product-detail.html",
+          "regular_price": "4.13",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\product.html",
+          "regular_price": "4.13",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "4.13",
+          "sale_price": "2.45"
+        }
+      ],
+      "metadata": {
+        "rating": "4.50",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_2.html",
+          "index_2": "catalog/storefront/card_index_2_2.html",
+          "index_3": "catalog/storefront/card_index_3_15.html",
+          "product_detail_0": "catalog/storefront/card_product_detail_0_1.html",
+          "product_0": "catalog/storefront/card_product_0_1.html",
+          "shop_0": "catalog/storefront/card_shop_0_1.html"
+        },
+        "positions": {
+          "index_0": 2,
+          "index_2": 2,
+          "index_3": 15,
+          "product_detail_0": 1,
+          "product_0": 1,
+          "shop_0": 1
+        }
+      }
+    },
+    {
+      "key": "legacy-9db432949729f0437e304607",
+      "name": "California Pizza Kitchen Margherita, Crispy Thin Crust Pizza, 15.5 oz (Frozen)",
+      "regular_price": "14.77",
+      "sale_price": "11.77",
+      "images": [
+        "/static/web/images/1-30-500x500.jpg"
+      ],
+      "category": "bakery",
+      "category_candidates": [
+        "breads-bakery",
+        "pizza-and-flatbreads"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "138"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/product-detail.html",
+        "web/templates/web/product.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "14.77",
+          "sale_price": "11.77"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "14.77",
+          "sale_price": "11.77"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "14.77",
+          "sale_price": "11.77"
+        },
+        {
+          "source": "web\\templates\\web\\product-detail.html",
+          "regular_price": "14.77",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\product.html",
+          "regular_price": "14.77",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "14.77",
+          "sale_price": "11.77"
+        }
+      ],
+      "metadata": {
+        "rating": "4.33",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_3.html",
+          "index_2": "catalog/storefront/card_index_2_3.html",
+          "index_3": "catalog/storefront/card_index_3_16.html",
+          "product_detail_0": "catalog/storefront/card_product_detail_0_2.html",
+          "product_0": "catalog/storefront/card_product_0_2.html",
+          "shop_0": "catalog/storefront/card_shop_0_2.html"
+        },
+        "positions": {
+          "index_0": 3,
+          "index_2": 3,
+          "index_3": 16,
+          "product_detail_0": 2,
+          "product_0": 2,
+          "shop_0": 2
+        },
+        "legacy_names": [
+          "California Pizza Kitchen Margherita, Crispy Thin Crust Pizza, 15.5 oz (Frozen)",
+          "California Pizza Kitchen Margherita, Crispy Thin Crust Pizza",
+          "California Pizza Kitchen Margherita, Crispy Thin..."
+        ]
+      }
+    },
+    {
+      "key": "legacy-bcbca34f43793091c07a4b9c",
+      "name": "Cantaloupe Melon Fresh Organic Cut",
+      "regular_price": "1.25",
+      "sale_price": null,
+      "images": [
+        "/static/web/images/1-500x500.jpg"
+      ],
+      "category": "fruits-veg",
+      "category_candidates": [
+        "breaksfast-dairy",
+        "fruits-and-vegetables"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "3663"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/product-detail.html",
+        "web/templates/web/product.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.50",
+          "sale_price": "1.50"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.50",
+          "sale_price": "1.50"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.50",
+          "sale_price": "1.50"
+        },
+        {
+          "source": "web\\templates\\web\\product-detail.html",
+          "regular_price": "1.50",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\product.html",
+          "regular_price": "1.50",
+          "sale_price": null
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "1.50",
+          "sale_price": "1.50"
+        }
+      ],
+      "metadata": {
+        "rating": "3.67",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_4.html",
+          "index_2": "catalog/storefront/card_index_2_4.html",
+          "index_3": "catalog/storefront/card_index_3_17.html",
+          "product_detail_0": "catalog/storefront/card_product_detail_0_3.html",
+          "product_0": "catalog/storefront/card_product_0_3.html",
+          "shop_0": "catalog/storefront/card_shop_0_3.html"
+        },
+        "positions": {
+          "index_0": 4,
+          "index_2": 4,
+          "index_3": 17,
+          "product_detail_0": 3,
+          "product_0": 3,
+          "shop_0": 3
+        },
+        "legacy_price_range": {
+          "minimum": "1.25",
+          "maximum": "1.50"
+        },
+        "variant_confirmation_required": true
+      }
+    },
+    {
+      "key": "legacy-d6be907befed4fb8f30d98c2",
+      "name": "Angel Soft Toilet Paper, 9 Mega Rolls",
+      "regular_price": "17.12",
+      "sale_price": "14.12",
+      "images": [
+        "/static/web/images/1-9-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "baby-pregnancy",
+        "grocery-staples",
+        "household-needs"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "30"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "17.12",
+          "sale_price": "14.12"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "17.12",
+          "sale_price": "14.12"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "17.12",
+          "sale_price": "14.12"
+        }
+      ],
+      "metadata": {
+        "rating": "4.00",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_5.html",
+          "index_2": "catalog/storefront/card_index_2_5.html",
+          "index_3": "catalog/storefront/card_index_3_18.html"
+        },
+        "positions": {
+          "index_0": 5,
+          "index_2": 5,
+          "index_3": 18
+        }
+      }
+    },
+    {
+      "key": "legacy-ef253bac9d5c903b665f55e1",
+      "name": "Yellow Potatoes Whole Fresh, 5lb Bag",
+      "regular_price": "1.99",
+      "sale_price": null,
+      "images": [
+        "/static/web/images/1-39-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "cuts-sprouts",
+        "fresh-vegetables",
+        "fruits-vegetables"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "767"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "1.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "1.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "1.99"
+        }
+      ],
+      "metadata": {
+        "rating": "4.33",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_6.html",
+          "index_2": "catalog/storefront/card_index_2_6.html",
+          "index_3": "catalog/storefront/card_index_3_19.html"
+        },
+        "positions": {
+          "index_0": 6,
+          "index_2": 6,
+          "index_3": 19
+        }
+      }
+    },
+    {
+      "key": "legacy-49542ce198a0e64c6cdb59d2",
+      "name": "Vitaminwater zero sugar squeezed electrolyte enhanced water, lemonade, 16.9 fl oz, 6 count bottles",
+      "regular_price": "8.99",
+      "sale_price": "4.99",
+      "images": [
+        "/static/web/images/1-38-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "beverages",
+        "healthcare",
+        "water"
+      ],
+      "sections": [
+        "new_arrival",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "766"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "8.99",
+          "sale_price": "4.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "8.99",
+          "sale_price": "4.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "8.99",
+          "sale_price": "4.99"
+        }
+      ],
+      "metadata": {
+        "rating": "3.33",
+        "cards": {
+          "index_0": "catalog/storefront/card_index_0_7.html",
+          "index_2": "catalog/storefront/card_index_2_7.html",
+          "index_3": "catalog/storefront/card_index_3_20.html"
+        },
+        "positions": {
+          "index_0": 7,
+          "index_2": 7,
+          "index_3": 20
+        }
+      }
+    },
+    {
+      "key": "legacy-db4948b49ed16797b70de3cc",
+      "name": "Marketside Fresh Organic Bananas, Bunch",
+      "regular_price": "1.99",
+      "sale_price": "0.89",
+      "images": [
+        "/static/web/images/1-109-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "exotic-fruits-veggies",
+        "fresh-fruits",
+        "fruits-vegetables",
+        "herbs-seasonings",
+        "packaged-produce"
+      ],
+      "sections": [
+        "featured",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "480"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "0.89"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "0.89"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "0.89"
+        }
+      ],
+      "metadata": {
+        "rating": "3.00",
+        "cards": {
+          "index_1": "catalog/storefront/card_index_1_0.html",
+          "index_2": "catalog/storefront/card_index_2_8.html",
+          "index_3": "catalog/storefront/card_index_3_8.html"
+        },
+        "positions": {
+          "index_1": 0,
+          "index_2": 8,
+          "index_3": 8
+        }
+      }
+    },
+    {
+      "key": "legacy-48e8934645f54b48b5f3855d",
+      "name": "Lay’s Classic Potato Snack Chips, Party Size, 13 oz Bag",
+      "regular_price": "1.99",
+      "sale_price": "1.00",
+      "images": [
+        "/static/web/images/1-105-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "biscuits-snacks",
+        "grocery-staples"
+      ],
+      "sections": [
+        "featured",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "437"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "1.00"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "1.00"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "1.99",
+          "sale_price": "1.00"
+        }
+      ],
+      "metadata": {
+        "rating": "2.67",
+        "cards": {
+          "index_1": "catalog/storefront/card_index_1_1.html",
+          "index_2": "catalog/storefront/card_index_2_9.html",
+          "index_3": "catalog/storefront/card_index_3_9.html"
+        },
+        "positions": {
+          "index_1": 1,
+          "index_2": 9,
+          "index_3": 9
+        }
+      }
+    },
+    {
+      "key": "legacy-fd6f85e460d5af06644db900",
+      "name": "Great Value Classic Crust Pepperoni Microwave Frozen Pizza 7.2oz",
+      "regular_price": "3.99",
+      "sale_price": "1.99",
+      "images": [
+        "/static/web/images/1-82-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "breads-bakery",
+        "frozen-foods",
+        "pizza-and-flatbreads"
+      ],
+      "sections": [
+        "featured",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "318"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "3.99",
+          "sale_price": "1.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "3.99",
+          "sale_price": "1.99"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "3.99",
+          "sale_price": "1.99"
+        }
+      ],
+      "metadata": {
+        "rating": "3.00",
+        "cards": {
+          "index_1": "catalog/storefront/card_index_1_2.html",
+          "index_2": "catalog/storefront/card_index_2_10.html",
+          "index_3": "catalog/storefront/card_index_3_10.html"
+        },
+        "positions": {
+          "index_1": 2,
+          "index_2": 10,
+          "index_3": 10
+        }
+      }
+    },
+    {
+      "key": "legacy-ae37438b55c5fd0fe79d5e02",
+      "name": "All Natural 85_15 Ground Beef – 1lb",
+      "regular_price": "8.75",
+      "sale_price": "7.75",
+      "images": [
+        "/static/web/images/1-7-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "beef-products",
+        "meats-seafood"
+      ],
+      "sections": [
+        "featured",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "28"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "8.75",
+          "sale_price": "7.75"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "8.75",
+          "sale_price": "7.75"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "8.75",
+          "sale_price": "7.75"
+        }
+      ],
+      "metadata": {
+        "rating": "4.67",
+        "cards": {
+          "index_1": "catalog/storefront/card_index_1_3.html",
+          "index_2": "catalog/storefront/card_index_2_11.html",
+          "index_3": "catalog/storefront/card_index_3_11.html"
+        },
+        "positions": {
+          "index_1": 3,
+          "index_2": 11,
+          "index_3": 11
+        }
+      }
+    },
+    {
+      "key": "legacy-0d380b617c4a16b9cd68e08a",
+      "name": "ACT Anticavity Fluoride Mouthwash With Zero Alcohol",
+      "regular_price": "4.33",
+      "sale_price": "2.33",
+      "images": [
+        "/static/web/images/1-6-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "healthcare"
+      ],
+      "sections": [
+        "featured",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "27"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.33",
+          "sale_price": "2.33"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.33",
+          "sale_price": "2.33"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.33",
+          "sale_price": "2.33"
+        }
+      ],
+      "metadata": {
+        "rating": "4.00",
+        "cards": {
+          "index_1": "catalog/storefront/card_index_1_4.html",
+          "index_2": "catalog/storefront/card_index_2_12.html",
+          "index_3": "catalog/storefront/card_index_3_21.html"
+        },
+        "positions": {
+          "index_1": 4,
+          "index_2": 12,
+          "index_3": 21
+        }
+      }
+    },
+    {
+      "key": "legacy-0cc2cbf4473b8300d36cb4dc",
+      "name": "FireSmith Flame Grilled Chicken Breast – Deli Fresh Sliced – price per lb",
+      "regular_price": "17.91",
+      "sale_price": "15.91",
+      "images": [
+        "/static/web/images/3-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "beef-products",
+        "chicken-and-turkey-products",
+        "meats-seafood"
+      ],
+      "sections": [
+        "featured",
+        "best_seller",
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "18"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "17.91",
+          "sale_price": "15.91"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "17.91",
+          "sale_price": "15.91"
+        },
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "17.91",
+          "sale_price": "15.91"
+        }
+      ],
+      "metadata": {
+        "rating": "3.33",
+        "cards": {
+          "index_1": "catalog/storefront/card_index_1_5.html",
+          "index_2": "catalog/storefront/card_index_2_13.html",
+          "index_3": "catalog/storefront/card_index_3_12.html"
+        },
+        "positions": {
+          "index_1": 5,
+          "index_2": 13,
+          "index_3": 12
+        }
+      }
+    },
+    {
+      "key": "legacy-edc6c7221bcab4052c7f894c",
+      "name": "Vital Farms Pasture-Raised Grade A Large Eggs – 12ct",
+      "regular_price": "4.99",
+      "sale_price": "3.99",
+      "images": [
+        "/static/web/images/1-37-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "breaksfast-dairy",
+        "eggs-and-egg-products",
+        "fresh-dairy-products"
+      ],
+      "sections": [
+        "best_seller"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "765"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.99",
+          "sale_price": "3.99"
+        }
+      ],
+      "metadata": {
+        "rating": "2.67",
+        "cards": {
+          "index_2": "catalog/storefront/card_index_2_14.html"
+        },
+        "positions": {
+          "index_2": 14
+        }
+      }
+    },
+    {
+      "key": "legacy-e607183588372996d835f847",
+      "name": "Tillamook Medium Cheddar Cheese Loaf – 32oz",
+      "regular_price": "7.99",
+      "sale_price": null,
+      "images": [
+        "/static/web/images/1-29-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "breaksfast-dairy",
+        "cheese-varieties"
+      ],
+      "sections": [
+        "best_seller"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "758"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "7.99",
+          "sale_price": "7.99"
+        }
+      ],
+      "metadata": {
+        "rating": "4.00",
+        "cards": {
+          "index_2": "catalog/storefront/card_index_2_15.html"
+        },
+        "positions": {
+          "index_2": 15
+        }
+      }
+    },
+    {
+      "key": "legacy-c5488e650ae06044409504b2",
+      "name": "Thomas’ Everything Bagels – 20oz_6ct",
+      "regular_price": "4.50",
+      "sale_price": "2.50",
+      "images": [
+        "/static/web/images/1-27-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "bakery-pastries-and-rolls",
+        "breads-bakery",
+        "fresh-bread-varieties",
+        "sandwich-bread-and-wraps",
+        "sweets-and-pastry-products"
+      ],
+      "sections": [
+        "best_seller"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "756"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/static/web/js/terai-interactive.js"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.50",
+          "sale_price": "2.50"
+        }
+      ],
+      "metadata": {
+        "rating": "3.67",
+        "cards": {
+          "index_2": "catalog/storefront/card_index_2_16.html"
+        },
+        "positions": {
+          "index_2": 16
+        },
+        "legacy_names": [
+          "Thomas’ Everything Bagels – 20oz_6ct",
+          "Thomas' Everything Bagels - 20oz_6ct"
+        ]
+      }
+    },
+    {
+      "key": "legacy-b039598e91864e1634794b51",
+      "name": "Take And Bake Baguettes – 14oz_2ct",
+      "regular_price": "2.75",
+      "sale_price": "1.75",
+      "images": [
+        "/static/web/images/1-25-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "bakery-pastries-and-rolls",
+        "breads-bakery",
+        "fresh-bread-varieties",
+        "glazed-and-filled-products",
+        "gluten-free-alternatives",
+        "organic-and-natural-breads",
+        "rye-and-whole-wheat-products"
+      ],
+      "sections": [
+        "best_seller"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "754"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/static/web/js/terai-interactive.js"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "2.75",
+          "sale_price": "1.75"
+        }
+      ],
+      "metadata": {
+        "rating": "4.67",
+        "cards": {
+          "index_2": "catalog/storefront/card_index_2_17.html"
+        },
+        "positions": {
+          "index_2": 17
+        },
+        "legacy_names": [
+          "Take And Bake Baguettes – 14oz_2ct",
+          "Take And Bake Baguettes - 14oz_2ct"
+        ]
+      }
+    },
+    {
+      "key": "legacy-9dfc96fa5a9c033b9a24aa32",
+      "name": "Royal Himalayan 2-Year Aged Basmati Rice – 5kg",
+      "regular_price": "15.99",
+      "sale_price": "12.50",
+      "images": [
+        "/static/web/images/banner-03.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [
+        "grocery-staples"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "111"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "14.70",
+          "sale_price": "12.50"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "15.99",
+          "sale_price": "12.50"
+        }
+      ],
+      "metadata": {
+        "rating": "4.90",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_0.html",
+          "shop_0": "catalog/storefront/card_shop_0_11.html"
+        },
+        "positions": {
+          "index_3": 0,
+          "shop_0": 11
+        }
+      }
+    },
+    {
+      "key": "legacy-33461f0eeeb4c09b4250dec9",
+      "name": "Organic Yellow Moong Dal Split Lentils – 1kg",
+      "regular_price": "3.75",
+      "sale_price": "2.85",
+      "images": [
+        "/static/web/images/banner-05.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [
+        "grocery-staples"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "24"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "3.80",
+          "sale_price": "3.80"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "3.75",
+          "sale_price": "2.85"
+        }
+      ],
+      "metadata": {
+        "rating": "4.90",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_1.html",
+          "shop_0": "catalog/storefront/card_shop_0_7.html"
+        },
+        "positions": {
+          "index_3": 1,
+          "shop_0": 7
+        }
+      }
+    },
+    {
+      "key": "legacy-8587b8704c43d00b3116e880",
+      "name": "Stoneground Artisan Chakki Wholewheat Atta – 5kg",
+      "regular_price": "8.99",
+      "sale_price": "6.99",
+      "images": [
+        "/static/web/images/banner-06.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [
+        "grocery-staples"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "25"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "7.79",
+          "sale_price": "6.99"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "8.99",
+          "sale_price": "6.99"
+        }
+      ],
+      "metadata": {
+        "rating": "4.80",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_2.html",
+          "shop_0": "catalog/storefront/card_shop_0_8.html"
+        },
+        "positions": {
+          "index_3": 2,
+          "shop_0": 8
+        }
+      }
+    },
+    {
+      "key": "legacy-b256f034c1d60c7d91b4ff49",
+      "name": "High-Altitude Himalayan Loose Leaf Tea – 150g",
+      "regular_price": "7.20",
+      "sale_price": "5.40",
+      "images": [
+        "/static/web/images/banner-07.jpg"
+      ],
+      "category": "beverages",
+      "category_candidates": [
+        "beverages"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "104"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "5.40",
+          "sale_price": "5.40"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "7.20",
+          "sale_price": "5.40"
+        }
+      ],
+      "metadata": {
+        "rating": "4.90",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_3.html",
+          "shop_0": "catalog/storefront/card_shop_0_9.html"
+        },
+        "positions": {
+          "index_3": 3,
+          "shop_0": 9
+        }
+      }
+    },
+    {
+      "key": "legacy-aa5fe807340982387125ed52",
+      "name": "Pure Raw Himalayan Multiflora Honey – 500g Jar",
+      "regular_price": "9.90",
+      "sale_price": "7.80",
+      "images": [
+        "/static/web/images/banner-07.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [
+        "grocery-staples"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "107"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "9.75",
+          "sale_price": "7.80"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "9.90",
+          "sale_price": "7.80"
+        }
+      ],
+      "metadata": {
+        "rating": "4.90",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_4.html",
+          "shop_0": "catalog/storefront/card_shop_0_14.html"
+        },
+        "positions": {
+          "index_3": 4,
+          "shop_0": 14
+        }
+      }
+    },
+    {
+      "key": "legacy-b514d03bfa2f1d77fe4bbeaa",
+      "name": "Cold-Pressed Pure White Sesame Oil – 500ml",
+      "regular_price": "5.50",
+      "sale_price": "4.25",
+      "images": [
+        "/static/web/images/banner-04.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [
+        "grocery-staples"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "106"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "4.25",
+          "sale_price": "4.25"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "5.50",
+          "sale_price": "4.25"
+        }
+      ],
+      "metadata": {
+        "rating": "4.60",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_5.html",
+          "shop_0": "catalog/storefront/card_shop_0_13.html"
+        },
+        "positions": {
+          "index_3": 5,
+          "shop_0": 13
+        }
+      }
+    },
+    {
+      "key": "legacy-0e587b542be5ff5de1339879",
+      "name": "Whole Organic Black Chickpeas (Kala Chana) – 1kg",
+      "regular_price": "3.10",
+      "sale_price": "2.40",
+      "images": [
+        "/static/web/images/banner-05.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [
+        "grocery-staples"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "3665"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "2.40",
+          "sale_price": "2.40"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "3.10",
+          "sale_price": "2.40"
+        }
+      ],
+      "metadata": {
+        "rating": "4.70",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_6.html",
+          "shop_0": "catalog/storefront/card_shop_0_12.html"
+        },
+        "positions": {
+          "index_3": 6,
+          "shop_0": 12
+        }
+      }
+    },
+    {
+      "key": "legacy-9a6cd817b074ac6197544579",
+      "name": "Farm Fresh Organic Hass Avocados – 4 Pack",
+      "regular_price": "4.50",
+      "sale_price": "3.20",
+      "images": [
+        "/static/web/images/banner-01.jpg"
+      ],
+      "category": "fruits-veg",
+      "category_candidates": [
+        "fruits-vegetables"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "110"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "3.20",
+          "sale_price": "3.20"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "4.50",
+          "sale_price": "3.20"
+        }
+      ],
+      "metadata": {
+        "rating": "4.80",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_7.html",
+          "shop_0": "catalog/storefront/card_shop_0_10.html"
+        },
+        "positions": {
+          "index_3": 7,
+          "shop_0": 10
+        }
+      }
+    },
+    {
+      "key": "legacy-43a32cbbccd59b24b08237b4",
+      "name": "Crisp UK Bio-Farm Royal Gala Apples – 6-Pack",
+      "regular_price": "3.60",
+      "sale_price": "2.90",
+      "images": [
+        "/static/web/images/banner-01.jpg"
+      ],
+      "category": "fruits-veg",
+      "category_candidates": [
+        "fresh-fruits"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "481",
+        "480"
+      ],
+      "sources": [
+        "web/templates/web/index.html",
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "2.90",
+          "sale_price": "2.90"
+        },
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "3.60",
+          "sale_price": "2.90"
+        }
+      ],
+      "metadata": {
+        "rating": "4.60",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_22.html",
+          "shop_0": "catalog/storefront/card_shop_0_15.html"
+        },
+        "positions": {
+          "index_3": 22,
+          "shop_0": 15
+        }
+      }
+    },
+    {
+      "key": "legacy-b7896ccba0424f88ef892d86",
+      "name": "Great Value Rising Crust Pepperoni Pizza",
+      "regular_price": "9.99",
+      "sale_price": "6.49",
+      "images": [
+        "/static/web/images/1-82-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [
+        "frozen-foods"
+      ],
+      "sections": [
+        "for_you"
+      ],
+      "description": "",
+      "legacy_ids": [
+        "319"
+      ],
+      "sources": [
+        "web/templates/web/index.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\index.html",
+          "regular_price": "9.99",
+          "sale_price": "6.49"
+        }
+      ],
+      "metadata": {
+        "rating": "4.20",
+        "cards": {
+          "index_3": "catalog/storefront/card_index_3_23.html"
+        },
+        "positions": {
+          "index_3": 23
+        }
+      }
+    },
+    {
+      "key": "legacy-68da039c861b25ae6de4dde4",
+      "name": "Wild Himalayan Timur Pepper & Cardamom – 250g",
+      "regular_price": "8.50",
+      "sale_price": "6.49",
+      "images": [
+        "/static/web/images/banner-07.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [],
+      "sections": [],
+      "description": "",
+      "legacy_ids": [
+        "102"
+      ],
+      "sources": [
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "8.50",
+          "sale_price": "6.49"
+        }
+      ],
+      "metadata": {
+        "rating": "4.9",
+        "cards": {
+          "shop_0": "catalog/storefront/card_shop_0_5.html"
+        },
+        "positions": {
+          "shop_0": 5
+        }
+      }
+    },
+    {
+      "key": "legacy-1fb586d04fd159a63737eeb7",
+      "name": "Cold-Pressed Pure Himalayan Mustard Oil – 1L",
+      "regular_price": "6.80",
+      "sale_price": "4.99",
+      "images": [
+        "/static/web/images/banner-04.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [],
+      "sections": [],
+      "description": "",
+      "legacy_ids": [
+        "103"
+      ],
+      "sources": [
+        "web/templates/web/shop.html"
+      ],
+      "source_prices": [
+        {
+          "source": "web\\templates\\web\\shop.html",
+          "regular_price": "6.80",
+          "sale_price": "4.99"
+        }
+      ],
+      "metadata": {
+        "rating": "4.8",
+        "cards": {
+          "shop_0": "catalog/storefront/card_shop_0_6.html"
+        },
+        "positions": {
+          "shop_0": 6
+        }
+      }
+    },
+    {
+      "key": "legacy-19e9dc8aad6894d932b91662",
+      "name": "Wild Forest Raw Organic Honey - 500g",
+      "regular_price": "9.50",
+      "sale_price": "7.99",
+      "images": [
+        "/static/web/images/1-16-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [],
+      "sections": [],
+      "description": "",
+      "legacy_ids": [
+        "752"
+      ],
+      "sources": [
+        "web/static/web/js/terai-interactive.js"
+      ],
+      "metadata": {
+        "unit": "500g"
+      }
+    },
+    {
+      "key": "legacy-e37204a68f976b6b1a048883",
+      "name": "Himalayan Pink Rock Salt (Fine) - 1kg",
+      "regular_price": "4.20",
+      "sale_price": "3.25",
+      "images": [
+        "/static/web/images/1-28-500x500.jpg"
+      ],
+      "category": "",
+      "category_candidates": [],
+      "sections": [],
+      "description": "",
+      "legacy_ids": [
+        "750"
+      ],
+      "sources": [
+        "web/static/web/js/terai-interactive.js"
+      ],
+      "metadata": {
+        "unit": "1kg"
+      }
+    },
+    {
+      "key": "legacy-bbb7e1944cdb3fcbc36873a7",
+      "name": "LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm | Chinese Achar | Chilli Oil | Chicken Achar",
+      "regular_price": "5.50",
+      "sale_price": "4.19",
+      "images": [
+        "/static/web/images/laoganma-chicken-main.jpg",
+        "/static/web/images/1-105-500x500.jpg",
+        "/static/web/images/1-30-500x500.jpg",
+        "/static/web/images/1-109-500x500.jpg",
+        "/static/web/images/1-12-500x500.jpg"
+      ],
+      "category": "grocery",
+      "category_candidates": [
+        "spices-seasonings"
+      ],
+      "sections": [],
+      "description": "Lao Gan Ma Chili Sauce with Chicken, also known as Tao Huabi, is a seasoning oil that elevates the flavour and takes taste buds on a savory culinary adventure. This world-renowned condiment originates from Guizhou and has gained international acclaim for its unique blend of crispy texture, deep umami, and fragrant heat.\n\nThe star ingredient in Lao Gan Ma Chicken Chili Sauce is the carefully selected high-quality chicken, skillfully diced and fried until crunchy, then infused into rich soybean oil alongside sun-dried red chili peppers, garlic, and fragrant Sichuan peppercorns. This sauce delivers a harmonious balance of crispy bits, savory chicken aroma, and appetizing tingling heat.\n\nWhether you're looking to elevate Himalayan momos and dumplings, stir-fry noodles, noodles, fried rice, or marinate roasted meats, Lao Gan Ma Chicken Chili Sauce brings authentic gourmet depth to every single bite.",
+      "legacy_ids": [],
+      "sources": [
+        "web/templates/web/product-detail.html"
+      ],
+      "metadata": {
+        "legacy_detail": true,
+        "stock_conflict": "14 items / 38 left",
+        "specifications": [
+          "• Brand: LAOGANMA (Tao Huabi)",
+          "• Model Name: Chili Sauce With Chicken Flavour, Chicken Achar, Chicken Pickle",
+          "• Quantity: 280g Type: Sauce",
+          "• Classification & Use: Accompaniment / Mixture / Marinade",
+          "• Shelf Life: 18 Months",
+          "• Caution: No Added Artificial Preservatives",
+          "• Dietary: Non-vegetarian (Authentic tender chicken pieces)",
+          "• Container Type: Hermetic Glass Bottle",
+          "• Ingredients: Soybean Oil, Chicken, Chili, Garlic, Salt, Sichuan Peppercorn"
+        ]
+      }
+    }
+  ],
+  "occurrences": [
+    {
+      "source": "web/templates/web/index.html",
+      "start": 61494,
+      "end": 66585,
+      "key": "legacy-f58c242f4b7764b394ea26cc",
+      "parent_start": 61468,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 66617,
+      "end": 74047,
+      "key": "legacy-52c99633ee538f6db3b3e6fc",
+      "parent_start": 66591,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 74079,
+      "end": 78448,
+      "key": "legacy-b5f1b1c1df7dea4dbe381321",
+      "parent_start": 74053,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 78480,
+      "end": 86083,
+      "key": "legacy-9db432949729f0437e304607",
+      "parent_start": 78454,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 86115,
+      "end": 91003,
+      "key": "legacy-bcbca34f43793091c07a4b9c",
+      "parent_start": 86089,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 91035,
+      "end": 95364,
+      "key": "legacy-d6be907befed4fb8f30d98c2",
+      "parent_start": 91009,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 95396,
+      "end": 99336,
+      "key": "legacy-ef253bac9d5c903b665f55e1",
+      "parent_start": 95370,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 99368,
+      "end": 104100,
+      "key": "legacy-49542ce198a0e64c6cdb59d2",
+      "parent_start": 99342,
+      "section": "new_arrival",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 111219,
+      "end": 116994,
+      "key": "legacy-db4948b49ed16797b70de3cc",
+      "parent_start": 111150,
+      "section": "featured",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 116994,
+      "end": 122137,
+      "key": "legacy-48e8934645f54b48b5f3855d",
+      "parent_start": 111150,
+      "section": "featured",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 122137,
+      "end": 130348,
+      "key": "legacy-fd6f85e460d5af06644db900",
+      "parent_start": 111150,
+      "section": "featured",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 130348,
+      "end": 135297,
+      "key": "legacy-ae37438b55c5fd0fe79d5e02",
+      "parent_start": 111150,
+      "section": "featured",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 135297,
+      "end": 140309,
+      "key": "legacy-0d380b617c4a16b9cd68e08a",
+      "parent_start": 111150,
+      "section": "featured",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 140309,
+      "end": 145510,
+      "key": "legacy-0cc2cbf4473b8300d36cb4dc",
+      "parent_start": 111150,
+      "section": "featured",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 147679,
+      "end": 152524,
+      "key": "legacy-f58c242f4b7764b394ea26cc",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 152535,
+      "end": 159717,
+      "key": "legacy-52c99633ee538f6db3b3e6fc",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 159728,
+      "end": 163849,
+      "key": "legacy-b5f1b1c1df7dea4dbe381321",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 163860,
+      "end": 171215,
+      "key": "legacy-9db432949729f0437e304607",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 171226,
+      "end": 175860,
+      "key": "legacy-bcbca34f43793091c07a4b9c",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 175871,
+      "end": 179954,
+      "key": "legacy-d6be907befed4fb8f30d98c2",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 179965,
+      "end": 183657,
+      "key": "legacy-ef253bac9d5c903b665f55e1",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 183668,
+      "end": 188152,
+      "key": "legacy-49542ce198a0e64c6cdb59d2",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 188163,
+      "end": 193938,
+      "key": "legacy-db4948b49ed16797b70de3cc",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 193949,
+      "end": 199092,
+      "key": "legacy-48e8934645f54b48b5f3855d",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 199103,
+      "end": 207314,
+      "key": "legacy-fd6f85e460d5af06644db900",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 207325,
+      "end": 212274,
+      "key": "legacy-ae37438b55c5fd0fe79d5e02",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 212285,
+      "end": 217297,
+      "key": "legacy-0d380b617c4a16b9cd68e08a",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 217308,
+      "end": 222509,
+      "key": "legacy-0cc2cbf4473b8300d36cb4dc",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 222520,
+      "end": 226609,
+      "key": "legacy-edc6c7221bcab4052c7f894c",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 226620,
+      "end": 230326,
+      "key": "legacy-e607183588372996d835f847",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 230337,
+      "end": 234571,
+      "key": "legacy-c5488e650ae06044409504b2",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 234582,
+      "end": 238876,
+      "key": "legacy-b039598e91864e1634794b51",
+      "parent_start": 147601,
+      "section": "best_seller",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 241258,
+      "end": 245235,
+      "key": "legacy-9dfc96fa5a9c033b9a24aa32",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 245246,
+      "end": 248958,
+      "key": "legacy-33461f0eeeb4c09b4250dec9",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 248969,
+      "end": 252372,
+      "key": "legacy-8587b8704c43d00b3116e880",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 252383,
+      "end": 256106,
+      "key": "legacy-b256f034c1d60c7d91b4ff49",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 256117,
+      "end": 259519,
+      "key": "legacy-aa5fe807340982387125ed52",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 259530,
+      "end": 263241,
+      "key": "legacy-b514d03bfa2f1d77fe4bbeaa",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 263252,
+      "end": 267010,
+      "key": "legacy-0e587b542be5ff5de1339879",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 267021,
+      "end": 270728,
+      "key": "legacy-9a6cd817b074ac6197544579",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 270739,
+      "end": 274677,
+      "key": "legacy-db4948b49ed16797b70de3cc",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 274688,
+      "end": 278154,
+      "key": "legacy-48e8934645f54b48b5f3855d",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 278165,
+      "end": 281678,
+      "key": "legacy-fd6f85e460d5af06644db900",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 281689,
+      "end": 285018,
+      "key": "legacy-ae37438b55c5fd0fe79d5e02",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 285029,
+      "end": 288584,
+      "key": "legacy-0cc2cbf4473b8300d36cb4dc",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 288595,
+      "end": 291954,
+      "key": "legacy-f58c242f4b7764b394ea26cc",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 291965,
+      "end": 295370,
+      "key": "legacy-52c99633ee538f6db3b3e6fc",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 295381,
+      "end": 298747,
+      "key": "legacy-b5f1b1c1df7dea4dbe381321",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 298758,
+      "end": 302359,
+      "key": "legacy-9db432949729f0437e304607",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 302370,
+      "end": 306231,
+      "key": "legacy-bcbca34f43793091c07a4b9c",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 306242,
+      "end": 309585,
+      "key": "legacy-d6be907befed4fb8f30d98c2",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 309596,
+      "end": 313280,
+      "key": "legacy-ef253bac9d5c903b665f55e1",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 313291,
+      "end": 317007,
+      "key": "legacy-49542ce198a0e64c6cdb59d2",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 317018,
+      "end": 320438,
+      "key": "legacy-0d380b617c4a16b9cd68e08a",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 320449,
+      "end": 324169,
+      "key": "legacy-43a32cbbccd59b24b08237b4",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/index.html",
+      "start": 324180,
+      "end": 327549,
+      "key": "legacy-b7896ccba0424f88ef892d86",
+      "parent_start": 241180,
+      "section": "for_you",
+      "shop": false
+    },
+    {
+      "source": "web/templates/web/product-detail.html",
+      "start": 56271,
+      "end": 57688,
+      "key": "legacy-52c99633ee538f6db3b3e6fc",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/product-detail.html",
+      "start": 57761,
+      "end": 59198,
+      "key": "legacy-b5f1b1c1df7dea4dbe381321",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/product-detail.html",
+      "start": 59277,
+      "end": 60699,
+      "key": "legacy-9db432949729f0437e304607",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/product-detail.html",
+      "start": 60777,
+      "end": 62149,
+      "key": "legacy-bcbca34f43793091c07a4b9c",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/product.html",
+      "start": 56271,
+      "end": 57688,
+      "key": "legacy-52c99633ee538f6db3b3e6fc",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/product.html",
+      "start": 57761,
+      "end": 59198,
+      "key": "legacy-b5f1b1c1df7dea4dbe381321",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/product.html",
+      "start": 59277,
+      "end": 60699,
+      "key": "legacy-9db432949729f0437e304607",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/product.html",
+      "start": 60777,
+      "end": 62149,
+      "key": "legacy-bcbca34f43793091c07a4b9c",
+      "parent_start": 56173,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 20488,
+      "end": 22255,
+      "key": "legacy-52c99633ee538f6db3b3e6fc",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 22340,
+      "end": 24001,
+      "key": "legacy-b5f1b1c1df7dea4dbe381321",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 24092,
+      "end": 25890,
+      "key": "legacy-9db432949729f0437e304607",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 25980,
+      "end": 27636,
+      "key": "legacy-bcbca34f43793091c07a4b9c",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 27689,
+      "end": 29422,
+      "key": "legacy-f58c242f4b7764b394ea26cc",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 29497,
+      "end": 31255,
+      "key": "legacy-68da039c861b25ae6de4dde4",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 31331,
+      "end": 33055,
+      "key": "legacy-1fb586d04fd159a63737eeb7",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 33130,
+      "end": 34880,
+      "key": "legacy-33461f0eeeb4c09b4250dec9",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 34959,
+      "end": 36690,
+      "key": "legacy-8587b8704c43d00b3116e880",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 36766,
+      "end": 38533,
+      "key": "legacy-b256f034c1d60c7d91b4ff49",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 38603,
+      "end": 40347,
+      "key": "legacy-9a6cd817b074ac6197544579",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 40425,
+      "end": 42198,
+      "key": "legacy-9dfc96fa5a9c033b9a24aa32",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 42265,
+      "end": 44020,
+      "key": "legacy-0e587b542be5ff5de1339879",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 44092,
+      "end": 45803,
+      "key": "legacy-b514d03bfa2f1d77fe4bbeaa",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 45876,
+      "end": 47640,
+      "key": "legacy-aa5fe807340982387125ed52",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    },
+    {
+      "source": "web/templates/web/shop.html",
+      "start": 47713,
+      "end": 49466,
+      "key": "legacy-43a32cbbccd59b24b08237b4",
+      "parent_start": 20324,
+      "section": "",
+      "shop": true
+    }
+  ],
+  "issues": [
+    {
+      "name": "Organic Yellow Moong Dal Split Lentils – 1kg",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "3.75"
+    },
+    {
+      "name": "Stoneground Artisan Chakki Wholewheat Atta – 5kg",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "8.99"
+    },
+    {
+      "name": "High-Altitude Himalayan Loose Leaf Tea – 150g",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "7.20"
+    },
+    {
+      "name": "Farm Fresh Organic Hass Avocados – 4 Pack",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "4.50"
+    },
+    {
+      "name": "Royal Himalayan 2-Year Aged Basmati Rice – 5kg",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "15.99"
+    },
+    {
+      "name": "Whole Organic Black Chickpeas (Kala Chana) – 1kg",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "3.10"
+    },
+    {
+      "name": "Cold-Pressed Pure White Sesame Oil – 500ml",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "5.50"
+    },
+    {
+      "name": "Pure Raw Himalayan Multiflora Honey – 500g Jar",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "9.90"
+    },
+    {
+      "name": "Crisp UK Bio-Farm Royal Gala Apples – 6-Pack",
+      "issue": "Conflicting source price",
+      "source": "web/templates/web/shop.html",
+      "regular_price": "3.60"
+    },
+    {
+      "name": "California Pizza Kitchen Margherita, Crispy Thin Crust Pizza",
+      "issue": "Category requires confirmation"
+    },
+    {
+      "name": "Thomas' Everything Bagels - 20oz_6ct",
+      "issue": "Category requires confirmation"
+    },
+    {
+      "name": "Take And Bake Baguettes - 14oz_2ct",
+      "issue": "Category requires confirmation"
+    },
+    {
+      "name": "Wild Forest Raw Organic Honey - 500g",
+      "issue": "Category requires confirmation"
+    },
+    {
+      "name": "Himalayan Pink Rock Salt (Fine) - 1kg",
+      "issue": "Missing image",
+      "image": "/static/web/images/1-28-500x500.jpg"
+    },
+    {
+      "name": "Himalayan Pink Rock Salt (Fine) - 1kg",
+      "issue": "Category requires confirmation"
+    },
+    {
+      "name": "Cantaloupe Melon Fresh Organic Cut",
+      "issue": "Legacy variable-price product: £1.25–£1.50. Confirm sellable variant and stock before purchase."
+    }
+  ],
+  "aliases": {
+    "legacy-ae45cfc732c70f9de2189488": "legacy-9db432949729f0437e304607",
+    "legacy-9bca5252df651347f24f2822": "legacy-9db432949729f0437e304607",
+    "legacy-6da3dcb293ce3f71c2a9f24d": "legacy-c5488e650ae06044409504b2",
+    "legacy-a04ee71b8792c45571d7a54f": "legacy-b039598e91864e1634794b51"
+  }
+}

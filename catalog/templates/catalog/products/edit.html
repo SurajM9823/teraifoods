@@ -1,0 +1,30 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Edit product{% endblock %}{% block breadcrumb %}Products{% endblock %}
+{% block category_content %}
+<h1>{% if product.pk %}{{ product.name }}{% else %}Add product{% endif %}</h1>
+<form method="post" class="category-form">{% csrf_token %}{{ form.as_p }}<p>For You automatically includes every active, published product.</p><button class="category-primary">Save product</button> <a href="{% url 'products:index' %}">Back to products</a></form>
+{{ subcategories|json_script:'product-subcategories' }}
+<script>
+(() => {
+const category=document.getElementById('id_category'), sub=document.getElementById('id_subcategory');
+const options=JSON.parse(document.getElementById('product-subcategories').textContent);
+category.addEventListener('change',()=>{sub.replaceChildren(new Option('---------',''));for(const item of options.filter(v=>String(v.category_id)===category.value))sub.add(new Option(item.name,item.id));});
+const featured=document.getElementById('id_featured'), sale=document.getElementById('id_sale_price');
+const validate=()=>{sale.required=featured.checked;};featured.addEventListener('change',validate);validate();
+})();
+</script>
+{% if product.pk %}
+<h2>Images (one main, up to four additional)</h2>
+<div style="display:flex;gap:20px;flex-wrap:wrap">{% for image in product.images.all %}<div>
+<img src="{{ image.url }}" alt="{{ image.alt }}" width="120" height="120" style="object-fit:contain">
+<p>#{{ image.pk }} · Position {{ image.position }}{% if image.is_main %} · Main image{% endif %}</p>
+<form method="post" action="{% url 'products:images' product.pk %}">{% csrf_token %}<input type="hidden" name="image_id" value="{{ image.pk }}"><button name="action" value="main">Make main</button>
+<select name="replacement_id" aria-label="Replacement main image"><option value="">Replacement main</option>{% for other in product.images.all %}{% if other.pk != image.pk %}<option value="{{ other.pk }}">Image #{{ other.pk }}</option>{% endif %}{% endfor %}</select><button name="action" value="delete">Delete</button></form></div>{% endfor %}</div>
+<form method="post" enctype="multipart/form-data" action="{% url 'products:images' product.pk %}">{% csrf_token %}<input type="hidden" name="action" value="upload"><input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/avif" required aria-label="Upload product image"><label><input type="checkbox" name="main">Use as main image</label><button>Upload image</button></form>
+<form method="post" action="{% url 'products:images' product.pk %}">{% csrf_token %}<input type="hidden" name="action" value="reorder"><label>Image IDs in display order <input name="order" value="{% for image in product.images.all %}{{ image.pk }}{% if not forloop.last %},{% endif %}{% endfor %}" required></label><button>Save image order</button></form>
+<h2>Inventory</h2><p>Available stock: {% if product.stock_confirmed %}{{ product.stock }}{% else %}Unknown — enter confirmed initial stock{% endif %}. Low-stock threshold: {{ product.low_stock_threshold }}.</p>
+<form method="post" action="{% url 'products:stock' product.pk %}">{% csrf_token %}{{ stock_form.as_p }}<button class="category-primary">Record adjustment</button></form>
+<h2>Stock history</h2><table class="category-table"><thead><tr><th>Time</th><th>Previous</th><th>Change</th><th>New</th><th>Type / reference</th><th>Reason</th><th>Actor</th></tr></thead><tbody>{% for audit in history %}<tr><td>{{ audit.created_at }}</td><td>{{ audit.previous_quantity }}</td><td>{{ audit.adjustment }}</td><td>{{ audit.new_quantity }}</td><td>{{ audit.adjustment_type }} {{ audit.reference }}</td><td>{{ audit.reason }}</td><td>{{ audit.actor|default:'System' }}</td></tr>{% empty %}<tr><td colspan="7">No stock has been confirmed.</td></tr>{% endfor %}</tbody></table>
+<nav aria-label="Stock history pages">{% if history.has_previous %}<a href="?history_page={{ history.previous_page_number }}">Newer adjustments</a>{% endif %} Page {{ history.number }} of {{ history.paginator.num_pages }} {% if history.has_next %}<a href="?history_page={{ history.next_page_number }}">Older adjustments</a>{% endif %}</nav>
+{% endif %}
+{% endblock %}

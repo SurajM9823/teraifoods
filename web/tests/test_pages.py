@@ -54,7 +54,8 @@ class PageTests(TestCase):
         self.assertRedirects(self.client.get("/index.html"), "/", status_code=301)
 
     def test_legacy_urls_redirect_and_preserve_queries(self):
-        for page in list_pages():
+        # Search and Shop share the approved template; its old URL is canonical Shop.
+        for page in {page.legacy_path:page for page in list_pages()}.values():
             with self.subTest(page=page.key):
                 response = self.client.get('/' + page.legacy_path + '?q=rice&page=2')
                 self.assertRedirects(response, '/' + page.path + '?q=rice&page=2', status_code=301,

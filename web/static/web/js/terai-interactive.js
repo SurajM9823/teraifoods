@@ -8,6 +8,12 @@
 (function () {
   'use strict';
 
+  function escapeHTML(value) {
+    const node = document.createElement('span');
+    node.textContent = String(value ?? '');
+    return node.innerHTML.replaceAll(String.fromCharCode(34), '&quot;').replaceAll(String.fromCharCode(39), '&#39;');
+  }
+
   // --- Constants & Storage Keys ---
   const STORAGE_CART = 'teraifood_cart';
   const STORAGE_WISHLIST = 'teraifood_wishlist';
@@ -30,71 +36,12 @@
     updateCartUI();
   }
 
-  // --- Default Wishlist Dataset (Matches Initial 4-Count Badge) ---
-  const DEFAULT_WISHLIST = [
-    {
-      id: '756',
-      title: "Thomas' Everything Bagels - 20oz_6ct",
-      price: 2.50,
-      oldPrice: 4.50,
-      image: "/static/web/images/1-27-500x500.jpg",
-      unit: "20oz / 6ct",
-      stock: "In Stock"
-    },
-    {
-      id: '754',
-      title: "Take And Bake Baguettes - 14oz_2ct",
-      price: 1.75,
-      oldPrice: 2.75,
-      image: "/static/web/images/1-25-500x500.jpg",
-      unit: "14oz / 2ct",
-      stock: "In Stock"
-    },
-    {
-      id: '752',
-      title: "Wild Forest Raw Organic Honey - 500g",
-      price: 7.99,
-      oldPrice: 9.50,
-      image: "/static/web/images/1-16-500x500.jpg",
-      unit: "500g",
-      stock: "In Stock"
-    },
-    {
-      id: '750',
-      title: "Himalayan Pink Rock Salt (Fine) - 1kg",
-      price: 3.25,
-      oldPrice: 4.20,
-      image: "/static/web/images/1-28-500x500.jpg",
-      unit: "1kg",
-      stock: "In Stock"
-    }
-  ];
-
+  // Wishlists contain only products explicitly selected by this customer.
   function getWishlist() {
     try {
-      const data = localStorage.getItem(STORAGE_WISHLIST);
-      if (data === null) {
-        localStorage.setItem(STORAGE_WISHLIST, JSON.stringify(DEFAULT_WISHLIST));
-        return DEFAULT_WISHLIST;
-      }
-      const parsed = JSON.parse(data);
-      if (!Array.isArray(parsed)) return [];
-      
-      return parsed.map((item, idx) => {
-        if (typeof item === 'object' && item !== null) return item;
-        const defaultMatch = DEFAULT_WISHLIST.find(d => String(d.id) === String(item));
-        return defaultMatch || {
-          id: String(item),
-          title: `Organic Grocery Special #${idx + 1}`,
-          price: 4.99,
-          oldPrice: 6.50,
-          image: "/static/web/images/1-16-500x500.jpg",
-          stock: "In Stock"
-        };
-      });
-    } catch (e) {
-      return [];
-    }
+      const data = JSON.parse(localStorage.getItem(STORAGE_WISHLIST) || '[]');
+      return Array.isArray(data) ? data.filter(item => item && typeof item === 'object' && item.id) : [];
+    } catch { return []; }
   }
 
   function saveWishlist(list) {
@@ -287,6 +234,11 @@
   }
 
   function addToCart(item, qty = 1) {
+    if (!item || !Number.isInteger(qty) || qty < 1) return;
+    if (item.element?.dataset.catalogProduct && item.element.dataset.available !== 'true') {
+      showToast('Unavailable', 'Stock must be confirmed before this item can be purchased.', 'warning');
+      return;
+    }
     const cart = getCart();
     const existing = cart.find(i => String(i.id) === String(item.id));
 
@@ -298,12 +250,13 @@
         title: item.title,
         price: item.price,
         image: item.image,
-        quantity: qty
+        quantity: qty,
+        catalogVersion: 2
       });
     }
 
     saveCart(cart);
-    showToast('Added to Basket!', `✓ ${item.title} (${qty}x) added to your order.`, 'success');
+    showToast('Added to Basket!', `✓ ${escapeHTML(item.title)} (${qty}x) added to your order.`, 'success');
     highlightHeaderCart(item, qty);
   }
 
@@ -326,7 +279,7 @@
     cart = cart.filter(i => String(i.id) !== String(id));
     saveCart(cart);
     if (item) {
-      showToast('Item Removed', `${item.title} removed from basket.`, 'info');
+      showToast('Item Removed', `${escapeHTML(item.title)} removed from basket.`, 'info');
     }
   }
 
@@ -486,12 +439,12 @@
     cardsHtml += list.map(item => `
       <div class="wishlist-card-item" data-id="${item.id}">
         <div class="wishlist-card-img-wrap">
-          <img src="${item.image || '/static/web/images/1-16-500x500.jpg'}" alt="${item.title}" class="wishlist-card-img">
+          <img src="${escapeHTML(item.image || '/static/web/images/1-16-500x500.jpg')}" alt="${escapeHTML(item.title)}" class="wishlist-card-img">
         </div>
         <div class="wishlist-card-info">
           <div class="wishlist-card-top-row">
             <h5 class="wishlist-card-title">
-              <a href="/product-detail/" title="${item.title}">${item.title}</a>
+              <a href="/product-detail/" title="${escapeHTML(item.title)}">${escapeHTML(item.title)}</a>
             </h5>
             <button type="button" class="wishlist-btn-remove" data-id="${item.id}" title="Remove from wishlist">
               <i class="klb-icon-x"></i>
@@ -1141,6 +1094,9 @@
     // Step 3: Form submit -> Order Confirmed in Step 4
     sideCartDrawer.querySelector('#form-drawer-payment')?.addEventListener('submit', (e) => {
       e.preventDefault();
+      showToast('Payment unavailable', 'Online payment is not configured. No payment has been taken.', 'warning');
+      return;
+      e.preventDefault();
       const cart = getCart();
       const activeItems = cart.filter(i => !unselectedItemIds.has(String(i.id)));
       const subtotal = calculateDrawerSubtotal();
@@ -1175,9 +1131,9 @@
           <tr>
             <td>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <img src="${item.image || '/static/web/images/1-16-500x500.jpg'}" alt="${item.title}" style="width: 32px; height: 32px; object-fit: cover; border: 1px solid #e2e8f0;">
+                <img src="${escapeHTML(item.image || '/static/web/images/1-16-500x500.jpg')}" alt="${escapeHTML(item.title)}" style="width: 32px; height: 32px; object-fit: cover; border: 1px solid #e2e8f0;">
                 <div>
-                  <strong style="color: #0f172a; font-size: 11.5px;">${item.title}</strong>
+                  <strong style="color: #0f172a; font-size: 11.5px;">${escapeHTML(item.title)}</strong>
                   <div style="font-size: 10px; color: #64748b;">Qty: ${item.quantity} &times; £${Number(item.price).toFixed(2)}</div>
                 </div>
               </div>
@@ -1412,10 +1368,10 @@
             <span class="cart-checkbox-box"></span>
           </label>
           <div class="cart-drawer-thumb-box">
-            <img src="${item.image || '/static/web/images/1-16-500x500.jpg'}" alt="${item.title}">
+            <img src="${escapeHTML(item.image || '/static/web/images/1-16-500x500.jpg')}" alt="${escapeHTML(item.title)}">
           </div>
           <div class="cart-drawer-item-info">
-            <h5 class="cart-drawer-item-title" title="${item.title}">${item.title}</h5>
+            <h5 class="cart-drawer-item-title" title="${escapeHTML(item.title)}">${escapeHTML(item.title)}</h5>
             <span class="cart-drawer-item-badge">FRESH &bull; IN STOCK</span>
             <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
               £${Number(item.price).toFixed(2)} each
@@ -1500,9 +1456,9 @@
     pkgContainer.innerHTML = activeItems.map(item => `
       <div class="checkout-pkg-item-row" data-id="${item.id}">
         <div class="checkout-pkg-item-left">
-          <img src="${item.image || '/static/web/images/1-16-500x500.jpg'}" alt="${item.title}" class="checkout-pkg-thumb">
+          <img src="${escapeHTML(item.image || '/static/web/images/1-16-500x500.jpg')}" alt="${escapeHTML(item.title)}" class="checkout-pkg-thumb">
           <div>
-            <h5 class="checkout-pkg-title" title="${item.title}">${item.title}</h5>
+            <h5 class="checkout-pkg-title" title="${escapeHTML(item.title)}">${escapeHTML(item.title)}</h5>
             <p class="checkout-pkg-desc">Fresh Farm Harvest, Standard Pack</p>
           </div>
         </div>
@@ -1525,7 +1481,11 @@
     });
   }
 
-  function goToDrawerStep(step) {
+  async function goToDrawerStep(step) {
+    if (step === 2 || step === 3) {
+      const selected = getCart().filter(item => !unselectedItemIds.has(String(item.id)));
+      if (!window.TeraiCatalog?.validateCart || !await window.TeraiCatalog.validateCart(selected)) return;
+    }
     currentDrawerStep = step;
     if (!sideCartDrawer) initSideCartDrawer();
 
@@ -1685,6 +1645,7 @@
 
   // --- Live Search System ---
   function setupLiveSearch() {
+    if (document.querySelector('script[src*="catalog-storefront"]')) return;
     const searchInputs = document.querySelectorAll('.search-input');
 
     searchInputs.forEach(input => {
@@ -1722,9 +1683,9 @@
             </div>
             ${matches.map(p => `
               <div class="terai-search-item" data-id="${p.id}">
-                <img src="${p.image}" alt="${p.title}" class="terai-search-thumb">
+                <img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}" class="terai-search-thumb">
                 <div class="terai-search-info">
-                  <div class="terai-search-name">${p.title}</div>
+                  <div class="terai-search-name">${escapeHTML(p.title)}</div>
                   <div class="terai-search-price">£${p.price.toFixed(2)}</div>
                 </div>
                 <button type="button" class="terai-search-btn" data-id="${p.id}">
@@ -1770,10 +1731,25 @@
       // Intercept submit
       if (parentForm) {
         parentForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const query = input.value.trim().toLowerCase();
+          const query = input.value.trim();
           resultsDropdown.classList.remove('active');
-          filterProductsByQuery(query);
+          const isShopOrSearchPage = window.location.pathname.includes('/shop') || window.location.pathname.includes('/search');
+          if (isShopOrSearchPage) {
+            e.preventDefault();
+            filterProductsByQuery(query.toLowerCase());
+            const url = new URL(window.location.href);
+            if (query) {
+              url.searchParams.set('s', query);
+            } else {
+              url.searchParams.delete('s');
+            }
+            window.history.replaceState({}, '', url.toString());
+          } else {
+            // If on another page, redirect to shop with ?s= query param
+            e.preventDefault();
+            const shopUrl = parentForm.getAttribute('action') || '/shop/';
+            window.location.href = shopUrl + (shopUrl.includes('?') ? '&' : '?') + 's=' + encodeURIComponent(query);
+          }
         });
       }
     });
@@ -1803,6 +1779,7 @@
 
   // --- Category Filtering ---
   function setupCategoryFiltering() {
+    if (document.querySelector('[data-catalog-product]')) return;
     const categoryLinks = document.querySelectorAll('.site-categories a, .categories-menu a, .category-box a, .site-category-box a');
 
     categoryLinks.forEach(link => {
@@ -1877,6 +1854,9 @@
 
   // --- Product Card Click Handlers (Add to Cart & Quickview) ---
   function setupProductCardClicks() {
+    window.TeraiCatalog = {refresh:indexProducts, addToCart, getProductById, openQuickview, showToast,
+      getCart, saveCart, addDetail:window.TeraiCatalog?.addDetail};
+    document.addEventListener('catalog:updated', indexProducts);
     // 1. Add to cart buttons
     document.querySelectorAll('.button.ajax_add_to_cart, .button.add_to_cart_button, a[href*="add-to-cart"]').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -1887,7 +1867,7 @@
         const id = btn.getAttribute('data-product_id') ||
                    productNode?.className.match(/post-(\d+)/)?.[1];
 
-        const product = getProductById(id) || catalog[0];
+        const product = getProductById(id);
         if (!product) return;
 
         const qtyInput = productNode?.querySelector('input.qty');
@@ -1917,7 +1897,7 @@
                    productNode?.querySelector('[data-product_id]')?.getAttribute('data-product_id') ||
                    productNode?.className.match(/post-(\d+)/)?.[1];
 
-        const product = getProductById(id) || catalog[0];
+        const product = getProductById(id);
         if (product) {
           openQuickview(product);
         }
@@ -1928,7 +1908,7 @@
     document.querySelectorAll('.product .product-thumbnail a, .product .product-title a, .shop-product-card .product-thumbnail a, .shop-product-card .product-title a, a[href*="product-detail"], a[href*="/product/"]').forEach(el => {
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        window.location.href = '/product-detail/';
+        window.location.href = el.href || '/product-detail/';
       });
     });
 
@@ -1939,7 +1919,7 @@
         if (e.target.closest('.btn-cart-pill, .ajax_add_to_cart, .add_to_cart_button, .quickview-button, .eye-link, .action-icons, .klbwl-btn, .quantity, .thumbnail-buttons')) {
           return;
         }
-        window.location.href = '/product-detail/';
+        window.location.href = card.dataset.productUrl || '/product-detail/';
       });
     });
 
@@ -3309,6 +3289,19 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     setupGlobalClickFeedback();
     updateCartUI();
     updateWishlistUI();
+
+    // Check URL for search parameter 's' or 'q' if on shop or search page
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchQuery = urlParams.get('s') || urlParams.get('q');
+      if (searchQuery) {
+        const searchInputs = document.querySelectorAll('.search-input');
+        searchInputs.forEach(input => { input.value = searchQuery; });
+        setTimeout(() => {
+          filterProductsByQuery(searchQuery.toLowerCase());
+        }, 100);
+      }
+    } catch(e) {}
   }
 
   if (document.readyState === 'loading') {

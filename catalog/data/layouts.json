@@ -1,0 +1,51 @@
+{
+  "index_0": {
+    "section": "new_arrival",
+    "limit": 8,
+    "listing": false,
+    "related": false,
+    "template": "catalog/storefront/card_index_0_0.html"
+  },
+  "index_1": {
+    "section": "featured",
+    "limit": 6,
+    "listing": false,
+    "related": false,
+    "template": "catalog/storefront/card_index_1_0.html"
+  },
+  "index_2": {
+    "section": "best_seller",
+    "limit": 18,
+    "listing": false,
+    "related": false,
+    "template": "catalog/storefront/card_index_2_0.html"
+  },
+  "index_3": {
+    "section": "for_you",
+    "limit": 24,
+    "listing": false,
+    "related": false,
+    "template": "catalog/storefront/card_index_3_0.html"
+  },
+  "product_detail_0": {
+    "section": "",
+    "limit": 4,
+    "listing": false,
+    "related": true,
+    "template": "catalog/storefront/card_product_detail_0_0.html"
+  },
+  "product_0": {
+    "section": "",
+    "limit": 4,
+    "listing": false,
+    "related": true,
+    "template": "catalog/storefront/card_product_0_0.html"
+  },
+  "shop_0": {
+    "section": "",
+    "limit": 16,
+    "listing": true,
+    "related": false,
+    "template": "catalog/storefront/card_shop_0_0.html"
+  }
+}

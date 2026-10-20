@@ -95,14 +95,14 @@ def delete(request, kind, pk):
     model = Category if kind == 'category' else Subcategory
     permitted(request, 'delete', model)
     item = get_object_or_404(model, pk=pk)
-    blocked = kind == 'category' and item.subcategories.exists()
+    blocked = item.products.exists() or (kind == 'category' and item.subcategories.exists())
     if request.method == 'POST':
         try:
             with transaction.atomic():
                 item.delete()
         except ProtectedError:
             blocked = True
-            messages.error(request, 'Move or delete the subcategories first, or deactivate this category instead.')
+            messages.error(request, 'Reassign products and subcategories first, or deactivate this category instead.')
         else:
             messages.success(request, f'{kind.capitalize()} deleted.')
             return redirect('catalog:index')

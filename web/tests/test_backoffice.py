@@ -137,6 +137,10 @@ class BackofficeTests(TestCase):
         for url_name, title in pages:
             with self.subTest(page=title):
                 response = self.client.get(reverse(url_name))
+                if url_name == 'backoffice:products':
+                    # Product management now requires explicit catalog permissions.
+                    self.assertEqual(response.status_code, 403)
+                    continue
                 self.assertEqual(response.status_code, 200)
                 content = response.content.decode("utf-8")
 

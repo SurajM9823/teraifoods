@@ -25,6 +25,7 @@ PAGES = {
     'payment': Page('payment', 'payment/', 'web/payment.html'),
     'product-detail': Page('product-detail', 'product-detail/', 'web/product-detail.html'),
     'product': Page('product', 'product/', 'web/product.html'),
+    'search': Page('search', 'search/', 'web/shop.html'),
     'shop': Page('shop', 'shop/', 'web/shop.html'),
     'track-order': Page('track-order', 'track-order/', 'web/track-order.html'),
     'blogs-high-protein-lentils-dhal-recipes': Page('blogs-high-protein-lentils-dhal-recipes', 'blogs/high-protein-lentils-dhal-recipes/', 'web/blogs/high-protein-lentils-dhal-recipes.html'),

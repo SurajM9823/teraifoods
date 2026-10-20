@@ -1,0 +1,66 @@
+{% load static %}
+<div id="menu-drawer" class="site-drawer site-menu-drawer get-mobile-nav-height">
+    <div class="site-drawer-inner position-relative d-flex flex-column site-scroll z-1">
+  
+		<div class="site-drawer-row site-drawer-header d-flex align-items-center justify-content-between">
+			<div class="site-brand">
+				<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+					<img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food – Fresh Grocery &amp; Organic Food Store" width="200" height="84">
+				</a>
+			</div><!-- site-brand -->
+			<div class="site-button close-button">
+			  <a href="#" aria-label="Close Menu"><i class="klb-icon-x"></i></a>
+			</div><!-- site-button -->    
+		</div><!-- site-drawer-header -->
+  
+		<div class="site-drawer-row site-drawer-body flex-fill pt-16">
+			<nav class="site-menu vertical drawer-primary">
+				<ul id="menu-menu-1" class="menu-item">
+					<li class="menu-item"><a href="{% url 'web:home' %}"><i class="klb-icon-store"></i><span>Home</span></a></li>
+					<li class="menu-item"><a href="{% url 'web:about' %}"><i class="klb-icon-info"></i><span>About Us</span></a></li>
+					<li class="menu-item"><a href="{% url 'web:blogs' %}"><i class="klb-icon-book-open"></i><span>Blogs</span></a></li>
+					<li class="menu-item"><a href="{% url 'web:contact' %}"><i class="klb-icon-phone-call"></i><span>Contact</span></a></li>
+					<li class="menu-item"><a href="{% url 'web:track-order' %}"><i class="klb-icon-truck"></i><span>Track Order</span></a></li>
+					<li class="menu-item menu-item-bulk-order"><a href="{% url 'web:bulk-order' %}" class="nav-bulk-order-cta"><span class="d-inline-flex align-items-center"><i class="klb-icon-box"></i><span>Bulk Order &raquo; Request Quote</span></span> <i class="klb-icon-move-right"></i></a></li>
+				</ul>    
+			</nav><!-- site-menu -->
+			
+			<h4 class="entry-subtitle text-11 fw-bold text-uppercase text-gray-400 lt-spacing-1 mt-24 mb-10 opacity-75">Help &amp; Support</h4>
+			<nav class="site-menu vertical drawer-secondary pb-24 border-bottom border-gray-200">
+				<ul id="menu-canvas-bottom" class="menu-item">
+					<li id="menu-item-3536" class="menu-item"><a rel="privacy-policy" href="#privacy">Privacy Policy</a></li>
+					<li id="menu-item-3537" class="menu-item"><a href="{% url 'web:track-order' %}">Order Tracking</a></li>
+					<li id="menu-item-3538" class="menu-item"><a href="{% url 'web:about' %}">About Us</a></li>
+					<li id="menu-item-3539" class="menu-item"><a href="{% url 'web:contact' %}">Contact</a></li>
+				</ul>				
+			</nav><!-- klb-menu-wrapper -->
+						
+			<h4 class="entry-subtitle text-11 fw-bold text-uppercase text-gray-400 lt-spacing-1 mt-24 mb-10 opacity-75">Contact Details</h4>
+			<div class="site-drawer-contact pb-16">
+				<ul>
+					<li>
+						<div class="contact-icon">
+							<i class="klb-icon-phone-call"></i>
+						</div><!-- contact-icon -->
+						<div class="contact-detail">
+							<div><a class="phone" href="tel:555-555-5555">555-555-5555</a></div>
+							<span>You can call anytime from 9 am to 6 pm.</span>
+						</div><!-- contact-detail -->
+					</li>
+					<li>
+						<div class="contact-icon">
+							<i class="klb-icon-send"></i>
+						</div><!-- contact-icon -->
+						<div class="contact-detail">
+							<div><a class="email" href="mailto:support@teraifoods.co.uk">support@teraifoods.co.uk</a></div>
+							<span>We will gladly assist you in the shortest time.</span>
+						</div><!-- contact-detail -->
+					</li>
+				</ul>
+			</div><!-- drawer-contact -->
+		</div><!-- site-drawer-body -->
+    </div><!-- site-drawer-inner -->
+  
+    <div class="site-drawer-overlay position-absolute strech"></div>
+</div><!-- site-menu-drawer -->
+

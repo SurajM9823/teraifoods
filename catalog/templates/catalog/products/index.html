@@ -1,0 +1,17 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Products{% endblock %}{% block breadcrumb %}Products{% endblock %}
+{% block category_content %}
+<div class="category-heading"><div><h1>Products</h1><p>Manage prices, publication, images and stock.</p></div><a class="category-primary" href="{% url 'products:add' %}">Add product</a></div>
+<form method="get" class="category-toolbar">
+<input name="q" value="{{ query }}" placeholder="Search name or SKU" aria-label="Search products">
+<select name="status" aria-label="Status"><option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="low">Low stock</option></select>
+<select name="category" aria-label="Category"><option value="">All categories</option>{% for c in categories %}<option value="{{ c.pk }}">{{ c.name }}</option>{% endfor %}</select>
+<select name="sort" aria-label="Sort"><option value="name">Name</option><option value="stock">Stock</option><option value="regular_price">Price</option></select><button class="category-primary">Filter</button>
+</form>
+<form method="post">{% csrf_token %}
+<select name="action" aria-label="Bulk action"><option value="activate">Activate</option><option value="deactivate">Deactivate</option><option value="archive">Archive</option></select><button class="category-secondary">Apply to selected</button>
+<div style="overflow:auto"><table class="category-table"><thead><tr><th>Select</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Sections</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>{% for p in page %}<tr><td><input type="checkbox" name="products" value="{{ p.pk }}" aria-label="Select {{ p.name }}"></td><td>{% if p.image_url %}<img src="{{ p.image_url }}" alt="" width="48" height="48" style="object-fit:contain">{% endif %} {{ p.name }}</td><td>{{ p.category|default:'Unassigned' }}{% if p.subcategory %} / {{ p.subcategory }}{% endif %}</td><td>£{{ p.price }}{% if p.sale_price %} <del>£{{ p.regular_price }}</del> ({{ p.discount_percent }}%){% endif %}</td><td>{% if p.stock_confirmed %}{{ p.stock }}{% else %}Unknown{% endif %}</td><td>{% if p.new_arrival %}New Arrivals {% endif %}{% if p.featured %}Featured {% endif %}{% if p.best_seller %}Best Sellers {% endif %}{% if p.is_published and p.is_active %}For You{% endif %}</td><td>{% if p.is_archived %}Archived{% elif not p.is_published %}Draft{% elif p.is_active %}Active{% else %}Inactive{% endif %}</td><td><a href="{% url 'products:edit' p.pk %}">Edit / inventory</a></td></tr>{% empty %}<tr><td colspan="8">No products found.</td></tr>{% endfor %}</tbody></table></div>
+</form>
+<nav aria-label="Pages">{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&q={{ query|urlencode }}">Previous</a>{% endif %} Page {{ page.number }} of {{ page.paginator.num_pages }} {% if page.has_next %}<a href="?page={{ page.next_page_number }}&q={{ query|urlencode }}">Next</a>{% endif %}</nav>
+{% endblock %}
