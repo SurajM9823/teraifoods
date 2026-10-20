@@ -851,17 +851,42 @@
   line-height: 15px;
 }
 
-/* 4-Column Merchandising Toggle Cards */
+/* Single Unified Form Box & Clean Section Dividers */
+.product-form-box {
+  background: #ffffff;
+  border: 1px solid #bbbbbb;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.form-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #1547A8;
+  padding-bottom: 4px;
+  margin: 12px 0 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.form-section-divider:first-child {
+  margin-top: 0;
+}
+
+/* 4-Column Merchandising Toggle Cards - Compact & Clean */
 .toggle-card {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 6px 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 8px;
   background: #f8fafc;
   border: 1px solid #cbd5e1;
   cursor: pointer;
   transition: all 0.14s ease;
-  min-height: 58px;
+  height: 28px;
   box-sizing: border-box;
 }
 .toggle-card:hover {
@@ -871,12 +896,16 @@
 .toggle-card.is-checked {
   background: #eff6ff;
   border-color: #1547A8;
+  color: #1547A8;
 }
-.toggle-card-header {
+.toggle-card-label {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: inherit;
+  line-height: 1;
 }
 .toggle-card-icon {
   font-size: 11px;
@@ -895,47 +924,6 @@
   cursor: pointer !important;
   margin: 0 !important;
   accent-color: #1547A8 !important;
-}
-.toggle-card-title {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #0f172a;
-  line-height: 1.2;
-}
-.toggle-card-desc {
-  font-size: 9px;
-  color: #64748b;
-  line-height: 1.2;
-}
-.compact-toggle {
-  min-height: 48px;
-}
-
-/* Callout Info Box */
-.info-callout-box {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 10px;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  font-size: 10px;
-  color: #475569;
-  line-height: 1.35;
-}
-.callout-icon {
-  color: #1547A8;
-  font-size: 12px;
-  margin-top: 1px;
-  flex-shrink: 0;
-}
-.callout-text strong {
-  display: block;
-  color: #0f172a;
-  margin-bottom: 1px;
-}
-.callout-text p {
-  margin: 0;
 }
 
 /* Static Metric Display Box */

@@ -3,8 +3,7 @@ from .models import Product, Subcategory
 
 
 class ProductForm(forms.ModelForm):
-    initial_stock = forms.IntegerField(min_value=0, required=False,
-        help_text='Leave blank if stock has not been counted. Zero confirms no stock.')
+    initial_stock = forms.IntegerField(min_value=0, required=False)
     low_stock_threshold = forms.IntegerField(min_value=0, required=False, initial=5)
     class Meta:
         model = Product
@@ -12,10 +11,8 @@ class ProductForm(forms.ModelForm):
                   'weight', 'weight_unit',
                   'regular_price', 'sale_price', 'new_arrival', 'featured', 'best_seller',
                   'low_stock_threshold', 'is_active', 'is_published', 'is_archived']
-        widgets = {'description':forms.Textarea(attrs={'rows':4})}
+        widgets = {'description':forms.Textarea(attrs={'rows':3})}
         labels = {'new_arrival':'New Arrivals', 'featured':'Featured Products', 'best_seller':'Best Sellers'}
-        help_texts = {'is_published':'Upload a main image before publishing.',
-                      'sale_price':'Required for Featured Products; must be below the regular price.'}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,15 +21,8 @@ class ProductForm(forms.ModelForm):
         if self.instance.pk:
             self.fields.pop('initial_stock')
         placeholders = {
-            'name': 'e.g. Organic Basmati Rice 1kg',
-            'slug': 'e.g. organic-basmati-rice-1kg',
-            'sku': 'e.g. TF-GR-001',
             'regular_price': '0.00',
             'sale_price': '0.00',
-            'weight': '150',
-            'initial_stock': 'e.g. 50',
-            'low_stock_threshold': '5',
-            'description': 'Enter detailed product ingredients, provenance, and storage instructions...',
         }
         for field_name, ph in placeholders.items():
             if field_name in self.fields:

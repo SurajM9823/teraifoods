@@ -7,40 +7,29 @@
   <!-- Top Header Toolbar -->
   <div class="product-header-toolbar">
     <div>
-      <div class="product-badge-strip">
-        {% if product.pk %}
+      <h1 class="product-page-title">
+        {% if product.pk %}{{ product.name }}{% else %}Add Product{% endif %}
+      </h1>
+      {% if product.pk %}
+        <div class="product-badge-strip" style="margin-top: 4px; margin-bottom: 0;">
           <span class="product-id-pill">ID #{{ product.pk }}</span>
           {% if product.is_published %}
-            <span class="status-chip chip-live"><i class="fa fa-globe"></i> Published</span>
+            <span class="status-chip chip-live">Published</span>
           {% else %}
-            <span class="status-chip chip-draft"><i class="fa fa-pencil"></i> Draft</span>
+            <span class="status-chip chip-draft">Draft</span>
           {% endif %}
           {% if product.is_archived %}
-            <span class="status-chip chip-archived"><i class="fa fa-archive"></i> Archived</span>
+            <span class="status-chip chip-archived">Archived</span>
           {% endif %}
           {% if product.stock_confirmed %}
             {% if product.stock <= product.low_stock_threshold %}
-              <span class="product-stock-pill pill-low-stock"><i class="fa fa-exclamation-triangle"></i> Low Stock: {{ product.stock }}</span>
+              <span class="product-stock-pill pill-low-stock">Stock: {{ product.stock }} (Low)</span>
             {% else %}
-              <span class="product-stock-pill pill-in-stock"><i class="fa fa-check-circle"></i> Stock: {{ product.stock }}</span>
+              <span class="product-stock-pill pill-in-stock">Stock: {{ product.stock }}</span>
             {% endif %}
-          {% else %}
-            <span class="product-stock-pill pill-uncounted"><i class="fa fa-question-circle"></i> Stock Uncounted</span>
           {% endif %}
-        {% else %}
-          <span class="status-chip chip-new"><i class="fa fa-plus-circle"></i> New Product Draft</span>
-        {% endif %}
-      </div>
-      <h1 class="product-page-title">
-        {% if product.pk %}{{ product.name }}{% else %}Add New Product{% endif %}
-      </h1>
-      <p class="product-page-sub">
-        {% if product.pk %}
-          SKU: <strong>{{ product.sku|default:"None" }}</strong> · Slug: <span style="font-family: monospace;">{{ product.slug }}</span>
-        {% else %}
-          Fill in product details, pricing, and merchandising controls.
-        {% endif %}
-      </p>
+        </div>
+      {% endif %}
     </div>
     <div class="product-header-actions">
       <a href="{% url 'products:index' %}" class="btn-action btn-outline">
@@ -60,22 +49,18 @@
     </div>
   {% endif %}
 
-  <!-- Main Product Form -->
+  <!-- Main Product Form in a Single Box -->
   <form method="post" id="product-main-form" class="product-form" novalidate>
     {% csrf_token %}
 
-    <!-- Card 1: Identification & Taxonomy (4 Columns) -->
-    <div class="product-card">
-      <div class="product-card-header">
-        <span class="card-icon"><i class="fa fa-barcode"></i></span>
-        <div class="card-title-group">
-          <h2 class="card-title">1. Identification & Taxonomy</h2>
-          <span class="card-hint">Core product identifiers, categorization, and URL configuration</span>
-        </div>
+    <div class="product-form-box">
+      <!-- Section 1: Identification & Taxonomy -->
+      <div class="form-section-divider">
+        <i class="fa fa-barcode"></i> Identification & Taxonomy
       </div>
 
       <div class="grid-4-cols">
-        <!-- Row 1: Name (col-span-2), Slug (col-span-1), SKU (col-span-1) -->
+        <!-- Row 1: Name (span 2), Slug (span 1), SKU (span 1) -->
         <div class="form-col col-span-2 {% if form.name.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.name.id_for_label }}">
             <span>Product Name <span class="req">*</span></span>
@@ -87,9 +72,9 @@
         <div class="form-col col-span-1 {% if form.slug.errors %}has-error{% endif %}">
           <div class="label-with-tool">
             <label class="form-label" for="{{ form.slug.id_for_label }}">
-              <span>URL Slug <span class="req">*</span></span>
+              <span>Slug <span class="req">*</span></span>
             </label>
-            <button type="button" id="btn-toggle-slug-lock" class="btn-slug-toggle" title="Unlock/Lock auto-generation from name">
+            <button type="button" id="btn-toggle-slug-lock" class="btn-slug-toggle" title="Unlock/Lock auto-generation">
               <i class="fa fa-link" id="icon-slug-lock"></i> Auto
             </button>
           </div>
@@ -100,7 +85,7 @@
         <div class="form-col col-span-1 {% if form.sku.errors %}has-error{% endif %}">
           <div class="label-with-tool">
             <label class="form-label" for="{{ form.sku.id_for_label }}">
-              <span>SKU Code</span>
+              <span>SKU</span>
             </label>
             <button type="button" id="btn-generate-sku" class="btn-gen-sku" title="Generate SKU">
               <i class="fa fa-random"></i> Generate
@@ -110,10 +95,10 @@
           {% if form.sku.errors %}<div class="field-error">{{ form.sku.errors }}</div>{% endif %}
         </div>
 
-        <!-- Row 2: Category (col-span-1), Subcategory (col-span-1), Weight (col-span-1), Weight Unit (col-span-1) -->
+        <!-- Row 2: Category (span 1), Subcategory (span 1), Weight (span 1), Weight Unit (span 1) -->
         <div class="form-col col-span-1 {% if form.category.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.category.id_for_label }}">
-            <span>Primary Category <span class="req">*</span></span>
+            <span>Category <span class="req">*</span></span>
           </label>
           {{ form.category }}
           {% if form.category.errors %}<div class="field-error">{{ form.category.errors }}</div>{% endif %}
@@ -129,7 +114,7 @@
 
         <div class="form-col col-span-1 {% if form.weight.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.weight.id_for_label }}">
-            <span>Unit Weight / Measure</span>
+            <span>Weight</span>
           </label>
           {{ form.weight }}
           {% if form.weight.errors %}<div class="field-error">{{ form.weight.errors }}</div>{% endif %}
@@ -137,26 +122,20 @@
 
         <div class="form-col col-span-1 {% if form.weight_unit.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.weight_unit.id_for_label }}">
-            <span>Weight Unit</span>
+            <span>Unit</span>
           </label>
           {{ form.weight_unit }}
           {% if form.weight_unit.errors %}<div class="field-error">{{ form.weight_unit.errors }}</div>{% endif %}
         </div>
       </div>
-    </div>
 
-    <!-- Card 2: Pricing & Inventory Control (4 Columns) -->
-    <div class="product-card">
-      <div class="product-card-header">
-        <span class="card-icon"><i class="fa fa-money"></i></span>
-        <div class="card-title-group">
-          <h2 class="card-title">2. Pricing & Inventory Controls</h2>
-          <span class="card-hint">Retail pricing, promotional discount calculations, and stock threshold alerts</span>
-        </div>
+      <!-- Section 2: Pricing & Stock -->
+      <div class="form-section-divider">
+        <i class="fa fa-money"></i> Pricing & Stock
       </div>
 
       <div class="grid-4-cols">
-        <!-- Col 1: Regular Price -->
+        <!-- Row 3: Regular Price, Sale Price, Initial Stock/Metric, Low Stock Threshold -->
         <div class="form-col col-span-1 {% if form.regular_price.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.regular_price.id_for_label }}">
             <span>Regular Price <span class="req">*</span></span>
@@ -168,7 +147,6 @@
           {% if form.regular_price.errors %}<div class="field-error">{{ form.regular_price.errors }}</div>{% endif %}
         </div>
 
-        <!-- Col 2: Sale Price with Discount Badge -->
         <div class="form-col col-span-1 {% if form.sale_price.errors %}has-error{% endif %}">
           <div class="label-with-tool">
             <label class="form-label" for="{{ form.sale_price.id_for_label }}">
@@ -180,18 +158,15 @@
             <span class="curr-symbol">£</span>
             {{ form.sale_price }}
           </div>
-          <span class="field-desc">Required if product is featured</span>
           {% if form.sale_price.errors %}<div class="field-error">{{ form.sale_price.errors }}</div>{% endif %}
         </div>
 
-        <!-- Col 3: Initial Stock (Add mode) OR Stock Status Metric (Edit mode) -->
         {% if not product.pk %}
           <div class="form-col col-span-1 {% if form.initial_stock.errors %}has-error{% endif %}">
             <label class="form-label" for="{{ form.initial_stock.id_for_label }}">
-              <span>Initial Stock Count</span>
+              <span>Initial Stock</span>
             </label>
             {{ form.initial_stock }}
-            <span class="field-desc">Blank = unconfirmed. 0 = out of stock.</span>
             {% if form.initial_stock.errors %}<div class="field-error">{{ form.initial_stock.errors }}</div>{% endif %}
           </div>
         {% else %}
@@ -201,118 +176,84 @@
             </label>
             <div class="static-metric-box">
               <span class="metric-val">{% if product.stock_confirmed %}{{ product.stock }}{% else %}—{% endif %}</span>
-              <span class="metric-sub">{% if product.stock_confirmed %}units on hand{% else %}uncounted{% endif %}</span>
+              <span class="metric-sub">{% if product.stock_confirmed %}units{% else %}uncounted{% endif %}</span>
             </div>
-            <span class="field-desc">Adjust via inventory ledger below</span>
           </div>
         {% endif %}
 
-        <!-- Col 4: Low Stock Threshold -->
         <div class="form-col col-span-1 {% if form.low_stock_threshold.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.low_stock_threshold.id_for_label }}">
-            <span>Low-Stock Alert Level</span>
+            <span>Low Stock Alert</span>
           </label>
           {{ form.low_stock_threshold }}
-          <span class="field-desc">Triggers dashboard warning (Default: 5)</span>
           {% if form.low_stock_threshold.errors %}<div class="field-error">{{ form.low_stock_threshold.errors }}</div>{% endif %}
         </div>
       </div>
-    </div>
 
-    <!-- Card 3: Merchandising & Visibility Flags (4 Columns) -->
-    <div class="product-card">
-      <div class="product-card-header">
-        <span class="card-icon"><i class="fa fa-sliders"></i></span>
-        <div class="card-title-group">
-          <h2 class="card-title">3. Merchandising & Visibility Flags</h2>
-          <span class="card-hint">Storefront placement badges, publishing status, and catalog discovery</span>
-        </div>
+      <!-- Section 3: Merchandising & Visibility -->
+      <div class="form-section-divider">
+        <i class="fa fa-sliders"></i> Merchandising & Visibility
       </div>
 
       <!-- Row 4: 4 Columns (Featured, New Arrival, Best Seller, Published) -->
       <div class="grid-4-cols" style="margin-bottom: 8px;">
-        <!-- Featured -->
         <label class="toggle-card {% if form.featured.value %}is-checked{% endif %}" id="card_id_featured">
-          <div class="toggle-card-header">
+          <span class="toggle-card-label">
             <span class="toggle-card-icon icon-amber"><i class="fa fa-star"></i></span>
-            {{ form.featured }}
-          </div>
-          <span class="toggle-card-title">Featured Product</span>
-          <span class="toggle-card-desc">Promote on homepage (requires sale price)</span>
+            Featured
+          </span>
+          {{ form.featured }}
         </label>
 
-        <!-- New Arrival -->
         <label class="toggle-card {% if form.new_arrival.value %}is-checked{% endif %}" id="card_id_new_arrival">
-          <div class="toggle-card-header">
+          <span class="toggle-card-label">
             <span class="toggle-card-icon icon-blue"><i class="fa fa-bolt"></i></span>
-            {{ form.new_arrival }}
-          </div>
-          <span class="toggle-card-title">New Arrival</span>
-          <span class="toggle-card-desc">Display in latest arrivals collection</span>
+            New Arrival
+          </span>
+          {{ form.new_arrival }}
         </label>
 
-        <!-- Best Seller -->
         <label class="toggle-card {% if form.best_seller.value %}is-checked{% endif %}" id="card_id_best_seller">
-          <div class="toggle-card-header">
+          <span class="toggle-card-label">
             <span class="toggle-card-icon icon-rose"><i class="fa fa-fire"></i></span>
-            {{ form.best_seller }}
-          </div>
-          <span class="toggle-card-title">Best Seller</span>
-          <span class="toggle-card-desc">Display in popular favorites section</span>
+            Best Seller
+          </span>
+          {{ form.best_seller }}
         </label>
 
-        <!-- Published -->
         <label class="toggle-card {% if form.is_published.value %}is-checked{% endif %}" id="card_id_is_published">
-          <div class="toggle-card-header">
+          <span class="toggle-card-label">
             <span class="toggle-card-icon icon-green"><i class="fa fa-globe"></i></span>
-            {{ form.is_published }}
-          </div>
-          <span class="toggle-card-title">Live & Published</span>
-          <span class="toggle-card-desc">Visible to public shoppers on storefront</span>
+            Published
+          </span>
+          {{ form.is_published }}
         </label>
       </div>
 
-      <!-- Row 5: 4 Columns (Active [1 col], Archived [1 col], Discovery Callout [2 cols]) -->
+      <!-- Row 5: 4 Columns (Active, Archived, empty 2 cols) -->
       <div class="grid-4-cols">
-        <!-- Active -->
-        <label class="toggle-card compact-toggle {% if form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
-          <div class="toggle-card-header">
+        <label class="toggle-card {% if form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
+          <span class="toggle-card-label">
             <span class="toggle-card-icon icon-blue"><i class="fa fa-check-square"></i></span>
-            {{ form.is_active }}
-          </div>
-          <span class="toggle-card-title">Active in Catalog</span>
-          <span class="toggle-card-desc">Allow add-to-cart & checkout</span>
+            Active
+          </span>
+          {{ form.is_active }}
         </label>
 
-        <!-- Archived -->
-        <label class="toggle-card compact-toggle {% if form.is_archived.value %}is-checked{% endif %}" id="card_id_is_archived">
-          <div class="toggle-card-header">
+        <label class="toggle-card {% if form.is_archived.value %}is-checked{% endif %}" id="card_id_is_archived">
+          <span class="toggle-card-label">
             <span class="toggle-card-icon icon-muted"><i class="fa fa-archive"></i></span>
-            {{ form.is_archived }}
-          </div>
-          <span class="toggle-card-title">Archived Product</span>
-          <span class="toggle-card-desc">Retired product line</span>
+            Archived
+          </span>
+          {{ form.is_archived }}
         </label>
 
-        <!-- Discovery Callout (Span 2) -->
-        <div class="info-callout-box col-span-2">
-          <span class="callout-icon"><i class="fa fa-info-circle"></i></span>
-          <div class="callout-text">
-            <strong>Storefront 'For You' Discovery</strong>
-            <p>Every active, published product with an image is automatically indexed in personalized recommendations and search results.</p>
-          </div>
-        </div>
+        <div class="col-span-2"></div>
       </div>
-    </div>
 
-    <!-- Card 4: Detailed Description (4 Columns) -->
-    <div class="product-card">
-      <div class="product-card-header">
-        <span class="card-icon"><i class="fa fa-align-left"></i></span>
-        <div class="card-title-group">
-          <h2 class="card-title">4. Description & Product Details</h2>
-          <span class="card-hint">Ingredients, origin provenance, cooking tips, and allergen disclosures</span>
-        </div>
+      <!-- Section 4: Description -->
+      <div class="form-section-divider">
+        <i class="fa fa-align-left"></i> Description
       </div>
 
       <div class="grid-4-cols">
@@ -326,7 +267,7 @@
     <!-- Bottom Action Bar -->
     <div class="product-bottom-bar">
       <div class="shortcut-tip">
-        <i class="fa fa-keyboard-o"></i> Press <kbd>Ctrl</kbd> + <kbd>S</kbd> to save changes at any time.
+        <i class="fa fa-keyboard-o"></i> <kbd>Ctrl</kbd> + <kbd>S</kbd> to save
       </div>
       <div class="bottom-bar-right">
         <a href="{% url 'products:index' %}" class="btn-action btn-outline">Cancel</a>
@@ -340,28 +281,23 @@
   {{ subcategories|json_script:'product-subcategories' }}
 
   {% if product.pk %}
-    <!-- Card 5: Media & Visual Assets (Edit Mode - 4 Columns) -->
-    <div class="product-card">
-      <div class="product-card-header">
-        <span class="card-icon"><i class="fa fa-picture-o"></i></span>
-        <div class="card-title-group">
-          <h2 class="card-title">5. Product Images (1 Main + up to 4 Gallery Images)</h2>
-          <span class="card-hint">High resolution product photography (1:1 aspect ratio recommended)</span>
-        </div>
+    <!-- Images Box (Edit Mode) -->
+    <div class="product-form-box">
+      <div class="form-section-divider" style="margin-top: 0;">
+        <i class="fa fa-picture-o"></i> Images
       </div>
 
-      <!-- 4-Column Image Tiles -->
       <div class="product-images-grid">
         {% for image in product.images.all %}
           <div class="image-tile {% if image.is_main %}is-main{% endif %}">
             {% if image.is_main %}
-              <span class="image-tile-badge"><i class="fa fa-star"></i> Main Image</span>
+              <span class="image-tile-badge"><i class="fa fa-star"></i> Main</span>
             {% endif %}
             <div class="image-thumb-wrap">
               <img src="{{ image.url }}" alt="{{ image.alt|default:product.name }}" loading="lazy">
             </div>
             <div class="image-tile-meta">
-              <span><strong>#{{ image.pk }}</strong> · Pos: {{ image.position }}</span>
+              <span><strong>#{{ image.pk }}</strong> · Pos {{ image.position }}</span>
             </div>
             <div class="image-tile-actions">
               <form method="post" action="{% url 'products:images' product.pk %}">
@@ -369,7 +305,7 @@
                 <input type="hidden" name="image_id" value="{{ image.pk }}">
                 {% if not image.is_main %}
                   <button type="submit" name="action" value="main" class="btn-image-action">
-                    <i class="fa fa-check"></i> Make Main
+                    <i class="fa fa-check"></i> Main
                   </button>
                 {% else %}
                   <select name="replacement_id" aria-label="Replacement main image" class="btn-image-action" style="padding: 1px 4px; font-size: 9.5px;">
@@ -388,9 +324,8 @@
             </div>
           </div>
         {% empty %}
-          <div class="col-span-4" style="padding: 20px; text-align: center; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1;">
-            <i class="fa fa-camera" style="font-size: 24px; color: #94a3b8; margin-bottom: 6px; display: block;"></i>
-            No product images uploaded yet. Upload a main image below to enable publishing.
+          <div class="col-span-4" style="padding: 14px; text-align: center; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; font-size: 11px;">
+            No images uploaded yet.
           </div>
         {% endfor %}
       </div>
@@ -402,35 +337,28 @@
           <input type="hidden" name="action" value="upload">
           <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/avif" required aria-label="Upload product image">
           <label style="font-size: 11px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
-            <input type="checkbox" name="main"> Set as main image
+            <input type="checkbox" name="main"> Main image
           </label>
           <button type="submit" class="btn-action btn-primary" style="padding: 3px 10px;">
-            <i class="fa fa-upload"></i> Upload Image
+            <i class="fa fa-upload"></i> Upload
           </button>
         </form>
 
         <form method="post" action="{% url 'products:images' product.pk %}" class="image-reorder-form">
           {% csrf_token %}
           <input type="hidden" name="action" value="reorder">
-          <input type="text" name="order" value="{% for image in product.images.all %}{{ image.pk }}{% if not forloop.last %},{% endif %}{% endfor %}" required placeholder="e.g. 1,2,3" style="width: 100px !important;">
-          <button type="submit" class="btn-action btn-outline" style="padding: 3px 8px;" title="Save image sequence order">
+          <input type="text" name="order" value="{% for image in product.images.all %}{{ image.pk }}{% if not forloop.last %},{% endif %}{% endfor %}" required placeholder="1,2,3" style="width: 80px !important;">
+          <button type="submit" class="btn-action btn-outline" style="padding: 3px 8px;">
             <i class="fa fa-sort-amount-asc"></i> Save Order
           </button>
         </form>
       </div>
     </div>
 
-    <!-- Card 6: Inventory Ledger & Adjustments (Edit Mode) -->
-    <div class="product-card">
-      <div class="product-card-header">
-        <span class="card-icon"><i class="fa fa-cubes"></i></span>
-        <div class="card-title-group">
-          <h2 class="card-title">6. Inventory Ledger & Stock Adjustment</h2>
-          <span class="card-hint">
-            Current Stock: <strong>{% if product.stock_confirmed %}{{ product.stock }} units{% else %}Unknown{% endif %}</strong> · 
-            Low-stock alert threshold: <strong>{{ product.low_stock_threshold }} units</strong>
-          </span>
-        </div>
+    <!-- Inventory Box (Edit Mode) -->
+    <div class="product-form-box">
+      <div class="form-section-divider" style="margin-top: 0;">
+        <i class="fa fa-cubes"></i> Inventory Adjustment & History
       </div>
 
       <!-- Stock Adjustment Quick Form -->
@@ -445,13 +373,13 @@
         </div>
         <div class="form-col">
           <label class="form-label" for="{{ stock_form.reason.id_for_label }}">
-            <span>Adjustment Reason / Reference</span>
+            <span>Reason / Reference</span>
           </label>
           {{ stock_form.reason }}
         </div>
         <div style="align-self: flex-end;">
           <button type="submit" class="btn-action btn-primary" style="height: 28px;">
-            <i class="fa fa-pencil-square-o"></i> Record Adjustment
+            <i class="fa fa-pencil-square-o"></i> Adjust Stock
           </button>
         </div>
       </form>
@@ -484,8 +412,8 @@
             </tr>
           {% empty %}
             <tr>
-              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 12px;">
-                No inventory adjustments logged yet.
+              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 10px;">
+                No stock history logged yet.
               </td>
             </tr>
           {% endfor %}
@@ -583,7 +511,7 @@
   const slugInput = document.getElementById('id_slug');
   const slugBtn = document.getElementById('btn-toggle-slug-lock');
   const slugIcon = document.getElementById('icon-slug-lock');
-  let slugAuto = !slugInput || !slugInput.value; // auto if empty initially
+  let slugAuto = !slugInput || !slugInput.value;
 
   const updateSlugLockUI = () => {
     if (!slugBtn || !slugIcon) return;
