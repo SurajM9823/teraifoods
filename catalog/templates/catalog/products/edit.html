@@ -171,10 +171,13 @@
           </div>
         {% else %}
           <div class="form-col col-span-1">
-            <label class="form-label">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
               <span>Confirmed Stock</span>
+              <button type="button" class="js-open-stock-modal" style="background: none; border: none; color: #16a34a; font-size: 11px; font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline;">
+                <i class="fa fa-pencil-square-o"></i> Adjust
+              </button>
             </label>
-            <div class="static-metric-box">
+            <div class="static-metric-box js-open-stock-modal" style="cursor: pointer;" title="Click to adjust stock">
               <span class="metric-val">{% if product.stock_confirmed %}{{ product.stock }}{% else %}—{% endif %}</span>
               <span class="metric-sub">{% if product.stock_confirmed %}units{% else %}uncounted{% endif %}</span>
             </div>

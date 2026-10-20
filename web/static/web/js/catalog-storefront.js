@@ -59,7 +59,18 @@
       const product = window.TeraiCatalog?.getProductById(card.dataset.catalogProduct);
       if (!product) return;
       if (quick) window.TeraiCatalog.openQuickview(product);
-      else window.TeraiCatalog.addToCart(product, 1);
+      else {
+        const added = window.TeraiCatalog?.addToCart(product, 1);
+        if (added && add) {
+          add.classList.add('added-success');
+          const orig = add.innerHTML;
+          add.innerHTML = '✓ Added! <i class="klb-icon-check"></i>';
+          setTimeout(() => {
+            add.classList.remove('added-success');
+            add.innerHTML = orig;
+          }, 1500);
+        }
+      }
     }, true);
 
     if (grid && initial) {

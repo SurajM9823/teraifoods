@@ -35,6 +35,19 @@ def index(request):
                             product.is_active = action == 'activate'
                         product.save()
                 messages.success(request, 'Products updated.')
+        elif action == 'confirm_stock':
+            ids = request.POST.getlist('products')
+            if len(ids) <= 100 and all(v.isdigit() for v in ids):
+                with transaction.atomic():
+                    for product in Product.objects.select_for_update().filter(pk__in=ids).order_by('pk'):
+                        key = f'bulk-confirm-{product.pk}-{uuid.uuid4().hex[:8]}'
+                        if not product.stock_confirmed:
+                            adjust_stock(product.pk, 50, reason='Admin bulk stock confirmation',
+                                         actor=request.user, key=key, kind='initial')
+                        elif product.stock == 0:
+                            adjust_stock(product.pk, 50, reason='Admin bulk restock',
+                                         actor=request.user, key=key, kind='manual_increase')
+                messages.success(request, 'Selected products stock confirmed (50 units each).')
         return redirect('products:index')
     products = Product.objects.select_related('category', 'subcategory').prefetch_related('images')
     query = request.GET.get('q', '')[:200]

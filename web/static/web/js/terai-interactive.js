@@ -252,10 +252,10 @@
   }
 
   function addToCart(item, qty = 1) {
-    if (!item || !Number.isInteger(qty) || qty < 1) return;
+    if (!item || !Number.isInteger(qty) || qty < 1) return false;
     if (item.element?.dataset.catalogProduct && item.element.dataset.available !== 'true') {
       showToast('Unavailable', 'Stock must be confirmed before this item can be purchased.', 'warning');
-      return;
+      return false;
     }
     const cart = getCart();
     const existing = cart.find(i => String(i.id) === String(item.id));
@@ -276,6 +276,7 @@
     saveCart(cart);
     showToast('Added to Basket!', `✓ ${escapeHTML(item.title)} (${qty}x) added to your order.`, 'success');
     highlightHeaderCart(item, qty);
+    return true;
   }
 
   function changeCartItemQty(id, delta) {
@@ -1941,16 +1942,17 @@
         const qtyInput = productNode?.querySelector('input.qty');
         const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
 
-        btn.classList.add('added-success');
-        const origText = btn.innerHTML;
-        btn.innerHTML = '✓ Added! <i class="klb-icon-check"></i>';
+        const added = addToCart(product, qty);
+        if (added) {
+          btn.classList.add('added-success');
+          const origText = btn.innerHTML;
+          btn.innerHTML = '✓ Added! <i class="klb-icon-check"></i>';
 
-        setTimeout(() => {
-          btn.classList.remove('added-success');
-          btn.innerHTML = origText;
-        }, 1500);
-
-        addToCart(product, qty);
+          setTimeout(() => {
+            btn.classList.remove('added-success');
+            btn.innerHTML = origText;
+          }, 1500);
+        }
       });
     });
 
