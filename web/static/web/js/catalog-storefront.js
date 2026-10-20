@@ -151,7 +151,9 @@
 
       const updateSearchUI = () => {
         const val = search ? search.value.trim() : '';
+        const magIcon = document.getElementById('shop-search-mag-icon');
         if (clearBtn) clearBtn.style.display = val ? 'inline-flex' : 'none';
+        if (magIcon) magIcon.style.display = val ? 'none' : 'inline-block';
         if (statusBar) {
           if (val) {
             statusBar.style.display = 'flex';
@@ -200,7 +202,8 @@
         });
 
         const doReset = () => {
-          search.value = '';
+          if (search) search.value = '';
+          if (desktopSearch) desktopSearch.value = '';
           filters.delete('q');
           filters.delete('s');
           if (sort && sort.value === 'relevance') {
@@ -210,7 +213,7 @@
           history.replaceState(null, '', location.pathname + (filters.toString() ? '?' + filters : ''));
           updateSearchUI();
           load(true).finally(() => {
-            search.focus();
+            if (search && window.innerWidth < 1200) search.focus();
           });
         };
 
@@ -220,9 +223,11 @@
         const urlParams = new URLSearchParams(location.search);
         if (urlParams.get('focus_search') === 'true' || urlParams.get('focus_search') === '1') {
           setTimeout(() => {
-            search.focus();
-            search.select();
-            search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (window.innerWidth < 1200 && search) {
+              search.focus();
+              search.select();
+              search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
           }, 60);
           urlParams.delete('focus_search');
           const cleanSearch = urlParams.toString() ? '?' + urlParams : '';
@@ -234,7 +239,7 @@
         mobileSearchToggle.addEventListener('click', (e) => {
           if (window.location.pathname.includes('/shop')) {
             e.preventDefault();
-            if (search) {
+            if (search && window.innerWidth < 1200) {
               search.focus();
               search.select();
               search.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -258,7 +263,8 @@
             e.preventDefault();
             search.value = desktopSearch.value;
             search.dispatchEvent(new Event('input'));
-            search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const targetEl = document.getElementById('shop-products-container') || search;
+            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
           });
         }
       }

@@ -477,13 +477,13 @@ a.klbwl-btn::after,
   line-height: 1 !important;
 }
 
-/* Store Page Expanded Search Nav Bar: Sleek, compact height, static clean border, no lighting ring */
+/* Store Page Expanded Search Nav Bar (Mobile & Tablet only, hidden on Desktop mode) */
 .shop-expanded-search-nav {
   background: #f8fafc !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 6px !important;
   box-shadow: none !important;
-  padding: 0 12px !important;
+  padding: 0 10px !important;
   height: 36px !important;
   min-height: 36px !important;
   max-height: 36px !important;
@@ -500,6 +500,15 @@ a.klbwl-btn::after,
   box-shadow: none !important;
   outline: none !important;
 }
+
+/* Hide store page search on desktop mode (1200px and up) */
+@media (min-width: 1200px) {
+  .shop-expanded-search-nav,
+  .shop-search-status-bar {
+    display: none !important;
+  }
+}
+
 .shop-search-inner {
   width: 100% !important;
 }
@@ -515,16 +524,45 @@ a.klbwl-btn::after,
   height: 34px !important;
   position: relative !important;
 }
+
+/* Left side icon & cross button inside search */
 .shop-search-icon {
   font-size: 15px !important;
   color: #64748b !important;
-  margin-right: 8px !important;
+  margin-right: 6px !important;
   flex-shrink: 0 !important;
   transition: color 0.15s ease !important;
 }
 .shop-expanded-search-nav:focus-within .shop-search-icon {
   color: #634c9f !important;
 }
+
+/* Cross icon button within search on left side */
+.shop-search-clear-btn-left {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  padding: 0;
+  margin-right: 6px;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.shop-search-clear-btn-left:hover,
+.shop-search-clear-btn-left:active {
+  background: #fee2e2;
+  color: #b91c1c;
+  transform: scale(1.08);
+}
+
 .shop-live-search-input {
   border: none !important;
   outline: none !important;
@@ -533,7 +571,7 @@ a.klbwl-btn::after,
   height: 32px !important;
   line-height: 32px !important;
   font-size: 13.5px !important;
-  padding: 0 28px 0 0 !important;
+  padding: 0 10px 0 0 !important;
   background: transparent !important;
   color: #0f172a !important;
   font-weight: 500 !important;
@@ -553,28 +591,7 @@ a.klbwl-btn::after,
   font-weight: 400;
   font-size: 13px;
 }
-.shop-search-clear-btn {
-  position: absolute;
-  right: 4px;
-  background: #cbd5e1;
-  border: none;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #475569;
-  cursor: pointer;
-  font-size: 10px;
-  line-height: 1;
-  padding: 0;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.shop-search-clear-btn:hover {
-  background: #94a3b8;
-  color: #0f172a;
-}
+
 .shop-search-spinner {
   width: 14px;
   height: 14px;
@@ -583,18 +600,20 @@ a.klbwl-btn::after,
   border-radius: 50%;
   animation: shopSearchSpin 0.6s linear infinite;
   position: absolute;
-  right: 28px;
+  right: 6px;
 }
 @keyframes shopSearchSpin {
   to { transform: rotate(360deg); }
 }
+
+/* Static clean search feedback text without separate clear text */
 .shop-search-status-bar {
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
   padding: 3px 4px !important;
   margin-top: 2px !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 8px !important;
   border: none !important;
   font-size: 12px !important;
   color: #64748b !important;
@@ -606,19 +625,6 @@ a.klbwl-btn::after,
 }
 .shop-search-feedback-text strong {
   color: #0f172a !important;
-}
-.shop-search-reset-link {
-  background: none;
-  border: none;
-  color: #dc2626;
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
-}
-.shop-search-reset-link:hover {
-  color: #b91c1c;
 }
 .shop-empty-search-state {
   grid-column: 1 / -1;

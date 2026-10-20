@@ -636,7 +636,7 @@
 			font-weight: 600;
 		}
 	</style>
-  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=clean-search-v10261020-search-v2">
+  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=clean-search-v2">
 <link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-shop-page">
@@ -674,25 +674,25 @@
 					<!-- Right Main Storefront: 4-Column Flash Sale Product Cards -->
 					<div class="shop-products-col">
 
-						<!-- Top Expanded Search Nav Bar -->
-						<div class="shop-expanded-search-nav" id="shop-expanded-search-nav">
+						<!-- Top Expanded Search Nav Bar (Mobile & Tablet only, hidden on Desktop mode) -->
+						<div class="shop-expanded-search-nav d-xl-none" id="shop-expanded-search-nav">
 							<div class="shop-search-inner position-relative">
 								<form class="shop-search-form" id="shop-search-form" onsubmit="return false;">
 									<div class="shop-search-input-box position-relative d-flex align-items-center">
-										<i class="klb-icon-search shop-search-icon" aria-hidden="true"></i>
-										<input type="search" id="shop-header-search-input" class="form-control shop-live-search-input" placeholder="Search fresh produce, rice, spices, lentils, snacks..." autocomplete="off" spellcheck="false" value="{{ search_query|default:'' }}">
-										<button type="button" class="shop-search-clear-btn" id="shop-search-clear-btn" aria-label="Clear search query" style="display: none;">
+										<!-- Left Side: Cross (X) icon when searching to clear, or Magnifying glass when empty -->
+										<button type="button" class="shop-search-clear-btn-left" id="shop-search-clear-btn" aria-label="Clear search" title="Clear search" style="display: none;">
 											<i class="klb-icon-x"></i>
 										</button>
+										<i class="klb-icon-search shop-search-icon" id="shop-search-mag-icon" aria-hidden="true"></i>
+										<input type="search" id="shop-header-search-input" class="form-control shop-live-search-input" placeholder="Search fresh produce, rice, spices, lentils, snacks..." autocomplete="off" spellcheck="false" value="{{ search_query|default:'' }}">
 										<span class="shop-search-spinner" id="shop-search-spinner" style="display: none;" aria-hidden="true"></span>
 									</div>
 								</form>
 							</div>
 						</div>
-						<!-- Search results count / status shown below search bar without expanding search box border -->
-						<div class="shop-search-status-bar" id="shop-search-status-bar" style="display: none;">
+						<!-- Search results count / status shown below search bar without expanding search box border (Mobile & Tablet only) -->
+						<div class="shop-search-status-bar d-xl-none" id="shop-search-status-bar" style="display: none;">
 							<span class="shop-search-feedback-text" id="shop-search-feedback-text"></span>
-							<button type="button" class="shop-search-reset-link" id="shop-search-reset-link">Clear search</button>
 						</div>
 
 
