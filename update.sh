@@ -29,6 +29,12 @@ echo 'Creating and applying migrations...'
 echo 'Collecting static files and checking the application...'
 "$python" "$manage" collectstatic --noinput
 "$python" "$manage" check
+
+echo 'Updating Nginx configuration and media permissions...'
+install -m 644 deploy/native/teraifoods.nginx /etc/nginx/sites-available/teraifoods
+if [ -d /opt/teraifoods/media ]; then
+    chmod -R a+rX /opt/teraifoods/media
+fi
 nginx -t
 
 echo 'Restarting project services...'
