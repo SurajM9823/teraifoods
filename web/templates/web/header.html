@@ -99,8 +99,15 @@
 					</div>
 				</div>
 
-				<!-- Mobile Header Actions (Right): Wishlist & Account -->
+				<!-- Mobile Header Actions (Right): Search, Wishlist & Account -->
 				<div class="col d-inline-flex d-xl-none align-items-center flex-auto gap-2">
+					<div class="quick-button style-1 mobile-search-button">
+						<a href="{% url 'web:shop' %}?focus_search=true" class="action-link" id="mobile-search-toggle-btn" title="Search Products" aria-label="Search Products">
+							<div class="action-icon">
+								<i class="klb-icon-search"></i>
+							</div>
+						</a>
+					</div>
 					<div class="quick-button style-1 wishlist-button">
 						<a href="#wishlist" class="action-link" title="Wishlist">
 							<div class="action-icon">

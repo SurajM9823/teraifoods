@@ -636,7 +636,7 @@
 			font-weight: 600;
 		}
 	</style>
-  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=1">
+  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=20261020-search-v1">
 <link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-shop-page">
@@ -674,12 +674,33 @@
 					<!-- Right Main Storefront: 4-Column Flash Sale Product Cards -->
 					<div class="shop-products-col">
 
+						<!-- Top Expanded Search Nav Bar -->
+						<div class="shop-expanded-search-nav" id="shop-expanded-search-nav">
+							<div class="shop-search-inner position-relative">
+								<form class="shop-search-form" id="shop-search-form" onsubmit="return false;">
+									<div class="shop-search-input-box position-relative d-flex align-items-center">
+										<i class="klb-icon-search shop-search-icon" aria-hidden="true"></i>
+										<input type="search" id="shop-header-search-input" class="form-control shop-live-search-input" placeholder="Search fresh produce, rice, spices, lentils, snacks..." autocomplete="off" spellcheck="false" value="{{ search_query|default:'' }}">
+										<button type="button" class="shop-search-clear-btn" id="shop-search-clear-btn" aria-label="Clear search query" style="display: none;">
+											<i class="klb-icon-x"></i>
+										</button>
+										<span class="shop-search-spinner" id="shop-search-spinner" style="display: none;" aria-hidden="true"></span>
+									</div>
+								</form>
+								<div class="shop-search-status-bar" id="shop-search-status-bar" style="display: none;">
+									<span class="shop-search-feedback-text" id="shop-search-feedback-text"></span>
+									<button type="button" class="shop-search-reset-link" id="shop-search-reset-link">Clear search</button>
+								</div>
+							</div>
+						</div>
+
 						<!-- Sleek Minimal-Height Top Sort Controls (Single horizontal line) -->
 						<div class="shop-top-controls">
 							<div class="shop-sort-wrapper">
 								<label for="shop-sort-select">Sort by:</label>
 								<select class="compact-sort-select" id="shop-sort-select">
 									<option value="featured">Featured Deals</option>
+									<option value="relevance">Best Match (Relevance)</option>
 									<option value="price-asc">Price: Low to High</option>
 									<option value="price-desc">Price: High to Low</option>
 									<option value="rating">Highest Rated</option>

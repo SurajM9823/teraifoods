@@ -97,6 +97,25 @@ class ProductTests(TestCase):
         self.assertEqual(self.client.get('/api/products/?cursor=garbage').status_code, 400)
         self.assertEqual(self.client.get('/api/products/?min_price=NaN').status_code, 400)
 
+    def test_advanced_search_space_and_typo_matching(self):
+        from django.core.cache import cache
+        cache.clear()
+        p1 = Product.objects.create(name='Organic Himalayan Basmati Rice', slug='organic-basmati-rice',
+                                    category=self.category, regular_price=12, is_published=True)
+        p2 = Product.objects.create(name='Red Split Lentils', slug='red-split-lentils',
+                                    category=self.category, regular_price=5, is_published=True)
+        # Multi-word space search
+        res1 = self.client.get('/api/products/', {'q': 'basmati rice'}).json()
+        self.assertIn(p1.pk, [p['id'] for p in res1['products']])
+
+        # Typo / spelling mistake tolerance: "oragnic" -> "organic"
+        res2 = self.client.get('/api/products/', {'q': 'oragnic'}).json()
+        self.assertIn(p1.pk, [p['id'] for p in res2['products']])
+
+        # Typo with space: "splti lentils" -> "split lentils"
+        res3 = self.client.get('/api/products/', {'q': 'splti lentils'}).json()
+        self.assertIn(p2.pk, [p['id'] for p in res3['products']])
+
     def test_stock_initial_adjustments_idempotency_and_immutability(self):
         audit = self.stock()
         self.assertEqual(self.stock().pk, audit.pk)

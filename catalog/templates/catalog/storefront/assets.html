@@ -1,5 +1,5 @@
 {% load static %}
-<script src="{% static 'web/js/storefront-categories.js' %}" defer></script>
+<script src="{% static 'web/js/storefront-categories.js' %}?v=mobile-drawers-v2" defer></script>
 <script src="{% static 'web/js/catalog-storefront.js' %}?v={{ catalog_revision|default:1 }}" defer></script>
 <script src="{% static 'web/js/delivery-quote.js' %}" defer></script>
 {{ catalog_revision|default:1|json_script:'catalog-revision' }}

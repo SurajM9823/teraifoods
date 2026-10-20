@@ -1,10 +1,12 @@
+import difflib
 import hashlib
 import json
+import re
 from decimal import Decimal, InvalidOperation
 from django.core import signing
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.db.models import Q, F, Max, Count
+from django.db.models import Q, F, Max, Count, Case, When, Value, IntegerField
 from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -17,6 +19,34 @@ from .services import reserve_order
 
 class CatalogChanged(ValidationError):
     pass
+
+
+def get_catalog_vocabulary():
+    vocab = cache.get('catalog:search_vocab')
+    if vocab is None:
+        words = set()
+        try:
+            for name, desc in Product.objects.filter(is_active=True, is_published=True).values_list('name', 'description'):
+                for text in (name, desc):
+                    if text:
+                        for w in re.findall(r'[a-zA-Z0-9]{3,}', text.lower()):
+                            words.add(w)
+            for cat_name in Category.objects.filter(is_active=True).values_list('name', flat=True):
+                if cat_name:
+                    for w in re.findall(r'[a-zA-Z0-9]{3,}', cat_name.lower()):
+                        words.add(w)
+            for subcat_name in Subcategory.objects.filter(is_active=True).values_list('name', flat=True):
+                if subcat_name:
+                    for w in re.findall(r'[a-zA-Z0-9]{3,}', subcat_name.lower()):
+                        words.add(w)
+        except Exception:
+            pass
+        vocab = list(words)
+        try:
+            cache.set('catalog:search_vocab', vocab, 3600)
+        except CACHE_ERRORS:
+            pass
+    return vocab
 
 
 def public_products():
@@ -55,8 +85,61 @@ def paginate(params):
     if subcategory:
         queryset = queryset.filter(subcategory__slug=subcategory)
     query = params.get('q', params.get('s', '')).strip()[:200]
+    has_search = False
+    all_tokens_q = Q()
+    any_tokens_q = Q()
+    all_tokens_name_q = Q()
+    any_tokens_name_q = Q()
+    exact_phrase_q = Q()
+    fuzzy_q = Q()
     if query:
-        queryset = queryset.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(sku__icontains=query))
+        tokens = [t.lower() for t in re.split(r'\s+', query) if t]
+        if tokens:
+            has_search = True
+            exact_phrase_q = Q(name__icontains=query) | Q(description__icontains=query) | Q(sku__icontains=query)
+            for t in tokens:
+                all_tokens_name_q &= Q(name__icontains=t)
+                all_tokens_q &= (
+                    Q(name__icontains=t) |
+                    Q(description__icontains=t) |
+                    Q(sku__icontains=t) |
+                    Q(category__name__icontains=t) |
+                    Q(subcategory__name__icontains=t)
+                )
+                any_tokens_name_q |= Q(name__icontains=t)
+                any_tokens_q |= (
+                    Q(name__icontains=t) |
+                    Q(description__icontains=t) |
+                    Q(sku__icontains=t) |
+                    Q(category__name__icontains=t) |
+                    Q(subcategory__name__icontains=t)
+                )
+            fuzzy_tokens = set()
+            vocab = get_catalog_vocabulary()
+            for t in tokens:
+                if len(t) >= 3:
+                    matches = difflib.get_close_matches(t, vocab, n=2, cutoff=0.72)
+                    for m in matches:
+                        if m != t and m not in tokens:
+                            fuzzy_tokens.add(m)
+            for ft in fuzzy_tokens:
+                fuzzy_q |= (
+                    Q(name__icontains=ft) |
+                    Q(description__icontains=ft) |
+                    Q(category__name__icontains=ft) |
+                    Q(subcategory__name__icontains=ft)
+                )
+            q_parts = [exact_phrase_q]
+            if all_tokens_q.children:
+                q_parts.append(all_tokens_q)
+            if any_tokens_q.children:
+                q_parts.append(any_tokens_q)
+            if fuzzy_q.children:
+                q_parts.append(fuzzy_q)
+            combined_q = Q()
+            for qp in q_parts:
+                combined_q |= qp
+            queryset = queryset.filter(combined_q)
     section = params.get('section', '')
     if section in ('new_arrival', 'featured', 'best_seller'):
         queryset = queryset.filter(**{section:True})
@@ -76,7 +159,33 @@ def paginate(params):
         raise ValidationError('Invalid page size or price filter.')
     sort = params.get('sort', '')
     queryset = queryset.annotate(sort_rating=Coalesce('rating', Decimal('0.00')))
-    field = {'price-asc':'selling_price', 'price-desc':'-selling_price', 'name':'name', 'newest':'-id', 'rating':'-sort_rating'}.get(sort, 'display_order')
+    if has_search:
+        when_list = [
+            When(name__iexact=query, then=Value(100)),
+            When(name__istartswith=query, then=Value(90)),
+            When(exact_phrase_q, then=Value(80)),
+        ]
+        if all_tokens_name_q.children:
+            when_list.append(When(all_tokens_name_q, then=Value(70)))
+        if all_tokens_q.children:
+            when_list.append(When(all_tokens_q, then=Value(60)))
+        if any_tokens_name_q.children:
+            when_list.append(When(any_tokens_name_q, then=Value(50)))
+        if any_tokens_q.children:
+            when_list.append(When(any_tokens_q, then=Value(30)))
+        if fuzzy_q.children:
+            when_list.append(When(fuzzy_q, then=Value(20)))
+
+        relevance_case = Case(
+            *when_list,
+            default=Value(10),
+            output_field=IntegerField()
+        )
+        queryset = queryset.annotate(relevance=relevance_case)
+        default_field = '-relevance'
+    else:
+        default_field = 'display_order'
+    field = {'price-asc':'selling_price', 'price-desc':'-selling_price', 'name':'name', 'newest':'-id', 'rating':'-sort_rating', 'relevance':'-relevance' if has_search else 'display_order'}.get(sort, default_field)
     fingerprint = hashlib.sha256(json.dumps({k:params.get(k, '') for k in ('category','subcategory','q','s','section','min_price','max_price','sort','limit','ids')}, sort_keys=True).encode()).hexdigest()
     count = queryset.count()
     if params.get('cursor'):
@@ -92,11 +201,15 @@ def paginate(params):
             op = 'gt' if ascending else 'lt'
             if name == 'id':
                 queryset = queryset.filter(**{f'id__{op}': last_id})
+            elif name == 'relevance':
+                r_val = int(value)
+                queryset = queryset.filter(Q(**{f'{name}__{op}':r_val}) | (Q(**{name:r_val}) & Q(id__gt=last_id)))
             else:
                 queryset = queryset.filter(Q(**{f'{name}__{op}':value}) | (Q(**{name:value}) & Q(id__gt=last_id)))
         except (signing.BadSignature, KeyError, ValueError, TypeError):
             raise ValidationError('Invalid or expired pagination cursor.')
-    rows = list(queryset.order_by(field, 'id')[:limit + 1])
+    order_fields = ('-relevance', '-sort_rating', 'id') if (has_search and field == '-relevance') else (field, 'id')
+    rows = list(queryset.order_by(*order_fields)[:limit + 1])
     more, rows = len(rows) > limit, rows[:limit]
     next_cursor = None
     if more:

@@ -14,7 +14,7 @@ def context(request, page_key):
         return {}
     from .models import CatalogRevision
     revision, _ = CatalogRevision.objects.get_or_create(pk=1)
-    result = {'catalog_groups':{}, 'catalog_revision': revision.version}
+    result = {'catalog_groups':{}, 'catalog_revision': revision.version, 'search_query': request.GET.get('q', request.GET.get('s', '')).strip()}
     selected = None
     if prefix in ('product', 'product_detail'):
         slug = request.GET.get('product')

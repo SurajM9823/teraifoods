@@ -5814,6 +5814,66 @@ a.button.is-loading::after,
    Mobile Sidebar Drawer Redesign & Refinement
    ========================================================================== */
 
+/* Universal Mobile Navigation & Categories Drawer States */
+.site-drawer {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 9999999 !important;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.site-drawer .site-drawer-inner {
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  -webkit-transform: translateX(-100%);
+  transform: translateX(-100%);
+  z-index: 2 !important;
+  position: relative !important;
+}
+
+.site-drawer .site-drawer-overlay {
+  transition: opacity 0.28s ease, visibility 0.28s ease !important;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1 !important;
+  pointer-events: auto;
+}
+
+/* Active Drawer States */
+.site-drawer.is-active,
+.site-drawer.active,
+body.site-menu-drawer-active .site-menu-drawer,
+body.site-categories-drawer-active .site-categories-drawer,
+body.site-search-drawer-active .site-search-drawer {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.site-drawer.is-active .site-drawer-inner,
+.site-drawer.active .site-drawer-inner,
+body.site-menu-drawer-active .site-menu-drawer .site-drawer-inner,
+body.site-categories-drawer-active .site-categories-drawer .site-drawer-inner,
+body.site-search-drawer-active .site-search-drawer .site-drawer-inner {
+  -webkit-transform: translateX(0) !important;
+  transform: translateX(0) !important;
+}
+
+.site-drawer.is-active .site-drawer-overlay,
+.site-drawer.active .site-drawer-overlay,
+body.site-menu-drawer-active .site-menu-drawer .site-drawer-overlay,
+body.site-categories-drawer-active .site-categories-drawer .site-drawer-overlay,
+body.site-search-drawer-active .site-search-drawer .site-drawer-overlay {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
 /* 1. Mobile Drawer Width: 85% to 90% of screen (NOT full screen) */
 .site-drawer.site-menu-drawer .site-drawer-inner,
 .site-menu-drawer .site-drawer-inner {

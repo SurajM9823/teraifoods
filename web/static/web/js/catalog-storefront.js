@@ -102,6 +102,22 @@
             if (id && !seen.has(id)) { grid.append(child); seen.add(id); }
           }
           info = payload;
+          if (!grid.children.length && (filters.get('q') || filters.get('s'))) {
+            const qVal = filters.get('q') || filters.get('s');
+            const emptyNotice = document.createElement('div');
+            emptyNotice.className = 'shop-empty-search-state';
+            emptyNotice.innerHTML = `
+              <div class="empty-icon"><i class="klb-icon-search"></i></div>
+              <h4 class="empty-title">No matching products found</h4>
+              <p class="empty-desc">We couldn't find any products matching "<strong>${escape(qVal)}</strong>".<br>Try checking your spelling, using broader keywords, or searching for categories like <em>rice</em>, <em>spices</em>, or <em>tea</em>.</p>
+              <button type="button" class="btn btn-outline-primary btn-sm rounded" id="btn-empty-reset-search">Clear Search Filter</button>
+            `;
+            emptyNotice.querySelector('#btn-empty-reset-search')?.addEventListener('click', () => {
+              const clearBtn = document.getElementById('shop-search-clear-btn');
+              if (clearBtn) clearBtn.click();
+            });
+            grid.append(emptyNotice);
+          }
           document.dispatchEvent(new Event('catalog:updated'));
         } catch (error) {
           if (error.name !== 'AbortError' && run === generation) retry = true;
@@ -126,14 +142,122 @@
       }
       let timer;
       const search = document.getElementById('shop-header-search-input');
+      const clearBtn = document.getElementById('shop-search-clear-btn');
+      const spinner = document.getElementById('shop-search-spinner');
+      const statusBar = document.getElementById('shop-search-status-bar');
+      const feedbackText = document.getElementById('shop-search-feedback-text');
+      const resetLink = document.getElementById('shop-search-reset-link');
+      const mobileSearchToggle = document.getElementById('mobile-search-toggle-btn');
+
+      const updateSearchUI = () => {
+        const val = search ? search.value.trim() : '';
+        if (clearBtn) clearBtn.style.display = val ? 'inline-flex' : 'none';
+        if (statusBar) {
+          if (val) {
+            statusBar.style.display = 'flex';
+            if (info && typeof info.total === 'number') {
+              feedbackText.innerHTML = `Found <strong>${info.total}</strong> product${info.total === 1 ? '' : 's'} for "<strong>${escape(val)}</strong>"`;
+            } else {
+              feedbackText.innerHTML = `Searching for "<strong>${escape(val)}</strong>"…`;
+            }
+          } else {
+            statusBar.style.display = 'none';
+            if (feedbackText) feedbackText.innerHTML = '';
+          }
+        }
+      };
+
       if (search) {
-        search.value = filters.get('q') || '';
+        search.value = filters.get('q') || filters.get('s') || '';
+        updateSearchUI();
+
         search.addEventListener('input', () => {
           clearTimeout(timer);
+          updateSearchUI();
+          if (spinner) spinner.style.display = 'inline-block';
           timer = setTimeout(() => {
-            filters.set('q', search.value); history.replaceState(null, '', '?' + filters); load(true);
-          }, 250);
+            const query = search.value.trim();
+            if (query) {
+              filters.set('q', query);
+              filters.delete('s');
+              if (!filters.has('sort') || filters.get('sort') === 'relevance' || filters.get('sort') === 'featured') {
+                if (sort) sort.value = 'relevance';
+              }
+            } else {
+              filters.delete('q');
+              filters.delete('s');
+              if (sort && sort.value === 'relevance') {
+                sort.value = 'featured';
+                filters.delete('sort');
+              }
+            }
+            history.replaceState(null, '', location.pathname + (filters.toString() ? '?' + filters : ''));
+            load(true).finally(() => {
+              if (spinner) spinner.style.display = 'none';
+              updateSearchUI();
+            });
+          }, 200);
         });
+
+        const doReset = () => {
+          search.value = '';
+          filters.delete('q');
+          filters.delete('s');
+          if (sort && sort.value === 'relevance') {
+            sort.value = 'featured';
+            filters.delete('sort');
+          }
+          history.replaceState(null, '', location.pathname + (filters.toString() ? '?' + filters : ''));
+          updateSearchUI();
+          load(true).finally(() => {
+            search.focus();
+          });
+        };
+
+        if (clearBtn) clearBtn.addEventListener('click', doReset);
+        if (resetLink) resetLink.addEventListener('click', doReset);
+
+        const urlParams = new URLSearchParams(location.search);
+        if (urlParams.get('focus_search') === 'true' || urlParams.get('focus_search') === '1') {
+          setTimeout(() => {
+            search.focus();
+            search.select();
+            search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 200);
+        }
+      }
+
+      if (mobileSearchToggle) {
+        mobileSearchToggle.addEventListener('click', (e) => {
+          if (window.location.pathname.includes('/shop')) {
+            e.preventDefault();
+            if (search) {
+              search.focus();
+              search.select();
+              search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }
+        });
+      }
+
+      const desktopSearch = document.getElementById('header-search-input');
+      if (desktopSearch && search) {
+        if (!desktopSearch.value && search.value) {
+          desktopSearch.value = search.value;
+        }
+        desktopSearch.addEventListener('input', () => {
+          search.value = desktopSearch.value;
+          search.dispatchEvent(new Event('input'));
+        });
+        const desktopForm = desktopSearch.closest('form');
+        if (desktopForm) {
+          desktopForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            search.value = desktopSearch.value;
+            search.dispatchEvent(new Event('input'));
+            search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          });
+        }
       }
       // History navigation restores the loaded fragment only briefly; checkout
       // always validates current price/status/stock in the database.
