@@ -12,7 +12,9 @@ def context(request, page_key):
     prefix = {'home':'index', 'shop':'shop', 'search':'shop', 'product':'product', 'product-detail':'product_detail'}.get(page_key)
     if not prefix:
         return {}
-    result = {'catalog_groups':{}}
+    from .models import CatalogRevision
+    revision, _ = CatalogRevision.objects.get_or_create(pk=1)
+    result = {'catalog_groups':{}, 'catalog_revision': revision.version}
     selected = None
     if prefix in ('product', 'product_detail'):
         slug = request.GET.get('product')

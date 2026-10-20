@@ -42,6 +42,12 @@ def paginate(params):
     from .models import CatalogRevision
     revision, _ = CatalogRevision.objects.get_or_create(pk=1)
     queryset = public_products()
+    ids_param = params.get('ids')
+    target_ids = []
+    if ids_param:
+        target_ids = [int(i) for i in ids_param.split(',') if i.strip().isdigit()][:100]
+        if target_ids:
+            queryset = queryset.filter(id__in=target_ids)
     category, subcategory = params.get('category'), params.get('subcategory')
     if category:
         queryset = queryset.filter(category__slug=category)
@@ -56,7 +62,9 @@ def paginate(params):
     elif section not in ('', 'for_you'):
         raise ValidationError('Invalid product section.')
     try:
-        limit = min(48, max(1, int(params.get('limit', 12))))
+        max_limit = 100 if target_ids else 48
+        default_limit = len(target_ids) if target_ids else 12
+        limit = min(max_limit, max(1, int(params.get('limit', default_limit))))
         for key, operator in [('min_price','gte'), ('max_price','lte')]:
             if params.get(key):
                 value = Decimal(params[key])
@@ -68,7 +76,7 @@ def paginate(params):
     sort = params.get('sort', '')
     queryset = queryset.annotate(sort_rating=Coalesce('rating', Decimal('0.00')))
     field = {'price-asc':'selling_price', 'price-desc':'-selling_price', 'name':'name', 'newest':'-id', 'rating':'-sort_rating'}.get(sort, 'display_order')
-    fingerprint = hashlib.sha256(json.dumps({k:params.get(k, '') for k in ('category','subcategory','q','s','section','min_price','max_price','sort','limit')}, sort_keys=True).encode()).hexdigest()
+    fingerprint = hashlib.sha256(json.dumps({k:params.get(k, '') for k in ('category','subcategory','q','s','section','min_price','max_price','sort','limit','ids')}, sort_keys=True).encode()).hexdigest()
     count = queryset.count()
     if params.get('cursor'):
         try:
@@ -206,3 +214,22 @@ def cart_quote(request):
         return JsonResponse({'items':lines, 'subtotal':str(total)})
     except (ValueError, TypeError, ValidationError) as exc:
         return JsonResponse({'errors':getattr(exc, 'messages', ['Invalid basket.'])}, status=400)
+
+
+@require_GET
+@never_cache
+def catalog_revision(request):
+    try:
+        version = cache.get('catalog:revision:version')
+    except CACHE_ERRORS:
+        version = None
+    if version is None:
+        from .models import CatalogRevision
+        revision, _ = CatalogRevision.objects.get_or_create(pk=1)
+        version = revision.version
+        try:
+            cache.set('catalog:revision:version', version, 86400)
+        except CACHE_ERRORS:
+            pass
+    return JsonResponse({'version': version})
+

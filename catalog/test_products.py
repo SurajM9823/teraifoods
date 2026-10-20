@@ -256,6 +256,28 @@ class ProductTests(TestCase):
         self.assertEqual(product.stock, 9)
         self.assertEqual(product.stock_history.get().adjustment_type, 'initial')
 
+    def test_catalog_revision_and_ids_filter(self):
+        from .models import CatalogRevision
+        res = self.client.get('/api/catalog/revision/')
+        self.assertEqual(res.status_code, 200)
+        v1 = res.json()['version']
+
+        # Edit product and verify revision increments
+        self.product.name = 'Updated Real-time Groceries'
+        self.product.save()
+
+        res2 = self.client.get('/api/catalog/revision/')
+        self.assertEqual(res2.status_code, 200)
+        v2 = res2.json()['version']
+        self.assertGreater(v2, v1)
+
+        # Test querying products by ids
+        res_ids = self.client.get(f'/api/products/?ids={self.product.pk}')
+        self.assertEqual(res_ids.status_code, 200)
+        data = res_ids.json()
+        self.assertTrue(any(p['id'] == self.product.pk for p in data['products']))
+        self.assertEqual(data['products'][0]['name'], 'Updated Real-time Groceries')
+
 
 class ImportTests(TestCase):
     def test_complete_idempotent_import_and_no_overwrite(self):

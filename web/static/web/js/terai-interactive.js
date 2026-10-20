@@ -1855,7 +1855,7 @@
   // --- Product Card Click Handlers (Add to Cart & Quickview) ---
   function setupProductCardClicks() {
     window.TeraiCatalog = {refresh:indexProducts, addToCart, getProductById, openQuickview, showToast,
-      getCart, saveCart, addDetail:window.TeraiCatalog?.addDetail};
+      getCart, saveCart, addDetail:window.TeraiCatalog?.addDetail, validateCart:window.TeraiCatalog?.validateCart};
     document.addEventListener('catalog:updated', indexProducts);
     // 1. Add to cart buttons
     document.querySelectorAll('.button.ajax_add_to_cart, .button.add_to_cart_button, a[href*="add-to-cart"]').forEach(btn => {

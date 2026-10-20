@@ -19,6 +19,7 @@ urlpatterns = [
     path("api/categories/", product_api.categories, name="product-categories-api"),
     path("api/checkout/reserve/", product_api.checkout, name="product-checkout"),
     path("api/cart/quote/", product_api.cart_quote, name="product-cart-quote"),
+    path("api/catalog/revision/", product_api.catalog_revision, name="catalog-revision-api"),
     path("admin/products/", include("catalog.product_urls")),
     path("health/", health, name="health"),
     path("admin/system/login/", AdminLoginView.as_view()),

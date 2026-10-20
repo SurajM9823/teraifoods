@@ -10,9 +10,13 @@
     let info = initial, busy = false, generation = 0, controller, retry = false;
     let filters = new URLSearchParams(location.search);
     if (filters.has('s') && !filters.has('q')) filters.set('q', filters.get('s'));
-    const detail = read('catalog-detail');
+    let detail = read('catalog-detail');
+    let currentRevision = Number(read('catalog-revision') || 1);
+    let reloadShopGrid = null;
     const notify = message => window.TeraiCatalog?.showToast('Product availability', message, 'warning');
+
     if (window.TeraiCatalog) window.TeraiCatalog.validateCart = async (cart = window.TeraiCatalog.getCart()) => {
+      if (!cart || !cart.length) return true;
       if (cart.some(item => item.catalogVersion !== 2)) {
         notify('Your basket contains items from the old catalog. Please remove and re-add them.');
         return false;
@@ -105,6 +109,7 @@
           if (run === generation) { busy = false; update(); }
         }
       }
+      reloadShopGrid = () => load(true);
       more.addEventListener('click', () => load());
       if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => {
@@ -160,5 +165,210 @@
         notify('Online payment is not configured. No payment has been taken.');
       }
     }, true);
+
+    /* --- Real-Time Reflection without Page Refresh --- */
+    function updateCard(card, product) {
+      if (!card || !product) return;
+      card.dataset.price = product.price;
+      card.dataset.name = product.name;
+      card.dataset.available = product.available ? 'true' : 'false';
+
+      // Title
+      const titleLink = card.querySelector('.product-title a, .woocommerce-loop-product__title a, h2.product-title a, h2 a');
+      if (titleLink) {
+        titleLink.textContent = product.name;
+        if (product.url) titleLink.href = product.url;
+      }
+
+      // Shop card prices
+      const saleEl = card.querySelector('.sale-price');
+      const regEl = card.querySelector('.regular-price, del.regular-price');
+      if (saleEl) {
+        saleEl.innerHTML = '&pound;' + product.price;
+        if (regEl) regEl.innerHTML = product.sale_price ? ('&pound;' + product.regular_price) : '';
+      }
+
+      // WooCommerce / Homepage style prices
+      const insBdi = card.querySelector('.price ins .woocommerce-Price-amount bdi, .price ins .amount bdi');
+      const delBdi = card.querySelector('.price del .woocommerce-Price-amount bdi, .price del .amount bdi');
+      if (insBdi) {
+        insBdi.innerHTML = '<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.price;
+        if (delBdi) {
+          delBdi.innerHTML = product.sale_price ? ('<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.regular_price) : '';
+        }
+      } else {
+        const singleBdi = card.querySelector('.price .woocommerce-Price-amount bdi, .price .amount bdi');
+        if (singleBdi) {
+          singleBdi.innerHTML = '<span class="woocommerce-Price-currencySymbol" translate="no">&pound;</span>' + product.price;
+        }
+      }
+
+      // Discount badges
+      const discountPill = card.querySelector('.badge-discount');
+      if (discountPill) {
+        if (product.discount) {
+          discountPill.textContent = product.discount + '%';
+          discountPill.style.display = '';
+        } else {
+          discountPill.style.display = 'none';
+        }
+      }
+      const saleBadge = card.querySelector('.thumbnail-badges .badge.sale, .badge.sale');
+      if (saleBadge) {
+        if (product.discount) {
+          saleBadge.textContent = product.discount + '%';
+          saleBadge.style.display = '';
+        } else {
+          saleBadge.style.display = 'none';
+        }
+      }
+
+      // Images
+      if (product.image) {
+        const img = card.querySelector('.product-thumbnail img, .thumbnail-wrapper img, img.wp-post-image, img');
+        if (img) img.src = product.image;
+        if (product.images && product.images[0]) {
+          const avif = card.querySelector('picture source[type="image/avif"]');
+          if (avif && product.images[0].avif) avif.srcset = product.images[0].avif;
+          const webp = card.querySelector('picture source[type="image/webp"]');
+          if (webp && product.images[0].webp) webp.srcset = product.images[0].webp;
+        }
+      }
+
+      // Availability state
+      if (!product.available) {
+        card.classList.add('out-of-stock');
+      } else {
+        card.classList.remove('out-of-stock');
+      }
+    }
+
+    async function syncProductDetail(slug) {
+      try {
+        const res = await fetch(`/api/products/${encodeURIComponent(slug)}/?_v=${currentRevision}`, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store'
+        });
+        if (res.status === 404) {
+          if (detail) detail.available = false;
+          notify('Notice: This product is no longer active or available.');
+          document.querySelectorAll('#btn-pdp-add-cart, #btn-pdp-buy-now, .btn-add-cart-detail').forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('disabled');
+          });
+          return;
+        }
+        if (!res.ok) return;
+        const prod = await res.json();
+        if (detail) {
+          detail.name = prod.name;
+          detail.price = prod.price;
+          detail.stock = prod.stock;
+          detail.available = prod.available;
+          detail.image = prod.image;
+        }
+
+        // Title and Breadcrumb
+        document.querySelectorAll('.pdp-product-title, .single-product-title').forEach(el => el.textContent = prod.name);
+        document.querySelectorAll('.current').forEach(el => {
+          if (el.closest('.breadcrumbs, .woocommerce-breadcrumb, .breadcrumb')) el.textContent = prod.name;
+        });
+
+        // Prices
+        document.querySelectorAll('.pdp-main-price, .single-product-price .price ins .amount, .single-product-price .price .amount').forEach(el => {
+          el.innerHTML = '&pound;' + prod.price;
+        });
+        const strikeEl = document.querySelector('.pdp-strike-price');
+        if (strikeEl) {
+          if (prod.sale_price) {
+            strikeEl.innerHTML = `<del>&pound;${prod.regular_price}</del> <span class="pdp-discount-pill">-${prod.discount}%</span>`;
+          } else {
+            strikeEl.innerHTML = '';
+          }
+        }
+
+        // Image
+        const activeImg = document.getElementById('pdp-active-image');
+        if (activeImg && prod.image) activeImg.src = prod.image;
+
+        // Action buttons
+        const actionBtns = document.querySelectorAll('#btn-pdp-add-cart, #btn-pdp-buy-now, .btn-add-cart-detail');
+        if (!prod.available) {
+          actionBtns.forEach(btn => { btn.disabled = true; btn.classList.add('disabled'); });
+        } else {
+          actionBtns.forEach(btn => { btn.disabled = false; btn.classList.remove('disabled'); });
+        }
+      } catch {}
+    }
+
+    async function syncCardsOnPage() {
+      const cards = document.querySelectorAll('[data-catalog-product]');
+      if (!cards.length) return;
+      const ids = [...new Set([...cards].map(c => c.dataset.catalogProduct).filter(Boolean))];
+      if (!ids.length) return;
+      try {
+        const res = await fetch(`/api/products/?ids=${ids.join(',')}&limit=100&_v=${currentRevision}`, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store'
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data.products)) {
+          const byId = new Map(data.products.map(p => [String(p.id), p]));
+          cards.forEach(card => {
+            const prod = byId.get(String(card.dataset.catalogProduct));
+            if (prod) updateCard(card, prod);
+          });
+          document.dispatchEvent(new Event('catalog:updated'));
+        }
+      } catch {}
+    }
+
+    async function syncStorefront() {
+      if (reloadShopGrid) {
+        reloadShopGrid();
+      } else {
+        await syncCardsOnPage();
+      }
+      const pdpSlug = detail?.slug || new URLSearchParams(location.search).get('product');
+      if (pdpSlug) {
+        syncProductDetail(pdpSlug);
+      }
+      if (window.TeraiCatalog?.getCart()?.length > 0) {
+        window.TeraiCatalog.validateCart();
+      }
+    }
+
+    let isCheckingRevision = false;
+    async function checkCatalogRevision() {
+      if (isCheckingRevision || document.hidden) return;
+      isCheckingRevision = true;
+      try {
+        const res = await fetch('/api/catalog/revision/', {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (typeof data.version === 'number' && data.version > currentRevision) {
+            currentRevision = data.version;
+            syncStorefront();
+          }
+        }
+      } catch {} finally {
+        isCheckingRevision = false;
+      }
+    }
+
+    setInterval(checkCatalogRevision, 12000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) checkCatalogRevision();
+    });
+    window.addEventListener('focus', checkCatalogRevision);
+
+    if (window.TeraiCatalog) {
+      window.TeraiCatalog.sync = syncStorefront;
+      window.TeraiCatalog.checkRevision = checkCatalogRevision;
+    }
   });
 })();
