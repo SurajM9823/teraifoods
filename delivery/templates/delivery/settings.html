@@ -1,0 +1,15 @@
+{% extends 'catalog/base.html' %}
+{% block title %}UK delivery{% endblock %}{% block breadcrumb %}UK delivery{% endblock %}
+{% block category_content %}
+<h1>UK delivery</h1>
+<p>Coverage: the whole United Kingdom. Charges use the total shipping weight of all basket quantities.</p>
+<h2>Delivery estimate</h2>
+<form method="post" action="{% url 'delivery:settings' %}" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="policy">{{ policy_form.as_p }}<button class="category-primary">Save delivery estimate</button></form>
+<h2>Delivery charges by weight</h2>
+<p>Each price covers weights above the previous active band up to and including its upper limit. The highest active limit is the maximum supported basket weight. No delivery price is assumed if no band covers a basket.</p>
+<table class="category-table"><thead><tr><th>Up to weight</th><th>Charge (GBP)</th><th>Status</th><th>Action</th></tr></thead><tbody>
+{% for band in bands %}<tr><td>{{ band.max_weight_grams|floatformat:3 }} gm</td><td>£{{ band.charge }}</td><td>{{ band.is_active|yesno:'Active,Inactive' }}</td><td><a href="?edit={{ band.pk }}">Edit</a></td></tr>{% empty %}<tr><td colspan="4">Add delivery charges before accepting orders.</td></tr>{% endfor %}
+</tbody></table>
+<h2>{% if editing %}Edit weight band{% else %}Add weight band{% endif %}</h2>
+<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="band">{{ band_form.as_p }}<button class="category-primary">Save weight band</button>{% if editing %} <a href="{% url 'delivery:settings' %}">Add another band</a>{% endif %}</form>
+{% endblock %}

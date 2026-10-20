@@ -17,6 +17,9 @@ INSTALLED_APPS = [
     "web.apps.WebConfig",
     "cms.apps.CmsConfig",
     "catalog.apps.CatalogConfig",
+    "delivery.apps.DeliveryConfig",
+    "orders.apps.OrdersConfig",
+    "channels",
     "customers.apps.CustomersConfig",
     "allauth", "allauth.account", "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
@@ -75,3 +78,4 @@ from .accounts import *  # noqa: F403,E402
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 from .content import *  # noqa: F403,E402
+from .orders import *  # noqa: F403,E402

@@ -27,6 +27,7 @@ def public_products():
 
 def serialize(product):
     return dict(id=product.pk, name=product.name, slug=product.slug, description=product.description,
+        weight=str(product.weight), weight_unit=product.weight_unit, weight_grams=str(product.weight_grams),
         category=product.category.slug, category_key=product.category.legacy_key or product.category.slug,
         subcategory=product.subcategory.slug if product.subcategory_id else None,
         regular_price=str(product.regular_price), sale_price=str(product.sale_price) if product.sale_price is not None else None,
@@ -211,7 +212,13 @@ def cart_quote(request):
                 raise ValidationError(f'{product.name}: insufficient confirmed stock.')
             total += product.price * quantity
             lines.append(dict(**serialize(product), quantity=quantity))
-        return JsonResponse({'items':lines, 'subtotal':str(total)})
+        from delivery.services import quote_delivery
+        delivery = quote_delivery(products, quantities, country=data.get('country', 'GB'))
+        return JsonResponse({'items':lines, 'subtotal':str(total),
+            'delivery_charge':str(delivery['charge']), 'total':str(total + delivery['charge']),
+            'total_weight_grams':str(delivery['weight_grams']),
+            'delivery':{'country':'GB', 'minimum_days':delivery['minimum_days'], 'maximum_days':delivery['maximum_days'],
+                        'estimate':f"{delivery['minimum_days']}–{delivery['maximum_days']} days"}})
     except (ValueError, TypeError, ValidationError) as exc:
         return JsonResponse({'errors':getattr(exc, 'messages', ['Invalid basket.'])}, status=400)
 

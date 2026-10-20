@@ -8,6 +8,7 @@ app_name = "web"
 urlpatterns = [
     path("", views.page_view, {"page_key": "home"}, name="home-root"),
     path("api/pages/", views.page_directory, name="page-directory"),
+    path("compare/", views.compare_view, name="compare"),
 ]
 urlpatterns += [
     path(page.path, views.page_view, {"page_key": page.key}, name=page.key)

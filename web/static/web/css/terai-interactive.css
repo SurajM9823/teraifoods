@@ -4629,12 +4629,27 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   }
 }
 
-/* Mobile Bottom Bar Styling */
+/* Mobile Bottom Bar Styling (Phone Only) */
 .site-mobile-navbar {
   background: #ffffff !important;
   border-top: 1px solid #e2e8f0 !important;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08) !important;
   z-index: 9999 !important;
+  padding-top: 0.35rem !important;
+  padding-bottom: max(0.35rem, env(safe-area-inset-bottom)) !important;
+  transition: transform 0.25s ease, background-color 0.2s ease;
+}
+.site-mobile-navbar ul {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+.site-mobile-navbar ul li {
+  flex: 1 1 0% !important;
+  text-align: center !important;
 }
 .site-mobile-navbar ul li a {
   position: relative;
@@ -4644,35 +4659,53 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   justify-content: center !important;
   color: #64748b;
   text-decoration: none !important;
+  padding: 4px 2px !important;
+  transition: all 0.18s ease-in-out !important;
+}
+.site-mobile-navbar ul li a:active {
+  transform: scale(0.92);
 }
 .site-mobile-navbar ul li a:hover,
 .site-mobile-navbar ul li a:focus,
 .site-mobile-navbar ul li a.active {
   color: #1547A8 !important;
 }
+.site-mobile-navbar ul li a.active i {
+  transform: none !important;
+  color: #1547A8 !important;
+}
+.site-mobile-navbar ul li a.active .menu-text {
+  opacity: 1 !important;
+  transform: none !important;
+  color: #1547A8 !important;
+}
 .site-mobile-navbar ul li a i {
   font-size: 20px !important;
+  line-height: 1.2 !important;
 }
 .site-mobile-navbar ul li a .menu-text {
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.5px !important;
-  margin-top: 2px !important;
+  letter-spacing: 0.4px !important;
+  margin-top: 3px !important;
+  line-height: 1 !important;
 }
 .site-mobile-navbar ul li a .count {
   position: absolute !important;
-  top: 4px !important;
-  right: 18px !important;
+  top: 1px !important;
+  right: calc(50% - 18px) !important;
   background-color: #1547A8 !important;
   color: #ffffff !important;
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 700 !important;
   min-width: 16px !important;
   height: 16px !important;
   line-height: 16px !important;
   border-radius: 999px !important;
   padding: 0 4px !important;
+  box-shadow: 0 1px 3px rgba(21, 71, 168, 0.4) !important;
 }
+
 
 /* ==========================================================================
    Global Brand Color Theme Override (#1547A8)
@@ -4994,25 +5027,30 @@ svg rect[fill="#634c9f"] {
     height: 9px !important;
   }
 
-  /* 3. Action Buttons (Wishlist, Compare, Add to Cart) - Keep Horizontally at Top with Proper Icon Only */
+  /* 3. Action Buttons (Wishlist & Compare) - Vertical Stack on Top Right */
+  .thumbnail-wrapper .thumbnail-buttons,
+  .thumbnail-buttons,
+  .action-icons,
   .elementor-element-2bdf9e6 .thumbnail-buttons,
   .elementor-element-d6f7202 .thumbnail-buttons {
     position: absolute !important;
-    top: 4px !important;
-    right: 4px !important;
+    top: 8px !important;
+    right: 8px !important;
     left: auto !important;
     bottom: auto !important;
     display: flex !important;
-    flex-direction: row !important; /* HORIZONTAL ROW */
+    flex-direction: column !important; /* STRICT VERTICAL STACK */
     align-items: center !important;
-    gap: 4px !important;
-    z-index: 5 !important;
+    gap: 6px !important;
+    z-index: 10 !important;
     margin: 0 !important;
     padding: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 
-  .elementor-element-2bdf9e6 .thumbnail-buttons > *,
-  .elementor-element-d6f7202 .thumbnail-buttons > * {
+  .thumbnail-buttons > *,
+  .action-icons > * {
     opacity: 1 !important;
     transform: none !important;
     visibility: visible !important;
@@ -5023,23 +5061,38 @@ svg rect[fill="#634c9f"] {
     margin: 0 !important;
   }
 
-  /* Circular action button base: No text label overflow, clean icon-only pill */
+  /* Completely remove duplicate top cart button and quickview/eye button */
+  .thumbnail-buttons .mobile-top-cart-btn,
+  .thumbnail-buttons .quick-view-button,
+  .thumbnail-buttons .quickview-button,
+  .action-icons .quickview-button,
+  .action-icons .eye-link {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Circular action button base: clean icon-only pill */
+  .thumbnail-buttons a,
+  .thumbnail-buttons .wishlist-button a,
+  .thumbnail-buttons .compare-button a,
+  .action-icons a,
   .elementor-element-2bdf9e6 .thumbnail-buttons a,
-  .elementor-element-d6f7202 .thumbnail-buttons a,
-  .elementor-element-2bdf9e6 .thumbnail-buttons .quickview-button,
-  .elementor-element-d6f7202 .thumbnail-buttons .quickview-button {
-    width: 25px !important;
-    height: 25px !important;
-    min-width: 25px !important;
-    min-height: 25px !important;
+  .elementor-element-d6f7202 .thumbnail-buttons a {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
     border-radius: 50% !important;
     background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0 !important; /* CRITICAL: Hides text labels ("Add to wishlist", "Compare") */
+    font-size: 0 !important; /* Hides text labels */
     line-height: 1 !important;
     text-indent: 0 !important;
     color: #475569 !important;
@@ -5047,73 +5100,99 @@ svg rect[fill="#634c9f"] {
     margin: 0 !important;
     overflow: hidden !important;
     text-decoration: none !important;
+    cursor: pointer !important;
+    transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease !important;
   }
 
-  /* Add to Cart Top Button: proper cart icon only */
-  .elementor-element-2bdf9e6 .thumbnail-buttons .mobile-top-cart-btn,
-  .elementor-element-d6f7202 .thumbnail-buttons .mobile-top-cart-btn {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+  /* Suppress broken pseudo elements so our clean SVG icons show crisp */
+  .thumbnail-buttons a::before,
+  .thumbnail-buttons a::after,
+  .action-icons a::before,
+  .action-icons a::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* SVG Icons display */
+  .thumbnail-buttons svg,
+  .action-icons svg {
+    display: block !important;
+    width: 15px !important;
+    height: 15px !important;
+    stroke: currentColor !important;
+    pointer-events: none !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Wishlist Button: Order 1 */
+  .thumbnail-buttons .wishlist-button,
+  .action-icons .wishlist-button {
     order: 1 !important;
   }
-  .elementor-element-2bdf9e6 .thumbnail-buttons a.mobile-top-cart-btn,
-  .elementor-element-d6f7202 .thumbnail-buttons a.mobile-top-cart-btn,
-  .elementor-element-2bdf9e6 .thumbnail-buttons .mobile-top-cart-btn a,
-  .elementor-element-d6f7202 .thumbnail-buttons .mobile-top-cart-btn a {
-    background-color: #1547A8 !important;
-    border-color: #1547A8 !important;
-    color: #ffffff !important;
+  .thumbnail-buttons .wishlist-button a:hover,
+  .action-icons a.klbwl-btn:hover {
+    background-color: #fee2e2 !important;
+    color: #ef4444 !important;
+    border-color: #fca5a5 !important;
+    transform: scale(1.08) !important;
   }
-  .elementor-element-2bdf9e6 .thumbnail-buttons .mobile-top-cart-btn i,
-  .elementor-element-d6f7202 .thumbnail-buttons .mobile-top-cart-btn i {
-    font-size: 11px !important;
-    color: #ffffff !important;
-    display: inline-flex !important;
-    margin: 0 !important;
+  .thumbnail-buttons .wishlist-button a:hover svg,
+  .action-icons a.klbwl-btn:hover svg {
+    stroke: #ef4444 !important;
   }
 
-  /* Wishlist Button: proper heart icon only */
-  .elementor-element-2bdf9e6 .thumbnail-buttons .wishlist-button,
-  .elementor-element-d6f7202 .thumbnail-buttons .wishlist-button {
+  /* Wishlist Active / Liked State */
+  .thumbnail-buttons a.klbwl-btn.active,
+  .thumbnail-buttons a.klbwl-btn.liked,
+  .thumbnail-buttons a.klbwl-btn.klbwl-product-in-list,
+  .action-icons a.klbwl-btn.active,
+  .action-icons a.klbwl-btn.liked,
+  .action-icons a.klbwl-btn.klbwl-product-in-list {
+    background-color: #fee2e2 !important;
+    border-color: #f87171 !important;
+    color: #ef4444 !important;
+  }
+  .thumbnail-buttons a.klbwl-btn.active svg,
+  .thumbnail-buttons a.klbwl-btn.liked svg,
+  .thumbnail-buttons a.klbwl-btn.klbwl-product-in-list svg,
+  .action-icons a.klbwl-btn.active svg,
+  .action-icons a.klbwl-btn.liked svg,
+  .action-icons a.klbwl-btn.klbwl-product-in-list svg {
+    fill: #ef4444 !important;
+    stroke: #ef4444 !important;
+  }
+
+  /* Compare Button: Order 2 */
+  .thumbnail-buttons .compare-button,
+  .thumbnail-buttons a.klbcp-btn {
     order: 2 !important;
   }
-  .elementor-element-2bdf9e6 .thumbnail-buttons .wishlist-button a::before,
-  .elementor-element-d6f7202 .thumbnail-buttons .wishlist-button a::before {
-    font-family: "klbtheme" !important;
-    content: "\eb35" !important;
-    font-size: 12px !important;
-    line-height: 1 !important;
-    display: inline-block !important;
-    color: #64748b !important;
-    margin: 0 !important;
-    padding: 0 !important;
+  .thumbnail-buttons a.klbcp-btn:hover,
+  .action-icons a.klbcp-btn:hover {
+    background-color: #f0fdf4 !important;
+    color: #16a34a !important;
+    border-color: #86efac !important;
+    transform: scale(1.08) !important;
+  }
+  .thumbnail-buttons a.klbcp-btn:hover svg,
+  .action-icons a.klbcp-btn:hover svg {
+    stroke: #16a34a !important;
   }
 
-  /* Compare Button: proper compare icon only */
-  .elementor-element-2bdf9e6 .thumbnail-buttons a.klbcp-btn,
-  .elementor-element-d6f7202 .thumbnail-buttons a.klbcp-btn {
-    order: 3 !important;
+  /* Compare Active State */
+  .thumbnail-buttons a.klbcp-btn.klbcp-btn-added,
+  .thumbnail-buttons a.klbcp-btn.klbcp-added,
+  .action-icons a.klbcp-btn.klbcp-btn-added,
+  .action-icons a.klbcp-btn.klbcp-added {
+    background-color: #dcfce7 !important;
+    border-color: #86efac !important;
+    color: #16a34a !important;
   }
-  .elementor-element-2bdf9e6 .thumbnail-buttons a.klbcp-btn::before,
-  .elementor-element-d6f7202 .thumbnail-buttons a.klbcp-btn::before {
-    font-family: "klbtheme" !important;
-    content: "\e839" !important;
-    font-size: 12px !important;
-    line-height: 1 !important;
-    display: inline-block !important;
-    color: #64748b !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: auto !important;
-    height: auto !important;
-    border: none !important;
-  }
-
-  /* Hide quickview on mobile */
-  .elementor-element-2bdf9e6 .thumbnail-buttons .quick-view-button,
-  .elementor-element-d6f7202 .thumbnail-buttons .quick-view-button {
-    display: none !important;
+  .thumbnail-buttons a.klbcp-btn.klbcp-btn-added svg,
+  .thumbnail-buttons a.klbcp-btn.klbcp-added svg,
+  .action-icons a.klbcp-btn.klbcp-btn-added svg,
+  .action-icons a.klbcp-btn.klbcp-added svg {
+    stroke: #16a34a !important;
   }
 
   /* Product Title styling */
@@ -6128,3 +6207,294 @@ a.button.is-loading::after,
 
 
 
+
+
+/* Compare Modal / Drawer */
+.compare-side-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.compare-side-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.compare-modal-side {
+  position: fixed;
+  top: 0;
+  right: -520px;
+  width: 500px;
+  max-width: 92vw;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.18);
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.compare-modal-side.active {
+  right: 0;
+}
+
+.compare-modal-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.compare-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.compare-modal-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compare-badge-count {
+  font-size: 11.5px;
+  font-weight: 600;
+  background: #eff6ff;
+  color: #1547A8;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid #bfdbfe;
+}
+
+.compare-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.compare-modal-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.compare-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+}
+
+.compare-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+
+.compare-empty-icon {
+  font-size: 42px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.compare-empty-state h5 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.compare-empty-state p {
+  font-size: 13.5px;
+  margin: 0;
+  color: #64748b;
+}
+
+.compare-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.compare-modal-card {
+  position: relative;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.compare-modal-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.compare-remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  line-height: 1;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  z-index: 2;
+}
+
+.compare-remove-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #ef4444;
+}
+
+.compare-modal-img {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  background: #ffffff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.compare-modal-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.compare-modal-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 34px;
+}
+
+.compare-modal-item-price {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1547A8;
+  margin-bottom: 4px;
+}
+
+.compare-modal-item-stock {
+  font-size: 11.5px;
+  color: #16a34a;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-compare-modal-add-cart {
+  width: 100%;
+  padding: 7px 10px;
+  background: #1547A8;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-compare-modal-add-cart:hover {
+  background: #0d3278;
+}
+
+.compare-modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-view-compare-page {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #1547A8;
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  transition: background 0.15s ease;
+}
+
+.btn-view-compare-page:hover {
+  background: #0d3278;
+}
+
+.btn-clear-compare-modal {
+  padding: 10px 14px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-clear-compare-modal:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #ef4444;
+}
+
+@media (max-width: 480px) {
+  .compare-modal-side {
+    width: 100%;
+    max-width: 100vw;
+  }
+  .compare-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}

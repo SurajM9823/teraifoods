@@ -1,0 +1,41 @@
+{% load static %}
+<!-- Mobile Bottom Navbar (Phone Only) -->
+<div class="klb-mobile-bottom site-mobile-navbar">
+	<div class="mobile-navbar-inner">
+		<nav class="site-menu horizontal mobile-nav" aria-label="Mobile Navigation">
+			<ul>
+				<li>
+					<a href="{% url 'web:home' %}" class="store{% if request.path == '/' or request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'home-root' %} active{% endif %}" id="mobile-nav-store">
+						<i class="klb-icon-store"></i>
+						<span class="menu-text">STORE</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'web:shop' %}" class="shop{% if '/shop/' in request.path or '/product' in request.path or '/search/' in request.path %} active{% endif %}" id="mobile-nav-shop">
+						<i class="klb-icon-shopping-bag-2"></i>
+						<span class="menu-text">SHOP</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'web:cart' %}" class="cart mini-cart-button{% if '/cart/' in request.path %} active{% endif %}" id="mobile-nav-cart">
+						<i class="klb-icon-shopping-cart-3"></i>
+						<span class="count cart-count">0</span>
+						<span class="menu-text">CART</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'web:track-order' %}" class="orders{% if '/track-order/' in request.path %} active{% endif %}" id="mobile-nav-orders">
+						<i class="klb-icon-truck"></i>
+						<span class="menu-text">ORDERS</span>
+					</a>
+				</li>
+				<li>  
+					<a href="#" class="categories menu-drawer-toggle" data-drawer="site-categories-drawer" id="mobile-nav-categories">
+						<i class="klb-icon-layout-list"></i>
+						<span class="menu-text">CATEGORIES</span>
+					</a>
+				</li>
+			</ul>
+		</nav><!-- mobile-menu -->
+	</div><!-- mobile-bottom-menu -->
+</div><!-- mobile-bottom-menu -->

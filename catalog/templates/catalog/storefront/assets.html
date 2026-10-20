@@ -1,6 +1,7 @@
 {% load static %}
 <script src="{% static 'web/js/storefront-categories.js' %}" defer></script>
 <script src="{% static 'web/js/catalog-storefront.js' %}?v={{ catalog_revision|default:1 }}" defer></script>
+<script src="{% static 'web/js/delivery-quote.js' %}" defer></script>
 {{ catalog_revision|default:1|json_script:'catalog-revision' }}
 <template id="storefront-category-menu"><nav class="site-categories collapse">{% include 'catalog/storefront/menu.html' with menu_class='menu' %}</nav></template>
 <template id="storefront-category-options">{% for category in storefront_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}</template>

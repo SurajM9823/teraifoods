@@ -4,6 +4,8 @@ from .icons import ICON_CHOICES
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from decimal import Decimal
+from django.core.validators import MinValueValidator
+import uuid
 
 
 class CategoryFields(models.Model):
@@ -68,6 +70,9 @@ class Product(models.Model):
     subcategory = models.ForeignKey(Subcategory, on_delete=models.PROTECT, related_name='products', null=True, blank=True)
     regular_price = models.DecimalField(max_digits=12, decimal_places=2)
     sale_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    weight = models.DecimalField(max_digits=10, decimal_places=3, default=Decimal('150'),
+        validators=[MinValueValidator(Decimal('0.001'))], help_text='Shipping weight per sellable unit.')
+    weight_unit = models.CharField(max_length=2, choices=[('g', 'gm (grams)'), ('kg', 'kg (kilograms)')], default='g')
     is_active = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
@@ -101,6 +106,8 @@ class Product(models.Model):
             models.CheckConstraint(condition=models.Q(sale_price__isnull=True) | (models.Q(sale_price__gt=0) & models.Q(sale_price__lt=models.F('regular_price'))), name='product_valid_discount'),
             models.CheckConstraint(condition=models.Q(featured=False) | models.Q(sale_price__isnull=False), name='featured_requires_discount'),
             models.CheckConstraint(condition=models.Q(is_published=False) | models.Q(category__isnull=False), name='published_requires_category'),
+            models.CheckConstraint(condition=models.Q(weight__gt=0), name='product_positive_weight'),
+            models.CheckConstraint(condition=models.Q(weight_unit__in=['g', 'kg']), name='product_weight_unit_valid'),
         ]
 
     def clean(self):
@@ -113,6 +120,10 @@ class Product(models.Model):
             errors['category'] = 'Published products require a category.'
         if errors:
             raise ValidationError(errors)
+
+    @property
+    def weight_grams(self):
+        return self.weight * (Decimal('1000') if self.weight_unit == 'kg' else Decimal('1'))
 
     @property
     def price(self):
@@ -207,12 +218,51 @@ class StockAudit(models.Model):
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True)
+    public_id = models.UUIDField(unique=True, null=True, editable=False)
+    email = models.EmailField(blank=True)
+    recipient_name = models.CharField(max_length=150, blank=True)
+    phone = models.CharField(max_length=30, blank=True)
+    address = models.JSONField(default=dict)
+    billing_address = models.JSONField(default=dict, blank=True)
+    currency = models.CharField(max_length=3, default='GBP')
+    payment_method = models.CharField(max_length=20, default='stripe')
+    payment_status = models.CharField(max_length=20, default='pending')
+    fulfilment_status = models.CharField(max_length=30, default='pending_payment', db_index=True)
+    cancellation_status = models.CharField(max_length=20, default='none')
+    refund_status = models.CharField(max_length=20, default='none')
+    tax = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    discount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    version = models.PositiveIntegerField(default=0)
+    guest_access_version = models.PositiveIntegerField(default=1)
+    reservation_expires_at = models.DateTimeField(null=True, blank=True)
+    delivered_at = models.DateTimeField(null=True, blank=True)
+    tracking_reference = models.CharField(max_length=150, blank=True)
+    tracking_url = models.URLField(blank=True)
+    assigned_driver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True, related_name='delivery_assignments')
+    delivery_pin_hash = models.CharField(max_length=128, blank=True)
+    delivery_pin_expires_at = models.DateTimeField(null=True, blank=True)
+    delivery_pin_attempts = models.PositiveSmallIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
     idempotency_key = models.CharField(max_length=100, unique=True)
     request_digest = models.CharField(max_length=64)
     total = models.DecimalField(max_digits=14, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    delivery_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_weight_grams = models.DecimalField(max_digits=16, decimal_places=3, null=True, blank=True)
+    delivery_min_days = models.PositiveSmallIntegerField(null=True, blank=True)
+    delivery_max_days = models.PositiveSmallIntegerField(null=True, blank=True)
     status = models.CharField(max_length=20, default='reserved', choices=[('reserved', 'Reserved'), ('cancelled', 'Cancelled')])
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def number(self):
+        return f'TF-{self.pk:08d}'
+
+    def save(self, *args, **kwargs):
+        if self.public_id is None:
+            self.public_id = uuid.uuid4()
+        return super().save(*args, **kwargs)
 
 
 class OrderLine(models.Model):
@@ -220,6 +270,10 @@ class OrderLine(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    unit_weight_grams = models.DecimalField(max_digits=13, decimal_places=3, null=True, blank=True)
+    product_name = models.CharField(max_length=300, blank=True)
+    product_image = models.CharField(max_length=1000, blank=True)
+    product_sku = models.CharField(max_length=80, blank=True)
 
 
 class CatalogRevision(models.Model):

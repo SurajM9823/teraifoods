@@ -9,6 +9,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'slug', 'sku', 'description', 'category', 'subcategory',
+                  'weight', 'weight_unit',
                   'regular_price', 'sale_price', 'new_arrival', 'featured', 'best_seller',
                   'low_stock_threshold', 'is_active', 'is_published', 'is_archived']
         widgets = {'description':forms.Textarea(attrs={'rows':4})}
@@ -28,6 +29,10 @@ class ProductForm(forms.ModelForm):
         if data.get('is_published') and (not self.instance.pk or not self.instance.images.filter(is_main=True).exists()):
             self.add_error('is_published', 'Save a draft and upload a main image before publishing.')
         return data
+
+    def clean_low_stock_threshold(self):
+        value = self.cleaned_data.get('low_stock_threshold')
+        return value if value is not None else 5
 
 
 class StockForm(forms.Form):

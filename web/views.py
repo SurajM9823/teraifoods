@@ -39,3 +39,9 @@ def health(request):
     except DatabaseError:
         return JsonResponse({"status": "unavailable"}, status=503)
     return JsonResponse({"status": "ok"})
+
+
+@require_safe
+@ensure_csrf_cookie
+def compare_view(request):
+    return render(request, "web/compare.html", {})

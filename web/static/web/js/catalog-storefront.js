@@ -31,6 +31,7 @@
         const refreshed = new Map(data.items.map(item => [String(item.id), {id:String(item.id),title:item.name,
           image:item.image,price:Number(item.price),quantity:item.quantity,catalogVersion:2}]));
         window.TeraiCatalog.saveCart(window.TeraiCatalog.getCart().map(item => refreshed.get(String(item.id)) || item));
+        window.dispatchEvent(new CustomEvent('delivery:quote', {detail:{items:cart, quote:data}}));
         return true;
       } catch { notify('Unable to check current prices and stock. Please retry.'); return false; }
     };

@@ -56,6 +56,7 @@ def body(request):
 
 def product_data(product):
     return dict(id=product.pk, name=product.name, slug=product.slug, category_id=product.category_id,
+        weight=str(product.weight), weight_unit=product.weight_unit, weight_grams=str(product.weight_grams),
         subcategory_id=product.subcategory_id, regular_price=str(product.regular_price),
         sale_price=str(product.sale_price) if product.sale_price is not None else None,
         is_active=product.is_active, is_published=product.is_published, is_archived=product.is_archived,
@@ -87,7 +88,7 @@ def products(request, pk=None):
             return JsonResponse(product_data(product))
         incoming = body(request)
         fields = ProductForm.Meta.fields
-        values = {name:getattr(product, name + '_id' if name in ('category','subcategory') else name) for name in fields} if pk else {}
+        values = {name:getattr(product, name + '_id' if name in ('category','subcategory') else name) for name in fields}
         values.update({name:value for name,value in incoming.items() if name in fields})
         if 'category' in incoming and 'subcategory' not in incoming:
             values['subcategory'] = None

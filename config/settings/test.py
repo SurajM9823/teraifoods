@@ -12,3 +12,4 @@ EMAIL_DELIVERY_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 ALLAUTH_TRUSTED_PROXY_COUNT = 0
+CHANNEL_LAYERS = {'default': {'BACKEND':'channels.layers.InMemoryChannelLayer'}}

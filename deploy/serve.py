@@ -1,22 +1,18 @@
-"""Private WSGI server; only Nginx exposes a public port in Compose."""
+"""Private ASGI server; Nginx handles the public HTTP/WebSocket endpoint."""
 import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from config.wsgi import application
-from waitress import serve
+import uvicorn
 
-serve(
-    application,
+uvicorn.run(
+    "config.asgi:application",
     host=os.getenv("WEB_BIND_HOST", "0.0.0.0"),
     port=8000,
-    threads=int(os.getenv("WEB_THREADS", "8")),
-    connection_limit=int(os.getenv("WEB_CONNECTION_LIMIT", "200")),
-    channel_timeout=60,
-    max_request_body_size=10 * 1024 * 1024,
-    trusted_proxy="*",
-    trusted_proxy_headers={"x-forwarded-proto", "x-forwarded-for"},
-    trusted_proxy_count=1,
-    clear_untrusted_proxy_headers=True,
+    proxy_headers=True,
+    forwarded_allow_ips=os.getenv("FORWARDED_ALLOW_IPS", "*"),
+    ws_max_size=16384,
+    ws_ping_interval=20,
+    ws_ping_timeout=20,
 )

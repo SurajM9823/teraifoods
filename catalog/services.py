@@ -108,9 +108,15 @@ def reserve_order(customer, items, key):
         if not product.stock_confirmed or product.stock < quantities[product.pk]:
             raise ValidationError(f'{product.name}: insufficient confirmed stock.')
         total += product.price * quantities[product.pk]
-    order = Order.objects.create(customer=customer, idempotency_key=key, request_digest=digest, total=total)
+    from delivery.services import quote_delivery
+    delivery = quote_delivery(products, quantities, lock=True)
+    order = Order.objects.create(customer=customer, idempotency_key=key, request_digest=digest,
+        subtotal=total, total=total + delivery['charge'], delivery_charge=delivery['charge'],
+        total_weight_grams=delivery['weight_grams'], delivery_min_days=delivery['minimum_days'],
+        delivery_max_days=delivery['maximum_days'])
     for product in products:
-        OrderLine.objects.create(order=order, product=product, quantity=quantities[product.pk], unit_price=product.price)
+        OrderLine.objects.create(order=order, product=product, quantity=quantities[product.pk],
+                                 unit_price=product.price, unit_weight_grams=product.weight_grams)
         adjust_stock(product.pk, -quantities[product.pk], reason='Order reservation', actor=customer,
                      key=f'order:{order.pk}:{product.pk}', kind='order', reference=str(order.pk))
     return order

@@ -11,6 +11,8 @@ from .services import adjust_stock, reserve_order
 @skipUnless(connection.vendor == 'postgresql', 'Requires real PostgreSQL row locks and audit trigger')
 class PostgreSQLInventoryTests(TransactionTestCase):
     def test_simultaneous_orders_cannot_oversell(self):
+        from delivery.models import WeightBand
+        WeightBand.objects.create(max_weight_grams=10000, charge=0)
         category = Category.objects.create(name='Concurrency category', slug='concurrency-category')
         product = Product.objects.create(name='Last unit', slug='last-unit', category=category,
                                          regular_price=10, is_published=True)

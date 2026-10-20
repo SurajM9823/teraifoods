@@ -12,11 +12,23 @@ x-app: &app
     ALLAUTH_TRUSTED_PROXY_COUNT: "1"
     REDIS_CACHE_URL: redis://redis:6379/1
     CELERY_BROKER_URL: redis://redis:6379/0
+    CHANNEL_REDIS_URL: redis://redis:6379/2
+    ORDER_PUBLIC_ORIGIN: ${ORDER_PUBLIC_ORIGIN:-http://127.0.0.1:8080}
   volumes:
     - static_files:/app/staticfiles
     - media_files:/app/media
 
 services:
+  beat:
+    <<: *app
+    command: ["celery", "-A", "config", "beat", "--loglevel=WARNING", "--schedule=/tmp/order-beat"]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
   redis:
     image: redis:7-alpine
     command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "noeviction"]

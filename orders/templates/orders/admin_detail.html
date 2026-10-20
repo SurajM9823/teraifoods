@@ -1,0 +1,23 @@
+{% extends 'catalog/base.html' %}
+{% block title %}{{ order.number }}{% endblock %}{% block breadcrumb %}Orders / {{ order.number }}{% endblock %}
+{% block category_content %}
+<h1>{{ order.number }}</h1><p><a href="/admin/orders/">All orders</a> · <a href="/admin/orders/reviews/">Moderate reviews</a></p>
+<p>{{ order.recipient_name }} · {{ order.email }} · {{ order.phone }}</p>
+<p>{{ order.address.line1 }} {{ order.address.line2 }}, {{ order.address.city }} {{ order.address.postcode }} · {{ order.address.country }}</p>
+<p>Delivery instructions: {{ order.address.instructions|default:'None' }}</p>
+<p>Payment: {{ order.payment_status }} · Fulfilment: {{ order.fulfilment_status }} · Cancellation: {{ order.cancellation_status }} · Refund: {{ order.refund_status }}</p>
+<p>Subtotal £{{ order.subtotal }} · Delivery £{{ order.delivery_charge }} · Total £{{ order.total }} · {{ order.total_weight_grams }} gm · Estimated {{ order.delivery_min_days }}–{{ order.delivery_max_days }} days</p>
+<table class="category-table"><thead><tr><th>Product</th><th>Quantity</th><th>Unit price</th><th>Unit weight</th></tr></thead><tbody>{% for line in order.lines.all %}<tr><td>{{ line.product_name }}</td><td>{{ line.quantity }}</td><td>£{{ line.unit_price }}</td><td>{{ line.unit_weight_grams }} gm</td></tr>{% endfor %}</tbody></table>
+{% if perms.catalog.change_order %}
+<h2>Fulfilment</h2>
+<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="status"><label>Next status <select name="status">{% for status in statuses %}<option>{{ status }}</option>{% endfor %}</select></label><label>Note <input name="reason" maxlength="500"></label><button class="category-primary">Update status</button></form>
+<h2>Courier / delivery assignment</h2>
+<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="tracking"><label>Tracking reference <input name="tracking_reference" value="{{ order.tracking_reference }}" maxlength="150"></label><label>Tracking link <input type="url" name="tracking_url" value="{{ order.tracking_url }}"></label><label>Driver <select name="driver"><option value="">Unassigned</option>{% for driver in drivers %}<option value="{{ driver.pk }}" {% if driver.pk == order.assigned_driver_id %}selected{% endif %}>{{ driver }}</option>{% endfor %}</select></label><button class="category-primary">Save tracking</button></form>
+<h2>Delivery verification</h2>
+<form method="post">{% csrf_token %}<button name="action" value="pin" class="category-primary">Email recipient a delivery PIN</button></form>
+<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="deliver"><label>Recipient's PIN <input name="pin" inputmode="numeric" autocomplete="off" maxlength="6"></label><label>Alternative proof reason (only when PIN policy permits) <input name="reason" maxlength="500"></label><button class="category-primary">Confirm handover</button></form>
+<h2>Cancellation</h2><form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="cancel"><label>Reason <input name="reason" required maxlength="500"></label><button>Request cancellation and refund</button></form>
+{% if order.return_request %}<h2>Return: {{ order.return_request.status }}</h2><p>{{ order.return_request.reason }}</p><form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="return"><select name="status"><option value="approved">Approve</option><option value="rejected">Reject</option><option value="received">Received / refund</option></select><label>Reason <input name="reason" required maxlength="500"></label><label><input type="checkbox" name="restock">Received items are suitable for restocking</label><button>Record return decision</button></form>{% endif %}
+{% endif %}
+<h2>History</h2><ol>{% for event in order.events.all %}<li>{{ event.created_at }} · {{ event.message }} · {{ event.actor|default:'System / customer' }}</li>{% endfor %}</ol>
+{% endblock %}

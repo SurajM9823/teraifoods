@@ -27,6 +27,8 @@ def image_bytes(fmt='PNG'):
 class ProductTests(TestCase):
     def setUp(self):
         cache.clear()
+        from delivery.models import WeightBand
+        WeightBand.objects.create(max_weight_grams=100000, charge=0)
         self.staff = get_user_model().objects.create_user('product-staff', is_staff=True, is_superuser=True)
         self.customer = get_user_model().objects.create_user('buyer')
         self.category = Category.objects.first()
@@ -250,7 +252,8 @@ class ProductTests(TestCase):
     def test_admin_form_initial_stock(self):
         self.client.force_login(self.staff)
         response = self.client.post('/admin/products/add/', dict(name='Initial stock form', slug='initial-stock-form',
-            regular_price='4.00', category=self.category.pk, is_active='on', low_stock_threshold=5, initial_stock=9))
+            regular_price='4.00', category=self.category.pk, is_active='on', low_stock_threshold=5, initial_stock=9,
+            weight='150', weight_unit='g'))
         self.assertEqual(response.status_code, 302, response.content)
         product = Product.objects.get(slug='initial-stock-form')
         self.assertEqual(product.stock, 9)

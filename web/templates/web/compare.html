@@ -1,0 +1,254 @@
+{% load static catalog_tags %}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta name="customer-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Product Comparison – Terai Food UK | Farm Fresh &amp; Himalayan Groceries</title>
+	<meta name="description" content="Compare fresh groceries, prices, and quality from Terai Food UK.">
+	<link rel="canonical" href="/compare/">
+
+	<link rel="icon" href="{% static 'web/' %}images/terai_food_logo.png" type="image/png">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" id="bootstrap-css" href="{% static 'web/' %}css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-icons-css" href="{% static 'web/' %}css/klbtheme-icons.css" media="all">
+	<link rel="stylesheet" id="grogin-klbtheme-social-css" href="{% static 'web/' %}css/klbtheme-social.css" media="all">
+	<link rel="stylesheet" id="typography-css" href="{% static 'web/' %}css/typography-min.css" media="all">
+	<link rel="stylesheet" id="grogin-spaces-css" href="{% static 'web/' %}css/spaces-min.css" media="all">
+	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
+	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
+	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
+	<link rel="stylesheet" id="compare-css" href="{% static 'web/' %}css/compare.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+
+	<style>
+		.compare-page-wrapper {
+			padding: 40px 0 80px;
+			min-height: 60vh;
+		}
+		.compare-header-box {
+			margin-bottom: 24px;
+			padding-bottom: 16px;
+			border-bottom: 1px solid #e2e8f0;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 16px;
+		}
+		.compare-header-box h1 {
+			font-size: 24px;
+			font-weight: 700;
+			color: #0f172a;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.compare-card-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+			gap: 20px;
+		}
+		.compare-card-item {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 8px;
+			padding: 16px;
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+		}
+		.compare-card-remove {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			background: #fee2e2;
+			color: #ef4444;
+			border: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			font-size: 14px;
+			transition: all 0.2s;
+			z-index: 2;
+		}
+		.compare-card-remove:hover {
+			background: #ef4444;
+			color: #ffffff;
+		}
+		.compare-img-wrap {
+			width: 100%;
+			height: 180px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 14px;
+			overflow: hidden;
+		}
+		.compare-img-wrap img {
+			max-height: 100%;
+			max-width: 100%;
+			object-fit: contain;
+		}
+		.compare-item-title {
+			font-size: 15px;
+			font-weight: 600;
+			color: #1e293b;
+			margin-bottom: 8px;
+			line-height: 1.35;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		.compare-item-price {
+			font-size: 18px;
+			font-weight: 700;
+			color: #1547A8;
+			margin-bottom: 12px;
+		}
+		.compare-item-stock {
+			font-size: 12px;
+			font-weight: 600;
+			color: #16a34a;
+			margin-bottom: 16px;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+		.compare-empty-box {
+			text-align: center;
+			padding: 60px 20px;
+			background: #ffffff;
+			border: 1px dashed #cbd5e1;
+			border-radius: 8px;
+		}
+		.compare-empty-box i {
+			font-size: 48px;
+			color: #94a3b8;
+			margin-bottom: 16px;
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	{% include 'web/header.html' %}
+
+	<main class="compare-page-wrapper">
+		<div class="container">
+			<!-- Breadcrumbs -->
+			<div class="site-breadcrumbs mb-4">
+				<ul class="breadcrumbs d-flex align-items-center gap-2 list-unstyled p-0 m-0 text-13 text-gray-500">
+					<li><a href="/" class="text-gray-700">Home</a></li>
+					<li class="sep">&gt;</li>
+					<li class="current text-primary font-weight-600">Product Comparison</li>
+				</ul>
+			</div>
+
+			<div class="compare-header-box">
+				<h1><i class="klb-icon-shuffle"></i> Compare Products</h1>
+				<button type="button" class="btn btn-outline-danger btn-sm" id="btn-clear-compare" style="display:none;">Clear All Comparisons</button>
+			</div>
+
+			<div id="compare-items-container">
+				<!-- Injected by JavaScript -->
+			</div>
+		</div>
+	</main>
+
+	{% include 'catalog/storefront/assets.html' with include_drawer=True %}
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			function renderComparePage() {
+				const container = document.getElementById('compare-items-container');
+				const clearBtn = document.getElementById('btn-clear-compare');
+				if (!container) return;
+
+				const list = JSON.parse(localStorage.getItem('teraifood_compare') || '[]');
+				if (!list || !list.length) {
+					clearBtn.style.display = 'none';
+					container.innerHTML = `
+						<div class="compare-empty-box">
+							<i class="klb-icon-shuffle"></i>
+							<h3 class="font-weight-600 text-gray-800">Your comparison list is empty</h3>
+							<p class="text-gray-500 mb-4">You have not added any products to compare yet. Browse our store and click the compare icon on products.</p>
+							<a href="/shop/" class="btn btn-primary px-4 py-2">Explore Shop</a>
+						</div>
+					`;
+					return;
+				}
+
+				clearBtn.style.display = 'inline-block';
+				let html = '<div class="compare-card-grid">';
+				list.forEach(item => {
+					html += `
+						<div class="compare-card-item" data-product-id="${item.id}">
+							<button type="button" class="compare-card-remove" data-remove-id="${item.id}" title="Remove from compare">&times;</button>
+							<div class="compare-img-wrap">
+								<img src="${item.image || '/static/web/images/1-16-500x500.jpg'}" alt="${item.title}">
+							</div>
+							<a href="/product-detail/?product=${item.id}" class="compare-item-title text-decoration-none">${item.title}</a>
+							<div class="compare-item-price">&pound;${parseFloat(item.price).toFixed(2)}</div>
+							<div class="compare-item-stock"><i class="klb-icon-check"></i> ${item.stock || 'In Stock'}</div>
+							<button type="button" class="btn btn-primary btn-sm w-100 mt-auto btn-compare-add-cart" data-id="${item.id}">Add to Cart</button>
+						</div>
+					`;
+				});
+				html += '</div>';
+				container.innerHTML = html;
+
+				// Bind Remove buttons
+				container.querySelectorAll('[data-remove-id]').forEach(btn => {
+					btn.addEventListener('click', function(e) {
+						e.stopPropagation();
+						const id = this.getAttribute('data-remove-id');
+						let current = JSON.parse(localStorage.getItem('teraifood_compare') || '[]');
+						current = current.filter(it => String(it.id) !== String(id));
+						localStorage.setItem('teraifood_compare', JSON.stringify(current));
+						renderComparePage();
+						if (window.teraiShowToast) window.teraiShowToast('Comparison', 'Item removed from compare table.', 'info');
+					});
+				});
+
+				// Bind Add to Cart buttons
+				container.querySelectorAll('.btn-compare-add-cart').forEach(btn => {
+					btn.addEventListener('click', function(e) {
+						e.stopPropagation();
+						const id = this.getAttribute('data-id');
+						const found = list.find(it => String(it.id) === String(id));
+						if (found && window.TeraiCatalog?.addToCart) {
+							window.TeraiCatalog.addToCart(found, 1);
+						}
+					});
+				});
+			}
+
+			renderComparePage();
+
+			const clearBtn = document.getElementById('btn-clear-compare');
+			if (clearBtn) {
+				clearBtn.addEventListener('click', function() {
+					localStorage.removeItem('teraifood_compare');
+					renderComparePage();
+					if (window.teraiShowToast) window.teraiShowToast('Comparison Cleared', 'All products removed from compare table.', 'info');
+				});
+			}
+		});
+	</script>
+</body>
+</html>
+

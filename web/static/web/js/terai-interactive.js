@@ -17,6 +17,7 @@
   // --- Constants & Storage Keys ---
   const STORAGE_CART = 'teraifood_cart';
   const STORAGE_WISHLIST = 'teraifood_wishlist';
+  const STORAGE_COMPARE = 'teraifood_compare';
   const STORAGE_ADDRESS = 'teraifood_uk_address';
 
   // --- State Helpers ---
@@ -49,6 +50,22 @@
       localStorage.setItem(STORAGE_WISHLIST, JSON.stringify(list));
     } catch (e) {}
     updateWishlistUI();
+    updateCompareUI();
+    syncGuestDataOnLogin();
+  }
+
+  function getCompare() {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_COMPARE) || '[]');
+      return Array.isArray(data) ? data.filter(item => item && typeof item === 'object' && item.id) : [];
+    } catch { return []; }
+  }
+
+  function saveCompare(list) {
+    try {
+      localStorage.setItem(STORAGE_COMPARE, JSON.stringify(list));
+    } catch (e) {}
+    updateCompareUI();
   }
 
   // --- Toast Notification System ---
@@ -103,7 +120,8 @@
     const productNodes = document.querySelectorAll('.product, .shop-product-card');
 
     productNodes.forEach((node, index) => {
-      const id = node.querySelector('[data-product_id]')?.getAttribute('data-product_id') ||
+      const id = node.getAttribute('data-catalog-product') ||
+                 node.querySelector('[data-product_id]')?.getAttribute('data-product_id') ||
                  node.className.match(/post-(\d+)/)?.[1] ||
                  `p-${index + 1}`;
 
@@ -655,7 +673,7 @@
                 </div>
                 <div class="cart-drawer-summary-row">
                   <span>Delivery Fee</span>
-                  <span class="cart-drawer-summary-row-val" id="drawer-shipping-val">£3.99</span>
+                  <span class="cart-drawer-summary-row-val" id="drawer-shipping-val">Calculated at checkout</span>
                 </div>
                 <div class="cart-drawer-summary-total-row">
                   <span class="cart-drawer-summary-total-label">Total:</span>
@@ -745,10 +763,10 @@
                     <span class="checkout-delivery-check">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                     </span>
-                    <span id="checkout-delivery-price-text">£3.99</span>
+                    <span id="checkout-delivery-price-text">Calculated at checkout</span>
                   </div>
                   <div class="checkout-delivery-method">Standard Delivery</div>
-                  <div class="checkout-delivery-eta" id="checkout-delivery-eta-text">Guaranteed by 25 Oct</div>
+                  <div class="checkout-delivery-eta" id="checkout-delivery-eta-text">Estimated delivery: 2–4 days</div>
                 </div>
 
                 <!-- Package Items List -->
@@ -789,7 +807,7 @@
                 </div>
                 <div class="checkout-summary-line">
                   <span>Delivery Fee</span>
-                  <span class="checkout-summary-line-val" id="checkout-summary-delivery-fee">£3.99</span>
+                  <span class="checkout-summary-line-val" id="checkout-summary-delivery-fee">Calculated at checkout</span>
                 </div>
                 <div class="checkout-summary-total-wrap">
                   <span class="checkout-summary-total-label">Total:</span>
@@ -893,7 +911,7 @@
                   <div class="checkout-order-detail-title">Payment Summary</div>
                   <div class="checkout-summary-line">
                     <span>Delivery Fee:</span>
-                    <span class="checkout-summary-line-val" id="drawer-step3-shipping">£3.99</span>
+                    <span class="checkout-summary-line-val" id="drawer-step3-shipping">Calculated at checkout</span>
                   </div>
                   <div class="checkout-summary-total-wrap">
                     <span class="checkout-summary-total-label">Total to Pay:</span>
@@ -1236,18 +1254,33 @@
     }, 0);
   }
 
+  let deliveryQuote = null;
+  const deliveryKey = items => JSON.stringify(items.map(i => [String(i.id), Number(i.quantity)]).sort());
+  function currentDeliveryQuote() {
+    const items = getCart().filter(i => !unselectedItemIds.has(String(i.id)));
+    return deliveryQuote?.key === deliveryKey(items) ? deliveryQuote.data : null;
+  }
+  window.addEventListener('delivery:quote', event => {
+    deliveryQuote = {key:deliveryKey(event.detail.items), data:event.detail.quote};
+    renderDrawerSummaries();
+  });
   function calculateDrawerShipping() {
-    const subtotal = calculateDrawerSubtotal();
-    if (selectedShippingMethod === 'express') return 6.99;
-    return subtotal >= 50.0 ? 0.0 : 3.99;
+    const quote = currentDeliveryQuote();
+    return quote ? Number(quote.delivery_charge) : null;
   }
 
   function renderDrawerSummaries() {
-    const subtotal = calculateDrawerSubtotal();
+    const quoted = currentDeliveryQuote();
+    const subtotal = quoted ? Number(quoted.subtotal) : calculateDrawerSubtotal();
     const shipping = calculateDrawerShipping();
-    const discount = (subtotal * voucherDiscountPercent) / 100;
-    const total = Math.max(0, subtotal - discount) + shipping;
+    const discount = 0;
+    const total = quoted ? Number(quoted.total) : null;
     const cart = getCart();
+    window.dispatchEvent(new CustomEvent('delivery:request', {detail:cart.filter(i => !unselectedItemIds.has(String(i.id)))}));
+    const shippingText = shipping === null ? 'Calculated at checkout' : shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2);
+    const totalText = total === null ? '—' : '£' + total.toFixed(2);
+    const estimate = document.getElementById('checkout-delivery-eta-text');
+    if (estimate) estimate.textContent = 'Estimated delivery: ' + (quoted?.delivery?.estimate || '2–4 days');
     const activeCount = cart.filter(i => !unselectedItemIds.has(String(i.id))).length;
 
     // Step 1 summary values
@@ -1260,8 +1293,8 @@
 
     if (s1ItemsCount) s1ItemsCount.textContent = `${activeCount} Items`;
     if (subtotalEl) subtotalEl.textContent = '£' + subtotal.toFixed(2);
-    if (shippingEl) shippingEl.textContent = (shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2));
-    if (totalEl) totalEl.textContent = '£' + total.toFixed(2);
+    if (shippingEl) shippingEl.textContent = shippingText;
+    if (totalEl) totalEl.textContent = totalText;
 
     if (discountRow && discountVal) {
       if (discount > 0) {
@@ -1283,9 +1316,9 @@
 
     if (s2ItemsCount) s2ItemsCount.textContent = `${activeCount} Items`;
     if (s2ItemsTotal) s2ItemsTotal.textContent = '£' + subtotal.toFixed(2);
-    if (s2ShippingFee) s2ShippingFee.textContent = (shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2));
-    if (s2DeliveryPriceText) s2DeliveryPriceText.textContent = (shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2));
-    if (s2GrandTotal) s2GrandTotal.textContent = '£' + total.toFixed(2);
+    if (s2ShippingFee) s2ShippingFee.textContent = shippingText;
+    if (s2DeliveryPriceText) s2DeliveryPriceText.textContent = shippingText;
+    if (s2GrandTotal) s2GrandTotal.textContent = totalText;
 
     if (s2DiscountRow && s2DiscountVal) {
       if (discount > 0) {
@@ -1301,8 +1334,8 @@
     const s3Total = document.getElementById('drawer-step3-total');
     const s3CustPreview = document.getElementById('drawer-step3-cust-preview');
 
-    if (s3Shipping) s3Shipping.textContent = (shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2));
-    if (s3Total) s3Total.textContent = '£' + total.toFixed(2);
+    if (s3Shipping) s3Shipping.textContent = shippingText;
+    if (s3Total) s3Total.textContent = totalText;
     if (s3CustPreview) {
       const addr = getSavedAddress();
       s3CustPreview.textContent = `${addr.name} (${addr.tag || 'OFFICE'})`;
@@ -1439,11 +1472,7 @@
     const etaText = document.getElementById('checkout-delivery-eta-text');
     if (!pkgContainer) return;
 
-    // Delivery guarantee date: 3 business days from now
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 3);
-    const dateFormatted = targetDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-    if (etaText) etaText.textContent = 'Guaranteed by ' + dateFormatted;
+    if (etaText) etaText.textContent = 'Estimated delivery: ' + (currentDeliveryQuote()?.delivery?.estimate || '2–4 days');
 
     const cart = getCart();
     const activeItems = cart.filter(i => !unselectedItemIds.has(String(i.id)));
@@ -1852,22 +1881,189 @@
     });
   }
 
+
+  // --- Product Comparison Modal & Drawer System ---
+  let compareModal = null;
+  let compareOverlay = null;
+
+  function initCompareModal() {
+    if (document.getElementById('compare-modal-side')) {
+      compareModal = document.getElementById('compare-modal-side');
+      compareOverlay = document.getElementById('compare-side-overlay');
+      return;
+    }
+
+    compareOverlay = document.createElement('div');
+    compareOverlay.id = 'compare-side-overlay';
+    compareOverlay.className = 'compare-side-overlay';
+
+    compareModal = document.createElement('div');
+    compareModal.id = 'compare-modal-side';
+    compareModal.className = 'compare-modal-side';
+    compareModal.setAttribute('role', 'dialog');
+    compareModal.setAttribute('aria-modal', 'true');
+    compareModal.setAttribute('aria-label', 'Product Comparison');
+
+    compareModal.innerHTML = `
+      <div class="compare-modal-header">
+        <div class="compare-modal-title-wrap">
+          <h4 class="compare-modal-title"><i class="klb-icon-shuffle"></i> Product Comparison</h4>
+          <span class="compare-badge-count" id="compare-modal-badge">0 items</span>
+        </div>
+        <button type="button" class="compare-modal-close" id="compare-modal-close" aria-label="Close Comparison">
+          <i class="klb-icon-x"></i>
+        </button>
+      </div>
+      <div class="compare-modal-body" id="compare-modal-body"></div>
+      <div class="compare-modal-footer">
+        <a href="/compare/" class="btn-view-compare-page"><i class="klb-icon-shuffle"></i> Open Full Compare Page</a>
+        <button type="button" class="btn-clear-compare-modal" id="btn-modal-clear-compare">Clear All</button>
+      </div>
+    `;
+
+    document.body.appendChild(compareOverlay);
+    document.body.appendChild(compareModal);
+
+    compareOverlay.addEventListener('click', closeCompareModal);
+    compareModal.querySelector('#compare-modal-close')?.addEventListener('click', closeCompareModal);
+    compareModal.querySelector('#btn-modal-clear-compare')?.addEventListener('click', () => {
+      saveCompare([]);
+      showToast('Compare Cleared', 'All products removed from comparison.', 'info');
+      closeCompareModal();
+    });
+  }
+
+  function openCompareModal() {
+    if (!compareModal) initCompareModal();
+    closeSideCart();
+    closeWishlistDrawer();
+    renderCompareModal();
+    compareOverlay?.classList.add('active');
+    compareModal?.classList.add('active');
+  }
+
+  function closeCompareModal() {
+    if (compareModal) compareModal.classList.remove('active');
+    if (compareOverlay) compareOverlay.classList.remove('active');
+  }
+
+  function renderCompareModal() {
+    if (!compareModal) initCompareModal();
+    const body = compareModal.querySelector('#compare-modal-body');
+    const badge = compareModal.querySelector('#compare-modal-badge');
+    const list = getCompare();
+
+    if (badge) badge.textContent = `${list.length} item${list.length === 1 ? '' : 's'}`;
+
+    if (!list.length) {
+      body.innerHTML = `
+        <div class="compare-empty-state">
+          <div class="compare-empty-icon"><i class="klb-icon-shuffle"></i></div>
+          <h5>No items in comparison</h5>
+          <p>Click the compare icon on any product to compare details side-by-side.</p>
+          <a href="/shop/" class="btn-shop-from-compare">Explore Shop</a>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '<div class="compare-modal-grid">';
+    list.forEach(item => {
+      html += `
+        <div class="compare-modal-card">
+          <button type="button" class="compare-remove-btn" data-remove-compare="${item.id}" title="Remove from compare">&times;</button>
+          <div class="compare-modal-img">
+            <img src="${item.image || '/static/web/images/1-16-500x500.jpg'}" alt="${item.title}">
+          </div>
+          <h6 class="compare-modal-item-title">${item.title}</h6>
+          <div class="compare-modal-item-price">&pound;${parseFloat(item.price).toFixed(2)}</div>
+          <div class="compare-modal-item-stock"><i class="klb-icon-check"></i> ${item.stock || 'In Stock'}</div>
+          <button type="button" class="btn-compare-modal-add-cart" data-compare-add="${item.id}">Add to Cart</button>
+        </div>
+      `;
+    });
+    html += '</div>';
+    body.innerHTML = html;
+
+    body.querySelectorAll('[data-remove-compare]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-remove-compare');
+        const updated = getCompare().filter(it => String(it.id) !== String(id));
+        saveCompare(updated);
+        renderCompareModal();
+        showToast('Comparison', 'Item removed from comparison.', 'info');
+      });
+    });
+
+    body.querySelectorAll('[data-compare-add]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-compare-add');
+        const found = list.find(it => String(it.id) === String(id));
+        if (found) {
+          addToCart(found, 1);
+          closeCompareModal();
+        }
+      });
+    });
+  }
+
+  function updateCompareUI() {
+    const list = getCompare();
+    const count = list.length;
+    document.querySelectorAll('.compare-count, #compare-badge, .header-compare .count').forEach(el => {
+      el.textContent = count;
+    });
+    const idSet = new Set(list.map(it => String(it.id)));
+    document.querySelectorAll('.klbcp-btn').forEach(btn => {
+      const bId = String(btn.getAttribute('data-product_id') || btn.getAttribute('data-id') || '');
+      if (idSet.has(bId)) {
+        btn.classList.add('klbcp-btn-added', 'klbcp-added');
+      } else {
+        btn.classList.remove('klbcp-btn-added', 'klbcp-added');
+      }
+    });
+  }
+
+  function syncGuestDataOnLogin() {
+    if (!isUserAuthenticated()) return;
+    const cart = getCart();
+    const wishlist = getWishlist();
+    if (cart.length > 0) {
+      try { localStorage.setItem('teraifood_user_cart', JSON.stringify(cart)); } catch {}
+    }
+    if (wishlist.length > 0) {
+      try { localStorage.setItem('teraifood_user_wishlist', JSON.stringify(wishlist)); } catch {}
+    }
+  }
+
   // --- Product Card Click Handlers (Add to Cart & Quickview) ---
   function setupProductCardClicks() {
     window.TeraiCatalog = {refresh:indexProducts, addToCart, getProductById, openQuickview, showToast,
       getCart, saveCart, addDetail:window.TeraiCatalog?.addDetail, validateCart:window.TeraiCatalog?.validateCart};
     document.addEventListener('catalog:updated', indexProducts);
     // 1. Add to cart buttons
-    document.querySelectorAll('.button.ajax_add_to_cart, .button.add_to_cart_button, a[href*="add-to-cart"]').forEach(btn => {
+    document.querySelectorAll('.button.ajax_add_to_cart, .button.add_to_cart_button, a[href*="add-to-cart"], .btn-cart-pill').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
 
         const productNode = btn.closest('.product, .shop-product-card');
         const id = btn.getAttribute('data-product_id') ||
+                   productNode?.getAttribute('data-catalog-product') ||
                    productNode?.className.match(/post-(\d+)/)?.[1];
 
-        const product = getProductById(id);
+        let product = getProductById(id);
+        if (!product && productNode) {
+          const title = productNode.querySelector('.product-title a, .product-title')?.textContent?.trim() || 'Product';
+          const img = productNode.querySelector('.wp-post-image, img')?.getAttribute('src') || '/static/web/images/1-16-500x500.jpg';
+          const priceText = productNode.querySelector('.price ins .amount, .price .amount, .sale-price')?.textContent?.replace(/[^0-9.]/g, '') || '5.99';
+          product = {
+            id: String(id || 'p-1'),
+            title: title,
+            price: parseFloat(priceText) || 5.99,
+            image: img
+          };
+        }
         if (!product) return;
 
         const qtyInput = productNode?.querySelector('input.qty');
@@ -1967,8 +2163,35 @@
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const name = btn.getAttribute('data-product_name') || 'Product';
-        showToast('Product Comparison', `${name} added to comparison table.`, 'info');
+
+        const id = String(btn.getAttribute('data-product_id') || btn.getAttribute('data-id') || '');
+        const productNode = btn.closest('.product, .shop-product-card');
+        const prod = getProductById(id);
+        const title = prod ? prod.title : (productNode?.querySelector('.product-title a, .product-title')?.textContent?.trim() || btn.getAttribute('data-product_name') || 'Product');
+        const image = prod ? prod.image : (productNode?.querySelector('.wp-post-image, img')?.getAttribute('src') || '/static/web/images/1-16-500x500.jpg');
+        const priceText = productNode?.querySelector('.price ins .amount, .price .amount, .sale-price')?.textContent?.replace(/[^0-9.]/g, '') || '5.99';
+        const price = prod ? prod.price : (parseFloat(priceText) || 5.99);
+
+        let compareList = getCompare();
+        const exists = compareList.some(item => String(item.id) === id);
+
+        if (exists) {
+          compareList = compareList.filter(item => String(item.id) !== id);
+          btn.classList.remove('klbcp-btn-added', 'klbcp-added');
+          showToast('Comparison Updated', `${title} removed from comparison.`, 'info');
+        } else {
+          if (compareList.length >= 4) {
+            showToast('Compare Limit', 'You can compare up to 4 items at a time.', 'warning');
+            openCompareModal();
+            return;
+          }
+          compareList.push({ id, title, image, price, stock: 'In Stock' });
+          btn.classList.add('klbcp-btn-added', 'klbcp-added');
+          showToast('Product Comparison', `✓ ${title} added to comparison.`, 'success');
+        }
+
+        saveCompare(compareList);
+        openCompareModal();
       });
     });
   }
@@ -1979,6 +2202,16 @@
 
     document.querySelectorAll('.wishlist-count, .klbwl-wishlist-count, .klbwl-count, .wishlist .count, #wishlist-drawer-badge').forEach(el => {
       el.textContent = count;
+    });
+
+    const idSet = new Set(list.map(it => String(it.id)));
+    document.querySelectorAll('.klbwl-btn').forEach(btn => {
+      const bId = String(btn.getAttribute('data-product_id') || '');
+      if (idSet.has(bId)) {
+        btn.classList.add('active', 'liked', 'klbwl-product-in-list');
+      } else {
+        btn.classList.remove('active', 'liked', 'klbwl-product-in-list');
+      }
     });
 
     const ids = list.map(item => String(item.id));
@@ -2600,6 +2833,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
           accountFrame.style.height = Math.max(160, Math.min(event.data.height, window.innerHeight - 32)) + 'px';
         }
         if (event.data?.type === 'terai-auth-complete') {
+          syncGuestDataOnLogin();
           closeLoginModal();
           const target = event.data?.next || '/';
           window.location.assign(target);
@@ -2666,6 +2900,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
       if (e.key === 'Escape') {
         closeSideCart();
         closeWishlistDrawer();
+        closeCompareModal();
         closeLoginModal();
       }
     });

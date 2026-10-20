@@ -1060,47 +1060,8 @@ for (let j = 0; j < urlFields.length; j++) {
   urlFields[j].addEventListener('blur', maybePrefixUrlField)
 }
 })();</script>
-				<div class="klb-mobile-bottom site-mobile-navbar">
-			<div class="mobile-navbar-inner">
-				<nav class="site-menu horizontal mobile-nav">
-					<ul>
-						<li>
-							<a href="{% url 'web:home' %}" class="store" id="mobile-nav-store">
-								<i class="klb-icon-store"></i>
-								<span class="menu-text">STORE</span>
-							</a>
-						</li>
-						<li>
-							<div class="search-holder-button menu-drawer-toggle" data-drawer="site-search-drawer">
-								<a href="#" class="search">
-									<i class="klb-icon-search"></i>
-									<span class="menu-text">SEARCH</span>
-								</a>
-							</div>
-						</li>
-						<li>
-							<a href="{% url 'web:shop' %}" class="shop">
-								<i class="klb-icon-shopping-bag-2"></i>
-								<span class="menu-text">SHOP</span>
-							</a>
-						</li>
-						<li>
-							<a href="{% url 'web:cart' %}" class="cart mini-cart-button">
-								<i class="klb-icon-shopping-cart-3"></i>
-								<span class="count cart-count">0</span>
-								<span class="menu-text">CART</span>
-							</a>
-						</li>
-						<li>  
-							<a href="#" class="menu-drawer-toggle" data-drawer="site-categories-drawer">
-								<i class="klb-icon-layout-list"></i>
-								<span class="menu-text">CATEGORIES</span>
-							</a>
-						</li>
-					</ul>
-				</nav><!-- mobile-menu -->
-			</div><!-- mobile-bottom-menu -->
-		</div><!-- mobile-bottom-menu -->
+		{% include 'web/includes/mobile-navbar.html' %}
+
 
 		
 			<div class="cart-widget-side">

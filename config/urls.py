@@ -5,8 +5,15 @@ from web.views import health
 from customers.views import profile
 from catalog import api as product_api
 from catalog import admin_api
+from orders import backoffice as order_admin
 
 urlpatterns = [
+    path("admin/orders", order_admin.index),
+    path("admin/orders/", order_admin.index),
+    path("admin/orders/reviews/", order_admin.reviews, name="order-admin-reviews"),
+    path("admin/orders/<uuid:public_id>/", order_admin.detail, name="order-admin-detail"),
+    path("api/orders/", include("orders.urls")),
+    path("admin/delivery/", include("delivery.urls")),
     path("api/admin/products/", admin_api.products),
     path("api/admin/products/<int:pk>/", admin_api.products),
     path("api/admin/products/<int:pk>/stock/", admin_api.stock),
