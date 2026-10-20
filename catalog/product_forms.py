@@ -23,6 +23,27 @@ class ProductForm(forms.ModelForm):
         self.fields['subcategory'].queryset = Subcategory.objects.filter(category_id=category) if str(category or '').isdigit() else Subcategory.objects.none()
         if self.instance.pk:
             self.fields.pop('initial_stock')
+        placeholders = {
+            'name': 'e.g. Organic Basmati Rice 1kg',
+            'slug': 'e.g. organic-basmati-rice-1kg',
+            'sku': 'e.g. TF-GR-001',
+            'regular_price': '0.00',
+            'sale_price': '0.00',
+            'weight': '150',
+            'initial_stock': 'e.g. 50',
+            'low_stock_threshold': '5',
+            'description': 'Enter detailed product ingredients, provenance, and storage instructions...',
+        }
+        for field_name, ph in placeholders.items():
+            if field_name in self.fields:
+                self.fields[field_name].widget.attrs['placeholder'] = ph
+        if 'regular_price' in self.fields:
+            self.fields['regular_price'].widget.attrs['step'] = '0.01'
+        if 'sale_price' in self.fields:
+            self.fields['sale_price'].widget.attrs['step'] = '0.01'
+        if 'weight' in self.fields:
+            self.fields['weight'].widget.attrs['step'] = '0.001'
+
 
     def clean(self):
         data = super().clean()

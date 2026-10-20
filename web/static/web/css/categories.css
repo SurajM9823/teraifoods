@@ -487,3 +487,696 @@
     max-width: 100%;
   }
 }
+
+/* ==========================================================================
+   Product Management High-Density 4-Column Form & Media Studio
+   ========================================================================== */
+
+.product-edit-page {
+  max-width: 100%;
+  margin: 0 auto;
+  font-family: inherit;
+  color: #0f172a;
+}
+
+/* Header & Quick Action Toolbar */
+.product-header-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #bbbbbb;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+.product-badge-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  line-height: 1.2;
+}
+.chip-new {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+.chip-live {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+.chip-draft {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.chip-archived {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+.product-id-pill {
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 2px 6px;
+}
+.product-stock-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+}
+.pill-in-stock {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+.pill-low-stock {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+.pill-uncounted {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+.product-page-title {
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+.product-page-sub {
+  font-size: 11px !important;
+  color: #64748b !important;
+  margin: 2px 0 0 !important;
+}
+.product-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+.btn-primary {
+  background: #1547A8 !important;
+  color: #ffffff !important;
+  border-color: #1547A8 !important;
+}
+.btn-primary:hover {
+  background: #0f3580 !important;
+  border-color: #0f3580 !important;
+  color: #ffffff !important;
+}
+.btn-outline {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+.btn-outline:hover {
+  background: #f1f5f9 !important;
+  border-color: #64748b !important;
+  color: #000000 !important;
+}
+
+/* Banner Errors */
+.form-banner-errors {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 11.5px;
+}
+.form-banner-errors strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.form-banner-errors ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* Form Cards & 4-Column Grid Layout */
+.product-card {
+  background: #ffffff;
+  border: 1px solid #bbbbbb;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.product-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 9px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #eff6ff;
+  color: #1547A8;
+  border: 1px solid #dbeafe;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.card-title-group {
+  display: flex;
+  flex-direction: column;
+}
+.card-title {
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+.card-hint {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+/* The 4-Column Congested Grid */
+.grid-4-cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 10px;
+  align-items: start;
+}
+.col-span-1 {
+  grid-column: span 1;
+}
+.col-span-2 {
+  grid-column: span 2;
+}
+.col-span-3 {
+  grid-column: span 3;
+}
+.col-span-4 {
+  grid-column: span 4;
+}
+
+/* Form Columns & Controls */
+.form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.form-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 1px !important;
+  line-height: 1.2 !important;
+}
+.form-label .req {
+  color: #dc2626;
+  font-weight: 800;
+  margin-left: 2px;
+}
+.label-with-tool {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.field-desc {
+  font-size: 9.5px;
+  color: #64748b;
+  line-height: 1.2;
+  margin-top: 1px;
+}
+.field-error {
+  font-size: 10.5px;
+  color: #b91c1c;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.field-error ul {
+  margin: 0;
+  padding-left: 14px;
+}
+.has-error input,
+.has-error select,
+.has-error textarea {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2 !important;
+}
+
+/* Form Inputs in High Density */
+.form-col input:not([type=checkbox]),
+.form-col select,
+.form-col textarea {
+  width: 100% !important;
+  height: 28px !important;
+  padding: 3px 7px !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  border: 1px solid #94a3b8 !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease !important;
+}
+.form-col textarea {
+  height: 60px !important;
+  line-height: 1.4 !important;
+  resize: vertical !important;
+  font-family: inherit !important;
+}
+.form-col input:focus,
+.form-col select:focus,
+.form-col textarea:focus {
+  border-color: #1547A8 !important;
+  box-shadow: 0 0 0 2px rgba(21, 71, 168, 0.2) !important;
+  outline: none !important;
+}
+.form-col input[readonly],
+.form-col input:disabled {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  cursor: not-allowed !important;
+}
+
+/* Currency Input Styling */
+.input-currency-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.curr-symbol {
+  position: absolute;
+  left: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  pointer-events: none;
+}
+.input-currency-wrap input {
+  padding-left: 20px !important;
+  font-family: monospace !important;
+  font-weight: 700 !important;
+}
+
+/* Micro Buttons inside Labels */
+.btn-slug-toggle,
+.btn-gen-sku {
+  height: 17px;
+  padding: 0 5px;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  line-height: 15px;
+}
+.btn-slug-toggle:hover,
+.btn-gen-sku:hover {
+  background: #1547A8;
+  color: #ffffff;
+  border-color: #1547A8;
+}
+.badge-discount {
+  font-size: 9.5px;
+  font-weight: 700;
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  padding: 0 4px;
+  line-height: 15px;
+}
+
+/* 4-Column Merchandising Toggle Cards */
+.toggle-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  min-height: 58px;
+  box-sizing: border-box;
+}
+.toggle-card:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+.toggle-card.is-checked {
+  background: #eff6ff;
+  border-color: #1547A8;
+}
+.toggle-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.toggle-card-icon {
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-amber { color: #d97706; }
+.icon-blue { color: #2563eb; }
+.icon-rose { color: #e11d48; }
+.icon-green { color: #16a34a; }
+.icon-muted { color: #64748b; }
+.toggle-card input[type=checkbox] {
+  width: 14px !important;
+  height: 14px !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  accent-color: #1547A8 !important;
+}
+.toggle-card-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+.toggle-card-desc {
+  font-size: 9px;
+  color: #64748b;
+  line-height: 1.2;
+}
+.compact-toggle {
+  min-height: 48px;
+}
+
+/* Callout Info Box */
+.info-callout-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  font-size: 10px;
+  color: #475569;
+  line-height: 1.35;
+}
+.callout-icon {
+  color: #1547A8;
+  font-size: 12px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+.callout-text strong {
+  display: block;
+  color: #0f172a;
+  margin-bottom: 1px;
+}
+.callout-text p {
+  margin: 0;
+}
+
+/* Static Metric Display Box */
+.static-metric-box {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  height: 28px;
+  padding: 3px 8px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  box-sizing: border-box;
+}
+.metric-val {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.metric-sub {
+  font-size: 9.5px;
+  color: #64748b;
+}
+
+/* Bottom Bar */
+.product-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #bbbbbb;
+  padding: 8px 12px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+.shortcut-tip {
+  font-size: 10px;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.shortcut-tip kbd {
+  font-family: monospace;
+  font-size: 9.5px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 1px 4px;
+  color: #0f172a;
+}
+.bottom-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Images & Stock Section (Edit Mode - 4 Columns)
+   ========================================================================== */
+.product-images-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.image-tile {
+  position: relative;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.image-tile.is-main {
+  border: 2px solid #1547A8;
+  background: #f8fafc;
+}
+.image-thumb-wrap {
+  width: 100%;
+  height: 110px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.image-thumb-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.image-tile-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #1547A8;
+  color: #ffffff;
+  padding: 1px 5px;
+  letter-spacing: 0.5px;
+}
+.image-tile-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #475569;
+}
+.image-tile-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.image-tile-actions form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+.btn-image-action {
+  height: 22px;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  line-height: 20px;
+  flex: 1;
+  text-align: center;
+}
+.btn-image-action:hover {
+  background: #1547A8;
+  color: #ffffff;
+  border-color: #1547A8;
+}
+.btn-image-delete {
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+.btn-image-delete:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+}
+
+/* Image Upload & Reorder Card */
+.image-upload-strip {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+.image-upload-form,
+.image-reorder-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.image-upload-form input[type=file] {
+  font-size: 11px;
+}
+
+/* Inventory Adjustment Strip */
+.stock-adjust-strip {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.stock-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  border: 1px solid #cbd5e1;
+}
+.stock-history-table th {
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 700;
+  text-align: left;
+  padding: 5px 8px;
+  border: 1px solid #cbd5e1;
+}
+.stock-history-table td {
+  padding: 4px 8px;
+  border: 1px solid #e2e8f0;
+}
+.stock-history-table tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+/* Responsive Rules for 4-Column Grid */
+@media (max-width: 1024px) {
+  .grid-4-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .product-images-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .image-upload-strip {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .grid-4-cols {
+    grid-template-columns: 1fr;
+  }
+  .col-span-1,
+  .col-span-2,
+  .col-span-3,
+  .col-span-4 {
+    grid-column: span 1 !important;
+  }
+  .product-images-grid {
+    grid-template-columns: 1fr;
+  }
+  .product-header-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .product-header-actions {
+    justify-content: flex-end;
+  }
+  .stock-adjust-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
