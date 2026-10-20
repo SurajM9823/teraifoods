@@ -5,6 +5,7 @@ from .models import Product, Subcategory
 class ProductForm(forms.ModelForm):
     initial_stock = forms.IntegerField(min_value=0, required=False,
         help_text='Leave blank if stock has not been counted. Zero confirms no stock.')
+    low_stock_threshold = forms.IntegerField(min_value=0, required=False, initial=5)
     class Meta:
         model = Product
         fields = ['name', 'slug', 'sku', 'description', 'category', 'subcategory',
