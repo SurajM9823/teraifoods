@@ -50,7 +50,7 @@
   {% endif %}
 
   <!-- Main Product Form in a Single Box -->
-  <form method="post" id="product-main-form" class="product-form" novalidate>
+  <form method="post" id="product-main-form" class="product-form" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
 
     <div class="product-form-box">
@@ -135,7 +135,7 @@
       </div>
 
       <div class="grid-4-cols">
-        <!-- Row 3: Regular Price, Sale Price, Initial Stock/Metric, Low Stock Threshold -->
+        <!-- Row 3: Regular Price, Sale Price, Initial Stock/Metric, Low Stock Alert -->
         <div class="form-col col-span-1 {% if form.regular_price.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.regular_price.id_for_label }}">
             <span>Regular Price <span class="req">*</span></span>
@@ -230,7 +230,7 @@
         </label>
       </div>
 
-      <!-- Row 5: 4 Columns (Active, Archived, empty 2 cols) -->
+      <!-- Row 5: 4 Columns (Active [1], Archived [1], Main Image [2]) -->
       <div class="grid-4-cols">
         <label class="toggle-card {% if form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
           <span class="toggle-card-label">
@@ -248,7 +248,17 @@
           {{ form.is_archived }}
         </label>
 
-        <div class="col-span-2"></div>
+        <!-- Product Image Upload Field (Span 2) -->
+        <div class="form-col col-span-2 {% if form.image.errors %}has-error{% endif %}">
+          <label class="form-label" for="id_image">
+            <span>Main Image Upload</span>
+          </label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="file" name="image" id="id_image" accept="image/jpeg,image/png,image/webp,image/avif" style="height: 28px; padding: 2px 4px; font-size: 11px;">
+            <img id="add-image-preview" class="add-image-preview-thumb" alt="Preview">
+          </div>
+          {% if form.image.errors %}<div class="field-error">{{ form.image.errors }}</div>{% endif %}
+        </div>
       </div>
 
       <!-- Section 4: Description -->
@@ -355,34 +365,14 @@
       </div>
     </div>
 
-    <!-- Inventory Box (Edit Mode) -->
+    <!-- Inventory Box with Audit Action (Edit Mode) -->
     <div class="product-form-box">
-      <div class="form-section-divider" style="margin-top: 0;">
-        <i class="fa fa-cubes"></i> Inventory Adjustment & History
+      <div class="form-section-divider" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+        <span><i class="fa fa-cubes"></i> Inventory History</span>
+        <button type="button" class="btn-audit-trigger js-open-stock-modal">
+          <i class="fa fa-pencil-square-o"></i> Stock Adjustment
+        </button>
       </div>
-
-      <!-- Stock Adjustment Quick Form -->
-      <form method="post" action="{% url 'products:stock' product.pk %}" class="stock-adjust-strip">
-        {% csrf_token %}
-        <input type="hidden" name="key" value="{{ stock_form.key.value }}">
-        <div class="form-col">
-          <label class="form-label" for="{{ stock_form.quantity.id_for_label }}">
-            <span>Adjustment (+ / −)</span>
-          </label>
-          {{ stock_form.quantity }}
-        </div>
-        <div class="form-col">
-          <label class="form-label" for="{{ stock_form.reason.id_for_label }}">
-            <span>Reason / Reference</span>
-          </label>
-          {{ stock_form.reason }}
-        </div>
-        <div style="align-self: flex-end;">
-          <button type="submit" class="btn-action btn-primary" style="height: 28px;">
-            <i class="fa fa-pencil-square-o"></i> Adjust Stock
-          </button>
-        </div>
-      </form>
 
       <!-- Stock History Audit Table -->
       <table class="stock-history-table">
@@ -395,6 +385,7 @@
             <th>Type / Reference</th>
             <th>Reason</th>
             <th>Actor</th>
+            <th style="text-align: center; width: 60px;">Audit</th>
           </tr>
         </thead>
         <tbody>
@@ -409,11 +400,16 @@
               <td><span class="status-chip">{{ audit.adjustment_type }}</span> {{ audit.reference }}</td>
               <td>{{ audit.reason }}</td>
               <td>{{ audit.actor|default:'System' }}</td>
+              <td style="text-align: center;">
+                <button type="button" class="btn-audit-trigger js-open-stock-modal" title="Record adjustment">
+                  <i class="fa fa-pencil-square-o"></i>
+                </button>
+              </td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 10px;">
-                No stock history logged yet.
+              <td colspan="8" style="text-align: center; color: #94a3b8; padding: 10px;">
+                No stock history logged yet. Click <strong>Stock Adjustment</strong> to record your first stock count.
               </td>
             </tr>
           {% endfor %}
@@ -433,6 +429,62 @@
           {% endif %}
         </nav>
       {% endif %}
+    </div>
+
+    <!-- Stock Adjustment Modal Popup -->
+    <div class="stock-modal-backdrop" id="stock-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="stock-modal-title">
+      <div class="stock-modal-window">
+        <div class="stock-modal-header">
+          <h3 class="stock-modal-title" id="stock-modal-title">
+            <i class="fa fa-pencil-square-o"></i> Stock Adjustment
+          </h3>
+          <button type="button" class="btn-close-modal" id="btn-close-modal-x" aria-label="Close">&times;</button>
+        </div>
+        <div class="stock-modal-body">
+          <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between; padding-bottom: 4px; border-bottom: 1px solid #f1f5f9;">
+            <span>Current Stock: <strong>{% if product.stock_confirmed %}{{ product.stock }} units{% else %}Uncounted{% endif %}</strong></span>
+            <span>Alert: <strong>{{ product.low_stock_threshold }} units</strong></span>
+          </div>
+
+          <!-- Direction Selector (+ / -) -->
+          <div class="form-col">
+            <label class="form-label"><span>Adjustment Type</span></label>
+            <div class="stock-dir-group">
+              <button type="button" id="btn-dir-add" class="btn-dir is-active-add">
+                <i class="fa fa-plus"></i> Increase (+)
+              </button>
+              <button type="button" id="btn-dir-sub" class="btn-dir">
+                <i class="fa fa-minus"></i> Decrease (−)
+              </button>
+            </div>
+          </div>
+
+          <!-- Value -->
+          <div class="form-col">
+            <label class="form-label" for="stock-modal-val"><span>Quantity (Units) <span class="req">*</span></span></label>
+            <input type="number" id="stock-modal-val" min="1" step="1" required placeholder="e.g. 10" style="height: 28px; font-size: 11.5px;">
+          </div>
+
+          <!-- Reason -->
+          <div class="form-col">
+            <label class="form-label" for="stock-modal-reason"><span>Reason / Reference <span class="req">*</span></span></label>
+            <input type="text" id="stock-modal-reason" required placeholder="e.g. Restock shipment, damaged goods" style="height: 28px; font-size: 11.5px;">
+          </div>
+
+          <form method="post" id="stock-modal-form" action="{% url 'products:stock' product.pk %}" style="display: none;">
+            {% csrf_token %}
+            <input type="hidden" name="key" value="{{ stock_form.key.value }}">
+            <input type="hidden" name="quantity" id="stock-real-quantity">
+            <input type="hidden" name="reason" id="stock-real-reason">
+          </form>
+        </div>
+        <div class="stock-modal-footer">
+          <button type="button" class="btn-action btn-outline" id="btn-close-modal-cancel">Cancel</button>
+          <button type="button" class="btn-action btn-primary" id="btn-confirm-stock-adjust">
+            <i class="fa fa-check"></i> Record Adjustment
+          </button>
+        </div>
+      </div>
     </div>
   {% endif %}
 </div>
@@ -597,11 +649,107 @@
     updateDiscount();
   }
 
-  // 7. Keyboard Shortcut (Ctrl+S or Cmd+S to submit)
+  // 7. Live image preview for uploaded file
+  const imgInput = document.getElementById('id_image');
+  const imgPreview = document.getElementById('add-image-preview');
+  if (imgInput && imgPreview) {
+    imgInput.addEventListener('change', () => {
+      const file = imgInput.files && imgInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imgPreview.src = e.target.result;
+          imgPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imgPreview.style.display = 'none';
+      }
+    });
+  }
+
+  // 8. Stock Adjustment Modal (+ / - direction, quantity, reason)
+  let stockDirection = 1;
+  const modalBackdrop = document.getElementById('stock-modal-backdrop');
+  const openButtons = document.querySelectorAll('.js-open-stock-modal');
+  const btnCloseX = document.getElementById('btn-close-modal-x');
+  const btnCloseCancel = document.getElementById('btn-close-modal-cancel');
+  const btnDirAdd = document.getElementById('btn-dir-add');
+  const btnDirSub = document.getElementById('btn-dir-sub');
+  const valInput = document.getElementById('stock-modal-val');
+  const reasonInput = document.getElementById('stock-modal-reason');
+  const realQty = document.getElementById('stock-real-quantity');
+  const realReason = document.getElementById('stock-real-reason');
+  const realForm = document.getElementById('stock-modal-form');
+  const btnConfirm = document.getElementById('btn-confirm-stock-adjust');
+
+  const openStockModal = () => {
+    if (!modalBackdrop) return;
+    modalBackdrop.classList.add('is-open');
+    stockDirection = 1;
+    if (btnDirAdd) btnDirAdd.classList.add('is-active-add');
+    if (btnDirSub) btnDirSub.classList.remove('is-active-sub');
+    if (valInput) { valInput.value = ''; valInput.focus(); }
+    if (reasonInput) reasonInput.value = '';
+  };
+
+  const closeStockModal = () => {
+    if (modalBackdrop) modalBackdrop.classList.remove('is-open');
+  };
+
+  openButtons.forEach(btn => btn.addEventListener('click', openStockModal));
+  if (btnCloseX) btnCloseX.addEventListener('click', closeStockModal);
+  if (btnCloseCancel) btnCloseCancel.addEventListener('click', closeStockModal);
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeStockModal();
+    });
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalBackdrop && modalBackdrop.classList.contains('is-open')) {
+      closeStockModal();
+    }
+  });
+
+  if (btnDirAdd && btnDirSub) {
+    btnDirAdd.addEventListener('click', () => {
+      stockDirection = 1;
+      btnDirAdd.classList.add('is-active-add');
+      btnDirSub.classList.remove('is-active-sub');
+    });
+    btnDirSub.addEventListener('click', () => {
+      stockDirection = -1;
+      btnDirSub.classList.add('is-active-sub');
+      btnDirAdd.classList.remove('is-active-add');
+    });
+  }
+
+  if (btnConfirm && realForm && valInput && reasonInput) {
+    btnConfirm.addEventListener('click', () => {
+      const rawVal = parseInt(valInput.value, 10);
+      if (isNaN(rawVal) || rawVal <= 0) {
+        alert('Please enter a valid positive quantity.');
+        valInput.focus();
+        return;
+      }
+      const reason = (reasonInput.value || '').trim();
+      if (!reason) {
+        alert('Please enter a reason or reference for this adjustment.');
+        reasonInput.focus();
+        return;
+      }
+      realQty.value = stockDirection * rawVal;
+      realReason.value = reason;
+      realForm.submit();
+    });
+  }
+
+  // 9. Keyboard Shortcut (Ctrl+S or Cmd+S to submit main form)
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       const activeForm = document.getElementById('product-main-form');
-      if (activeForm) {
+      if (activeForm && (!modalBackdrop || !modalBackdrop.classList.contains('is-open'))) {
         e.preventDefault();
         activeForm.requestSubmit();
       }

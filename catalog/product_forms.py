@@ -3,6 +3,7 @@ from .models import Product, Subcategory
 
 
 class ProductForm(forms.ModelForm):
+    image = forms.ImageField(required=False, label='Product Image')
     initial_stock = forms.IntegerField(min_value=0, required=False)
     low_stock_threshold = forms.IntegerField(min_value=0, required=False, initial=5)
     class Meta:
@@ -34,11 +35,14 @@ class ProductForm(forms.ModelForm):
         if 'weight' in self.fields:
             self.fields['weight'].widget.attrs['step'] = '0.001'
 
-
     def clean(self):
         data = super().clean()
-        if data.get('is_published') and (not self.instance.pk or not self.instance.images.filter(is_main=True).exists()):
-            self.add_error('is_published', 'Save a draft and upload a main image before publishing.')
+        has_image = (
+            (self.instance.pk and self.instance.images.filter(is_main=True).exists())
+            or bool(self.cleaned_data.get('image'))
+        )
+        if data.get('is_published') and not has_image:
+            self.add_error('is_published', 'Upload a main image before publishing.')
         return data
 
     def clean_low_stock_threshold(self):

@@ -63,16 +63,23 @@ def edit(request, pk=None):
     permitted(request, 'change' if pk else 'add', Product)
     with transaction.atomic():
         product = get_object_or_404(Product.objects.select_for_update(), pk=pk) if pk else Product()
-        form = ProductForm(request.POST if request.method == 'POST' else None, instance=product)
+        form = ProductForm(request.POST if request.method == 'POST' else None,
+                           request.FILES if request.method == 'POST' else None,
+                           instance=product)
         if request.method == 'POST' and form.is_valid():
             try:
                 with transaction.atomic():
                     product = form.save()
+                    if form.cleaned_data.get('image'):
+                        from .media import add_image
+                        add_image(product.pk, form.cleaned_data['image'], main=True)
                     if not pk and form.cleaned_data.get('initial_stock') is not None:
                         adjust_stock(product.pk, form.cleaned_data['initial_stock'], reason='Initial stock on creation',
                                      actor=request.user, key=uuid.uuid4().hex, kind='initial')
             except IntegrityError:
                 form.add_error(None, 'Another product uses that slug. Refresh and try again.')
+            except ValidationError as exc:
+                form.add_error(None, ' '.join(exc.messages))
             else:
                 messages.success(request, 'Product saved.')
                 return redirect('products:edit', pk=product.pk)

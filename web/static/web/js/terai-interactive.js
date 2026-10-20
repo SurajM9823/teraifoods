@@ -2014,7 +2014,12 @@
       el.textContent = count;
     });
     const idSet = new Set(list.map(it => String(it.id)));
+    const COMPARE_SVG = '<svg class="compare-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>';
     document.querySelectorAll('.klbcp-btn').forEach(btn => {
+      // Ensure only single clean compare SVG icon exists inside
+      if (!btn.querySelector('svg.compare-icon')) {
+        btn.innerHTML = COMPARE_SVG;
+      }
       const bId = String(btn.getAttribute('data-product_id') || btn.getAttribute('data-id') || '');
       if (idSet.has(bId)) {
         btn.classList.add('klbcp-btn-added', 'klbcp-added');
@@ -2205,7 +2210,11 @@
     });
 
     const idSet = new Set(list.map(it => String(it.id)));
+    const HEART_SVG = '<svg class="heart-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
     document.querySelectorAll('.klbwl-btn').forEach(btn => {
+      if (!btn.querySelector('svg.heart-icon')) {
+        btn.innerHTML = HEART_SVG;
+      }
       const bId = String(btn.getAttribute('data-product_id') || '');
       if (idSet.has(bId)) {
         btn.classList.add('active', 'liked', 'klbwl-product-in-list');

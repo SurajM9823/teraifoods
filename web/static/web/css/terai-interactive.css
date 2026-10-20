@@ -5027,173 +5027,7 @@ svg rect[fill="#634c9f"] {
     height: 9px !important;
   }
 
-  /* 3. Action Buttons (Wishlist & Compare) - Vertical Stack on Top Right */
-  .thumbnail-wrapper .thumbnail-buttons,
-  .thumbnail-buttons,
-  .action-icons,
-  .elementor-element-2bdf9e6 .thumbnail-buttons,
-  .elementor-element-d6f7202 .thumbnail-buttons {
-    position: absolute !important;
-    top: 8px !important;
-    right: 8px !important;
-    left: auto !important;
-    bottom: auto !important;
-    display: flex !important;
-    flex-direction: column !important; /* STRICT VERTICAL STACK */
-    align-items: center !important;
-    gap: 6px !important;
-    z-index: 10 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
 
-  .thumbnail-buttons > *,
-  .action-icons > * {
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
-    transition: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 !important;
-  }
-
-  /* Completely remove duplicate top cart button and quickview/eye button */
-  .thumbnail-buttons .mobile-top-cart-btn,
-  .thumbnail-buttons .quick-view-button,
-  .thumbnail-buttons .quickview-button,
-  .action-icons .quickview-button,
-  .action-icons .eye-link {
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
-    pointer-events: none !important;
-  }
-
-  /* Circular action button base: clean icon-only pill */
-  .thumbnail-buttons a,
-  .thumbnail-buttons .wishlist-button a,
-  .thumbnail-buttons .compare-button a,
-  .action-icons a,
-  .elementor-element-2bdf9e6 .thumbnail-buttons a,
-  .elementor-element-d6f7202 .thumbnail-buttons a {
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
-    border-radius: 50% !important;
-    background-color: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 0 !important; /* Hides text labels */
-    line-height: 1 !important;
-    text-indent: 0 !important;
-    color: #475569 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    text-decoration: none !important;
-    cursor: pointer !important;
-    transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease !important;
-  }
-
-  /* Suppress broken pseudo elements so our clean SVG icons show crisp */
-  .thumbnail-buttons a::before,
-  .thumbnail-buttons a::after,
-  .action-icons a::before,
-  .action-icons a::after {
-    display: none !important;
-    content: none !important;
-  }
-
-  /* SVG Icons display */
-  .thumbnail-buttons svg,
-  .action-icons svg {
-    display: block !important;
-    width: 15px !important;
-    height: 15px !important;
-    stroke: currentColor !important;
-    pointer-events: none !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Wishlist Button: Order 1 */
-  .thumbnail-buttons .wishlist-button,
-  .action-icons .wishlist-button {
-    order: 1 !important;
-  }
-  .thumbnail-buttons .wishlist-button a:hover,
-  .action-icons a.klbwl-btn:hover {
-    background-color: #fee2e2 !important;
-    color: #ef4444 !important;
-    border-color: #fca5a5 !important;
-    transform: scale(1.08) !important;
-  }
-  .thumbnail-buttons .wishlist-button a:hover svg,
-  .action-icons a.klbwl-btn:hover svg {
-    stroke: #ef4444 !important;
-  }
-
-  /* Wishlist Active / Liked State */
-  .thumbnail-buttons a.klbwl-btn.active,
-  .thumbnail-buttons a.klbwl-btn.liked,
-  .thumbnail-buttons a.klbwl-btn.klbwl-product-in-list,
-  .action-icons a.klbwl-btn.active,
-  .action-icons a.klbwl-btn.liked,
-  .action-icons a.klbwl-btn.klbwl-product-in-list {
-    background-color: #fee2e2 !important;
-    border-color: #f87171 !important;
-    color: #ef4444 !important;
-  }
-  .thumbnail-buttons a.klbwl-btn.active svg,
-  .thumbnail-buttons a.klbwl-btn.liked svg,
-  .thumbnail-buttons a.klbwl-btn.klbwl-product-in-list svg,
-  .action-icons a.klbwl-btn.active svg,
-  .action-icons a.klbwl-btn.liked svg,
-  .action-icons a.klbwl-btn.klbwl-product-in-list svg {
-    fill: #ef4444 !important;
-    stroke: #ef4444 !important;
-  }
-
-  /* Compare Button: Order 2 */
-  .thumbnail-buttons .compare-button,
-  .thumbnail-buttons a.klbcp-btn {
-    order: 2 !important;
-  }
-  .thumbnail-buttons a.klbcp-btn:hover,
-  .action-icons a.klbcp-btn:hover {
-    background-color: #f0fdf4 !important;
-    color: #16a34a !important;
-    border-color: #86efac !important;
-    transform: scale(1.08) !important;
-  }
-  .thumbnail-buttons a.klbcp-btn:hover svg,
-  .action-icons a.klbcp-btn:hover svg {
-    stroke: #16a34a !important;
-  }
-
-  /* Compare Active State */
-  .thumbnail-buttons a.klbcp-btn.klbcp-btn-added,
-  .thumbnail-buttons a.klbcp-btn.klbcp-added,
-  .action-icons a.klbcp-btn.klbcp-btn-added,
-  .action-icons a.klbcp-btn.klbcp-added {
-    background-color: #dcfce7 !important;
-    border-color: #86efac !important;
-    color: #16a34a !important;
-  }
-  .thumbnail-buttons a.klbcp-btn.klbcp-btn-added svg,
-  .thumbnail-buttons a.klbcp-btn.klbcp-added svg,
-  .action-icons a.klbcp-btn.klbcp-btn-added svg,
-  .action-icons a.klbcp-btn.klbcp-added svg {
-    stroke: #16a34a !important;
-  }
 
   /* Product Title styling */
   .elementor-element-2bdf9e6 .product-title,
@@ -5240,11 +5074,7 @@ svg rect[fill="#634c9f"] {
     font-size: 10.5px !important;
   }
 
-  /* 4. Bottom Product Cart - Hidden on mobile in New Arrivals since action buttons are at top */
-  .elementor-element-2bdf9e6 .product-cart,
-  .elementor-element-d6f7202 .product-cart {
-    display: none !important;
-  }
+
 }
 
 /* ==========================================================================
@@ -6497,4 +6327,272 @@ a.button.is-loading::after,
   .compare-modal-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================================
+   GLOBAL PRODUCT CARD ACTION BUTTONS (Wishlist & Compare)
+   Strict Vertical Stack on Top Right for ALL Viewports (Mobile & Desktop)
+   Applies across New Arrivals, Featured/Flash Deals, Best Sellers, For You, and Shop
+   ========================================================================== */
+
+/* 1. Ensure Thumbnail Wrapper has relative positioning for reliable anchoring */
+.thumbnail-wrapper,
+.product-inner .thumbnail-wrapper,
+.products .product .thumbnail-wrapper {
+  position: relative !important;
+}
+
+/* 2. Container: Strict Vertical Column on Top-Right */
+.thumbnail-wrapper .thumbnail-buttons,
+.thumbnail-buttons,
+.action-icons,
+.action-buttons-vertical,
+.products .product .thumbnail-buttons,
+.products .product .thumbnail-wrapper .thumbnail-buttons,
+.products-grid-module .thumbnail-buttons,
+.products.md-list-style .thumbnail-buttons,
+.product-type-1 .thumbnail-buttons,
+.elementor-element-2bdf9e6 .thumbnail-buttons,
+.elementor-element-d6f7202 .thumbnail-buttons {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: flex !important;
+  flex-direction: column !important; /* STRICT VERTICAL STACK ON ALL SCREENS */
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  z-index: 10 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* 3. Items inside the stack */
+.thumbnail-buttons > *,
+.action-icons > *,
+.action-buttons-vertical > *,
+.thumbnail-wrapper .thumbnail-buttons > * {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+  transition: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+/* Override any theme hover translation effects */
+.products .product:hover .thumbnail-wrapper .thumbnail-buttons > *,
+.products .product .thumbnail-wrapper .thumbnail-buttons > *:nth-child(1),
+.products .product .thumbnail-wrapper .thumbnail-buttons > *:nth-child(2),
+.products .product .thumbnail-wrapper .thumbnail-buttons > *:nth-child(3) {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* 4. Completely eliminate duplicate top cart button and quickview/eye button */
+.thumbnail-buttons .mobile-top-cart-btn,
+.thumbnail-buttons .quick-view-button,
+.thumbnail-buttons .quickview-button,
+.action-icons .quickview-button,
+.action-icons .eye-link {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 5. Circular Action Button Base: Clean Round White Pill */
+.thumbnail-buttons a,
+.thumbnail-buttons .wishlist-button a,
+.thumbnail-buttons .compare-button a,
+.action-icons a,
+.action-buttons-vertical a,
+.action-buttons-vertical .wishlist-button a,
+.action-buttons-vertical .compare-button a,
+.elementor-element-2bdf9e6 .thumbnail-buttons a,
+.elementor-element-d6f7202 .thumbnail-buttons a {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  border-radius: 50% !important;
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0 !important; /* Hides any text labels */
+  line-height: 1 !important;
+  text-indent: 0 !important;
+  color: #475569 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.thumbnail-buttons a:hover,
+.action-icons a:hover,
+.action-buttons-vertical a:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16) !important;
+}
+
+/* 6. CRITICAL: Completely eliminate theme font pseudo-elements (::before & ::after)
+      This completely fixes the duplicate icon inside the Compare button across all viewports! */
+a.klbcp-btn::before,
+a.klbcp-btn::after,
+a.klbwl-btn::before,
+a.klbwl-btn::after,
+.thumbnail-buttons a::before,
+.thumbnail-buttons a::after,
+.action-icons a::before,
+.action-icons a::after,
+.action-buttons-vertical a::before,
+.action-buttons-vertical a::after,
+.compare-button a::before,
+.compare-button a::after,
+.wishlist-button a::before,
+.wishlist-button a::after {
+  display: none !important;
+  content: "" !important;
+  width: 0 !important;
+  height: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* 7. Clean SVG Icons Display */
+.thumbnail-buttons svg,
+.action-icons svg,
+.action-buttons-vertical svg,
+.wishlist-button svg,
+.compare-button svg {
+  display: block !important;
+  width: 15px !important;
+  height: 15px !important;
+  stroke: currentColor !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+  margin: 0 auto !important;
+}
+
+.compare-button svg.compare-icon,
+.action-buttons-vertical .compare-button svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* 8. Wishlist Button: Order 1 (Top) */
+.thumbnail-buttons .wishlist-button,
+.action-icons .wishlist-button,
+.action-buttons-vertical .wishlist-button {
+  order: 1 !important;
+}
+
+.thumbnail-buttons .wishlist-button a:hover,
+.action-icons a.klbwl-btn:hover,
+.action-buttons-vertical .wishlist-button a:hover {
+  background-color: #fee2e2 !important;
+  color: #ef4444 !important;
+  border-color: #fca5a5 !important;
+  transform: scale(1.08) !important;
+}
+
+.thumbnail-buttons .wishlist-button a:hover svg,
+.action-icons a.klbwl-btn:hover svg,
+.action-buttons-vertical .wishlist-button a:hover svg {
+  stroke: #ef4444 !important;
+}
+
+/* Wishlist Active / Liked State */
+.thumbnail-buttons a.klbwl-btn.active,
+.thumbnail-buttons a.klbwl-btn.liked,
+.thumbnail-buttons a.klbwl-btn.klbwl-product-in-list,
+.action-icons a.klbwl-btn.active,
+.action-icons a.klbwl-btn.liked,
+.action-icons a.klbwl-btn.klbwl-product-in-list,
+.action-buttons-vertical a.klbwl-btn.active,
+.action-buttons-vertical a.klbwl-btn.liked,
+.action-buttons-vertical a.klbwl-btn.klbwl-product-in-list {
+  background-color: #fee2e2 !important;
+  border-color: #f87171 !important;
+  color: #ef4444 !important;
+}
+
+.thumbnail-buttons a.klbwl-btn.active svg,
+.thumbnail-buttons a.klbwl-btn.liked svg,
+.thumbnail-buttons a.klbwl-btn.klbwl-product-in-list svg,
+.action-icons a.klbwl-btn.active svg,
+.action-icons a.klbwl-btn.liked svg,
+.action-icons a.klbwl-btn.klbwl-product-in-list svg,
+.action-buttons-vertical a.klbwl-btn.active svg,
+.action-buttons-vertical a.klbwl-btn.liked svg,
+.action-buttons-vertical a.klbwl-btn.klbwl-product-in-list svg {
+  fill: #ef4444 !important;
+  stroke: #ef4444 !important;
+}
+
+/* 9. Compare Button: Order 2 (Below Wishlist) */
+.thumbnail-buttons .compare-button,
+.action-icons .compare-button,
+.action-buttons-vertical .compare-button {
+  order: 2 !important;
+}
+
+.thumbnail-buttons a.klbcp-btn:hover,
+.action-icons a.klbcp-btn:hover,
+.action-buttons-vertical a.klbcp-btn:hover {
+  background-color: #f0fdf4 !important;
+  color: #16a34a !important;
+  border-color: #86efac !important;
+  transform: scale(1.08) !important;
+}
+
+.thumbnail-buttons a.klbcp-btn:hover svg,
+.action-icons a.klbcp-btn:hover svg,
+.action-buttons-vertical a.klbcp-btn:hover svg {
+  stroke: #16a34a !important;
+}
+
+/* Compare Active State */
+.thumbnail-buttons a.klbcp-btn.klbcp-btn-added,
+.thumbnail-buttons a.klbcp-btn.klbcp-added,
+.action-icons a.klbcp-btn.klbcp-btn-added,
+.action-icons a.klbcp-btn.klbcp-added,
+.action-buttons-vertical a.klbcp-btn.klbcp-btn-added,
+.action-buttons-vertical a.klbcp-btn.klbcp-added {
+  background-color: #dcfce7 !important;
+  border-color: #86efac !important;
+  color: #16a34a !important;
+}
+
+.thumbnail-buttons a.klbcp-btn.klbcp-btn-added svg,
+.thumbnail-buttons a.klbcp-btn.klbcp-added svg,
+.action-icons a.klbcp-btn.klbcp-btn-added svg,
+.action-icons a.klbcp-btn.klbcp-added svg,
+.action-buttons-vertical a.klbcp-btn.klbcp-btn-added svg,
+.action-buttons-vertical a.klbcp-btn.klbcp-added svg {
+  stroke: #16a34a !important;
 }
