@@ -317,3 +317,129 @@ footer img[src*="terai_food_logo.png"] {
     border-bottom: 1px solid #e5e7eb !important;
   }
 }
+
+
+/* ==========================================================================
+   PRODUCT CARDS ACTION BUTTONS (Wishlist & Compare) - STRICT VERTICAL STACK
+   Enforced across all viewports & sections (New Arrivals, Flash Sales, etc.)
+   ========================================================================== */
+.thumbnail-wrapper {
+  position: relative !important;
+}
+
+.thumbnail-buttons,
+.action-buttons-vertical,
+.action-icons,
+.thumbnail-wrapper .thumbnail-buttons,
+.products .product .thumbnail-buttons,
+.elementor-element-2bdf9e6 .thumbnail-buttons,
+.elementor-element-d6f7202 .thumbnail-buttons {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: flex !important;
+  flex-direction: column !important; /* STRICT VERTICAL STACK */
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  z-index: 10 !important;
+  width: 32px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.thumbnail-buttons > *,
+.action-buttons-vertical > *,
+.thumbnail-wrapper .thumbnail-buttons > * {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.thumbnail-buttons .wishlist-button,
+.action-buttons-vertical .wishlist-button {
+  order: 1 !important;
+}
+
+.thumbnail-buttons .compare-button,
+.action-buttons-vertical .compare-button {
+  order: 2 !important;
+}
+
+.thumbnail-buttons a,
+.thumbnail-buttons .wishlist-button a,
+.thumbnail-buttons .compare-button a,
+.action-buttons-vertical a {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  border-radius: 50% !important;
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Eliminate theme font pseudo-elements (removes second icon inside compare button) */
+a.klbcp-btn::before,
+a.klbcp-btn::after,
+a.klbwl-btn::before,
+a.klbwl-btn::after,
+.thumbnail-buttons a::before,
+.thumbnail-buttons a::after,
+.action-buttons-vertical a::before,
+.action-buttons-vertical a::after,
+.compare-button a::before,
+.compare-button a::after,
+.wishlist-button a::before,
+.wishlist-button a::after {
+  display: none !important;
+  content: "" !important;
+  width: 0 !important;
+  height: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* SVG icons */
+.thumbnail-buttons svg,
+.action-buttons-vertical svg,
+.wishlist-button svg,
+.compare-button svg {
+  display: block !important;
+  width: 15px !important;
+  height: 15px !important;
+  stroke: currentColor !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+  margin: 0 auto !important;
+}
+
+.compare-button svg.compare-icon,
+.action-buttons-vertical .compare-button svg {
+  width: 14px !important;
+  height: 14px !important;
+}
