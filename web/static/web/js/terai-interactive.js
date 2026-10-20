@@ -3388,9 +3388,35 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
 
     window.addEventListener('pageshow', stopProgress);
 
+    // Pointerdown prefetch for instant search page opening
+    document.addEventListener('pointerdown', (e) => {
+      const searchLink = e.target.closest('#mobile-search-toggle-btn, .mobile-search-link');
+      if (searchLink && !document.querySelector('link[rel="prefetch"][href*="/shop"]')) {
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = '/shop/';
+        document.head.appendChild(link);
+      }
+    }, { passive: true });
+
     // Click handler for all clickable triggers
     document.addEventListener('click', (e) => {
       if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+      // Mobile Search: NEVER show artificial loader or delay! Instant open!
+      const searchTrigger = e.target.closest('.mobile-search-button, #mobile-search-toggle-btn, .mobile-search-link');
+      if (searchTrigger) {
+        if (window.location.pathname.includes('/shop')) {
+          e.preventDefault();
+          const searchInput = document.getElementById('shop-header-search-input');
+          if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+        return;
+      }
 
       // 0. Mobile Bottom Navbar / Button Bar Items
       const bottomBarLi = e.target.closest('.site-mobile-navbar li, .klb-mobile-bottom li');

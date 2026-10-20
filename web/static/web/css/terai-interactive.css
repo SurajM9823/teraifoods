@@ -5874,36 +5874,49 @@ body.site-search-drawer-active .site-search-drawer .site-drawer-overlay {
   pointer-events: auto !important;
 }
 
-/* 1. Mobile Drawer Width: 85% to 90% of screen (NOT full screen) */
-.site-drawer.site-menu-drawer .site-drawer-inner,
-.site-menu-drawer .site-drawer-inner {
-  width: 86vw !important;
-  max-width: 360px !important;
-  min-width: 280px !important;
-  height: 100% !important;
-  background-color: #ffffff !important;
-  box-shadow: 6px 0 25px rgba(0, 0, 0, 0.16) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
+/* 1. Mobile Drawer Width: Exactly 80% to 85% of screen width (NOT full screen) across ALL drawers and pages */
+@media screen and (max-width: 1199px) {
+  .site-drawer .site-drawer-inner,
+  .site-drawer.site-menu-drawer .site-drawer-inner,
+  .site-menu-drawer .site-drawer-inner,
+  .site-drawer.site-categories-drawer .site-drawer-inner,
+  .site-categories-drawer .site-drawer-inner,
+  .site-drawer.site-search-drawer .site-drawer-inner,
+  .site-search-drawer .site-drawer-inner {
+    width: 82vw !important;
+    max-width: 380px !important;
+    min-width: 280px !important;
+    height: 100% !important;
+    background-color: #ffffff !important;
+    box-shadow: 6px 0 25px rgba(0, 0, 0, 0.22) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Dimmed backdrop covers remainder of screen (~18% showing page content behind it) */
+  .site-drawer .site-drawer-overlay,
+  .site-drawer.site-menu-drawer .site-drawer-overlay,
+  .site-menu-drawer .site-drawer-overlay,
+  .site-drawer.site-categories-drawer .site-drawer-overlay,
+  .site-categories-drawer .site-drawer-overlay,
+  .site-drawer.site-search-drawer .site-drawer-overlay,
+  .site-search-drawer .site-drawer-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(15, 23, 42, 0.55) !important;
+    backdrop-filter: blur(2px) !important;
+    z-index: 1 !important;
+    cursor: pointer !important;
+  }
 }
 
-/* Dimmed backdrop covers remainder of screen */
-.site-drawer.site-menu-drawer .site-drawer-overlay,
-.site-menu-drawer .site-drawer-overlay {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background-color: rgba(15, 23, 42, 0.55) !important;
-  backdrop-filter: blur(2px) !important;
-  z-index: 0 !important;
-  cursor: pointer !important;
-}
-
-/* 2. Logo Size in Sidebar Header: Larger, crisp & prominent */
-.site-menu-drawer .site-drawer-header {
+/* 2. Logo Size in Sidebar Header: Larger, crisp & prominent across all drawers */
+.site-menu-drawer .site-drawer-header,
+.site-categories-drawer .site-drawer-header {
   padding: 16px 20px !important;
   border-bottom: 1px solid #f1f5f9 !important;
   background-color: #ffffff !important;
@@ -5913,7 +5926,9 @@ body.site-search-drawer-active .site-search-drawer .site-drawer-overlay {
 }
 
 .site-menu-drawer .site-drawer-header .site-brand a img,
-.site-menu-drawer .site-brand a img {
+.site-menu-drawer .site-brand a img,
+.site-categories-drawer .site-drawer-header .site-brand a img,
+.site-categories-drawer .site-brand a img {
   height: 44px !important;
   max-height: 44px !important;
   width: auto !important;
@@ -5922,8 +5937,9 @@ body.site-search-drawer-active .site-search-drawer .site-drawer-overlay {
   display: block !important;
 }
 
-/* Close button modern circular pill */
-.site-menu-drawer .site-drawer-header .close-button a {
+/* Close button modern circular pill across all drawers */
+.site-menu-drawer .site-drawer-header .close-button a,
+.site-categories-drawer .site-drawer-header .close-button a {
   width: 36px !important;
   height: 36px !important;
   border-radius: 50% !important;
@@ -5937,7 +5953,8 @@ body.site-search-drawer-active .site-search-drawer .site-drawer-overlay {
   transition: all 0.2s ease !important;
 }
 
-.site-menu-drawer .site-drawer-header .close-button a:hover {
+.site-menu-drawer .site-drawer-header .close-button a:hover,
+.site-categories-drawer .site-drawer-header .close-button a:hover {
   background: #e2e8f0 !important;
   color: #0f172a !important;
 }

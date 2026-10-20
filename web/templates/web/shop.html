@@ -27,7 +27,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=sidebar-80w-v3" media="all">
 
 	<style>
 		body {
@@ -636,7 +636,7 @@
 			font-weight: 600;
 		}
 	</style>
-  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=20261020-search-v1">
+  <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=20261020-search-v2">
 <link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
 </head>
 <body class="page-template-default page terai-shop-page">
@@ -694,20 +694,6 @@
 							</div>
 						</div>
 
-						<!-- Sleek Minimal-Height Top Sort Controls (Single horizontal line) -->
-						<div class="shop-top-controls">
-							<div class="shop-sort-wrapper">
-								<label for="shop-sort-select">Sort by:</label>
-								<select class="compact-sort-select" id="shop-sort-select">
-									<option value="featured">Featured Deals</option>
-									<option value="relevance">Best Match (Relevance)</option>
-									<option value="price-asc">Price: Low to High</option>
-									<option value="price-desc">Price: High to Low</option>
-									<option value="rating">Highest Rated</option>
-									<option value="name">Alphabetical (A&ndash;Z)</option>
-								</select>
-							</div>
-						</div>
 
 						<!-- 4-Column Border-Touching Products Grid (Shared 1px Borders) -->
 						<div class="shop-products-grid-container" id="shop-products-container">
@@ -837,7 +823,7 @@
 	</script>
 
 	<!-- Main Theme and Interactive Engine -->
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=20261020-search-v2"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

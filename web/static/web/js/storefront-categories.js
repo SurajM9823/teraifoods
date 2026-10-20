@@ -1,186 +1,191 @@
 (() => {
-  // If legacy theme bundle is present on the page (e.g. home page index.html), let it handle its own drawer animations.
-  if (document.querySelector('script[src*="/bundle.js"]')) return;
+  // Check if already initialized to avoid duplicate binding
+  if (window.__teraiUnifiedDrawersInitialized) return;
+  window.__teraiUnifiedDrawersInitialized = true;
 
-  function initStorefrontDrawers() {
-    if (window.__storefrontDrawersInitialized) return;
-    window.__storefrontDrawersInitialized = true;
+  function initUnifiedDrawers() {
+    const drawers = new Map();
+    let activeDrawer = null;
 
-    let activeDrawerName = null;
-
-    function getDrawer(drawerName) {
-      if (!drawerName) return null;
-      return document.querySelector(`.${drawerName}`) ||
-             document.getElementById(drawerName) ||
-             document.getElementById(drawerName.replace(/^site-/, '')) ||
-             document.getElementById(`${drawerName}-drawer`);
-    }
-
-    function updateHeights(drawerEl) {
-      if (!drawerEl) return;
-      const header = document.querySelector('.site-header');
-      const mobileNav = document.querySelector('.site-mobile-navbar, .klb-mobile-bottom');
-      const headerHeight = header ? Math.round(header.getBoundingClientRect().height) : 0;
-      const mobileNavHeight = mobileNav ? Math.round(mobileNav.getBoundingClientRect().height) : 0;
-      drawerEl.style.setProperty('--header-height', `${headerHeight}px`);
-      drawerEl.style.setProperty('--mobile-nav-height', `${mobileNavHeight}px`);
-    }
-
-    function closeAllDrawers() {
-      // Remove active classes from body
+    const clearButtons = () => {
       document.body.classList.remove(
         'site-menu-drawer-active',
         'site-categories-drawer-active',
         'site-search-drawer-active'
       );
-
-      // Hide all drawers
-      document.querySelectorAll('.site-drawer').forEach(drawerEl => {
-        drawerEl.classList.remove('is-active', 'active');
-        drawerEl.style.visibility = 'hidden';
-        drawerEl.style.opacity = '0';
-        drawerEl.setAttribute('aria-hidden', 'true');
-
-        const inner = drawerEl.querySelector('.site-drawer-inner');
-        if (inner) inner.style.transform = '';
-
-        const overlay = drawerEl.querySelector('.site-drawer-overlay');
-        if (overlay) {
-          overlay.style.opacity = '0';
-          overlay.style.visibility = 'hidden';
-        }
+      document.querySelectorAll('.menu-drawer-toggle, [data-drawer]').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-expanded', 'false');
       });
-
-      // Deactivate all toggle buttons
-      document.querySelectorAll('.menu-drawer-toggle, [data-drawer]').forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-expanded', 'false');
-      });
-
-      // Clean up any lingering loading states
       document.querySelectorAll('.is-loading, .is-navigating').forEach(el => {
         el.classList.remove('is-loading', 'is-navigating');
       });
-
       document.body.style.overflow = '';
-      activeDrawerName = null;
-    }
+    };
 
-    function openDrawer(drawerName, triggerBtn) {
-      const drawerEl = getDrawer(drawerName);
-      if (!drawerEl) return;
+    const closeDrawer = () => {
+      clearButtons();
+      if (activeDrawer) {
+        const anim = drawers.get(activeDrawer);
+        if (anim && typeof anim.reverse === 'function') {
+          anim.reverse();
+        } else if (activeDrawer) {
+          activeDrawer.classList.remove('is-active', 'active');
+          activeDrawer.style.visibility = 'hidden';
+          activeDrawer.style.opacity = '0';
+          const inner = activeDrawer.querySelector('.site-drawer-inner');
+          if (inner) inner.style.transform = '';
+          const overlay = activeDrawer.querySelector('.site-drawer-overlay');
+          if (overlay) {
+            overlay.style.opacity = '0';
+            overlay.style.visibility = 'hidden';
+          }
+        }
+      }
+      activeDrawer = null;
+    };
 
-      // Toggle off if same drawer is clicked again
-      if (activeDrawerName === drawerName) {
-        closeAllDrawers();
-        return;
+    function registerDrawer(item) {
+      if (!item || drawers.has(item)) return;
+      const inner = item.querySelector('.site-drawer-inner');
+      const overlay = item.querySelector('.site-drawer-overlay');
+
+      if (window.gsap && typeof gsap.timeline === 'function') {
+        const timeline = gsap.timeline({ paused: true });
+        timeline.fromTo(item, 0.1, { autoAlpha: 0 }, { autoAlpha: 1 })
+          .to(inner, 0.45, { x: 0, ease: 'power4.inOut' }, 0)
+          .to(overlay, 0.45, { autoAlpha: 1, ease: 'power4.inOut' }, 0);
+        drawers.set(item, timeline);
+      } else {
+        // Fallback matching GSAP play/reverse API
+        drawers.set(item, {
+          play: () => {
+            item.classList.add('is-active', 'active');
+            item.style.visibility = 'visible';
+            item.style.opacity = '1';
+            if (inner) inner.style.transform = 'translateX(0)';
+            if (overlay) {
+              overlay.style.visibility = 'visible';
+              overlay.style.opacity = '1';
+            }
+          },
+          reverse: () => {
+            item.classList.remove('is-active', 'active');
+            item.style.visibility = 'hidden';
+            item.style.opacity = '0';
+            if (inner) inner.style.transform = '';
+            if (overlay) {
+              overlay.style.opacity = '0';
+              overlay.style.visibility = 'hidden';
+            }
+          }
+        });
       }
 
-      closeAllDrawers();
-      activeDrawerName = drawerName;
-
-      updateHeights(drawerEl);
-      document.body.classList.add(`${drawerName}-active`);
-      drawerEl.classList.add('is-active', 'active');
-      drawerEl.style.visibility = 'visible';
-      drawerEl.style.opacity = '1';
-      drawerEl.setAttribute('aria-hidden', 'false');
-
-      const inner = drawerEl.querySelector('.site-drawer-inner');
-      if (inner) {
-        inner.style.transform = 'translateX(0)';
-      }
-
-      const overlay = drawerEl.querySelector('.site-drawer-overlay');
-      if (overlay) {
-        overlay.style.visibility = 'visible';
-        overlay.style.opacity = '1';
-      }
-
-      // Mark trigger buttons as active
-      if (triggerBtn) {
-        triggerBtn.classList.add('active');
-        triggerBtn.setAttribute('aria-expanded', 'true');
-      }
-      document.querySelectorAll(`[data-drawer="${drawerName}"]`).forEach(btn => {
-        btn.classList.add('active');
-        btn.setAttribute('aria-expanded', 'true');
-      });
-
-      // Remove loading spinner from trigger
-      document.querySelectorAll('.is-loading, .is-navigating').forEach(el => {
-        el.classList.remove('is-loading', 'is-navigating');
-      });
-
-      document.body.style.overflow = 'hidden';
-    }
-
-    // Delegated click handler for triggers, close buttons, overlays, and links
-    document.addEventListener('click', event => {
-      // 1. Drawer Toggle Buttons (Header Hamburger, Bottom Navbar Categories, etc.)
-      const toggleBtn = event.target.closest('.menu-drawer-toggle, [data-drawer]');
-      if (toggleBtn) {
-        const targetDrawer = toggleBtn.getAttribute('data-drawer');
-        if (targetDrawer) {
+      // Close on inner close button and backdrop click
+      item.querySelectorAll('.close-button, .close-button a, .site-drawer-close, .site-drawer-overlay').forEach(closeEl => {
+        closeEl.addEventListener('click', event => {
           event.preventDefault();
           event.stopPropagation();
-          openDrawer(targetDrawer, toggleBtn);
-          return;
+          closeDrawer();
+        });
+      });
+
+      // Auto-close on normal link click inside drawer
+      item.querySelectorAll('.site-menu a, .menu-item a').forEach(navLink => {
+        navLink.addEventListener('click', () => {
+          if (navLink.parentElement && navLink.parentElement.classList.contains('menu-item-has-children')) return;
+          closeDrawer();
+        });
+      });
+
+      // Accordion dropdown for sub-categories
+      item.querySelectorAll('.menu-item-has-children > a').forEach(toggleLink => {
+        toggleLink.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+          toggleLink.parentElement.classList.toggle('active');
+        });
+      });
+    }
+
+    // Register all initial drawers in the DOM
+    document.querySelectorAll('.site-drawer').forEach(registerDrawer);
+
+    // Global delegated click listener for any trigger button
+    document.addEventListener('click', event => {
+      // 1. Check if clicking a drawer toggle button
+      const button = event.target.closest('.menu-drawer-toggle, [data-drawer]');
+      if (button) {
+        const name = button.dataset.drawer || button.getAttribute('data-drawer');
+        if (name) {
+          const item = document.querySelector(`.${name}`) || 
+                       document.getElementById(name) || 
+                       document.getElementById(name.replace(/^site-/, '')) ||
+                       document.getElementById(`${name}-drawer`);
+          if (item) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            registerDrawer(item);
+
+            const wasOpen = activeDrawer === item;
+            closeDrawer();
+
+            if (!wasOpen) {
+              activeDrawer = item;
+              const anim = drawers.get(item);
+              if (anim && typeof anim.play === 'function') {
+                anim.play();
+              }
+              button.classList.add('active');
+              button.setAttribute('aria-expanded', 'true');
+              document.body.classList.add(`${name}-active`);
+              document.body.style.overflow = 'hidden';
+
+              // Also mark any other button targeting this drawer
+              document.querySelectorAll(`[data-drawer="${name}"]`).forEach(b => {
+                b.classList.add('active');
+                b.setAttribute('aria-expanded', 'true');
+              });
+            }
+            return;
+          }
         }
       }
 
-      // 2. Drawer Close Buttons
+      // 2. Check if clicking close button inside any drawer
       const closeBtn = event.target.closest('.close-button, .close-button a, .site-drawer-close');
       if (closeBtn && closeBtn.closest('.site-drawer')) {
         event.preventDefault();
         event.stopPropagation();
-        closeAllDrawers();
+        closeDrawer();
         return;
       }
 
-      // 3. Drawer Overlay Click
+      // 3. Check if clicking backdrop overlay
       if (event.target.classList && event.target.classList.contains('site-drawer-overlay')) {
         event.preventDefault();
         event.stopPropagation();
-        closeAllDrawers();
+        closeDrawer();
         return;
-      }
-
-      // 4. Sub-menu accordion toggle inside drawer
-      const parentLink = event.target.closest('.site-drawer .menu-item-has-children > a');
-      if (parentLink) {
-        event.preventDefault();
-        event.stopPropagation();
-        parentLink.parentElement.classList.toggle('active');
-        return;
-      }
-
-      // 5. Normal Navigation Link inside drawer -> close drawer so user can navigate cleanly
-      const navLink = event.target.closest('.site-drawer .site-menu a, .site-drawer .menu-item a');
-      if (navLink && navLink.getAttribute('href') && navLink.getAttribute('href') !== '#') {
-        closeAllDrawers();
       }
     });
 
     // Close on Escape key
     document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && activeDrawerName) {
-        closeAllDrawers();
-      }
+      if (event.key === 'Escape') closeDrawer();
     });
 
-    // Recalculate dimensions on window resize
-    window.addEventListener('resize', () => {
-      if (activeDrawerName) {
-        const drawerEl = getDrawer(activeDrawerName);
-        if (drawerEl) updateHeights(drawerEl);
-      }
+    // Reset when page is restored from bfcache
+    window.addEventListener('pageshow', event => {
+      if (event.persisted) closeDrawer();
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initStorefrontDrawers);
+    document.addEventListener('DOMContentLoaded', initUnifiedDrawers);
   } else {
-    initStorefrontDrawers();
+    initUnifiedDrawers();
   }
 })();

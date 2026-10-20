@@ -1,5 +1,6 @@
 {% load static %}
-<script src="{% static 'web/js/storefront-categories.js' %}?v=mobile-drawers-v2" defer></script>
+<script src="{% static 'web/js/gsap.min.js' %}" defer></script>
+<script src="{% static 'web/js/storefront-categories.js' %}?v=sidebar-80w-v3" defer></script>
 <script src="{% static 'web/js/catalog-storefront.js' %}?v={{ catalog_revision|default:1 }}" defer></script>
 <script src="{% static 'web/js/delivery-quote.js' %}" defer></script>
 {{ catalog_revision|default:1|json_script:'catalog-revision' }}
@@ -7,7 +8,19 @@
 <template id="storefront-category-options">{% for category in storefront_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}</template>
 {% if include_drawer %}
 <div id="categories-drawer" class="site-drawer site-categories-drawer get-header-height get-mobile-nav-height">
-  <div class="site-drawer-inner site-scroll"><nav class="site-categories">{% include 'catalog/storefront/menu.html' %}</nav></div>
+  <div class="site-drawer-inner site-scroll">
+    <div class="site-drawer-row site-drawer-header d-flex align-items-center justify-content-between">
+      <div class="site-brand">
+        <a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
+          <img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food – Fresh Grocery &amp; Organic Food Store" width="200" height="84">
+        </a>
+      </div>
+      <div class="site-button close-button">
+        <a href="#" aria-label="Close Categories"><i class="klb-icon-x"></i></a>
+      </div>
+    </div>
+    <nav class="site-categories">{% include 'catalog/storefront/menu.html' %}</nav>
+  </div>
   <div class="site-drawer-overlay position-absolute strech"></div>
 </div>
 <div id="search-drawer" class="site-drawer site-search-drawer get-header-height get-mobile-nav-height">

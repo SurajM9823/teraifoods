@@ -223,7 +223,10 @@
             search.focus();
             search.select();
             search.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 200);
+          }, 60);
+          urlParams.delete('focus_search');
+          const cleanSearch = urlParams.toString() ? '?' + urlParams : '';
+          history.replaceState(null, '', location.pathname + cleanSearch);
         }
       }
 
