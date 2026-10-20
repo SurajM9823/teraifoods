@@ -562,11 +562,7 @@
   let lastOrderDetails = null;
 
   const DEFAULT_DARAZ_ADDRESS = {
-    name: 'Suraj Mahato',
-    phone: '9805996874',
-    tag: 'OFFICE',
-    address: 'Dhunge Sadhu Chowck, Lalitpur - Imadole Area, Lalitpur Outside Ring Road, Bagmati Province',
-    note: 'Aakrati Advertisment'
+    name: '', phone: '', tag: 'HOME', address: '', note: ''
   };
 
   function getSavedAddress() {
@@ -753,7 +749,7 @@
               <div class="checkout-card" id="checkout-package-card">
                 <div class="checkout-pkg-header">
                   <span class="checkout-card-title">Package 1 of 1</span>
-                  <span class="checkout-pkg-vendor">Shipped by <strong>SIM-EDWIN</strong></span>
+                  <span class="checkout-pkg-vendor">Shipped by <strong>Terai Foods</strong></span>
                 </div>
                 <div class="checkout-delivery-label">Delivery or Pickup</div>
 
@@ -1109,140 +1105,10 @@
       });
     });
 
-    // Step 3: Form submit -> Order Confirmed in Step 4
-    sideCartDrawer.querySelector('#form-drawer-payment')?.addEventListener('submit', (e) => {
+    // Stripe collects card details and the signed webhook confirms payment.
+    sideCartDrawer.querySelector('#form-drawer-payment')?.addEventListener('submit', e => {
       e.preventDefault();
-      showToast('Payment unavailable', 'Online payment is not configured. No payment has been taken.', 'warning');
-      return;
-      e.preventDefault();
-      const cart = getCart();
-      const activeItems = cart.filter(i => !unselectedItemIds.has(String(i.id)));
-      const subtotal = calculateDrawerSubtotal();
-      const shipping = calculateDrawerShipping();
-      const discount = (subtotal * voucherDiscountPercent) / 100;
-      const total = Math.max(0, subtotal - discount) + shipping;
-
-      const addrData = getSavedAddress();
-      const orderRef = 'TF-' + Math.floor(10000 + Math.random() * 90000);
-      const now = new Date();
-      const orderDateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-      lastOrderDetails = {
-        orderRef,
-        date: orderDateStr,
-        name: addrData.name,
-        phone: addrData.phone,
-        address: addrData.address,
-        tag: addrData.tag,
-        items: activeItems,
-        subtotal,
-        discount,
-        shipping,
-        total,
-        paymentMethod: selectedPaymentMethod === 'card' ? 'Credit/Debit Card' : (selectedPaymentMethod === 'paypal' ? 'PayPal' : (selectedPaymentMethod === 'bacs' ? 'Bank Transfer' : 'Cash on Delivery'))
-      };
-
-      // Populate Step 4 confirmation pane inside the drawer
-      const confirmContent = sideCartDrawer.querySelector('#drawer-confirm-content');
-      if (confirmContent) {
-        const itemsRows = lastOrderDetails.items.map(item => `
-          <tr>
-            <td>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <img src="${escapeHTML(item.image || '/static/web/images/1-16-500x500.jpg')}" alt="${escapeHTML(item.title)}" style="width: 32px; height: 32px; object-fit: cover; border: 1px solid #e2e8f0;">
-                <div>
-                  <strong style="color: #0f172a; font-size: 11.5px;">${escapeHTML(item.title)}</strong>
-                  <div style="font-size: 10px; color: #64748b;">Qty: ${item.quantity} &times; £${Number(item.price).toFixed(2)}</div>
-                </div>
-              </div>
-            </td>
-            <td style="text-align: right; font-weight: 700; color: #0f172a;">
-              £${(item.price * item.quantity).toFixed(2)}
-            </td>
-          </tr>
-        `).join('');
-
-        confirmContent.innerHTML = `
-          <div class="cart-drawer-confirm-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-          </div>
-          <h3 class="cart-drawer-confirm-title">Order Confirmed!</h3>
-          <p class="cart-drawer-confirm-desc">
-            Thank you, <strong>${lastOrderDetails.name}</strong>! Your order has been placed successfully.
-          </p>
-
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; text-align: left; margin-bottom: 14px; font-size: 11.5px; display: flex; flex-direction: column; gap: 4px;">
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: #64748b;">Order Reference:</span>
-              <strong style="color: #0f172a; font-weight: 800;">#${lastOrderDetails.orderRef}</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: #64748b;">Order Date:</span>
-              <span style="color: #0f172a; font-weight: 600;">${lastOrderDetails.date}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: #64748b;">Payment Method:</span>
-              <span style="color: #0f172a; font-weight: 600;">${lastOrderDetails.paymentMethod}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: #64748b;">Delivery To:</span>
-              <span style="color: #0f172a; font-weight: 600; text-align: right; max-width: 60%;">${lastOrderDetails.name} (${lastOrderDetails.tag}) - ${lastOrderDetails.address}</span>
-            </div>
-          </div>
-
-          <table class="cart-drawer-receipt-table">
-            <thead>
-              <tr>
-                <th>Item Details</th>
-                <th style="text-align: right;">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsRows}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td style="font-weight: 600; color: #64748b; padding-top: 8px;">Subtotal:</td>
-                <td style="text-align: right; font-weight: 600; color: #0f172a; padding-top: 8px;">£${lastOrderDetails.subtotal.toFixed(2)}</td>
-              </tr>
-              ${lastOrderDetails.discount > 0 ? `
-              <tr>
-                <td style="font-weight: 600; color: #16a34a;">Store Discount:</td>
-                <td style="text-align: right; font-weight: 600; color: #16a34a;">-£${lastOrderDetails.discount.toFixed(2)}</td>
-              </tr>` : ''}
-              <tr>
-                <td style="font-weight: 600; color: #64748b;">Delivery Fee:</td>
-                <td style="text-align: right; font-weight: 600; color: #0f172a;">${lastOrderDetails.shipping === 0 ? 'FREE' : '£' + lastOrderDetails.shipping.toFixed(2)}</td>
-              </tr>
-              <tr style="border-top: 1px solid #cbd5e1;">
-                <td style="font-weight: 800; font-size: 13px; color: #0f172a;">Total Paid:</td>
-                <td style="text-align: right; font-weight: 900; font-size: 15px; color: #f85606;">£${lastOrderDetails.total.toFixed(2)}</td>
-              </tr>
-            </tfoot>
-          </table>
-
-          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px;">
-            <button type="button" class="cart-drawer-btn-secondary" id="btn-drawer-continue-shopping" style="height: 38px; padding: 0 18px;">
-              Continue Shopping
-            </button>
-            <a href="/track-order/?order=${lastOrderDetails.orderRef}" class="checkout-btn-proceed-pay" style="width: auto; height: 38px; padding: 0 20px; line-height: 38px; text-decoration: none;">
-              Track Order &rarr;
-            </a>
-          </div>
-        `;
-
-        confirmContent.querySelector('#btn-drawer-continue-shopping')?.addEventListener('click', () => {
-          closeSideCart();
-          goToDrawerStep(1);
-        });
-      }
-
-      // Empty basket and update headers
-      saveCart([]);
-      unselectedItemIds.clear();
-
-      goToDrawerStep(4);
-      showToast('Order Placed!', `Order #${orderRef} placed successfully.`, 'success');
+      window.TeraiOrders?.checkout();
     });
   }
 
@@ -1511,6 +1377,7 @@
   }
 
   async function goToDrawerStep(step) {
+    if (step === 3 && window.TeraiOrders && !window.TeraiOrders.addressValid()) return;
     if (step === 2 || step === 3) {
       const selected = getCart().filter(item => !unselectedItemIds.has(String(item.id)));
       if (!window.TeraiCatalog?.validateCart || !await window.TeraiCatalog.validateCart(selected)) return;
@@ -2044,7 +1911,7 @@
   // --- Product Card Click Handlers (Add to Cart & Quickview) ---
   function setupProductCardClicks() {
     window.TeraiCatalog = {refresh:indexProducts, addToCart, getProductById, openQuickview, showToast,
-      getCart, saveCart, addDetail:window.TeraiCatalog?.addDetail, validateCart:window.TeraiCatalog?.validateCart};
+      getCart, saveCart, openCheckout:() => openSideCart(2), selectedItems:() => getCart().filter(i => !unselectedItemIds.has(String(i.id))), addDetail:window.TeraiCatalog?.addDetail, validateCart:window.TeraiCatalog?.validateCart};
     document.addEventListener('catalog:updated', indexProducts);
     // 1. Add to cart buttons
     document.querySelectorAll('.button.ajax_add_to_cart, .button.add_to_cart_button, a[href*="add-to-cart"], .btn-cart-pill').forEach(btn => {
@@ -2405,8 +2272,7 @@
   }
 
   function openOrderTracking() {
-    if (!trackModalBackdrop) initOrderTrackingModal();
-    trackModalBackdrop.classList.add('active');
+    window.location.href = '/track-order/';
   }
 
   function closeOrderTracking() {
@@ -3410,9 +3276,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
           e.preventDefault();
           const searchInput = document.getElementById('shop-header-search-input');
           if (searchInput) {
-            searchInput.focus();
-            searchInput.select();
-            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            searchInput.focus({ preventScroll: true });
           }
         }
         return;
@@ -3559,6 +3423,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     setupGlobalClickFeedback();
     updateCartUI();
     updateWishlistUI();
+    initScrollToTop();
 
     // Check URL for search parameter 's' or 'q' if on shop or search page
     try {
@@ -3572,6 +3437,57 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
         }, 100);
       }
     } catch(e) {}
+  }
+
+  // Universal Back to Top Scroll Handler
+  function initScrollToTop() {
+    const checkScroll = () => {
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      const btns = document.querySelectorAll('.scrollToTop, #scrollToTop');
+      btns.forEach(btn => {
+        if (scrollY > 200) {
+          btn.classList.add('button-show');
+        } else {
+          btn.classList.remove('button-show');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    document.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.scrollToTop, #scrollToTop');
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // 1. Smooth native window scroll to top
+        try {
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+          });
+        } catch (err) {
+          window.scrollTo(0, 0);
+        }
+
+        // 2. Direct assignment fallbacks for older devices / custom scroll containers
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        const pageEl = document.getElementById('page');
+        if (pageEl) pageEl.scrollTop = 0;
+        const mainEl = document.getElementById('main');
+        if (mainEl) mainEl.scrollTop = 0;
+
+        // 3. jQuery animate fallback if jQuery is present
+        if (window.jQuery) {
+          window.jQuery('html, body').stop().animate({ scrollTop: 0 }, 350);
+        }
+      }
+    });
   }
 
   if (document.readyState === 'loading') {

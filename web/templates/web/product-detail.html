@@ -5,7 +5,7 @@
 <meta name="customer-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 	<title>LAO GAN MA Tao Huabi Chilli Sauce With Chicken 280gm – Terai Food UK</title>
 	<meta name="description" content="Shop organic groceries, Himalayan spices, cold-pressed oils, lentils, stoneground flour, and flash sales with fast UK-wide delivery.">
@@ -27,7 +27,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=clean-search-v1" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=scroll-top-v1" media="all">
 
 	<style>
 		body {
@@ -1605,7 +1605,7 @@
 								<!-- Column 1: Gallery -->
 								<div class="pdp-gallery-col">
 									<div class="pdp-main-img-box">
-										<span class="pdp-badge-flash"><i class="klb-icon-zap"></i> FLASH SALE</span>
+										<span class="pdp-badge-flash"><i class="klb-icon-zap"></i> PRODUCT DETAILS</span>
 										<img src="{{ product.image_url }}" alt="{{ product.name }}" id="pdp-active-image">
 									</div>
 
@@ -1621,10 +1621,10 @@
 
 									<!-- Flash Sale Strip -->
 									<div class="pdp-flash-strip">
-										<span class="pdp-flash-title"><i class="klb-icon-zap"></i> FLASH SALE</span>
+										<span class="pdp-flash-title"><i class="klb-icon-zap"></i> PRODUCT DETAILS</span>
 										<div class="pdp-flash-timer">
-											<span>Ends in:</span>
-											<strong id="pdp-countdown-timer">02d 14h 32m 45s</strong>
+											<span>Shipping weight:</span>
+											<strong>{{ product.weight }} {{ product.get_weight_unit_display }}</strong>
 											<span class="text-muted ms-2">| {{ product.stock }} available</span>
 										</div>
 									</div>
@@ -1635,9 +1635,9 @@
 									<div class="pdp-meta-row">
 										<div class="pdp-meta-left">
 											<span class="pdp-gold-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-											<a href="#reviews-section" class="pdp-meta-link">198 Ratings</a>
+											<a href="#reviews-section" class="pdp-meta-link">{{ product.review_count }} Ratings</a>
 											<span class="text-muted">|</span>
-											<a href="#qa-section" class="pdp-meta-link">42 Answered Questions</a>
+											<a href="#qa-section" class="pdp-meta-link">Product questions</a>
 										</div>
 										<div class="pdp-meta-actions">
 											<button class="pdp-icon-btn" title="Share with friends" id="pdp-btn-share"><i class="klb-icon-share"></i></button>
@@ -1656,8 +1656,8 @@
 									<!-- Promotions -->
 									<div class="pdp-promo-row">
 										<span class="pdp-promo-label">Promotions</span>
-										<span class="pdp-promo-badge">Min. spend &pound;25, 10% OFF &gt;</span>
-										<span class="pdp-promo-badge">Buy 2 Get &pound;1 OFF &gt;</span>
+										<span class="pdp-promo-badge">{% if product.sale_price %}Sale price applied{% else %}Current price shown{% endif %}</span>
+										<span class="pdp-promo-badge">Prices checked at checkout</span>
 									</div>
 
 									<!-- Quantity Stepper -->
@@ -1692,7 +1692,7 @@
 										<i class="klb-icon-map-pin"></i>
 										<div class="pdp-delivery-details">
 											<div class="title">
-												<span>London, Greater London (SW1A)</span>
+												<span>Whole United Kingdom</span>
 												<a href="#" class="change-link">CHANGE</a>
 											</div>
 										</div>
@@ -1704,9 +1704,9 @@
 										<div class="pdp-delivery-details">
 											<div class="title">
 												<span>Standard Delivery</span>
-												<span class="price">&pound;2.49</span>
+												<span class="price">Calculated by basket weight</span>
 											</div>
-											<div class="sub">Guaranteed within 24&ndash;48 hrs &bull; Free over &pound;40</div>
+											<div class="sub">Estimated {{ delivery_policy.minimum_days|default:2 }}–{{ delivery_policy.maximum_days|default:4 }} days</div>
 										</div>
 									</div>
 
@@ -1714,8 +1714,8 @@
 									<div class="pdp-delivery-item">
 										<i class="klb-icon-credit-card"></i>
 										<div class="pdp-delivery-details">
-											<div class="title">Cash on Delivery &amp; Cards</div>
-											<div class="sub">UK Debit/Credit &amp; Apple Pay Available</div>
+											<div class="title">Secure card payment</div>
+											<div class="sub">Continue to Stripe at checkout</div>
 										</div>
 									</div>
 
@@ -1728,15 +1728,15 @@
 									<div class="pdp-delivery-item">
 										<i class="klb-icon-refresh-cw"></i>
 										<div class="pdp-delivery-details">
-											<div class="title">14 Days Free Returns</div>
-											<div class="sub">Change of mind is applicable for sealed grocery</div>
+											<div class="title">Return requests</div>
+											<div class="sub">Request a return from your delivered order for review</div>
 										</div>
 									</div>
 									<div class="pdp-delivery-item">
 										<i class="klb-icon-shield-check"></i>
 										<div class="pdp-delivery-details">
 											<div class="title">100% Authentic Quality</div>
-											<div class="sub">Certified Soil Association &amp; Himalayan Origin</div>
+											<div class="sub">Please check the product label for origin and certification</div>
 										</div>
 									</div>
 
@@ -1748,27 +1748,27 @@
 											<img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food">
 										</div>
 										<div class="pdp-qr-text">
-											<strong>Scan with mobile</strong>
-											Order via Terafood iOS &amp; Android App for extra 5% discount
+											<strong>Terai Foods</strong>
+											Shop securely on our website
 										</div>
 									</div>
 
 									<!-- Seller Card -->
 									<div class="pdp-seller-card">
 										<div class="pdp-seller-title">Sold by</div>
-										<div class="pdp-seller-name">Cang Choice 3 &bull; Terafood Direct UK</div>
+										<div class="pdp-seller-name">Terai Foods</div>
 										<div class="pdp-seller-stats">
 											<div class="pdp-seller-stat-col">
 												<div class="pdp-stat-label">Positive Seller Ratings</div>
-												<div class="pdp-stat-value">89%</div>
+												<div class="pdp-stat-value">—</div>
 											</div>
 											<div class="pdp-seller-stat-col">
 												<div class="pdp-stat-label">Ship on Time</div>
-												<div class="pdp-stat-value">100%</div>
+												<div class="pdp-stat-value">—</div>
 											</div>
 											<div class="pdp-seller-stat-col">
 												<div class="pdp-stat-label">Chat Response Rate</div>
-												<div class="pdp-stat-value">96%</div>
+												<div class="pdp-stat-value">—</div>
 											</div>
 										</div>
 										<button class="pdp-btn-visit-store" onclick="window.location.href='/shop/'">Visit Store</button>
@@ -1811,36 +1811,36 @@
 
 							<div class="pdp-ratings-overview">
 								<div class="pdp-score-block">
-									<div class="pdp-big-score">4.6<span class="pdp-score-scale">/5</span></div>
+									<div class="pdp-big-score">{{ product.rating }}<span class="pdp-score-scale">/5</span></div>
 									<div class="pdp-gold-stars my-1" style="font-size: 18px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-									<div class="text-muted" style="font-size: 12px;">198 Ratings</div>
+									<div class="text-muted" style="font-size: 12px;">{{ product.review_count }} Ratings</div>
 								</div>
 
 								<div class="pdp-bars-block">
 									<div class="pdp-bar-row">
 										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 61%;"></div></div>
-										<span class="pdp-bar-count">121</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
+										<span class="pdp-bar-count">0</span>
 									</div>
 									<div class="pdp-bar-row">
 										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 25%;"></div></div>
-										<span class="pdp-bar-count">50</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
+										<span class="pdp-bar-count">0</span>
 									</div>
 									<div class="pdp-bar-row">
 										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 7%;"></div></div>
-										<span class="pdp-bar-count">14</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
+										<span class="pdp-bar-count">0</span>
 									</div>
 									<div class="pdp-bar-row">
 										<span class="pdp-bar-stars">&#9733;&#9733;&#9734;&#9734;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 1%;"></div></div>
-										<span class="pdp-bar-count">2</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
+										<span class="pdp-bar-count">0</span>
 									</div>
 									<div class="pdp-bar-row">
 										<span class="pdp-bar-stars">&#9733;&#9734;&#9734;&#9734;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 6%;"></div></div>
-										<span class="pdp-bar-count">11</span>
+										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
+										<span class="pdp-bar-count">0</span>
 									</div>
 								</div>
 							</div>
@@ -1854,55 +1854,8 @@
 								</div>
 							</div>
 
-							<!-- Individual Reviews -->
-							<div class="pdp-reviews-list">
+                            <div class="pdp-reviews-list" id="real-product-reviews"><p>No reviews yet.</p></div>
 
-								<!-- Review 1 -->
-								<div class="pdp-review-item">
-									<div class="pdp-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-									<div class="pdp-review-author"><strong>Suraj K.</strong> <span class="pdp-verified-badge">&#10004; Verified Purchase</span> &bull; <span class="text-muted">15 Oct 2026</span></div>
-									<div class="pdp-review-content">Yummyyy! The crunchy chicken bits and aromatic chili oil combination is simply unmatched. Tastes delicious with rice and noodles.</div>
-									<div class="pdp-review-photos">
-										<div class="pdp-review-photo"><img src="{% static 'web/' %}images/laoganma-chicken-main.jpg" alt="Review photo"></div>
-									</div>
-									<div class="pdp-review-helpful"><i class="klb-icon-thumbs-up"></i> 9</div>
-								</div>
-
-								<!-- Review 2 -->
-								<div class="pdp-review-item">
-									<div class="pdp-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-									<div class="pdp-review-author"><strong>Elena R.</strong> <span class="pdp-verified-badge">&#10004; Verified Purchase</span> &bull; <span class="text-muted">12 Oct 2026</span></div>
-									<div class="pdp-review-content">one of the best product that I have bought. The taste is very rich in flavor with chicken bit. Little product look 4 ml to spicy but it is not, perfect heat level!</div>
-									<div class="pdp-review-photos">
-										<div class="pdp-review-photo"><img src="{% static 'web/' %}images/1-105-500x500.jpg" alt="Customer review photo"></div>
-									</div>
-									<div class="pdp-review-helpful"><i class="klb-icon-thumbs-up"></i> 6</div>
-								</div>
-
-								<!-- Review 3 -->
-								<div class="pdp-review-item">
-									<div class="pdp-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-									<div class="pdp-review-author"><strong>David M.</strong> <span class="pdp-verified-badge">&#10004; Verified Purchase</span> &bull; <span class="text-muted">08 Oct 2026</span></div>
-									<div class="pdp-review-content">ya it's yum momo achar sauce gonno make soy, its packing very nice, delivery boy is always fast and polite. Will order another 2 jars next week!</div>
-									<div class="pdp-review-photos">
-										<div class="pdp-review-photo"><img src="{% static 'web/' %}images/1-30-500x500.jpg" alt="Parcel received photo"></div>
-									</div>
-									<div class="pdp-review-helpful"><i class="klb-icon-thumbs-up"></i> 4</div>
-								</div>
-
-							</div>
-
-							<!-- Pagination -->
-							<div class="pdp-pagination">
-								<a class="pdp-page-btn">&lt;</a>
-								<a class="pdp-page-btn active">1</a>
-								<a class="pdp-page-btn">2</a>
-								<a class="pdp-page-btn">3</a>
-								<a class="pdp-page-btn">4</a>
-								<span class="text-muted px-1">...</span>
-								<a class="pdp-page-btn">12</a>
-								<a class="pdp-page-btn">&gt;</a>
-							</div>
 						</div>
 
 						<!-- 5. Section: Questions about this product (Q&A) -->
@@ -1911,7 +1864,7 @@
 							<div class="pdp-qa-box">
 								<div class="pdp-qa-icon"><i class="klb-icon-message-square"></i></div>
 								<div class="mb-2">There are no questions yet.</div>
-								<div><a href="#" class="text-primary fw-bold text-decoration-none">Login</a> or <a href="#" class="text-primary fw-bold text-decoration-none">Register</a> to ask the seller now and get answers right away.</div>
+								<div><a href="/contact/" class="text-primary fw-bold text-decoration-none">Contact us</a> with your product question.</div>
 							</div>
 						</div>
 
@@ -2128,7 +2081,7 @@
 	</script>
 
 	<!-- Main Theme and Interactive Engine -->
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=scroll-top-v1"></script>
 
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {

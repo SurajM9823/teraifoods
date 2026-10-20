@@ -58,6 +58,7 @@ def public_products():
 def serialize(product):
     return dict(id=product.pk, name=product.name, slug=product.slug, description=product.description,
         weight=str(product.weight), weight_unit=product.weight_unit, weight_grams=str(product.weight_grams),
+        review_count=product.review_count,
         category=product.category.slug, category_key=product.category.legacy_key or product.category.slug,
         subcategory=product.subcategory.slug if product.subcategory_id else None,
         regular_price=str(product.regular_price), sale_price=str(product.sale_price) if product.sale_price is not None else None,
@@ -289,16 +290,8 @@ def homepage(request):
 @require_POST
 @never_cache
 def checkout(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({'errors':['Sign in to checkout.']}, status=401)
-    try:
-        payload = json.loads(request.body)
-        if not isinstance(payload, dict):
-            raise ValueError()
-        order = reserve_order(request.user, payload.get('items'), request.headers.get('Idempotency-Key', ''))
-    except (ValueError, TypeError, ValidationError) as exc:
-        return JsonResponse({'errors':getattr(exc, 'messages', ['Invalid checkout request.'])}, status=400)
-    return JsonResponse({'id':order.pk, 'total':str(order.total), 'status':order.status, 'payment_processed':False}, status=201)
+    return JsonResponse({'errors':['Use /api/orders/checkout/ with contact and delivery details.'],
+                         'checkout_url':'/api/orders/checkout/'},status=410)
 
 
 @require_POST

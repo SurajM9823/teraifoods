@@ -3,7 +3,9 @@
 <script src="{% static 'web/js/storefront-categories.js' %}?v=sidebar-80w-v3" defer></script>
 <script src="{% static 'web/js/catalog-storefront.js' %}?v={{ catalog_revision|default:1 }}-left-cross-v2" defer></script>
 <script src="{% static 'web/js/delivery-quote.js' %}" defer></script>
+<script src="{% static 'web/js/orders.js' %}" defer></script>
 {{ catalog_revision|default:1|json_script:'catalog-revision' }}
+{{ request.user.is_authenticated|json_script:'customer-authenticated' }}
 <template id="storefront-category-menu"><nav class="site-categories collapse">{% include 'catalog/storefront/menu.html' with menu_class='menu' %}</nav></template>
 <template id="storefront-category-options">{% for category in storefront_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}</template>
 {% if include_drawer %}
@@ -41,4 +43,7 @@
 </div>
 {% include 'web/includes/menu-drawer.html' %}
 {% endif %}
+<a href="#top" class="scrollToTop" id="scrollToTop" aria-label="Scroll to top" role="button">
+  <i class="klb-icon-chevron-up" aria-hidden="true"></i>
+</a>
 

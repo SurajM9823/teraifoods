@@ -37,19 +37,26 @@ def create_session(order):
             'unit_amount':int(order.total*100),'product_data':{'name':f'Terai Foods {order.number} (including delivery)'}}}],
         'success_url':f'{origin}/track-order/?order={order.public_id}',
         'cancel_url':f'{origin}/track-order/?order={order.public_id}',
-        'expires_at':int((order.created_at+timedelta(minutes=31)).timestamp()),
+        # The reservation worker explicitly expires unpaid sessions after the
+        # configured window. Omitting expires_at keeps retries' payload stable.
     }, options={'idempotency_key':f'checkout-{order.public_id}'})
     with transaction.atomic():
         locked = Order.objects.select_for_update().get(pk=order.pk)
         payment = Payment.objects.select_for_update().get(order=locked)
         payment.session_id,payment.session_url = session.id,session.url
         payment.save()
+        cancelled = locked.fulfilment_status == 'cancelled' or locked.cancellation_status != 'none'
+    if cancelled:
+        gateway.v1.checkout.sessions.expire(session.id, options={'idempotency_key':f'expire-{order.public_id}'})
+        raise ValidationError('This order has been cancelled.')
     return session.url
 
 
 @transaction.atomic
 def apply_event(event):
     """Only called after signature verification, never from browser success."""
+    if hasattr(event, 'to_dict'):
+        event = event.to_dict()
     event_id, kind = event['id'], event['type']
     if ProviderEvent.objects.filter(event_id=event_id).exists():
         return
@@ -63,6 +70,8 @@ def apply_event(event):
         except (Order.DoesNotExist,ValueError):
             raise ValidationError('Unknown order reference.')
         payment = Payment.objects.select_for_update().get(order=order)
+        if ProviderEvent.objects.filter(event_id=event_id).exists():
+            return
         if payment.session_id and payment.session_id != data.get('id'):
             raise ValidationError('Payment session does not match the order.')
         if kind in ('checkout.session.completed','checkout.session.async_payment_succeeded') and data.get('payment_status') == 'paid':
@@ -132,12 +141,15 @@ def process_refund(refund_id):
         return
     if not refund.order.payment.intent_id:
         raise ValidationError('A payment reference is required for this refund.')
-    result = client().v1.refunds.create(params={'payment_intent':refund.order.payment.intent_id,
+    gateway = client()
+    result = gateway.v1.refunds.retrieve(refund.provider_id) if refund.provider_id else gateway.v1.refunds.create(params={'payment_intent':refund.order.payment.intent_id,
         'amount':int(refund.amount*100),'metadata':{'order_id':str(refund.order.public_id)}},
         options={'idempotency_key':f'refund-{refund.order.public_id}'})
     with transaction.atomic():
         order = Order.objects.select_for_update().get(pk=refund.order_id)
         locked = Refund.objects.select_for_update().get(pk=refund.pk)
+        if locked.status == 'succeeded' or (locked.provider_id == result.id and locked.status == result.status):
+            return
         locked.provider_id,locked.status = result.id,result.status
         locked.save()
         order.refund_status = 'refunded' if result.status == 'succeeded' else result.status

@@ -5,7 +5,7 @@
 <meta name="customer-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 	<title>Checkout – Terai Food UK | Order Confirmation &amp; Payment</title>
 	<meta name="description" content="Secure checkout for Terai Food UK. Confirm delivery address, review package dispatch options, apply voucher promotions, and proceed to payment.">
@@ -26,7 +26,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=clean-search-v1" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=scroll-top-v1" media="all">
 
 	<style>
 		/* Global Zero Border Radius & High Contrast Sharp Styling */
@@ -596,12 +596,12 @@
 								<a href="#" class="card-edit-link" id="edit-address-btn">EDIT</a>
 							</div>
 							<div class="address-recipient-row">
-								<span id="display-recipient-name">Suraj Mahato</span>
-								<span id="display-recipient-phone">07700 900077</span>
+								<span id="display-recipient-name"></span>
+								<span id="display-recipient-phone"></span>
 							</div>
 							<p class="address-details-text">
 								<span class="address-tag-badge" id="display-address-tag">OFFICE</span>
-								<span id="display-address-full">Unit 4B Peninsula Business Park, Greenwich, Greater London, SE10 0ER, United Kingdom</span>
+								<span id="display-address-full"></span>
 							</p>
 							<p class="address-landmark-text" id="display-address-landmark">
 								Opposite River Thames Pier &bull; Leave with reception if unattended
@@ -630,7 +630,7 @@
 									Standard Cold-Chain Delivery
 								</div>
 								<div class="delivery-guaranteed-date">
-									Guaranteed by <span id="delivery-date-text">Tomorrow by 1:00 PM</span>
+									Estimated delivery: <span id="delivery-date-text">2–4 days</span>
 								</div>
 							</div>
 
@@ -683,7 +683,7 @@
 								<h4 class="invoice-card-title">Invoice and Contact Info</h4>
 								<a href="#" class="card-edit-link" id="edit-invoice-btn">Edit</a>
 							</div>
-							<p class="invoice-card-email" id="display-invoice-email">suraj.mahato@teraifood.co.uk</p>
+							<p class="invoice-card-email" id="display-invoice-email">Enter contact email</p>
 							<p class="invoice-card-sub">Standard UK VAT Invoice will be issued and emailed upon dispatch.</p>
 						</div>
 
@@ -823,11 +823,11 @@
 				<div class="custom-modal-body">
 					<div class="mb-2">
 						<label class="form-label text-11 fw-bold">Full Name *</label>
-						<input type="text" id="modal-name-input" class="form-control" value="Suraj Mahato" required style="height: 32px; font-size: 12px;">
+						<input type="text" id="modal-name-input" class="form-control" value="" required style="height: 32px; font-size: 12px;">
 					</div>
 					<div class="mb-2">
 						<label class="form-label text-11 fw-bold">Contact Phone Number *</label>
-						<input type="text" id="modal-phone-input" class="form-control" value="07700 900077" required style="height: 32px; font-size: 12px;">
+						<input type="text" id="modal-phone-input" class="form-control" value="" required style="height: 32px; font-size: 12px;">
 					</div>
 					<div class="mb-2">
 						<label class="form-label text-11 fw-bold">Address Tag</label>
@@ -838,7 +838,7 @@
 					</div>
 					<div class="mb-2">
 						<label class="form-label text-11 fw-bold">Street Address *</label>
-						<textarea id="modal-address-input" class="form-control" rows="2" style="font-size: 12px;" required>Unit 4B Peninsula Business Park, Greenwich, Greater London, SE10 0ER, United Kingdom</textarea>
+						<textarea id="modal-address-input" class="form-control" rows="2" style="font-size: 12px;" required></textarea>
 					</div>
 					<div class="mb-2">
 						<label class="form-label text-11 fw-bold">Delivery Landmark / Note</label>
@@ -907,11 +907,11 @@
 					</div>
 					<div class="d-flex justify-content-between mb-1">
 						<span class="text-gray-500">Estimated Delivery:</span>
-						<strong class="text-success">Tomorrow by 1:00 PM</strong>
+						<strong class="text-success">2–4 days</strong>
 					</div>
 					<div class="d-flex justify-content-between">
 						<span class="text-gray-500">Invoice:</span>
-						<span class="text-dark">Sent to suraj.mahato@teraifood.co.uk</span>
+						<span class="text-dark">Sent to Enter contact email</span>
 					</div>
 				</div>
 				<a href="{% url 'web:home' %}" class="btn-proceed-pay" style="text-decoration: none;">Back to Home</a>
@@ -1062,7 +1062,7 @@
 			updateTotal();
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=scroll-top-v1"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

@@ -17,6 +17,8 @@ def context(request, page_key):
     result = {'catalog_groups':{}, 'catalog_revision': revision.version, 'search_query': request.GET.get('q', request.GET.get('s', '')).strip()}
     selected = None
     if prefix in ('product', 'product_detail'):
+        from delivery.models import DeliveryPolicy
+        result['delivery_policy'] = DeliveryPolicy.objects.filter(pk=1).first()
         slug = request.GET.get('product')
         selected = public_products().filter(slug=slug).first() if slug else public_products().filter(metadata__legacy_detail=True).first()
         if slug and selected is None:

@@ -28,6 +28,16 @@ TRANSITIONS = {
 CANCELLABLE = {'pending_payment','placed','confirmed'}
 
 
+def update_rating(product_id):
+    from django.db.models import Avg, Count
+    from .models import Review
+    values = Review.objects.filter(product_id=product_id,status='approved').aggregate(rating=Avg('rating'),count=Count('id'))
+    product = Product.objects.get(pk=product_id)
+    product.rating = values['rating']
+    product.review_count = values['count']
+    product.save(update_fields=['rating','review_count'])
+
+
 def normalize_address(data):
     if not isinstance(data, dict):
         raise ValidationError('Enter a delivery address.')
@@ -225,9 +235,8 @@ def request_return(order_id, reason, actor=None):
         raise ValidationError('Enter a return reason.')
     if order.fulfilment_status != 'delivered' or not order.delivered_at:
         raise ValidationError('Returns can be requested after delivery.')
-    if not settings.ORDER_RETURN_DAYS:
-        raise ValidationError('Contact support to arrange a return; the online return policy has not been configured.')
-    if timezone.now() > order.delivered_at + timedelta(days=settings.ORDER_RETURN_DAYS):
+    # Zero means manual review, never an automatic promise of return eligibility.
+    if settings.ORDER_RETURN_DAYS and timezone.now() > order.delivered_at + timedelta(days=settings.ORDER_RETURN_DAYS):
         raise ValidationError('The online return window has ended. Contact support.')
     result = ReturnRequest.objects.create(order=order,reason=reason)
     emit(order,'return_requested','Return requested.',actor)
@@ -237,7 +246,9 @@ def request_return(order_id, reason, actor=None):
 @transaction.atomic
 def decide_return(order_id, target, reason, actor, restock=False):
     order = Order.objects.select_for_update().get(pk=order_id)
-    request = ReturnRequest.objects.select_for_update().get(order=order)
+    request = ReturnRequest.objects.select_for_update().filter(order=order).first()
+    if request is None:
+        raise ValidationError('No return has been requested for this order.')
     allowed = {'requested':{'approved','rejected'},'approved':{'received'}}
     if target == request.status:
         return request
@@ -252,6 +263,15 @@ def decide_return(order_id, target, reason, actor, restock=False):
         order.refund_status = 'pending'
     emit(order,'return_'+target,'Return '+target+'.',actor)
     return request
+
+
+@transaction.atomic
+def support_message(order_id, message, actor=None, reply=False):
+    if not isinstance(message,str) or not message.strip() or len(message)>500:
+        raise ValidationError('Enter a message of up to 500 characters.')
+    order = Order.objects.select_for_update().get(pk=order_id)
+    emit(order,'support_reply' if reply else 'support_requested',message.strip(),actor)
+    return order
 
 
 @transaction.atomic

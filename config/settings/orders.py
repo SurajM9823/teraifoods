@@ -7,7 +7,7 @@ ORDER_PUBLIC_ORIGIN = os.getenv('ORDER_PUBLIC_ORIGIN', 'http://127.0.0.1:8000').
 ORDER_RESERVATION_MINUTES = 30
 ORDER_GUEST_ACCESS_DAYS = 30
 ORDER_DELIVERY_PIN_REQUIRED = os.getenv('ORDER_DELIVERY_PIN_REQUIRED', 'true').lower() == 'true'
-# Configure the merchant's policy; no legal/business return period is invented.
+# Zero permits requests for manual review; it does not promise automatic eligibility.
 ORDER_RETURN_DAYS = int(os.getenv('ORDER_RETURN_DAYS', '0'))
 CHANNEL_LAYERS = {'default': {'BACKEND':'channels_redis.core.RedisChannelLayer',
     'CONFIG':{'hosts':[os.getenv('CHANNEL_REDIS_URL', 'redis://127.0.0.1:6379/2')],

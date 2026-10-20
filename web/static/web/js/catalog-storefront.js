@@ -47,7 +47,7 @@
     document.addEventListener('click', event => {
       if (event.target.closest('#btn-final-pay, #btn-submit-new-card')) {
         event.preventDefault(); event.stopImmediatePropagation();
-        notify('Online payment is not configured. No payment has been taken.');
+        window.TeraiOrders?.checkout();
         return;
       }
       const card = event.target.closest('[data-catalog-product]');
@@ -224,9 +224,7 @@
         if (urlParams.get('focus_search') === 'true' || urlParams.get('focus_search') === '1') {
           setTimeout(() => {
             if (window.innerWidth < 1200 && search) {
-              search.focus();
-              search.select();
-              search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              search.focus({ preventScroll: true });
             }
           }, 60);
           urlParams.delete('focus_search');
@@ -240,9 +238,7 @@
           if (window.location.pathname.includes('/shop')) {
             e.preventDefault();
             if (search && window.innerWidth < 1200) {
-              search.focus();
-              search.select();
-              search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              search.focus({ preventScroll: true });
             }
           }
         });
@@ -294,7 +290,7 @@
     document.addEventListener('submit', event => {
       if (event.target.id === 'form-drawer-payment') {
         event.preventDefault(); event.stopImmediatePropagation();
-        notify('Online payment is not configured. No payment has been taken.');
+        window.TeraiOrders?.checkout();
       }
     }, true);
 

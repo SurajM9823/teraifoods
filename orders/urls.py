@@ -12,6 +12,7 @@ urlpatterns = [
     path('reviews/<int:product_id>/',views.reviews),
     path('notifications/',views.notifications),
     path('admin/reviews/<int:pk>/',views.moderate_review),
+    path('review/<int:pk>/action/',views.review_action),
     path('<uuid:public_id>/',views.detail),
     path('<uuid:public_id>/action/',views.action),
     path('<uuid:public_id>/admin/',views.admin_action),

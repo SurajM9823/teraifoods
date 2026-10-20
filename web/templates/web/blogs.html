@@ -5,7 +5,7 @@
 <meta name="customer-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 	<title>Food &amp; Wellness Journal – Terai Food UK | Recipes, Organic Living &amp; Guides</title>
 	<meta name="description" content="Explore healthy recipes, authentic Himalayan spice guides, cold-chain grocery tips, and organic nutrition guides on the Terai Food UK Journal.">
@@ -27,7 +27,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=clean-search-v1" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=scroll-top-v1" media="all">
 
 	<style>
 		/* Global Zero Border Radius & High Contrast */
@@ -1158,7 +1158,7 @@
 
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=scroll-top-v1"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

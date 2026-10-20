@@ -6778,3 +6778,88 @@ a.klbwl-btn::after,
   display: none !important;
 }
 
+/* 6. Strictly Prevent iOS Safari & Mobile Browser Auto-Zoom on Input Focus */
+@media (max-width: 991.98px) {
+  input[type="search"],
+  input[type="text"],
+  input.form-control,
+  .search-form input,
+  .shop-live-search-input {
+    font-size: 16px !important;
+    touch-action: manipulation !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
+}
+
+/* ==========================================================================
+   7. Universal Back-to-Top Floating Button
+   ========================================================================== */
+.scrollToTop {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14), 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  z-index: 99999 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(14px) scale(0.92) !important;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s ease, background-color 0.2s ease, color 0.2s ease !important;
+}
+
+.scrollToTop.button-show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+.scrollToTop:hover,
+.scrollToTop:focus {
+  background-color: #634c9f !important;
+  color: #ffffff !important;
+  border-color: #634c9f !important;
+  box-shadow: 0 6px 18px rgba(99, 76, 159, 0.35) !important;
+  transform: translateY(-2px) scale(1.04) !important;
+}
+
+.scrollToTop i,
+.scrollToTop svg {
+  font-size: 18px !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease !important;
+}
+
+.scrollToTop:after {
+  display: none !important;
+  content: "" !important;
+}
+
+.scrollToTop:hover i,
+.scrollToTop:hover svg {
+  transform: translateY(-2px) !important;
+}
+
+/* Mobile: Position comfortably above the bottom navigation bar */
+@media (max-width: 991.98px) {
+  .scrollToTop {
+    bottom: 74px !important; /* Clears mobile bottom navbar (60px) */
+    right: 16px !important;
+    width: 42px !important;
+    height: 42px !important;
+  }
+}
+
+
+

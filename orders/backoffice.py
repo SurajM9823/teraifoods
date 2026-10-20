@@ -63,6 +63,8 @@ def detail(request,public_id):
             elif action == 'return':
                 services.decide_return(order.pk,request.POST.get('status'),request.POST.get('reason',''),
                     request.user,restock=request.POST.get('restock')=='on')
+            elif action == 'support_reply':
+                services.support_message(order.pk,request.POST.get('reason',''),request.user,reply=True)
             elif action == 'tracking':
                 from django.core.validators import URLValidator
                 from django.db import transaction
@@ -103,6 +105,7 @@ def reviews(request):
             review.status = request.POST['status']
             review.moderation_reason = request.POST.get('reason','')[:500]
             review.save(update_fields=['status','moderation_reason'])
+            services.update_rating(review.product_id)
             messages.success(request,'Review moderation saved.')
         return redirect('order-admin-reviews')
     page = Paginator(Review.objects.select_related('product').prefetch_related('images').order_by('-created_at'),30).get_page(request.GET.get('page'))

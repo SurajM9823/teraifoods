@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 	<title>Manage My Account &bull; My Profile, Address Book, Payment Options – Terai Food UK</title>
 	<meta name="description" content="Manage your Terai Food account profile, saved delivery addresses, credit/debit payment methods, and recent orders.">
@@ -25,7 +25,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=clean-search-v1" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=scroll-top-v1" media="all">
 
 	<style>
 		/* Account Dashboard Zero Border-Radius & Scoped Styling */
@@ -398,10 +398,10 @@
 </div></div></div>
 <div class="col-12 col-md-6"><div class="account-content-card h-100">
 <div class="account-card-header"><h5 class="account-card-header-title">Address Book</h5></div>
-<div class="account-card-body text-13 text-muted">Saved addresses will be available when delivery address management is enabled.</div>
+<div class="account-card-body text-13 text-muted"><h4>Order updates</h4><div id="order-notifications">Loading updates…</div></div>
 </div></div></div></div>
-<div class="account-tab-pane" id="pane-address"><h4 class="text-18 fw-bold text-dark mb-3">Address Book</h4><div class="account-content-card"><div class="account-card-body text-13">Saved addresses are not available yet.</div></div></div>
-<div class="account-tab-pane" id="pane-payment"><h4 class="text-18 fw-bold text-dark mb-3">My Payment Options</h4><div class="account-content-card"><div class="account-card-body text-13">Saved payment methods are not available yet.</div></div></div>
+<div class="account-tab-pane" id="pane-address"><h4 class="text-18 fw-bold text-dark mb-3">Address Book</h4><div class="account-content-card"><div class="account-card-body text-13">Loading saved addresses…</div></div></div>
+<div class="account-tab-pane" id="pane-payment"><h4 class="text-18 fw-bold text-dark mb-3">My Payment Options</h4><div class="account-content-card"><div class="account-card-body text-13">Card details are collected securely by Stripe during checkout.</div></div></div>
 </div></div></div>
 </main>
 
@@ -489,7 +489,7 @@
 	<script src="{% static 'web/' %}js/jquery.min.js"></script>
 	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
 	
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=scroll-top-v1"></script>
 	{% include 'web/includes/mobile-navbar.html' %}
 </body>
 </html>

@@ -1,5 +1,6 @@
 import json
 import uuid
+from datetime import timedelta
 import stripe
 from functools import wraps
 from django.conf import settings
@@ -62,16 +63,19 @@ def order_data(order):
     return dict(id=str(order.public_id),number=order.number,version=order.version,
         created_at=order.created_at.isoformat(),payment_status=order.payment_status,fulfilment_status=stage,
         cancellation_status=order.cancellation_status,refund_status=order.refund_status,group=group,
-        subtotal=str(order.subtotal or order.total),delivery_charge=str(order.delivery_charge or 0),total=str(order.total),
+        subtotal=str(order.subtotal) if order.subtotal is not None else None,
+        delivery_charge=str(order.delivery_charge) if order.delivery_charge is not None else None,total=str(order.total),
         currency=order.currency,address=order.address,
         delivery_estimate=f'{order.delivery_min_days}–{order.delivery_max_days} days' if order.delivery_min_days else None,
         tracking_reference=order.tracking_reference,tracking_url=order.tracking_url,
         can_cancel=stage in services.CANCELLABLE and order.cancellation_status=='none',
-        can_return=stage=='delivered' and bool(settings.ORDER_RETURN_DAYS) and not hasattr(order,'return_request'),
+        can_return=stage=='delivered' and not hasattr(order,'return_request') and (
+            not settings.ORDER_RETURN_DAYS or (order.delivered_at and timezone.now() <= order.delivered_at + timedelta(days=settings.ORDER_RETURN_DAYS))),
         items=[dict(id=line.pk,product_id=line.product_id,name=line.product_name or line.product.name,
             image=line.product_image,quantity=line.quantity,unit_price=str(line.unit_price),
             can_review=stage=='delivered' and not hasattr(line,'review')) for line in order.lines.select_related('product')],
-        events=list(order.events.values('version','event_type','message','created_at')))
+        events=[{**event,'created_at':event['created_at'].isoformat()}
+                for event in order.events.values('version','event_type','message','created_at')])
 
 
 @api
@@ -131,6 +135,8 @@ def action(request, public_id):
         services.request_return(order.pk,data.get('reason',''),actor)
     elif data.get('action')=='payment':
         return JsonResponse({'payment_url':payments.create_session(order),'test_mode':True})
+    elif data.get('action')=='support':
+        services.support_message(order.pk,data.get('reason',''),actor)
     else:
         raise ValidationError('Choose cancellation, return or payment.')
     order.refresh_from_db()
@@ -187,7 +193,8 @@ def reviews(request, product_id):
     if request.method=='GET':
         queryset = product.reviews.filter(status='approved')
         summary = queryset.aggregate(average=Avg('rating'),count=Count('id'))
-        return JsonResponse({'summary':summary,'reviews':[dict(id=r.pk,rating=r.rating,title=r.title,
+        histogram = {row['rating']:row['count'] for row in queryset.values('rating').annotate(count=Count('id'))}
+        return JsonResponse({'summary':summary,'histogram':histogram,'reviews':[dict(id=r.pk,rating=r.rating,title=r.title,
             text=r.text,name=r.display_name,date=r.created_at,verified=True,
             images=[image.url for image in r.images.all()]) for r in queryset.prefetch_related('images').order_by('-created_at')[:100]]})
     data = request.POST if request.content_type=='multipart/form-data' else payload(request)
@@ -209,7 +216,8 @@ def reviews(request, product_id):
         review.save()
         for image in prepared:
             ReviewImage.objects.create(review=review,source=image['source'],variants=image['variants'])
-    return JsonResponse({'id':review.pk,'status':'pending'},status=201)
+    return JsonResponse({'id':review.pk,'status':'pending',
+        'images':[{'id':image.pk,'url':image.url} for image in review.images.all()]},status=201)
 
 
 @api
@@ -264,7 +272,28 @@ def moderate_review(request,pk):
     review.status = data['status']
     review.moderation_reason = data.get('reason','')[:500]
     review.save(update_fields=['status','moderation_reason'])
+    from .services import update_rating
+    update_rating(review.product_id)
     return JsonResponse({'status':review.status})
+
+
+@api
+@require_http_methods(['POST','DELETE'])
+def review_action(request,pk):
+    review = get_object_or_404(Review.objects.select_related('line__order'),pk=pk)
+    data = payload(request)
+    if request.method == 'POST' and data.get('action') == 'report':
+        if review.status != 'approved':
+            raise Http404
+        review.reported = True
+        review.save(update_fields=['reported'])
+        return JsonResponse({'reported':True})
+    services.authorize(review.line.order,request.user,request.session)
+    if request.method != 'DELETE' or review.status != 'pending':
+        raise ValidationError('Photos can be removed while a review is pending moderation.')
+    image = get_object_or_404(ReviewImage,pk=data.get('image_id'),review=review)
+    image.delete()
+    return JsonResponse({'deleted':True})
 
 
 @api

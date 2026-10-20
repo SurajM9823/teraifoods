@@ -160,11 +160,11 @@ class ProductTests(TestCase):
         with self.assertRaises(ValidationError):
             reserve_order(self.customer, items, 'inactive-category')
 
-    def test_checkout_auth_and_payload(self):
+    def test_legacy_reservation_endpoint_cannot_bypass_checkout(self):
         response = self.client.post('/api/checkout/reserve/', '{}', content_type='application/json')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 410)
         self.client.force_login(self.customer)
-        self.assertEqual(self.client.post('/api/checkout/reserve/', '[]', content_type='application/json').status_code, 400)
+        self.assertEqual(self.client.post('/api/checkout/reserve/', '[]', content_type='application/json').status_code, 410)
 
     def test_image_main_delete_reorder_and_five_limit(self):
         with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory):

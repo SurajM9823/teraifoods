@@ -5,7 +5,7 @@
 	<meta name="customer-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 	<title>Product Comparison – Terai Food UK | Farm Fresh &amp; Himalayan Groceries</title>
 	<meta name="description" content="Compare fresh groceries, prices, and quality from Terai Food UK.">
@@ -26,7 +26,7 @@
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
 	<link rel="stylesheet" id="compare-css" href="{% static 'web/' %}css/compare.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=clean-search-v1" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=scroll-top-v1" media="all">
 
 	<style>
 		.compare-page-wrapper {
@@ -170,7 +170,7 @@
 	</main>
 
 	{% include 'catalog/storefront/assets.html' with include_drawer=True %}
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=scroll-top-v1"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			function renderComparePage() {

@@ -84,6 +84,7 @@ class Product(models.Model):
     low_stock_threshold = models.PositiveIntegerField(default=5)
     display_order = models.PositiveIntegerField(default=100000)
     rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    review_count = models.PositiveIntegerField(default=0)
     legacy_key = models.CharField(max_length=100, null=True, blank=True, unique=True, editable=False)
     metadata = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

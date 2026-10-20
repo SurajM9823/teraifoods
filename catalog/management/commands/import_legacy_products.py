@@ -59,7 +59,9 @@ class Command(BaseCommand):
                     sale_price=Decimal(record['sale_price']) if record['sale_price'] else None,
                     category=category, subcategory=subcategory, metadata=metadata,
                     display_order=metadata.get('positions', {}).get('shop_0', 100000),
-                    rating=Decimal(metadata['rating']) if metadata.get('rating') else None,
+                    # Legacy display ratings are retained in metadata, not presented
+                    # as verified customer reviews.
+                    rating=None,
                     new_arrival='new_arrival' in record['sections'],
                     featured='featured' in record['sections'] and bool(record['sale_price']),
                     best_seller='best_seller' in record['sections'],

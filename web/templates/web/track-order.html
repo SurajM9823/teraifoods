@@ -5,7 +5,7 @@
 <meta name="customer-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 	<title>Track Order &bull; My Orders – Terai Food UK | Live Grocery Delivery</title>
 	<meta name="description" content="Track your Terai Food order status in real time. View dispatch, transit, and delivery updates across UK postcodes.">
@@ -26,7 +26,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=clean-search-v1" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=scroll-top-v1" media="all">
 
 	<style>
 		/* Global Zero Radius & Congested Sharp Modern Styling */
@@ -174,21 +174,153 @@
 			}
 		}
 
-		/* Mobile & Tablet (< 1200px) */
-		@media (max-width: 1199px) {
+		/* Mobile & Tablet (< 1200px): Borderless, Full-Width, Horizontally Scrollable Filters */
+		@media (max-width: 1199.98px) {
 			.terai-track-order-page .track-sidebar-col {
+				display: none !important; /* Hide track shipments sidebar on mobile */
+			}
+			.terai-track-order-page .track-main-container {
+				padding: 0 !important;
+				margin: 0 !important;
 				width: 100% !important;
-				flex: 0 0 100% !important;
-				position: static !important;
-				border-right: none !important;
-				border-bottom: 1px solid #e2e8f0 !important;
-				margin-bottom: 20px !important;
+				max-width: 100% !important;
+			}
+			.terai-track-order-page .track-main-row {
+				margin: 0 !important;
+				width: 100% !important;
+				display: block !important;
 			}
 			.terai-track-order-page .track-content-col {
-				padding: 16px !important;
+				padding: 0 !important;
+				width: 100% !important;
+				max-width: 100% !important;
 			}
 			.terai-track-order-page .categories-menu {
 				width: auto !important;
+			}
+
+			/* Edge-to-edge breadcrumbs */
+			.track-breadcrumbs {
+				padding: 10px 14px !important;
+				margin: 0 !important;
+				background: #f8fafc !important;
+				border-bottom: 1px solid #e2e8f0 !important;
+				font-size: 11.5px !important;
+			}
+
+			/* Horizontally Scrollable Order Status Filter Bar */
+			.order-filter-bar-compact {
+				display: flex !important;
+				flex-direction: column !important;
+				align-items: stretch !important;
+				border-left: none !important;
+				border-right: none !important;
+				border-top: none !important;
+				border-bottom: 1px solid #e2e8f0 !important;
+				border-radius: 0 !important;
+				background: #ffffff !important;
+				margin: 0 !important;
+				padding: 0 !important;
+				width: 100% !important;
+				box-sizing: border-box !important;
+			}
+			.order-tabs-group {
+				display: flex !important;
+				flex-wrap: nowrap !important;
+				overflow-x: auto !important;
+				-webkit-overflow-scrolling: touch !important;
+				scrollbar-width: none !important;
+				padding: 0 10px !important;
+				gap: 4px !important;
+				width: 100% !important;
+				box-sizing: border-box !important;
+				border-bottom: 1px solid #f1f5f9 !important;
+			}
+			.order-tabs-group::-webkit-scrollbar {
+				display: none !important;
+			}
+			.order-tab-btn {
+				flex: 0 0 auto !important;
+				white-space: nowrap !important;
+				height: 42px !important;
+				padding: 0 12px !important;
+				font-size: 12.5px !important;
+			}
+			.order-search-compact {
+				width: calc(100% - 20px) !important;
+				margin: 8px 10px !important;
+				height: 36px !important;
+				background: #f8fafc !important;
+				border: 1px solid #cbd5e1 !important;
+				border-radius: 6px !important;
+				box-sizing: border-box !important;
+			}
+			.order-search-compact input {
+				font-size: 16px !important;
+				height: 34px !important;
+				line-height: 34px !important;
+			}
+
+			/* Borderless Order Cards on Mobile */
+			.order-group-card {
+				border-left: none !important;
+				border-right: none !important;
+				border-top: 1px solid #e2e8f0 !important;
+				border-bottom: 8px solid #f1f5f9 !important;
+				border-radius: 0 !important;
+				margin-left: 0 !important;
+				margin-right: 0 !important;
+				margin-bottom: 0 !important;
+				box-shadow: none !important;
+				width: 100% !important;
+			}
+			.order-group-header {
+				padding: 10px 14px !important;
+			}
+			.order-item-row {
+				padding: 12px 14px !important;
+			}
+			.order-tracking-stepper {
+				padding: 12px 14px !important;
+			}
+			.order-group-footer {
+				padding: 10px 14px !important;
+			}
+			#real-orders {
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+			#real-orders > p {
+				padding: 24px 16px !important;
+				margin: 0 !important;
+			}
+			#order-browser-notifications {
+				margin: 16px 14px 30px !important;
+				width: calc(100% - 28px) !important;
+				display: block !important;
+				text-align: center !important;
+			}
+		}
+
+		@media (max-width: 575.98px) {
+			.step-node {
+				width: auto !important;
+				flex: 1 !important;
+			}
+			.step-label {
+				font-size: 10px !important;
+			}
+			.step-dot {
+				width: 26px !important;
+				height: 26px !important;
+				font-size: 10px !important;
+			}
+			.order-item-price {
+				min-width: auto !important;
+				text-align: left !important;
+			}
+			.order-item-qty {
+				margin-left: auto !important;
 			}
 		}
 
@@ -644,11 +776,11 @@
 		     Flush Left (ps-0), Zero Border Radius, Sticky Sidebar & Scroll Effect
 		     ======================================================== -->
 		<main id="main" class="site-primary track-main-layout">
-			<div class="container-fluid ps-0 pe-4 pe-xl-5 track-main-container">
+			<div class="container-fluid ps-0 pe-0 pe-xl-5 track-main-container">
 				<div class="track-main-row">
 
-					<!-- Left Column: Exactly 280px, Sticky on Scroll, Flush Left (0 Space), No Radius -->
-					<aside class="track-sidebar-col" id="track-sidebar">
+					<!-- Left Column: Desktop Only (Hidden on Mobile) -->
+					<aside class="track-sidebar-col d-none d-xl-flex" id="track-sidebar">
 
 
 						<!-- Widget 2: Order Status Filters -->
@@ -660,31 +792,31 @@
 								<li class="sidebar-cat-item">
 									<a href="#" class="sidebar-cat-link active" onclick="filterOrders('all', document.querySelectorAll('.order-tab-btn')[0]); return false;">
 										<span><i class="klb-icon-package me-2 text-primary"></i>All Orders</span>
-										<span class="cat-count">5</span>
+										<span class="cat-count">0</span>
 									</a>
 								</li>
 								<li class="sidebar-cat-item">
 									<a href="#" class="sidebar-cat-link" onclick="filterOrders('in-transit', document.querySelectorAll('.order-tab-btn')[1]); return false;">
 										<span><i class="klb-icon-truck me-2 text-primary"></i>To Receive / In Transit</span>
-										<span class="cat-count" style="background: #e0f2fe; color: #0369a1;">1</span>
+										<span class="cat-count" style="background: #e0f2fe; color: #0369a1;">0</span>
 									</a>
 								</li>
 								<li class="sidebar-cat-item">
 									<a href="#" class="sidebar-cat-link" onclick="filterOrders('processing', document.querySelectorAll('.order-tab-btn')[2]); return false;">
 										<span><i class="klb-icon-clock me-2 text-primary"></i>To Ship / Packing</span>
-										<span class="cat-count" style="background: #fef3c7; color: #b45309;">1</span>
+										<span class="cat-count" style="background: #fef3c7; color: #b45309;">0</span>
 									</a>
 								</li>
 								<li class="sidebar-cat-item">
 									<a href="#" class="sidebar-cat-link" onclick="filterOrders('completed', document.querySelectorAll('.order-tab-btn')[3]); return false;">
 										<span><i class="klb-icon-check-circle me-2 text-primary"></i>Delivered</span>
-										<span class="cat-count" style="background: #ecfdf5; color: #047857;">2</span>
+										<span class="cat-count" style="background: #ecfdf5; color: #047857;">0</span>
 									</a>
 								</li>
 								<li class="sidebar-cat-item">
 									<a href="#" class="sidebar-cat-link" onclick="filterOrders('cancelled', document.querySelectorAll('.order-tab-btn')[4]); return false;">
 										<span><i class="klb-icon-rotate-ccw me-2 text-primary"></i>Returns &amp; Cancelled</span>
-										<span class="cat-count">1</span>
+										<span class="cat-count">0</span>
 									</a>
 								</li>
 							</ul>
@@ -702,11 +834,11 @@
 						<!-- Status Tabs & Quick Filter (Compact Single-Row Bar) -->
 						<div class="order-filter-bar-compact">
 							<div class="order-tabs-group">
-								<button class="order-tab-btn active" onclick="filterOrders('all', this)">All <span class="order-tab-count">5</span></button>
-								<button class="order-tab-btn" onclick="filterOrders('in-transit', this)">To Receive <span class="order-tab-count">1</span></button>
-								<button class="order-tab-btn" onclick="filterOrders('processing', this)">To Ship <span class="order-tab-count">1</span></button>
-								<button class="order-tab-btn" onclick="filterOrders('completed', this)">Delivered <span class="order-tab-count">2</span></button>
-								<button class="order-tab-btn" onclick="filterOrders('cancelled', this)">Cancelled <span class="order-tab-count">1</span></button>
+								<button class="order-tab-btn active" onclick="filterOrders('all', this)">All <span class="order-tab-count">0</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('in-transit', this)">To Receive <span class="order-tab-count">0</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('processing', this)">To Ship <span class="order-tab-count">0</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('completed', this)">Delivered <span class="order-tab-count">0</span></button>
+								<button class="order-tab-btn" onclick="filterOrders('cancelled', this)">Cancelled <span class="order-tab-count">0</span></button>
 							</div>
 							<div class="order-search-compact">
 								<i class="klb-icon-search"></i>
@@ -714,235 +846,9 @@
 							</div>
 						</div>
 
-						<!-- Order Card 1: IN TRANSIT (With Visual Stepper) -->
-						<div class="order-group-card order-item-card" data-status="in-transit" data-keywords="terai organic produce tf-784920 fresh crisp apple gala honeycrisp">
-							<div class="order-group-header">
-								<div class="d-flex align-items-center gap-3">
-									<span class="store-badge"><i class="klb-icon-store"></i> Terai Fresh Farm Hub London</span>
-									<span class="text-gray-400">|</span>
-									<span class="text-gray-500">Order <strong class="text-dark">#TF-784920</strong></span>
-									<span class="text-gray-400 d-none d-md-inline">&bull; Placed on Oct 15, 2026</span>
-								</div>
-								<span class="order-status-pill status-in-transit"><i class="klb-icon-truck me-1"></i> In Transit &bull; Out for Delivery</span>
-							</div>
+                        <div id="real-orders" aria-live="polite"><p>Loading your orders…</p></div>
+                        <button type="button" class="btn-track-action" id="order-browser-notifications">Enable browser notifications</button>
 
-							<!-- Stepper -->
-							<div class="order-tracking-stepper">
-								<div class="d-flex justify-content-between align-items-center mb-1">
-									<span class="text-12 fw-bold text-primary"><i class="klb-icon-clock me-1"></i> Estimated Arrival Today: 4:30 PM &ndash; 6:00 PM</span>
-									<span class="text-12 text-gray-500">Carrier: <strong>Terai Express Van #14</strong></span>
-								</div>
-								<div class="stepper-progress-wrap">
-									<div class="stepper-progress-bar">
-										<div class="stepper-progress-active" style="width: 75%;"></div>
-									</div>
-
-									<div class="step-node completed">
-										<div class="step-dot"><i class="klb-icon-check"></i></div>
-										<span class="step-label">Order Placed</span>
-									</div>
-
-									<div class="step-node completed">
-										<div class="step-dot"><i class="klb-icon-check"></i></div>
-										<span class="step-label">Farm Packed</span>
-									</div>
-
-									<div class="step-node active">
-										<div class="step-dot"><i class="klb-icon-truck"></i></div>
-										<span class="step-label">Out for Delivery</span>
-									</div>
-
-									<div class="step-node">
-										<div class="step-dot"><i class="klb-icon-map-pin"></i></div>
-										<span class="step-label">Delivered</span>
-									</div>
-								</div>
-							</div>
-
-							<!-- Products in Order -->
-							<div class="order-item-row">
-								<img src="{% static 'web/' %}images/1-9-700x700.jpg" alt="Organic Gala Apples" class="order-item-thumb">
-								<div class="order-item-info">
-									<h6 class="order-item-title">100% Organic Honeycrisp &amp; Gala Apples &ndash; 1.5kg Family Pack</h6>
-									<p class="order-item-meta">Category: {% category_label storefront_categories 'fruits-veg' 'fresh-fruits' %} &bull; Origin: Organic Bio-Orchard Kent</p>
-									<span class="badge bg-light text-success border border-success-subtle text-11 mt-1">Temperature Chilled</span>
-								</div>
-								<div class="order-item-price">&pound;4.25</div>
-								<div class="order-item-qty">Qty: 2</div>
-							</div>
-
-							<div class="order-item-row">
-								<img src="{% static 'web/' %}images/1-16-700x700.jpg" alt="Himalayan Stone-Ground Turmeric" class="order-item-thumb">
-								<div class="order-item-info">
-									<h6 class="order-item-title">Single-Origin Himalayan High-Curcumin Turmeric Powder (250g)</h6>
-									<p class="order-item-meta">Category: {% category_label storefront_categories 'grocery' 'spices-seasonings' %} &bull; Stone-Ground</p>
-								</div>
-								<div class="order-item-price">&pound;3.99</div>
-								<div class="order-item-qty">Qty: 1</div>
-							</div>
-
-							<div class="order-group-footer">
-								<div>
-									<span class="text-gray-500">Total Amount:</span> <strong class="text-dark text-15">&pound;12.49</strong> <span class="text-gray-400 text-12">(Paid via Visa ending in 4119)</span>
-								</div>
-								<div class="d-flex gap-2">
-									<button class="btn-track-action" onclick="alert('Driver Contact: +44 7700 900821 (Dave &ndash; Terai Van 14)');">
-										<i class="klb-icon-phone me-1"></i> Call Driver
-									</button>
-									<button class="btn-track-action btn-track-primary" onclick="alert('Map updated: Van is 1.4 miles away near Westminster bridge.');">
-										<i class="klb-icon-map-pin me-1"></i> Live Van Map
-									</button>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 2: PROCESSING (To Ship) -->
-						<div class="order-group-card order-item-card" data-status="processing" data-keywords="himalayan organic grains tf-782104 lentils masoor yellow moong">
-							<div class="order-group-header">
-								<div class="d-flex align-items-center gap-3">
-									<span class="store-badge"><i class="klb-icon-store"></i> Terai Organic Pantry Hub</span>
-									<span class="text-gray-400">|</span>
-									<span class="text-gray-500">Order <strong class="text-dark">#TF-782104</strong></span>
-									<span class="text-gray-400 d-none d-md-inline">&bull; Placed on Oct 14, 2026</span>
-								</div>
-								<span class="order-status-pill status-processing"><i class="klb-icon-package me-1"></i> Processing &bull; Packaging</span>
-							</div>
-
-							<div class="order-item-row">
-								<img src="{% static 'web/' %}images/1-38-700x700.jpg" alt="Organic Yellow Moong Lentils" class="order-item-thumb">
-								<div class="order-item-info">
-									<h6 class="order-item-title">Split Yellow Moong Lentils (Dhal) &ndash; 1kg Vacuum Bag</h6>
-									<p class="order-item-meta">Category: {% category_label storefront_categories 'grocery' 'organic-staples' %} &bull; Zero Additives</p>
-								</div>
-								<div class="order-item-price">&pound;2.80</div>
-								<div class="order-item-qty">Qty: 3</div>
-							</div>
-
-							<div class="order-group-footer">
-								<div>
-									<span class="text-gray-500">Total Amount:</span> <strong class="text-dark text-15">&pound;8.40</strong>
-								</div>
-								<div class="d-flex gap-2">
-									<button class="btn-track-action" onclick="alert('Order TF-782104 is being packed at London Fulfillment Center 2.');">
-										<i class="klb-icon-file-text me-1"></i> View Invoice
-									</button>
-									<button class="btn-track-action" onclick="alert('Order cancellation window has closed as items are in packaging.');">
-										Cancel Order
-									</button>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 3: COMPLETED (Delivered) -->
-						<div class="order-group-card order-item-card" data-status="completed" data-keywords="minimalist cold pressed oil tf-779811 mustard oil">
-							<div class="order-group-header">
-								<div class="d-flex align-items-center gap-3">
-									<span class="store-badge"><i class="klb-icon-store"></i> Terai Specialty Mills</span>
-									<span class="text-gray-400">|</span>
-									<span class="text-gray-500">Order <strong class="text-dark">#TF-779811</strong></span>
-									<span class="text-gray-400 d-none d-md-inline">&bull; Delivered on Oct 08, 2026</span>
-								</div>
-								<span class="order-status-pill status-completed"><i class="klb-icon-check-circle me-1"></i> Delivered</span>
-							</div>
-
-							<div class="order-item-row">
-								<img src="{% static 'web/' %}images/1-12-700x700.jpg" alt="Cold Pressed Pure Mustard Oil" class="order-item-thumb">
-								<div class="order-item-info">
-									<h6 class="order-item-title">Raw Cold-Pressed Himalayan Yellow Mustard Oil &ndash; 1L Glass Bottle</h6>
-									<p class="order-item-meta">Category: {% category_label storefront_categories 'grocery' 'oils-ghee' %} &bull; 100% Virgin Pressed</p>
-								</div>
-								<div class="order-item-price">&pound;6.50</div>
-								<div class="order-item-qty">Qty: 1</div>
-							</div>
-
-							<div class="order-group-footer">
-								<div>
-									<span class="text-gray-500">Delivered to:</span> <strong>SW1A 1AA, London</strong>
-								</div>
-								<div class="d-flex gap-2">
-									<button class="btn-track-action" onclick="alert('Thank you for rating 5 stars!');">
-										<i class="klb-icon-star me-1"></i> Write Review
-									</button>
-									<a href="{% url 'web:home' %}" class="btn-track-action btn-track-primary">
-										<i class="klb-icon-repeat me-1"></i> Buy Again
-									</a>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 4: COMPLETED (Delivered) -->
-						<div class="order-group-card order-item-card" data-status="completed" data-keywords="fresh bakery artisanal sourdough bread tf-765402">
-							<div class="order-group-header">
-								<div class="d-flex align-items-center gap-3">
-									<span class="store-badge"><i class="klb-icon-store"></i> Terai Artisan Bakery</span>
-									<span class="text-gray-400">|</span>
-									<span class="text-gray-500">Order <strong class="text-dark">#TF-765402</strong></span>
-									<span class="text-gray-400 d-none d-md-inline">&bull; Delivered on Oct 01, 2026</span>
-								</div>
-								<span class="order-status-pill status-completed"><i class="klb-icon-check-circle me-1"></i> Delivered</span>
-							</div>
-
-							<div class="order-item-row">
-								<img src="{% static 'web/' %}images/1-30-700x700.jpg" alt="Organic Wholewheat Sourdough" class="order-item-thumb">
-								<div class="order-item-info">
-									<h6 class="order-item-title">Heritage Stoneground Wholewheat Sourdough Loaf (800g)</h6>
-									<p class="order-item-meta">Category: {% category_label storefront_categories 'bakery' %} &bull; Fresh Baked Morning Dispatch</p>
-								</div>
-								<div class="order-item-price">&pound;3.50</div>
-								<div class="order-item-qty">Qty: 2</div>
-							</div>
-
-							<div class="order-group-footer">
-								<div>
-									<span class="text-gray-500">Total:</span> <strong class="text-dark text-15">&pound;7.00</strong>
-								</div>
-								<div class="d-flex gap-2">
-									<button class="btn-track-action" onclick="alert('Invoice downloaded for Order #TF-765402.');">
-										<i class="klb-icon-download me-1"></i> Receipt
-									</button>
-									<a href="{% url 'web:home' %}" class="btn-track-action btn-track-primary">
-										<i class="klb-icon-repeat me-1"></i> Buy Again
-									</a>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 5: CANCELLED -->
-						<div class="order-group-card order-item-card" data-status="cancelled" data-keywords="wild timur pepper berries cancelled refund tf-751094">
-							<div class="order-group-header">
-								<div class="d-flex align-items-center gap-3">
-									<span class="store-badge"><i class="klb-icon-store"></i> Himalayan Foraged Spices</span>
-									<span class="text-gray-400">|</span>
-									<span class="text-gray-500">Order <strong class="text-dark">#TF-751094</strong></span>
-									<span class="text-gray-400 d-none d-md-inline">&bull; Cancelled on Sep 24, 2026</span>
-								</div>
-								<span class="order-status-pill status-cancelled"><i class="klb-icon-x-circle me-1"></i> Cancelled &bull; Refunded</span>
-							</div>
-
-							<div class="order-item-row">
-								<img src="{% static 'web/' %}images/1-27-700x700.jpg" alt="Wild Timur Pepper" class="order-item-thumb">
-								<div class="order-item-info">
-									<h6 class="order-item-title">Wild Foraged Timur Pepper Berries (100g Pouch)</h6>
-									<p class="order-item-meta">Reason: Customer requested cancellation before dispatch &bull; Refund of &pound;4.50 processed</p>
-								</div>
-								<div class="order-item-price text-muted text-decoration-line-through">&pound;4.50</div>
-								<div class="order-item-qty">Qty: 1</div>
-							</div>
-
-							<div class="order-group-footer">
-								<span class="text-success text-13"><i class="klb-icon-check-circle me-1"></i> &pound;4.50 Refund credited to original card</span>
-								<a href="{% url 'web:home' %}" class="btn-track-action">Explore Catalog</a>
-							</div>
-						</div>
-
-						<!-- Pagination Bar -->
-						<div class="pagination-daraz">
-							<span class="text-gray-400 text-12 me-2">1 &ndash; 5 of 5 Orders</span>
-							<a href="#" class="page-btn active">1</a>
-							<span class="text-gray-400">&bull;</span>
-							<span class="text-12 text-gray-500">Go to page:</span>
-							<input type="number" value="1" min="1" max="1" style="width: 44px; height: 32px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-size: 13px;">
-						</div>
 					</div>
 				</div>
 			</div>
@@ -1080,7 +986,7 @@
 
 
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=backend-categories-1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=scroll-top-v1"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

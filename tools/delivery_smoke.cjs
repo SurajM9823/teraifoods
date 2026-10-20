@@ -51,6 +51,28 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
     await evaluate(`window.TeraiCatalog.saveCart(${JSON.stringify([{...kilos,quantity:5}])})`);
     await until("document.getElementById('drawer-shipping-val')?.textContent === 'Unavailable'");
     assert.equal(await evaluate("document.getElementById('drawer-total-val').textContent"),'—');
+    if(process.env.ORDER_BROWSER_FLOW==='1') {
+      await evaluate(`window.TeraiCatalog.saveCart(${JSON.stringify([grams])});window.TeraiCatalog.openCheckout();`);
+      await until("document.getElementById('drawer-pane-2').classList.contains('active')");
+      const contact={name:'Browser Guest',email:'browser@example.com',phone:'07700900123',line1:'1 Test Street',city:'London',postcode:'SW1A 1AA'};
+      await evaluate(`Object.entries(${JSON.stringify(contact)}).forEach(([key,value])=>document.querySelector('#order-contact-form [name="'+key+'"]').value=value);document.getElementById('btn-proceed-to-pay').click();`);
+      await until("document.getElementById('drawer-pane-3').classList.contains('active')");
+      await evaluate("document.getElementById('form-drawer-payment').requestSubmit()");
+      await until("location.pathname==='/track-order/' && !!document.querySelector('#real-orders [data-order]')");
+      assert.match(await evaluate("document.getElementById('real-orders').textContent"),/pending payment/);
+      const orderId=await evaluate("document.querySelector('[data-order]').dataset.order");
+      const event={id:'evt_browser_test',type:'checkout.session.completed',livemode:false,data:{object:{
+        id:'cs_browser_test',metadata:{order_id:orderId},payment_status:'paid',currency:'gbp',amount_total:1050,payment_intent:'pi_browser_test'}}};
+      const raw=JSON.stringify(event),timestamp=String(Math.floor(Date.now()/1000));
+      const signature=require('crypto').createHmac('sha256','whsec_browser_test').update(timestamp+'.'+raw).digest('hex');
+      const response=await fetch(base+'/api/orders/webhook/stripe/',{method:'POST',headers:{'Content-Type':'application/json','Stripe-Signature':`t=${timestamp},v1=${signature}`},body:raw});
+      assert.equal(response.status,200,await response.text());
+      // Reload exercises missed-event recovery and the secure guest session.
+      await page('Page.navigate',{url:base+'/track-order/?order='+orderId});
+      await until("document.querySelector('#real-orders [data-order]')?.textContent.includes('Payment: paid')");
+      assert.equal(await evaluate("window.TeraiCatalog.getCart().length"),0);
+      console.log('Guest browser checkout passed: contact/address, hosted-session redirect, signed webhook, tracking and basket clearing.');
+    }
     console.log('Delivery UI passed: 300 gm boundary, mixed gm/kg basket, estimate, unsupported weight.');
   } finally {ws?.close();edge.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -570,26 +570,28 @@ a.klbwl-btn::after,
   width: 100% !important;
   height: 32px !important;
   line-height: 32px !important;
-  font-size: 13.5px !important;
+  font-size: 16px !important; /* Minimum 16px on mobile strictly prevents iOS Safari viewport auto-zoom */
   padding: 0 10px 0 0 !important;
   background: transparent !important;
   color: #0f172a !important;
   font-weight: 500 !important;
+  touch-action: manipulation !important;
+  -webkit-text-size-adjust: 100% !important;
 }
 .shop-live-search-input:focus {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
 }
-@media (max-width: 767.98px) {
+@media (max-width: 991.98px) {
   .shop-live-search-input {
-    font-size: 14px !important;
+    font-size: 16px !important; /* Strictly prevents auto-zoom on iOS */
   }
 }
 .shop-live-search-input::placeholder {
   color: #94a3b8;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 13.5px;
 }
 
 .shop-search-spinner {
