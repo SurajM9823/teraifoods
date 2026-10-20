@@ -41,7 +41,15 @@
         const quantity = Number(document.getElementById('pdp-qty-input')?.value || 1);
         if (!Number.isInteger(quantity) || quantity < 1 || quantity > detail.stock) return notify('Choose a quantity within available stock.');
         window.TeraiCatalog.addToCart({id:detail.id, title:detail.name, price:Number(detail.price), image:detail.image}, quantity);
-        if (buy) location.href = '/checkout/';
+        if (buy) {
+          if (typeof window.TeraiCatalog.openCheckout === 'function') {
+            window.TeraiCatalog.openCheckout();
+          } else if (typeof window.TeraiCatalog.openSideCart === 'function') {
+            window.TeraiCatalog.openSideCart(2);
+          } else {
+            location.href = '/checkout/';
+          }
+        }
       };
     }
     document.addEventListener('click', event => {

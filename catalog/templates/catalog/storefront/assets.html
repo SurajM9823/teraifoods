@@ -1,7 +1,7 @@
 {% load static %}
 <script src="{% static 'web/js/gsap.min.js' %}" defer></script>
 <script src="{% static 'web/js/storefront-categories.js' %}?v=sidebar-80w-v3" defer></script>
-<script src="{% static 'web/js/catalog-storefront.js' %}?v={{ catalog_revision|default:1 }}-left-cross-v2" defer></script>
+<script src="{% static 'web/js/catalog-storefront.js' %}?v={{ catalog_revision|default:1 }}-buynow-drawer" defer></script>
 <script src="{% static 'web/js/delivery-quote.js' %}" defer></script>
 <script src="{% static 'web/js/orders.js' %}" defer></script>
 {{ catalog_revision|default:1|json_script:'catalog-revision' }}

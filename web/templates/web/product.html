@@ -2128,7 +2128,7 @@
 	</script>
 
 	<!-- Main Theme and Interactive Engine -->
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=scroll-top-v1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=buynow-v1"></script>
 
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
@@ -2169,14 +2169,40 @@
 			const btnCart = document.getElementById('pdp-btn-cart');
 			const btnBuy = document.getElementById('pdp-btn-buy');
 			if (btnCart) {
-				btnCart.addEventListener('click', function () {
-					const qty = qtyInput ? qtyInput.value : 1;
-					window.TeraiCatalog?.addDetail(false);
+				btnCart.addEventListener('click', function (e) {
+					e.preventDefault();
+					if (typeof window.TeraiCatalog?.addDetail === 'function') {
+						window.TeraiCatalog.addDetail(false);
+					} else {
+						const qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
+						window.TeraiCatalog?.addToCart?.({
+							id: '{{ product.pk|default:1 }}',
+							title: '{{ product.name|escapejs }}',
+							price: parseFloat('{{ product.price|default:5.99 }}') || 5.99,
+							image: '{{ product.image_url|escapejs }}'
+						}, qty);
+					}
 				});
 			}
 			if (btnBuy) {
-				btnBuy.addEventListener('click', function () {
-					window.TeraiCatalog?.addDetail(true);
+				btnBuy.addEventListener('click', function (e) {
+					e.preventDefault();
+					if (typeof window.TeraiCatalog?.addDetail === 'function') {
+						window.TeraiCatalog.addDetail(true);
+					} else {
+						const qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
+						window.TeraiCatalog?.addToCart?.({
+							id: '{{ product.pk|default:1 }}',
+							title: '{{ product.name|escapejs }}',
+							price: parseFloat('{{ product.price|default:5.99 }}') || 5.99,
+							image: '{{ product.image_url|escapejs }}'
+						}, qty);
+						if (typeof window.TeraiCatalog?.openCheckout === 'function') {
+							window.TeraiCatalog.openCheckout();
+						} else if (typeof window.TeraiCatalog?.openSideCart === 'function') {
+							window.TeraiCatalog.openSideCart(2);
+						}
+					}
 				});
 			}
 

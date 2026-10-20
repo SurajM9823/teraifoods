@@ -258,6 +258,7 @@
       return false;
     }
     const cart = getCart();
+    unselectedItemIds.delete(String(item.id));
     const existing = cart.find(i => String(i.id) === String(item.id));
 
     if (existing) {
@@ -1911,8 +1912,44 @@
 
   // --- Product Card Click Handlers (Add to Cart & Quickview) ---
   function setupProductCardClicks() {
-    window.TeraiCatalog = {refresh:indexProducts, addToCart, getProductById, openQuickview, showToast,
-      getCart, saveCart, openCheckout:() => openSideCart(2), selectedItems:() => getCart().filter(i => !unselectedItemIds.has(String(i.id))), addDetail:window.TeraiCatalog?.addDetail, validateCart:window.TeraiCatalog?.validateCart};
+    function defaultAddDetail(buy = false) {
+      let detail = null;
+      try {
+        detail = JSON.parse(document.getElementById('catalog-detail')?.textContent || 'null');
+      } catch {}
+      const qtyInput = document.getElementById('pdp-qty-input');
+      const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
+      if (detail) {
+        if (!detail.available) {
+          showToast('Unavailable', 'This item is currently unavailable.', 'warning');
+          return;
+        }
+        addToCart({id:detail.id, title:detail.name, price:Number(detail.price), image:detail.image}, qty);
+      } else {
+        const title = document.querySelector('.product-title, .pdp-title')?.textContent?.trim() || 'Product';
+        const priceText = document.querySelector('.price ins .amount, .price .amount, .sale-price, .pdp-price')?.textContent?.replace(/[^0-9.]/g, '') || '5.99';
+        const img = document.querySelector('.wp-post-image, .pdp-gallery-main img, img')?.getAttribute('src') || '/static/web/images/1-16-500x500.jpg';
+        addToCart({id:'1', title, price:parseFloat(priceText)||5.99, image:img}, qty);
+      }
+      if (buy) {
+        openSideCart(2);
+      }
+    }
+
+    window.TeraiCatalog = {
+      refresh: indexProducts,
+      addToCart,
+      getProductById,
+      openQuickview,
+      showToast,
+      getCart,
+      saveCart,
+      openCheckout: () => openSideCart(2),
+      openSideCart: (step = 1) => openSideCart(step),
+      selectedItems: () => getCart().filter(i => !unselectedItemIds.has(String(i.id))),
+      addDetail: window.TeraiCatalog?.addDetail || defaultAddDetail,
+      validateCart: window.TeraiCatalog?.validateCart
+    };
     document.addEventListener('catalog:updated', indexProducts);
     // 1. Add to cart buttons
     document.querySelectorAll('.button.ajax_add_to_cart, .button.add_to_cart_button, a[href*="add-to-cart"], .btn-cart-pill').forEach(btn => {
