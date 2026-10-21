@@ -1141,13 +1141,13 @@
     const quoted = currentDeliveryQuote();
     const subtotal = quoted ? Number(quoted.subtotal) : calculateDrawerSubtotal();
     const quoteShipping = calculateDrawerShipping();
-    const shipping = quoteShipping !== null ? quoteShipping : (subtotal >= 40 || subtotal === 0 ? 0 : 3.99);
-    const discount = voucherDiscountPercent > 0 ? (subtotal * (voucherDiscountPercent / 100)) : 0;
-    const total = quoted && quoted.total ? Number(quoted.total) : Math.max(0, subtotal + shipping - discount);
+    const shipping = quoteShipping;
+    const discount = 0;
+    const total = quoted ? Number(quoted.total) : null;
     const cart = getCart();
     window.dispatchEvent(new CustomEvent('delivery:request', {detail:cart.filter(i => !unselectedItemIds.has(String(i.id)))}));
-    const shippingText = shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2);
-    const totalText = '£' + total.toFixed(2);
+    const shippingText = shipping === null ? 'Calculated at checkout' : shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2);
+    const totalText = total === null ? '—' : '£' + total.toFixed(2);
     const estimate = document.getElementById('checkout-delivery-eta-text');
     if (estimate) estimate.textContent = 'Estimated delivery: ' + (quoted?.delivery?.estimate || '2–4 days');
     const activeCount = cart.filter(i => !unselectedItemIds.has(String(i.id))).length;
@@ -1927,10 +1927,8 @@
         }
         addToCart({id:detail.id, title:detail.name, price:Number(detail.price), image:detail.image}, qty);
       } else {
-        const title = document.querySelector('.product-title, .pdp-title')?.textContent?.trim() || 'Product';
-        const priceText = document.querySelector('.price ins .amount, .price .amount, .sale-price, .pdp-price')?.textContent?.replace(/[^0-9.]/g, '') || '5.99';
-        const img = document.querySelector('.wp-post-image, .pdp-gallery-main img, img')?.getAttribute('src') || '/static/web/images/1-16-500x500.jpg';
-        addToCart({id:'1', title, price:parseFloat(priceText)||5.99, image:img}, qty);
+        showToast('Unavailable', 'Select a product from the shop first.', 'warning');
+        return;
       }
       if (buy) {
         openSideCart(2);
@@ -1945,9 +1943,12 @@
       showToast,
       getCart,
       saveCart,
+      getWishlist,
+      saveWishlist,
       openCheckout: () => openSideCart(2),
       openSideCart: (step = 1) => openSideCart(step),
       selectedItems: () => getCart().filter(i => !unselectedItemIds.has(String(i.id))),
+      setSelectedCart: ids => { unselectedItemIds = new Set(getCart().filter(i => !ids.includes(String(i.id))).map(i => String(i.id))); },
       addDetail: window.TeraiCatalog?.addDetail || defaultAddDetail,
       validateCart: window.TeraiCatalog?.validateCart
     };

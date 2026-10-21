@@ -51,3 +51,4 @@ class SEOTests(TestCase):
         self.assertEqual(res_products.status_code, 200)
         content_products = res_products.content.decode()
         self.assertIn('https://teraifoods.co.uk/product-detail/?product=organic-basmati-rice</loc>', content_products)
+

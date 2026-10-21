@@ -6,6 +6,7 @@
 <script src="{% static 'web/js/orders.js' %}" defer></script>
 {{ catalog_revision|default:1|json_script:'catalog-revision' }}
 {{ request.user.is_authenticated|json_script:'customer-authenticated' }}
+{{ order_demo_payments|json_script:'order-demo-payments' }}
 <template id="storefront-category-menu"><nav class="site-categories collapse">{% include 'catalog/storefront/menu.html' with menu_class='menu' %}</nav></template>
 <template id="storefront-category-options">{% for category in storefront_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}</template>
 {% if include_drawer %}

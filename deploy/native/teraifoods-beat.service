@@ -1,0 +1,22 @@
+[Unit]
+Description=Terai Foods order recovery scheduler
+After=network.target postgresql.service redis-server.service
+
+[Service]
+User=teraifoods
+Group=teraifoods
+WorkingDirectory=/opt/teraifoods
+EnvironmentFile=/opt/teraifoods/.env.server
+ExecStart=/opt/teraifoods/.venv/bin/celery -A config beat --loglevel=WARNING --schedule=/tmp/teraifoods-beat
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+MemoryMax=192M
+TasksMax=32
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

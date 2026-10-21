@@ -1,4 +1,5 @@
 import os
+ORDER_PAYMENT_MODE = os.getenv('ORDER_PAYMENT_MODE', 'stripe')
 
 # Test mode is mandatory until a separate, explicit production payment rollout.
 STRIPE_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY', '')

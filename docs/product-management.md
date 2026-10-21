@@ -27,9 +27,8 @@ copied to `scratch/product-baseline/` before implementation.
 
 ## Environment limitations at audit
 
-Local PostgreSQL connection times out and Docker Desktop is not running.
-The isolated preview uses `scratch/catalog-preview.sqlite3` via an explicit
-scratch settings module. This never substitutes SQLite in normal settings.
-CDN credentials/provider and payment gateway are not configured in this task.
-Do not claim production import, PostgreSQL concurrency, payment processing or
-global CDN delivery based on isolated tests.
+The initial audit encountered unavailable PostgreSQL and Docker. Docker is now
+running locally, migrations and the legacy product import are applied, and the
+PostgreSQL suite passed, including concurrent stock and checkout tests. Local
+demo payments are available. Actual Stripe connection, remote deployment and
+external CDN setup remain separate; see `order-management.md` for current status.

@@ -3,6 +3,7 @@
 {% block breadcrumb %}Orders{% endblock %}
 {% block main_content %}
 <form class="filter-strip" method="get">
+<label><input type="checkbox" name="returns" value="1" {% if request.GET.returns %}checked{% endif %}> Return requests</label>
 <input name="q" class="filter-control filter-search" value="{{ request.GET.q }}" placeholder="Order number, customer or email">
 <select name="status" class="filter-control"><option value="">All statuses</option><option>pending_payment</option><option>placed</option><option>confirmed</option><option>preparing</option><option>ready_for_dispatch</option><option>dispatched</option><option>out_for_delivery</option><option>delivered</option><option>cancelled</option></select>
 <button class="btn btn-primary btn-sm">Filter</button><a class="btn btn-outline btn-sm" href="/admin/orders/">Reset</a><a class="btn btn-outline btn-sm" href="/admin/orders/reviews/">Reviews</a>
@@ -66,6 +67,7 @@
           {% else %}
             <span class="badge badge-neutral">{{ order.fulfillment_status }}</span>
           {% endif %}
+          {% if order.return_status %}<span class="badge badge-warning">Return: {{ order.return_status }}</span>{% endif %}
         </td>
         <td class="table-cell-muted">{{ order.date }}</td>
         <td style="text-align: right;">
@@ -77,5 +79,5 @@
   </table>
 </div>
 
-<div class="pagination-bar"><span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span><div class="pagination-links">{% if page.has_previous %}<a class="page-link" href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}">Previous</a>{% endif %}{% if page.has_next %}<a class="page-link" href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}">Next</a>{% endif %}</div></div>
+<div class="pagination-bar"><span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span><div class="pagination-links">{% if page.has_previous %}<a class="page-link" href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&returns={{ request.GET.returns|urlencode }}">Previous</a>{% endif %}{% if page.has_next %}<a class="page-link" href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&returns={{ request.GET.returns|urlencode }}">Next</a>{% endif %}</div></div>
 {% endblock %}

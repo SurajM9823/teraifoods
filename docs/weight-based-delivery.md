@@ -45,6 +45,7 @@ Run isolated checks:
 .venv\Scripts\python manage.py test delivery catalog.test_products --settings=config.settings.test --noinput
 ```
 
-Normal PostgreSQL was unavailable during local verification (connection timeout).
-Tests using the explicit SQLite test settings do not establish PostgreSQL
-concurrency or deployment readiness.
+Docker PostgreSQL is now running locally and migrations are applied. The full
+PostgreSQL suite passed (138 tests, 9 skipped), including concurrent stock and
+checkout checks. Local sample delivery bands are configured; remote production
+deployment and actual Stripe connection remain separate. See `order-management.md`.

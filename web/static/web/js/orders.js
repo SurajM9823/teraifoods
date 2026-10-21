@@ -49,6 +49,15 @@
   }
   async function checkout() {
     if(pending) return;
+    const params=new URLSearchParams(location.search);
+    if(params.get('demo')==='1' && params.get('order')) {
+      pending=true;
+      try {
+        const result=await api(`/api/orders/${encodeURIComponent(params.get('order'))}/action/`,{action:'demo_payment'});
+        location.assign('/track-order/?order='+encodeURIComponent(result.id));
+      }catch(error){notify(error.message);}finally{pending=false;}
+      return;
+    }
     if(!addressValid()) {window.TeraiCatalog?.openCheckout();return;}
     const selected=window.TeraiCatalog?.selectedItems?.()||[];
     if(!selected.length){notify('Your basket is empty.');return;}
@@ -89,7 +98,7 @@
     }
     // Collection is hosted by Stripe; this site never reads a PAN or CVC.
     const cardBox=document.getElementById('drawer-card-box');
-    if(cardBox) cardBox.innerHTML='<p>Continue to Stripe secure checkout to enter your test card details.</p>';
+    if(cardBox) cardBox.innerHTML=document.getElementById('order-demo-payments')?.textContent==='true' ? '<p>Local demo checkout: no card details or real charges. Confirm the simulated payment on the next screen.</p>' : '<p>Continue to Stripe secure checkout to enter your test card details.</p>';
     document.querySelectorAll('.cart-drawer-payment-tile').forEach(tile=>{
       if(tile.dataset.payment!=='card') {tile.hidden=true;tile.querySelectorAll('input').forEach(i=>i.disabled=true);}
     });
@@ -106,7 +115,20 @@
       proceed.before(guest);
     }
     syncContact();
+    const params=new URLSearchParams(location.search);
+    if(params.get('demo')==='1' && params.get('order')) {
+      api(`/api/orders/${encodeURIComponent(params.get('order'))}/`).then(order=>{
+        if(order.payment_method!=='demo')throw new Error('This order is not a demo payment.');
+        const panel=document.getElementById('panel-card');
+        if(panel)panel.innerHTML='<h3>Local demo payment</h3><p>No card details are needed. No money will be charged. This simulates the payment confirmation step; it does not contact Stripe.</p>';
+        document.querySelectorAll('.summary-total-amount,.payment-summary-card .summary-line-val').forEach(el=>el.textContent='£'+order.total);
+        const button=document.getElementById('btn-final-pay');if(button)button.textContent='Confirm demo payment · £'+order.total;
+      }).catch(error=>notify(error.message));
+    }
     document.addEventListener('click',e=>{
+      if(e.target.closest('#btn-checkout-apply-promo, #promo-apply-btn, #apply-voucher-btn')) {
+        e.preventDefault();e.stopImmediatePropagation();notify('No promotional codes are configured. Product sale prices are already included.');return;
+      }
       if(e.target.closest('#btn-proceed-pay, #edit-address-btn, #edit-invoice-btn, #btn-edit-invoice-info')) {
         e.preventDefault();e.stopImmediatePropagation();window.TeraiCatalog?.openCheckout();
       }
@@ -116,6 +138,7 @@
     if(cart.length) window.dispatchEvent(new CustomEvent('delivery:request',{detail:cart}));
   }
   window.addEventListener('delivery:quote',e=>{
+    if(new URLSearchParams(location.search).get('demo')==='1')return;
     const q=e.detail.quote;
     for(const [id,value] of Object.entries({'summary-items-total':q?.subtotal,'summary-delivery-fee':q?.delivery_charge,'summary-total-val':q?.total,'modal-pay-amount':q?.total})) {
       const el=document.getElementById(id);if(el)el.textContent=value||'—';
@@ -139,11 +162,15 @@
       ${o.tracking_url && /^https:\/\//.test(o.tracking_url)?`<a href="${esc(o.tracking_url)}" target="_blank" rel="noopener">Courier tracking ${esc(o.tracking_reference)}</a>`:''}</div>
       ${o.items.map(i=>`<div class="order-item-row">${i.image?`<img class="order-item-thumb" src="${esc(i.image)}" alt="${esc(i.name)}">`:''}<div class="order-item-info"><h6 class="order-item-title">${esc(i.name)}</h6>${i.can_review?`<button class="btn-track-action" data-review-line="${i.id}" data-product="${i.product_id}">Write a review</button>`:''}</div><div class="order-item-price">£${esc(i.unit_price)}</div><div class="order-item-qty">Qty: ${i.quantity}</div></div>`).join('')}
       <div class="order-group-footer"><span>Total £${esc(o.total)} · Delivery £${esc(o.delivery_charge)}</span><div>${o.can_cancel?'<button class="btn-track-action" data-order-action="cancel">Cancel order</button>':''}${o.can_return?'<button class="btn-track-action" data-order-action="return">Request return</button>':''}${o.fulfilment_status==='pending_payment' && o.cancellation_status==='none'?'<button class="btn-track-action" data-order-action="payment">Retry payment</button>':''}<button class="btn-track-action" data-order-action="support">Contact support</button></div></div>
+      ${o.return_request?`<div class="p-3"><strong>Return: ${esc(label(o.return_request.status))}</strong><p>Refund preference: ${esc(label(o.return_request.preference))} · £${esc(o.return_request.amount)}</p><p>${esc(o.return_request.note)}</p>${o.return_request.reference?`<p>Refund completed via ${esc(label(o.return_request.method))}. ${o.return_request.method==='voucher'?'Issued voucher code':'Payment reference'}: <strong>${esc(o.return_request.reference)}</strong></p>`:''}</div>`:''}
       <details class="p-3"><summary>Order updates</summary><ol>${o.events.map(e=>`<li>${new Date(e.created_at).toLocaleString('en-GB')} · ${esc(e.message)}</li>`).join('')}</ol></details></article>`;
   }
   async function tracking() {
     const root=document.getElementById('real-orders');if(!root)return;
     const orders=new Map(), sockets=new Map(), versions=new Map();
+    let historyPages=1;
+    const more=document.createElement('button');more.className='page-btn';more.textContent='Load more orders';more.hidden=true;root.after(more);
+    more.onclick=()=>{historyPages++;sync().catch(error=>notify(error.message));};
     const update=o=>{
       const previous=versions.get(o.id);
       if(previous!==undefined && o.version<=previous)return;
@@ -161,7 +188,7 @@
       }
     };
     const connect=id=>{
-      if(sockets.has(id))return;
+      if(sockets.has(id) || sockets.size>=20)return;
       let retry=1000, stopped=false, heartbeat;
       const open=()=>{
         if(stopped)return;
@@ -174,7 +201,11 @@
     };
     async function sync() {
       const requested=new URLSearchParams(location.search).get('order');
-      const list=requested?[await api(`/api/orders/${encodeURIComponent(requested)}/`)]: (await api('/api/orders/history/')).orders;
+      let list=[];
+      if(requested) list=[await api(`/api/orders/${encodeURIComponent(requested)}/`)];
+      else for(let page=1;page<=historyPages;page++) {
+        const data=await api('/api/orders/history/?page='+page);list.push(...data.orders);more.hidden=!data.has_more;
+      }
       for(const order of list){update(order);connect(order.id);}
       if(!list.length)root.innerHTML='<p>No orders are available in this session. Use the secure tracking link from your order email, or sign in.</p>';
     }
@@ -189,6 +220,15 @@
       try {
         if(action) {
           const name=action.dataset.orderAction, id=action.closest('[data-order]').dataset.order;
+          if(name==='return') {
+            root.querySelector('#order-return-form')?.remove();
+            action.closest('.order-group-footer').insertAdjacentHTML('afterend',`<form id="order-return-form" class="p-3"><label class="d-block mb-2">Return reason<textarea name="reason" class="form-control" required maxlength="1000"></textarea></label><label class="d-block mb-2">Preferred refund method<select name="refund_preference" class="form-control"><option value="original">Original payment method</option><option value="voucher">Voucher</option><option value="bank">UK bank transfer</option></select></label><div data-return-bank hidden><p>Only enter bank account details for receiving your refund.</p><label class="d-block mb-2">Account holder<input name="account_name" class="form-control" maxlength="150" autocomplete="off"></label><label class="d-block mb-2">Sort code<input name="sort_code" class="form-control" inputmode="numeric" pattern="[0-9 -]{6,8}" maxlength="8" autocomplete="off"></label><label class="d-block mb-2">Account number<input name="account_number" class="form-control" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="off"></label></div><p>Returns require admin approval. Refund details and status will appear here.</p><button class="btn-track-action" type="submit">Submit return request</button><button class="btn-track-action" type="button" data-close-return>Close</button></form>`);
+            const form=root.querySelector('#order-return-form');
+            form.querySelector('[name="refund_preference"]').onchange=ev=>{const bank=ev.target.value==='bank';form.querySelector('[data-return-bank]').hidden=!bank;form.querySelectorAll('[data-return-bank] input').forEach(input=>{input.required=bank;input.disabled=!bank;});};
+            form.querySelector('[data-close-return]').onclick=()=>form.remove();
+            form.onsubmit=async ev=>{ev.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;try{const fields=Object.fromEntries(new FormData(form));const result=await api(`/api/orders/${id}/action/`,{action:'return',reason:fields.reason,refund_preference:fields.refund_preference,bank_details:{account_name:fields.account_name,sort_code:fields.sort_code,account_number:fields.account_number}});update(result);notify('Return request sent to the store.');}catch(error){notify(error.message);submit.disabled=false;}};
+            return;
+          }
           const reason=name==='payment'?'':prompt(name==='cancel'?'Reason for cancellation:':name==='support'?'Your message (up to 500 characters):':'Reason for return:');
           if(reason===null)return;
           action.disabled=true;

@@ -37,6 +37,34 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       throw new Error('Timed out: '+expression);
     };
     await page('Page.enable');
+    if(process.env.ORDER_RETURN_URL) {
+      await page('Page.navigate',{url:base+process.env.ORDER_RETURN_URL});
+      await until("!!document.querySelector('[data-order-action=return]')");
+      await evaluate("document.querySelector('[data-order-action=return]').click()");
+      await until("!!document.querySelector('#order-return-form')");
+      await evaluate(`var f=document.querySelector('#order-return-form');f.elements.reason.value='Damaged item';f.elements.refund_preference.value='bank';f.elements.refund_preference.dispatchEvent(new Event('change'));f.elements.account_name.value='Browser Buyer';f.elements.sort_code.value='12-34-56';f.elements.account_number.value='12345678';f.requestSubmit();`);
+      await until("document.querySelector('#real-orders').textContent.includes('Return: requested')");
+      assert.equal(await evaluate("!!document.querySelector('[data-order-action=return]')"),false);
+      assert.equal(await evaluate("document.querySelector('#real-orders').textContent.includes('12345678')"),false);
+      await evaluate("document.querySelector('[data-review-line]').click()");
+      await until("!!document.querySelector('#order-review-form')");
+      await evaluate("var f=document.querySelector('#order-review-form');f.elements.text.value='Delivered purchase review';f.requestSubmit()");
+      await until("!document.querySelector('#order-review-form')");
+      assert.equal(await evaluate("!!document.querySelector('[data-review-line]')"),false);
+      console.log('Delivered-order browser return and verified review passed.');
+      return;
+    }
+    if(process.env.ORDER_BROWSER_FLOW==='1') {
+      await page('Page.navigate',{url:base+'/product-detail/?product=browser-grams'});
+      await until('!!window.TeraiCatalog?.getWishlist');
+      await evaluate("document.getElementById('pdp-btn-wishlist').click();document.getElementById('pdp-btn-cart').click()");
+      await until('window.TeraiCatalog.getWishlist().length===1 && window.TeraiCatalog.getCart().length===1');
+      assert.equal(await evaluate('window.TeraiCatalog.getWishlist()[0].title'),'Browser grams');
+      await page('Page.navigate',{url:base+'/product-detail/?product=browser-grams'});
+      await until('!!window.TeraiCatalog?.getWishlist');
+      assert.equal(await evaluate('window.TeraiCatalog.getWishlist().length'),1);
+      await evaluate('window.TeraiCatalog.saveCart([])');
+    }
     await page('Page.navigate',{url:base+'/shop/'});
     await until('!!window.TeraiCatalog?.getCart');
     const grams={id:process.env.DELIVERY_GRAMS_PRODUCT,title:'Browser grams',price:4,quantity:2,catalogVersion:2,image:''};
@@ -44,6 +72,17 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
     await evaluate(`window.TeraiCatalog.saveCart(${JSON.stringify([grams])})`);
     await until("document.getElementById('drawer-shipping-val')?.textContent === '£2.50'");
     assert.equal(await evaluate("document.getElementById('drawer-total-val').textContent"),'£10.50');
+    if(process.env.ORDER_BROWSER_FLOW==='1') {
+      await page('Page.navigate',{url:base+'/cart/'});
+      await until("document.getElementById('summary-shipping-fee')?.textContent === '£2.50'");
+      assert.equal(await evaluate("document.getElementById('summary-grand-total').textContent"),'10.50');
+      await evaluate("document.querySelector('.item-select-checkbox').click()");
+      await until("document.getElementById('summary-grand-total').textContent === '—'");
+      await evaluate("document.querySelector('.item-select-checkbox').click()");
+      await until("document.getElementById('summary-grand-total').textContent === '10.50'");
+      await page('Page.navigate',{url:base+'/shop/'});
+      await until('!!window.TeraiCatalog?.getCart');
+    }
     await evaluate(`window.TeraiCatalog.saveCart(${JSON.stringify([grams,kilos])})`);
     await until("document.getElementById('drawer-shipping-val')?.textContent === '£5.00'");
     assert.equal(await evaluate("document.getElementById('drawer-total-val').textContent"),'£19.00');
@@ -58,7 +97,13 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       await evaluate(`Object.entries(${JSON.stringify(contact)}).forEach(([key,value])=>document.querySelector('#order-contact-form [name="'+key+'"]').value=value);document.getElementById('btn-proceed-to-pay').click();`);
       await until("document.getElementById('drawer-pane-3').classList.contains('active')");
       await evaluate("document.getElementById('form-drawer-payment').requestSubmit()");
+      if(process.env.ORDER_BROWSER_DEMO==='1') {
+        await until("location.pathname==='/payment/' && document.getElementById('btn-final-pay')?.textContent.includes('Confirm demo payment')");
+        assert.match(await evaluate("document.getElementById('panel-card').textContent"),/No money will be charged/);
+        await evaluate("document.getElementById('btn-final-pay').click()");
+      }
       await until("location.pathname==='/track-order/' && !!document.querySelector('#real-orders [data-order]')");
+      if(process.env.ORDER_BROWSER_DEMO!=='1') {
       assert.match(await evaluate("document.getElementById('real-orders').textContent"),/pending payment/);
       const orderId=await evaluate("document.querySelector('[data-order]').dataset.order");
       const event={id:'evt_browser_test',type:'checkout.session.completed',livemode:false,data:{object:{
@@ -69,6 +114,7 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       assert.equal(response.status,200,await response.text());
       // Reload exercises missed-event recovery and the secure guest session.
       await page('Page.navigate',{url:base+'/track-order/?order='+orderId});
+      }
       await until("document.querySelector('#real-orders [data-order]')?.textContent.includes('Payment: paid')");
       assert.equal(await evaluate("window.TeraiCatalog.getCart().length"),0);
       console.log('Guest browser checkout passed: contact/address, hosted-session redirect, signed webhook, tracking and basket clearing.');

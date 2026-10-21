@@ -10,6 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         values = {
+            'Effective payment mode':'local demo' if settings.DEBUG and settings.ORDER_PAYMENT_MODE == 'demo' else 'Stripe test',
             'Products':Product.objects.count(),
             'Products with confirmed stock':Product.objects.filter(stock_confirmed=True).count(),
             'Active delivery bands':WeightBand.objects.filter(is_active=True).count(),

@@ -9,6 +9,31 @@ from .models import Payment, ProviderEvent, Refund
 from .services import emit, finalize_cancel
 
 
+def demo_enabled():
+    return settings.DEBUG and settings.ORDER_PAYMENT_MODE == 'demo'
+
+
+@transaction.atomic
+def confirm_demo(order_id):
+    if not demo_enabled():
+        raise ValidationError('Local demo payments are disabled.')
+    order = Order.objects.select_for_update().get(pk=order_id)
+    if order.payment_method != 'demo':
+        raise ValidationError('This is not a demo order.')
+    if order.payment_status == 'paid':
+        return order
+    if order.fulfilment_status != 'pending_payment' or order.cancellation_status != 'none' or order.reservation_expires_at <= timezone.now():
+        raise ValidationError('This reservation is no longer payable.')
+    payment = Payment.objects.select_for_update().get(order=order)
+    payment.status = 'paid'
+    payment.intent_id = 'demo_' + str(order.public_id)
+    payment.save()
+    order.payment_status = 'paid'
+    order.fulfilment_status = 'placed'
+    emit(order,'payment_confirmed','Demo payment confirmed. No money was charged.')
+    return order
+
+
 def client():
     key = settings.STRIPE_SECRET_KEY
     if not key.startswith(('sk_test_', 'rk_test_')):
@@ -19,6 +44,10 @@ def client():
 def create_session(order):
     # Stripe idempotency serializes concurrent requests without holding a DB
     # transaction open during the remote call.
+    if order.payment_method == 'demo':
+        if not demo_enabled():
+            raise ValidationError('Local demo payments are disabled.')
+        return f'/payment/?order={order.public_id}&demo=1'
     gateway = client()
     payment = Payment.objects.get(order=order)
     if order.fulfilment_status != 'pending_payment' or order.cancellation_status != 'none':
@@ -70,6 +99,8 @@ def apply_event(event):
         except (Order.DoesNotExist,ValueError):
             raise ValidationError('Unknown order reference.')
         payment = Payment.objects.select_for_update().get(order=order)
+        if order.payment_method != 'stripe':
+            raise ValidationError('Payment provider does not match this order.')
         if ProviderEvent.objects.filter(event_id=event_id).exists():
             return
         if payment.session_id and payment.session_id != data.get('id'):
@@ -77,7 +108,7 @@ def apply_event(event):
         if kind in ('checkout.session.completed','checkout.session.async_payment_succeeded') and data.get('payment_status') == 'paid':
             if data.get('currency') != 'gbp' or data.get('amount_total') != int(order.total*100):
                 raise ValidationError('Payment amount or currency mismatch.')
-            if order.payment_status != 'paid':
+            if order.payment_status not in ('paid','refunded'):
                 payment.status,payment.session_id,payment.intent_id = 'paid',data['id'],data.get('payment_intent','')
                 payment.save()
                 order.payment_status = 'paid'
@@ -87,13 +118,13 @@ def apply_event(event):
                 else:
                     order.fulfilment_status = 'placed'
                 emit(order,'payment_confirmed','Payment confirmed.')
-        elif kind == 'checkout.session.expired' and order.payment_status != 'paid':
+        elif kind == 'checkout.session.expired' and order.payment_status not in ('paid','refunded'):
             payment.status = 'expired'
             payment.save(update_fields=['status'])
             order.payment_status = 'expired'
             order.save(update_fields=['payment_status'])
             finalize_cancel(order.pk, reason='Payment reservation expired.')
-        elif kind == 'checkout.session.async_payment_failed' and order.payment_status != 'paid':
+        elif kind == 'checkout.session.async_payment_failed' and order.payment_status not in ('paid','refunded'):
             order.payment_status = 'failed'
             payment.status = 'failed'
             payment.save(update_fields=['status'])
@@ -102,15 +133,17 @@ def apply_event(event):
         refund = Refund.objects.select_related('order').filter(provider_id=data.get('id')).first()
         if refund:
             order = Order.objects.select_for_update().get(pk=refund.order_id)
+            refund = Refund.objects.select_for_update().get(pk=refund.pk)
             if data.get('amount') != int(refund.amount*100) or data.get('currency') != 'gbp':
                 raise ValidationError('Refund amount mismatch.')
             state = data.get('status','pending')
-            refund.status = state
-            refund.save(update_fields=['status'])
-            order.refund_status = 'refunded' if state == 'succeeded' else state
-            if state == 'succeeded':
-                order.payment_status = 'refunded'
-            emit(order,'refund_'+state,'Refund '+state+'.')
+            if refund.status != 'succeeded' and refund.status != state:
+                refund.status = state
+                refund.save(update_fields=['status'])
+                order.refund_status = 'refunded' if state == 'succeeded' else state
+                if state == 'succeeded':
+                    order.payment_status = 'refunded'
+                emit(order,'refund_'+state,'Refund '+state+'.')
     ProviderEvent.objects.get_or_create(event_id=event_id,defaults={'event_type':kind})
 
 
@@ -137,7 +170,20 @@ def cancel_with_provider(order_id, reason='Cancellation requested'):
 
 def process_refund(refund_id):
     refund = Refund.objects.select_related('order__payment').get(pk=refund_id)
-    if refund.status == 'succeeded':
+    if refund.status in ('succeeded','awaiting_manual'):
+        return
+    if refund.order.payment_method == 'demo':
+        if not demo_enabled():
+            raise ValidationError('Local demo refunds are disabled.')
+        with transaction.atomic():
+            order = Order.objects.select_for_update().get(pk=refund.order_id)
+            locked = Refund.objects.select_for_update().get(pk=refund.pk)
+            if locked.status == 'succeeded':
+                return
+            locked.status, locked.provider_id = 'succeeded', 'demo_' + str(order.public_id)
+            locked.save()
+            order.payment_status, order.refund_status = 'refunded', 'refunded'
+            emit(order,'refund_succeeded','Demo refund completed. No money was transferred.')
         return
     if not refund.order.payment.intent_id:
         raise ValidationError('A payment reference is required for this refund.')

@@ -1,5 +1,5 @@
 [Unit]
-Description=Terai Foods WSGI application
+Description=Terai Foods ASGI application
 After=network.target postgresql.service redis-server.service
 
 [Service]

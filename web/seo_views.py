@@ -145,3 +145,4 @@ def sitemap_section(request, section):
 {body}
 </urlset>"""
     return HttpResponse(xml, content_type="application/xml; charset=utf-8")
+

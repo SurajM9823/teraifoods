@@ -1053,8 +1053,8 @@
 								<h4 class="cart-item-title">
 									<a href="/shop/">${escapeHTML(item.title)}</a>
 								</h4>
-								<p class="cart-item-meta">Fresh Farm Harvest &bull; Cold-Chain Dispatched</p>
-								<span class="cart-item-badge badge-fresh"><i class="klb-icon-shield-check me-1"></i>IN STOCK</span>
+								<p class="cart-item-meta">Delivery across the UK</p>
+								<span class="cart-item-badge badge-fresh"><i class="klb-icon-shield-check me-1"></i>Availability checked at checkout</span>
 							</div>
 
 							<div class="cart-item-pricing">
@@ -1165,6 +1165,12 @@
 				recalculateCart();
 			}
 
+            let serverQuote = null;
+            const quoteKey = items => JSON.stringify(items.map(i=>[String(i.id),Number(i.quantity)]).sort());
+            window.addEventListener('delivery:quote', event => {
+                serverQuote = {key:quoteKey(event.detail.items), data:event.detail.quote};
+                recalculateCart();
+            });
 			function recalculateCart() {
 				const cart = getCart();
 				const selectedItems = cart.filter(item => !unselectedIds.has(String(item.id)));
@@ -1184,49 +1190,16 @@
 				if (summarySubtotalEl) summarySubtotalEl.textContent = subtotal.toFixed(2);
 				if (checkoutBtnCountEl) checkoutBtnCountEl.textContent = selectedCount;
 
-				// Calculate Shipping Fee
-				let shippingFee = 0;
-				if (selectedCount === 0) {
-					shippingFee = 0;
-					if (summaryShippingFeeEl) summaryShippingFeeEl.textContent = '£0.00';
-					if (shippingThresholdBox) shippingThresholdBox.style.display = 'none';
-				} else if (subtotal >= FREE_SHIPPING_THRESHOLD) {
-					shippingFee = 0;
-					if (summaryShippingFeeEl) {
-						summaryShippingFeeEl.innerHTML = '<span class="summary-shipping-free">FREE</span>';
-					}
-					if (shippingThresholdBox) {
-						shippingThresholdBox.style.display = 'block';
-						shippingNoticeText.innerHTML = '<i class="klb-icon-check-circle text-success me-1"></i> You unlocked <strong>FREE Cold-Chain Delivery</strong>!';
-					}
-				} else {
-					shippingFee = BASE_SHIPPING_FEE;
-					const needed = (FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2);
-					if (summaryShippingFeeEl) {
-						summaryShippingFeeEl.textContent = '£' + BASE_SHIPPING_FEE.toFixed(2);
-					}
-					if (shippingThresholdBox) {
-						shippingThresholdBox.style.display = 'block';
-						shippingNoticeText.innerHTML = '<i class="klb-icon-truck text-primary me-1"></i> Add <strong>£' + needed + '</strong> more for <strong>FREE Delivery</strong>!';
-					}
-				}
-
-				// Voucher Calculation
-				let discountVal = 0;
-				if (appliedVoucherName === 'TERAI10' || appliedVoucherName === 'DARAZ10') {
-					discountVal = subtotal * 0.10;
-				} else if (appliedVoucherName === 'FREESHIP') {
-					discountVal = shippingFee;
-				}
-				appliedDiscount = discountVal;
-
-				const discountDisplayEl = document.getElementById('voucher-discount-val');
-				if (discountDisplayEl) {
-					discountDisplayEl.textContent = discountVal.toFixed(2);
-				}
-
-				const grandTotal = Math.max(0, subtotal + shippingFee - discountVal);
-				if (summaryGrandTotalEl) summaryGrandTotalEl.textContent = grandTotal.toFixed(2);
+                const quote = serverQuote?.key === quoteKey(selectedItems) ? serverQuote.data : null;
+                if (summaryShippingFeeEl) summaryShippingFeeEl.textContent = quote ? '£'+quote.delivery_charge : 'Calculated at checkout';
+                if (summaryGrandTotalEl) summaryGrandTotalEl.textContent = quote ? quote.total : '—';
+                if (quote && summarySubtotalEl) summarySubtotalEl.textContent = quote.subtotal;
+                if (shippingThresholdBox) shippingThresholdBox.style.display = 'block';
+                if (shippingNoticeText) shippingNoticeText.textContent = 'UK delivery is calculated by total product weight.';
+                const discountBox = document.getElementById('voucher-applied-box');
+                if (discountBox) discountBox.style.display = 'none';
+                window.TeraiCatalog?.setSelectedCart?.(selectedItems.map(i=>String(i.id)));
+                window.dispatchEvent(new CustomEvent('delivery:request',{detail:selectedItems}));
 
 				// Enable / Disable checkout button
 				if (checkoutButton) {

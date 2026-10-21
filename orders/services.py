@@ -153,7 +153,10 @@ def create_order(user, scope, payload, key):
         subtotal += product.price * quantities[product.pk]
         discount += (product.regular_price-product.price) * quantities[product.pk]
     shipping = quote_delivery(products, quantities, lock=True)
+    if subtotal + shipping['charge'] > Decimal('999999999999.99'):
+        raise ValidationError('This order exceeds the supported total. Contact the store for a bulk order.')
     order = Order.objects.create(customer=user if user.is_authenticated else None, email=email,
+        payment_method='demo' if settings.DEBUG and settings.ORDER_PAYMENT_MODE == 'demo' else 'stripe',
         recipient_name=address['name'],phone=address['phone'],address=address,
         idempotency_key=scoped_key, request_digest=digest, subtotal=subtotal,discount=discount,
         delivery_charge=shipping['charge'],total=subtotal+shipping['charge'],total_weight_grams=shipping['weight_grams'],
@@ -227,7 +230,7 @@ def transition(order_id, target, actor, reason=''):
 
 
 @transaction.atomic
-def request_return(order_id, reason, actor=None):
+def request_return(order_id, reason, actor=None, *, refund_preference='original', bank_details=None):
     order = Order.objects.select_for_update().get(pk=order_id)
     if hasattr(order,'return_request'):
         return order.return_request
@@ -238,13 +241,25 @@ def request_return(order_id, reason, actor=None):
     # Zero means manual review, never an automatic promise of return eligibility.
     if settings.ORDER_RETURN_DAYS and timezone.now() > order.delivered_at + timedelta(days=settings.ORDER_RETURN_DAYS):
         raise ValidationError('The online return window has ended. Contact support.')
-    result = ReturnRequest.objects.create(order=order,reason=reason)
+    if refund_preference not in ('original','voucher','bank'):
+        raise ValidationError('Choose original payment, voucher or bank transfer.')
+    encrypted = ''
+    if refund_preference == 'bank':
+        bank = bank_details if isinstance(bank_details,dict) else {}
+        name = str(bank.get('account_name','')).strip()
+        sort_code = re.sub(r'[ -]', '', str(bank.get('sort_code','')))
+        account = str(bank.get('account_number','')).strip()
+        if not 1 <= len(name) <= 150 or not re.fullmatch(r'[0-9]{6}',sort_code) or not re.fullmatch(r'[0-9]{8}',account):
+            raise ValidationError('Enter the account holder, six-digit UK sort code and eight-digit account number.')
+        from customers.email_backend import mail_cipher
+        encrypted = mail_cipher().encrypt(json.dumps(dict(account_name=name,sort_code=sort_code,account_number=account)).encode()).decode()
+    result = ReturnRequest.objects.create(order=order,reason=reason,refund_preference=refund_preference,bank_details_encrypted=encrypted)
     emit(order,'return_requested','Return requested.',actor)
     return result
 
 
 @transaction.atomic
-def decide_return(order_id, target, reason, actor, restock=False):
+def decide_return(order_id, target, reason, actor, restock=False, manual_refund=False):
     order = Order.objects.select_for_update().get(pk=order_id)
     request = ReturnRequest.objects.select_for_update().filter(order=order).first()
     if request is None:
@@ -259,9 +274,38 @@ def decide_return(order_id, target, reason, actor, restock=False):
     if target == 'received':
         if restock:
             restore_stock(order,actor,kind='return')
-        Refund.objects.get_or_create(order=order,defaults={'amount':order.total,'reason':reason})
-        order.refund_status = 'pending'
+        status = 'pending' if request.refund_preference == 'original' and not manual_refund else 'awaiting_manual'
+        Refund.objects.get_or_create(order=order,defaults={'amount':order.total,'reason':reason,'status':status})
+        order.refund_status = status
     emit(order,'return_'+target,'Return '+target+'.',actor)
+    return request
+
+
+@transaction.atomic
+def settle_return(order_id, method, reference, actor):
+    if not actor or not actor.is_staff or not actor.has_perm('catalog.change_order'):
+        raise PermissionDenied
+    order = Order.objects.select_for_update().get(pk=order_id)
+    request = ReturnRequest.objects.select_for_update().filter(order=order).first()
+    reference = reference.strip() if isinstance(reference,str) else ''
+    if method not in ('bank','voucher','cash','other') or not 1 <= len(reference) <= 150:
+        raise ValidationError('Choose the actual refund method and enter its payment reference or issued voucher code.')
+    if request and request.status == 'refunded':
+        if (request.settlement_method,request.settlement_reference) == (method,reference):
+            return request
+        raise ValidationError('This return has already been refunded.')
+    refund = Refund.objects.select_for_update().filter(order=order).first()
+    if not request or request.status != 'received' or not refund or refund.status != 'awaiting_manual' or refund.provider_id:
+        raise ValidationError('Receive the return first. Only manual refunds awaiting payment can be completed here; provider refunds cannot be paid twice.')
+    request.status = 'refunded'
+    request.settlement_method,request.settlement_reference = method,reference
+    request.settled_at,request.settled_by = timezone.now(),actor
+    request.bank_details_encrypted = ''
+    request.save()
+    refund.status = 'succeeded'
+    refund.save(update_fields=['status'])
+    order.refund_status,order.payment_status = 'refunded','refunded'
+    emit(order,'return_refunded',f'Return refund completed via {method}. See return details for the reference.',actor)
     return request
 
 

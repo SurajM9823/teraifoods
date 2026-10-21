@@ -81,8 +81,22 @@ class ReturnRequest(models.Model):
     reason = models.CharField(max_length=1000)
     status = models.CharField(max_length=20, default='requested')
     admin_reason = models.CharField(max_length=1000, blank=True)
+    refund_preference = models.CharField(max_length=20, default='original', choices=[('original','Original payment'),('voucher','Voucher'),('bank','Bank transfer')])
+    bank_details_encrypted = models.TextField(blank=True)
+    settlement_method = models.CharField(max_length=40, blank=True)
+    settlement_reference = models.CharField(max_length=150, blank=True)
+    settled_at = models.DateTimeField(null=True, blank=True)
+    settled_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def bank_details(self):
+        if not self.bank_details_encrypted:
+            return {}
+        import json
+        from customers.email_backend import mail_cipher
+        return json.loads(mail_cipher().decrypt(self.bank_details_encrypted.encode()).decode())
 
 
 class DeliveryAttempt(models.Model):

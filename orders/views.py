@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from django.db.models import Avg, Count
 from django.forms.models import model_to_dict
+from django.core.paginator import Paginator
 from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
@@ -61,8 +62,11 @@ def order_data(order):
     stage = order.fulfilment_status
     group = 'completed' if stage=='delivered' else 'cancelled' if stage=='cancelled' else 'in-transit' if stage in ('dispatched','out_for_delivery','delivery_failed') else 'processing'
     return dict(id=str(order.public_id),number=order.number,version=order.version,
-        created_at=order.created_at.isoformat(),payment_status=order.payment_status,fulfilment_status=stage,
+        created_at=order.created_at.isoformat(),payment_status=order.payment_status,payment_method=order.payment_method,fulfilment_status=stage,
         cancellation_status=order.cancellation_status,refund_status=order.refund_status,group=group,
+        return_request=(dict(status=order.return_request.status,preference=order.return_request.refund_preference,
+            method=order.return_request.settlement_method,reference=order.return_request.settlement_reference,
+            note=order.return_request.admin_reason,amount=str(order.total)) if hasattr(order,'return_request') else None),
         subtotal=str(order.subtotal) if order.subtotal is not None else None,
         delivery_charge=str(order.delivery_charge) if order.delivery_charge is not None else None,total=str(order.total),
         currency=order.currency,address=order.address,
@@ -82,7 +86,8 @@ def order_data(order):
 @require_POST
 def checkout(request):
     # Validate provider setup before reserving inventory.
-    payments.client()
+    if not payments.demo_enabled():
+        payments.client()
     if not request.session.get('checkout_scope'):
         request.session['checkout_scope'] = uuid.uuid4().hex
     scope = f'user:{request.user.pk}' if request.user.is_authenticated else 'guest:'+request.session['checkout_scope']
@@ -114,13 +119,15 @@ def history(request):
     else:
         queryset = Order.objects.filter(customer=request.user)
     result = []
-    for order in queryset.order_by('-created_at')[:100]:
+    page = Paginator(queryset.order_by('-created_at'),20).get_page(request.GET.get('page'))
+    for order in page:
         try:
             services.authorize(order,request.user,request.session)
         except PermissionDenied:
             continue
         result.append(order_data(order))
-    return JsonResponse({'orders':result})
+    return JsonResponse({'orders':result,'has_more':page.has_next(),
+                         'next_page':page.next_page_number() if page.has_next() else None})
 
 
 @api
@@ -132,11 +139,14 @@ def action(request, public_id):
     if data.get('action')=='cancel':
         services.request_cancel(order.pk,data.get('reason',''),actor)
     elif data.get('action')=='return':
-        services.request_return(order.pk,data.get('reason',''),actor)
+        services.request_return(order.pk,data.get('reason',''),actor,
+            refund_preference=data.get('refund_preference','original'),bank_details=data.get('bank_details'))
     elif data.get('action')=='payment':
         return JsonResponse({'payment_url':payments.create_session(order),'test_mode':True})
     elif data.get('action')=='support':
         services.support_message(order.pk,data.get('reason',''),actor)
+    elif data.get('action')=='demo_payment':
+        payments.confirm_demo(order.pk)
     else:
         raise ValidationError('Choose cancellation, return or payment.')
     order.refresh_from_db()
@@ -189,7 +199,8 @@ def addresses(request, pk=None):
 @api
 @require_http_methods(['GET','POST'])
 def reviews(request, product_id):
-    product = get_object_or_404(Product,pk=product_id,is_active=True,is_published=True,is_archived=False)
+    from catalog.api import public_products
+    product = get_object_or_404(public_products(),pk=product_id)
     if request.method=='GET':
         queryset = product.reviews.filter(status='approved')
         summary = queryset.aggregate(average=Avg('rating'),count=Count('id'))

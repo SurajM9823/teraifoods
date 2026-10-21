@@ -142,6 +142,10 @@ class OrderTests(TestCase):
             payments.process_refund(Refund.objects.get().pk)
             self.assertEqual(client.return_value.v1.refunds.create.call_count,1)
         order.refresh_from_db();self.assertEqual(order.refund_status,'refunded')
+        for index,kind in enumerate(('checkout.session.completed','checkout.session.expired','checkout.session.async_payment_failed')):
+            event=self.event(order);event.update(id=f'late-event-{index}',type=kind)
+            payments.apply_event(event)
+        order.refresh_from_db();self.assertEqual(order.payment_status,'refunded');self.assertEqual(order.refund_status,'refunded')
 
     def test_expired_reservation_reconciles_provider_before_releasing_stock(self):
         order=self.create();payment=order.payment;payment.session_id='cs_test_1';payment.save()
@@ -209,6 +213,61 @@ class OrderTests(TestCase):
         self.client.force_login(self.staff)
         self.assertEqual(self.client.delete(f"/api/orders/addresses/{first.json()['address']['id']}/").status_code,404)
 
+    def test_bank_return_admin_settlement_and_private_details(self):
+        order=self.delivered();self.grant(order)
+        url=f'/api/orders/{order.public_id}/action/'
+        body={'action':'return','reason':'Damaged','refund_preference':'bank',
+              'bank_details':{'account_name':'Test Buyer','sort_code':'12-34-56','account_number':'12345678'}}
+        self.assertEqual(self.post(url,body).status_code,400)
+        services.complete_delivery(order.pk,self.staff,pin='123456')
+        self.assertEqual(Client().post(url,json.dumps(body),content_type='application/json').status_code,403)
+        invalid={**body,'bank_details':{'account_name':'Test','sort_code':'bad','account_number':'1'}}
+        self.assertEqual(self.post(url,invalid).status_code,400)
+        response=self.post(url,body);self.assertEqual(response.status_code,200,response.content)
+        self.assertNotIn('12345678',response.content.decode())
+        ret=order.return_request
+        self.assertNotIn('12345678',ret.bank_details_encrypted)
+        self.assertEqual(ret.bank_details['account_number'],'12345678')
+        self.assertEqual(self.post(url,body).status_code,200)
+        self.client.force_login(self.staff)
+        self.assertContains(self.client.get('/admin/orders/?returns=1'), 'Return: requested')
+        admin=f'/admin/orders/{order.public_id}/'
+        self.assertContains(self.client.get(admin),'12345678')
+        self.client.post(admin,{'action':'return','status':'approved','reason':'Send it back'})
+        with self.assertRaises(ValidationError):services.settle_return(order.pk,'bank','transfer-1',self.staff)
+        self.client.post(admin,{'action':'return','status':'received','reason':'Received','restock':'on'})
+        refund=Refund.objects.get(order=order)
+        self.assertEqual(refund.status,'awaiting_manual')
+        with patch('orders.payments.client') as gateway:
+            payments.process_refund(refund.pk);gateway.assert_not_called()
+        self.client.post(admin,{'action':'settle_return','method':'bank','reference':'transfer-1'})
+        services.settle_return(order.pk,'bank','transfer-1',self.staff)
+        order.refresh_from_db();ret.refresh_from_db()
+        self.assertEqual(order.refund_status,'refunded');self.assertEqual(ret.status,'refunded')
+        self.assertEqual(ret.bank_details_encrypted,'')
+        self.assertEqual(Product.objects.get(pk=self.product.pk).stock,20)
+        self.assertEqual(order.events.filter(event_type='return_refunded').count(),1)
+        with self.assertRaises(ValidationError):services.settle_return(order.pk,'cash','another',self.staff)
+
+    def test_voucher_return_and_original_provider_double_payment_guard(self):
+        order=self.delivered();services.complete_delivery(order.pk,self.staff,pin='123456')
+        services.request_return(order.pk,'Return please',refund_preference='voucher')
+        services.decide_return(order.pk,'approved','Accepted',self.staff)
+        services.decide_return(order.pk,'received','Received',self.staff)
+        services.settle_return(order.pk,'voucher','ISSUED-VOUCHER-001',self.staff)
+        self.grant(order)
+        data=self.client.get(f'/api/orders/{order.public_id}/').json()
+        self.assertEqual(data['return_request']['reference'],'ISSUED-VOUCHER-001')
+        self.assertEqual(data['return_request']['method'],'voucher')
+        self.assertTrue(data['items'][0]['can_review'])
+
+    def test_provider_refund_cannot_be_manually_paid_again(self):
+        order=self.delivered();services.complete_delivery(order.pk,self.staff,pin='123456')
+        services.request_return(order.pk,'Return please')
+        services.decide_return(order.pk,'approved','Accepted',self.staff)
+        services.decide_return(order.pk,'received','Received',self.staff)
+        with self.assertRaises(ValidationError):services.settle_return(order.pk,'bank','transfer-2',self.staff)
+
     def test_verified_guest_review_and_moderation(self):
         order=self.delivered();self.grant(order)
         body={'order_line':order.lines.get().pk,'rating':5,'text':'Actual review'}
@@ -249,3 +308,19 @@ class OrderTests(TestCase):
     def test_csrf_required_for_checkout(self):
         client=Client(enforce_csrf_checks=True)
         self.assertEqual(client.post('/api/orders/checkout/',json.dumps(self.body),content_type='application/json').status_code,403)
+
+    @override_settings(DEBUG=True, ORDER_PAYMENT_MODE='demo')
+    def test_demo_confirmation_and_refund_are_local_idempotent_and_protected(self):
+        response=self.post('/api/orders/checkout/',self.body,HTTP_IDEMPOTENCY_KEY='demo-checkout')
+        self.assertEqual(response.status_code,201,response.content)
+        order=Order.objects.get()
+        self.assertEqual(order.payment_method,'demo')
+        url=f'/api/orders/{order.public_id}/action/'
+        for _ in range(2):
+            self.assertEqual(self.post(url,{'action':'demo_payment'}).status_code,200)
+        self.assertEqual(order.events.filter(event_type='payment_confirmed').count(),1)
+        with override_settings(DEBUG=False):
+            self.assertEqual(self.post(url,{'action':'demo_payment'}).status_code,400)
+        services.finalize_cancel(order.pk)
+        payments.process_refund(Refund.objects.get(order=order).pk)
+        order.refresh_from_db();self.assertEqual(order.refund_status,'refunded')

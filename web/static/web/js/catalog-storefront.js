@@ -53,6 +53,21 @@
       };
     }
     document.addEventListener('click', event => {
+      const wish = event.target.closest('#pdp-btn-wishlist, .klbwl-btn');
+      if (wish) {
+        const source = wish.id === 'pdp-btn-wishlist' ? detail : window.TeraiCatalog?.getProductById(wish.dataset.product_id || wish.closest('[data-catalog-product]')?.dataset.catalogProduct);
+        if (!source) return;
+        event.preventDefault(); event.stopImmediatePropagation();
+        const list = window.TeraiCatalog.getWishlist();
+        const exists = list.some(item => String(item.id) === String(source.id));
+        window.TeraiCatalog.saveWishlist(exists ? list.filter(item => String(item.id) !== String(source.id)) : [...list, {
+          id:String(source.id), title:source.name || source.title, price:Number(source.price), image:source.image,
+          stock:source.available === false ? 'Unavailable' : 'Check availability at checkout'
+        }]);
+        wish.classList.toggle('active', !exists);
+        window.TeraiCatalog.showToast('Wishlist', exists ? 'Product removed.' : 'Product saved.', 'info');
+        return;
+      }
       if (event.target.closest('#btn-final-pay, #btn-submit-new-card')) {
         event.preventDefault(); event.stopImmediatePropagation();
         window.TeraiOrders?.checkout();

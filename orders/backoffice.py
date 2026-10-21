@@ -27,6 +27,8 @@ def index(request):
         rows = rows.filter(condition)
     if request.GET.get('status'):
         rows = rows.filter(fulfilment_status=request.GET['status'])
+    if request.GET.get('returns') == '1':
+        rows = rows.filter(return_request__isnull=False)
     summary = dict(total_orders=rows.count(),
         processing=rows.filter(fulfilment_status__in=['placed','confirmed','preparing','ready_for_dispatch']).count(),
         dispatched=rows.filter(fulfilment_status__in=['dispatched','out_for_delivery']).count(),
@@ -35,7 +37,8 @@ def index(request):
     formatted = [dict(id=o.number,public_id=o.public_id,customer=o.recipient_name or 'Legacy order',email=o.email,
         type='Registered' if o.customer_id else 'Guest',items_summary=', '.join(f'{i.product_name} × {i.quantity}' for i in o.lines.all()),
         total='£'+str(o.total),payment_status=o.payment_status.title(),
-        fulfillment_status=o.fulfilment_status.replace('_',' ').title(),date=o.created_at) for o in page]
+        fulfillment_status=o.fulfilment_status.replace('_',' ').title(),
+        return_status=o.return_request.status if hasattr(o,'return_request') else '',date=o.created_at) for o in page]
     return render(request,'web/backoffice/orders.html',dict(active_page='orders',orders_list=formatted,summary=summary,page=page))
 
 
@@ -62,7 +65,9 @@ def detail(request,public_id):
                     alternative_reason=request.POST.get('reason',''))
             elif action == 'return':
                 services.decide_return(order.pk,request.POST.get('status'),request.POST.get('reason',''),
-                    request.user,restock=request.POST.get('restock')=='on')
+                    request.user,restock=request.POST.get('restock')=='on',manual_refund=request.POST.get('manual_refund')=='on')
+            elif action == 'settle_return':
+                services.settle_return(order.pk,request.POST.get('method'),request.POST.get('reference',''),request.user)
             elif action == 'support_reply':
                 services.support_message(order.pk,request.POST.get('reason',''),request.user,reply=True)
             elif action == 'tracking':
@@ -87,6 +92,7 @@ def detail(request,public_id):
             messages.success(request,'Order updated.')
         return redirect('order-admin-detail',public_id=public_id)
     return render(request,'orders/admin_detail.html',dict(active_page='orders',order=order,
+        return_bank=order.return_request.bank_details if request.user.has_perm('catalog.change_order') and hasattr(order,'return_request') else {},
         statuses=sorted(services.TRANSITIONS.get(order.fulfilment_status,set())-{'cancelled'}),
         drivers=get_user_model().objects.filter(is_staff=True,is_active=True)))
 
