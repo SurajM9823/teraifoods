@@ -21,7 +21,7 @@ from .models import Notification, Refund, Review, Address
 from .tasks import send_notification
 
 
-@override_settings(STRIPE_SECRET_KEY='sk_test_unit_test_only', STRIPE_WEBHOOK_SECRET='whsec_test_only',
+@override_settings(STRIPE_PUBLISHABLE_KEY='pk_test_unit_only', STRIPE_SECRET_KEY='sk_test_unit_test_only', STRIPE_WEBHOOK_SECRET='whsec_test_only',
                    ORDER_RETURN_DAYS=14, ORDER_PUBLIC_ORIGIN='http://testserver')
 class OrderTests(TestCase):
     def setUp(self):
@@ -78,7 +78,7 @@ class OrderTests(TestCase):
 
     def test_checkout_api_creates_test_session_and_guest_access(self):
         with patch('orders.payments.client') as client:
-            client.return_value.v1.checkout.sessions.create.return_value=SimpleNamespace(id='cs_test_1',url='https://checkout.stripe.com/test')
+            client.return_value.v1.checkout.sessions.create.side_effect=lambda **kw:SimpleNamespace(id='cs_test_1',url=None,client_secret='cs_test_1_secret_fake',status='open',livemode=False,currency='gbp',amount_total=1199,metadata=kw['params']['metadata'])
             response=self.post('/api/orders/checkout/',self.body,HTTP_IDEMPOTENCY_KEY='checkout-api')
         self.assertEqual(response.status_code,201,response.content)
         order=response.json()['order']

@@ -897,25 +897,12 @@
                     <div class="cart-drawer-payment-tile-header">
                       <div class="cart-drawer-payment-tile-left">
                         <input type="radio" name="drawer_payment" value="card" checked id="drawer-pay-card" class="payment-tile-radio">
-                        <label for="drawer-pay-card" style="margin: 0; cursor: pointer;">Credit or Debit Card</label>
+                        <label for="drawer-pay-card" style="margin: 0; cursor: pointer;">Secure payment</label>
                       </div>
                       <span style="font-size: 11px; font-weight: 700; color: #1547A8;">Visa / Mastercard / Amex</span>
                     </div>
                     <div class="cart-drawer-payment-tile-body" id="drawer-card-box">
-                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; margin-top: 6px; border: 1px solid #e2e8f0; background: #fafafa;">
-                        <div style="grid-column: 1 / -1;">
-                          <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Card Number</label>
-                          <input type="text" class="cart-drawer-form-input" id="drawer-card-num" value="4532 8920 1284 9912" placeholder="4xxx xxxx xxxx xxxx">
-                        </div>
-                        <div>
-                          <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Expiry (MM/YY)</label>
-                          <input type="text" class="cart-drawer-form-input" id="drawer-card-exp" value="08/28" placeholder="MM/YY">
-                        </div>
-                        <div>
-                          <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Security CVC</label>
-                          <input type="text" class="cart-drawer-form-input" id="drawer-card-cvc" value="382" placeholder="CVC">
-                        </div>
-                      </div>
+                      <p>Secure payment details will appear here.</p>
                     </div>
                   </div>
 
@@ -1295,6 +1282,7 @@
 
     // Step 2: Proceed to Pay -> Verify UK Phone & Postcode BEFORE Step 3
     sideCartDrawer.querySelector('#btn-proceed-to-pay')?.addEventListener('click', () => {
+      if (window.TeraiOrders) { goToDrawerStep(3); return; }
       const addr = getSavedAddress();
       const phoneRes = checkUKPhone(addr.phone);
       if (!phoneRes.valid) {
@@ -1634,7 +1622,7 @@
     if (step === 3 && window.TeraiOrders && !window.TeraiOrders.addressValid()) return;
     if (step === 2 || step === 3) {
       const selected = getCart().filter(item => !unselectedItemIds.has(String(item.id)));
-      if (!window.TeraiCatalog?.validateCart || !await window.TeraiCatalog.validateCart(selected)) return;
+      if (!window.TeraiOrders?.hasPendingCheckout() && (!window.TeraiCatalog?.validateCart || !await window.TeraiCatalog.validateCart(selected))) return;
     }
     currentDrawerStep = step;
     if (!sideCartDrawer) initSideCartDrawer();
@@ -1656,8 +1644,9 @@
     });
 
     if (step === 1) renderDrawerCart();
-    if (step === 2) renderCheckoutPackage();
+    if (step === 2) { renderCheckoutPackage(); window.TeraiOrders?.syncContact(); }
     renderDrawerSummaries();
+    if (step === 3) window.dispatchEvent(new Event('checkout:payment-step'));
   }
 
   // Backward compatibility aliases

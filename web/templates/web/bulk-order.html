@@ -747,6 +747,194 @@
 			color: #ef4444;
 			background: #fee2e2;
 		}
+
+		/* Bulk Requests Table & Expandable Details */
+		.bulk-table-responsive {
+			width: 100%;
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			margin-bottom: 12px;
+		}
+		.bulk-requests-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 13px;
+			color: #0f172a;
+			margin-bottom: 0;
+		}
+		.bulk-requests-table thead th {
+			background: #f8fafc;
+			color: #475569;
+			font-size: 11px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+			padding: 9px 12px;
+			border-bottom: 2px solid #cbd5e1;
+			border-top: none;
+			border-left: none;
+			border-right: 1px solid #e2e8f0;
+			white-space: nowrap;
+		}
+		.bulk-requests-table thead th:last-child {
+			border-right: none;
+		}
+		.bulk-req-row {
+			cursor: pointer;
+			transition: background-color 0.15s ease;
+		}
+		.bulk-req-row:hover {
+			background-color: #f1f5f9;
+		}
+		.bulk-req-row.is-expanded {
+			background-color: #f8fafc !important;
+		}
+		.bulk-req-row td {
+			padding: 10px 12px;
+			border-bottom: 1px solid #e2e8f0;
+			border-top: none;
+			border-left: none;
+			border-right: 1px solid #f1f5f9;
+			vertical-align: middle;
+		}
+		.bulk-req-row td:last-child {
+			border-right: none;
+		}
+		.bulk-chevron {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 22px;
+			height: 22px;
+			color: #64748b;
+			transition: transform 0.2s ease, color 0.2s ease;
+		}
+		.bulk-chevron.open {
+			transform: rotate(180deg);
+			color: #634c9f;
+		}
+		.bulk-po-num {
+			font-family: monospace, monospace;
+			font-size: 12.5px;
+			font-weight: 700;
+			color: #634c9f;
+		}
+		.bulk-status-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 11px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+			padding: 3px 7px;
+			line-height: 1.2;
+			border: 1px solid transparent;
+			white-space: nowrap;
+		}
+		.bulk-status-badge.status-new {
+			background: #eff6ff;
+			color: #1d4ed8;
+			border-color: #bfdbfe;
+		}
+		.bulk-status-badge.status-under_review {
+			background: #fffbeb;
+			color: #b45309;
+			border-color: #fde68a;
+		}
+		.bulk-status-badge.status-quoted {
+			background: #ecfdf5;
+			color: #047857;
+			border-color: #86efac;
+		}
+		.bulk-status-badge.status-accepted {
+			background: #faf5ff;
+			color: #6b21a8;
+			border-color: #e9d5ff;
+		}
+		.bulk-status-badge.status-completed {
+			background: #f0fdf4;
+			color: #15803d;
+			border-color: #bbf7d0;
+		}
+		.bulk-status-badge.status-declined {
+			background: #fef2f2;
+			color: #b91c1c;
+			border-color: #fecaca;
+		}
+		.bulk-status-badge.status-cancelled {
+			background: #f1f5f9;
+			color: #475569;
+			border-color: #cbd5e1;
+		}
+		.bulk-status-badge.status-generic {
+			background: #f8fafc;
+			color: #334155;
+			border-color: #cbd5e1;
+		}
+		.btn-bulk-expand {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 11.5px;
+			font-weight: 600;
+			padding: 4px 8px;
+			background: #ffffff;
+			color: #334155;
+			border: 1px solid #cbd5e1;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+		.btn-bulk-expand:hover {
+			background: #f8fafc;
+			color: #634c9f;
+			border-color: #634c9f;
+		}
+		.btn-bulk-expand.is-active {
+			background: #634c9f;
+			color: #ffffff;
+			border-color: #634c9f;
+		}
+		.bulk-btn-icon {
+			transition: transform 0.2s ease;
+		}
+		.bulk-btn-icon.rotate {
+			transform: rotate(180deg);
+		}
+		.bulk-detail-row.is-hidden {
+			display: none;
+		}
+		.bulk-detail-row.is-open {
+			display: table-row;
+		}
+		.bulk-detail-container {
+			background: #fafafa;
+			padding: 16px 20px;
+			border-bottom: 2px solid #cbd5e1;
+			box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+		}
+		.bulk-items-subtable {
+			font-size: 12px;
+		}
+		.bulk-items-subtable th {
+			background: #f1f5f9;
+			color: #334155;
+			font-size: 10.5px;
+			font-weight: 700;
+			text-transform: uppercase;
+			padding: 6px 8px;
+		}
+		.bulk-items-subtable td {
+			padding: 6px 8px;
+			vertical-align: middle;
+		}
+		.bulk-replies-timeline {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
 	</style>
   <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=clean-search-v1">
 <link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
@@ -934,7 +1122,36 @@
 						</div>
 					</div>
 				</form>
-				<section id="bulk-tracking" class="po-document-container mt-4 p-3"><h2 class="text-17">My Bulk Requests</h2><p id="bulk-message" role="status"></p><a href="/bulk-order/" class="btn-po-action-mini">All my requests / new request</a><button type="button" id="bulk-refresh" class="btn-po-action-mini">Refresh status</button><div id="bulk-request-list" aria-live="polite"></div><button type="button" id="bulk-more" class="btn-po-action-mini" hidden>Load more requests</button></section>
+				<!-- Bulk Purchase Orders Tracking & Management Section -->
+				<section id="bulk-tracking" class="po-document-container po-sheet mt-4 p-3 p-md-4 border" style="border-color: #cbd5e1 !important;">
+					<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pb-3 mb-3 border-bottom" style="border-color: #e2e8f0 !important;">
+						<div>
+							<div class="d-flex align-items-center gap-2">
+								<span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 text-10 fw-bold text-uppercase">Tracking &amp; Procurement Desk</span>
+							</div>
+							<h2 class="text-18 fw-bold text-dark mb-1 mt-1"><i class="klb-icon-archive text-primary me-2"></i>My Bulk Purchase Requests</h2>
+							<p class="text-12 text-muted mb-0">Track formal wholesale quotations, delivery schedules, line-item pricing, and store replies in real-time.</p>
+						</div>
+						<div class="d-flex flex-wrap align-items-center gap-2">
+							<a href="/bulk-order/" class="btn-po-action-mini">
+								<i class="klb-icon-plus me-1"></i> All My Requests / New Request
+							</a>
+							<button type="button" id="bulk-refresh" class="btn-po-action-mini">
+								<i class="klb-icon-refresh-cw me-1"></i> Refresh Status
+							</button>
+						</div>
+					</div>
+
+					<div id="bulk-message" role="status"></div>
+
+					<div id="bulk-request-list" aria-live="polite"></div>
+
+					<div class="text-center mt-3">
+						<button type="button" id="bulk-more" class="btn-po-action-mini px-4 py-2" hidden>
+							<i class="klb-icon-chevron-down me-1"></i> Load more requests
+						</button>
+					</div>
+				</section>
 
 				<!-- Wholesale & Bulk Procurement FAQs (PAA Query Optimization) -->
 				<section class="po-document-container mt-4 p-4 bg-white border" style="border-color: #e2e8f0 !important; border-radius: 0 !important;">
@@ -1206,12 +1423,12 @@
 			}
 		}
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=overlay-lifecycle-v6"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=elements-v1"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 
 
 
-<script src="{% static 'web/js/bulk-orders.js' %}?v=save-fix-v3" defer></script>
+<script src="{% static 'web/js/bulk-orders.js' %}?v=expandable-table-v1" defer></script>
 </body>
 </html>

@@ -77,8 +77,19 @@ class ItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['product'].queryset = Product.objects.filter(is_package=False, is_archived=False).order_by('name')
+        self.fields['product'].empty_label = 'Select a product to bundle...'
+        self.fields['product'].widget.attrs.update({
+            'class': 'form-select package-product-select',
+            'style': 'width: 100%; height: 38px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 10px; background: #fff;'
+        })
         self.fields['quantity'].max_value = 10000
         self.fields['quantity'].min_value = 1
+        self.fields['quantity'].widget.attrs.update({
+            'class': 'form-control',
+            'style': 'width: 100%; height: 38px; font-size: 13px; font-weight: 700; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px;',
+            'min': '1',
+            'placeholder': 'Qty'
+        })
 
 
 class ProductForm(forms.ModelForm):
@@ -106,10 +117,12 @@ class ProductForm(forms.ModelForm):
         return slug
 
 
-Items = inlineformset_factory(
-    Package, PackageItem, form=ItemForm, extra=4, can_delete=True,
-    min_num=1, validate_min=True, max_num=50, validate_max=True
-)
+def get_items_formset(data=None, instance=None):
+    ItemsFormSet = inlineformset_factory(
+        Package, PackageItem, form=ItemForm, extra=0, can_delete=True,
+        min_num=1, validate_min=True, max_num=50, validate_max=True
+    )
+    return ItemsFormSet(data, instance=instance, prefix='items')
 
 
 @never_cache
@@ -123,7 +136,7 @@ def manage(request, pk=None):
     product = package.product if pk else Product(is_package=True, regular_price=Decimal('1.00'), stock_confirmed=True)
     form = PackageForm(request.POST or None, instance=package)
     product_form = ProductForm(request.POST or None, request.FILES or None, instance=product, prefix='product')
-    items = Items(request.POST or None, instance=package, prefix='items')
+    items = get_items_formset(request.POST or None, instance=package)
 
     if request.method == 'POST':
         if not (request.user.is_staff or request.user.has_perm('catalog.change_package' if pk else 'catalog.add_package')):
@@ -203,6 +216,16 @@ def manage(request, pk=None):
                             banner_file = ContentFile(output.getvalue(), name=f'{product.slug}-banner.jpg')
                             add_image(product.pk, banner_file, main=True, alt=product.name)
                         except Exception as img_exc:
+                            err_str = str(img_exc)
+                            if 'Read-only file system' in err_str or getattr(img_exc, 'errno', None) == 30:
+                                logger.error('Media storage directory is read-only on host: %s', img_exc)
+                                raise ValidationError(
+                                    'Media storage directory (/opt/teraifoods/media/products) is read-only on the server. '
+                                    'Please run on the server: sudo mkdir -p /opt/teraifoods/media/products && '
+                                    'sudo chown -R teraifoods:teraifoods /opt/teraifoods/media && '
+                                    'sudo chmod -R u+rwX,g+rwX,a+rX /opt/teraifoods/media && '
+                                    'sudo systemctl restart teraifoods-web'
+                                ) from img_exc
                             raise ValidationError(f'Failed to process uploaded banner image: {img_exc}') from img_exc
 
                     # Re-save to trigger catalog revision increment and cache invalidation

@@ -3,9 +3,12 @@
 <script src="{% static 'web/js/storefront-categories.js' %}?v=single-drawers-v4" defer></script>
 <script src="{% static 'web/js/catalog-storefront.js' %}?v={{ catalog_revision|default:1 }}-vouchers-packages-v4" defer></script>
 <script src="{% static 'web/js/delivery-quote.js' %}?v=vouchers-v4" defer></script>
-<script src="{% static 'web/js/orders.js' %}?v=vouchers-v4" defer></script>
+<script src="{% static 'web/js/stripe-payment.js' %}?v=elements-v1" defer></script>
+<script src="{% static 'web/js/orders.js' %}?v=elements-v1" defer></script>
 {{ catalog_revision|default:1|json_script:'catalog-revision' }}
 {{ request.user.is_authenticated|json_script:'customer-authenticated' }}
+{{ request.user.pk|default:''|json_script:'checkout-customer-id' }}
+{{ request.user.email|default:''|json_script:'checkout-customer-email' }}
 {{ order_demo_payments|json_script:'order-demo-payments' }}
 <template id="storefront-category-menu"><nav class="site-categories collapse">{% include 'catalog/storefront/menu.html' with menu_class='menu' %}</nav></template>
 <template id="storefront-category-options">{% for category in storefront_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}</template>

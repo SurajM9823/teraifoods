@@ -2,6 +2,7 @@ import os
 ORDER_PAYMENT_MODE = os.getenv('ORDER_PAYMENT_MODE', 'stripe')
 
 # Test mode is mandatory until a separate, explicit production payment rollout.
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_TEST_PUBLISHABLE_KEY', '')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY', '')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_TEST_WEBHOOK_SECRET', '')
 ORDER_PUBLIC_ORIGIN = os.getenv('ORDER_PUBLIC_ORIGIN', 'http://127.0.0.1:8000').rstrip('/')

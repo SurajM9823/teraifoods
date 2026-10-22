@@ -43,7 +43,7 @@ def client():
     return stripe.StripeClient(key, max_network_retries=2)
 
 
-def create_session(order):
+def create_session(order, embedded=False):
     if order.payment_method == 'voucher' and order.payment_status == 'paid':
         return f'/track-order/?order={order.public_id}'
     # Stripe idempotency serializes concurrent requests without holding a DB
@@ -53,15 +53,15 @@ def create_session(order):
             raise ValidationError('Local demo payments are disabled.')
         return f'/payment/?order={order.public_id}&demo=1'
     gateway = client()
+    if embedded:
+        validate_elements_config()
     payment = Payment.objects.get(order=order)
     if order.fulfilment_status != 'pending_payment' or order.cancellation_status != 'none':
         raise ValidationError('This order cannot start a payment.')
-    if payment.session_url:
-        return payment.session_url
     if order.reservation_expires_at <= timezone.now():
         raise ValidationError('The reservation has expired. Please create a new checkout.')
     origin = settings.ORDER_PUBLIC_ORIGIN
-    session = gateway.v1.checkout.sessions.create(params={
+    params = {
         'mode':'payment','customer_email':order.email,
         'client_reference_id':str(order.public_id),
         'metadata':{'order_id':str(order.public_id)},
@@ -72,17 +72,68 @@ def create_session(order):
         'cancel_url':f'{origin}/track-order/?order={order.public_id}',
         # The reservation worker explicitly expires unpaid sessions after the
         # configured window. Omitting expires_at keeps retries' payload stable.
-    }, options={'idempotency_key':f'checkout-{order.public_id}'})
+    }
+    if embedded:
+        params.pop('success_url')
+        params.pop('cancel_url')
+        params.update(ui_mode='elements', return_url=f'{origin}/track-order/?order={order.public_id}',
+                      adaptive_pricing={'enabled': False})
+    if payment.session_id:
+        if not embedded and payment.session_url:
+            return payment.session_url
+        session = gateway.v1.checkout.sessions.retrieve(payment.session_id)
+    else:
+        session = gateway.v1.checkout.sessions.create(params=params,
+            options={'idempotency_key':f'checkout-{order.public_id}'})
     with transaction.atomic():
         locked = Order.objects.select_for_update().get(pk=order.pk)
         payment = Payment.objects.select_for_update().get(order=locked)
-        payment.session_id,payment.session_url = session.id,session.url
+        payment.session_id,payment.session_url = session.id,session.url or ''
         payment.save()
-        cancelled = locked.fulfilment_status == 'cancelled' or locked.cancellation_status != 'none'
+        cancelled = locked.fulfilment_status == 'cancelled' or locked.cancellation_status != 'none' or locked.reservation_expires_at <= timezone.now()
     if cancelled:
         gateway.v1.checkout.sessions.expire(session.id, options={'idempotency_key':f'expire-{order.public_id}'})
         raise ValidationError('This order has been cancelled.')
+    if embedded:
+        if session.status != 'open':
+            raise ValidationError('This payment is complete or expired. Check your order status before retrying.')
+        if session.livemode or session.currency != 'gbp' or session.amount_total != int(order.total * 100) or session.metadata['order_id'] != str(order.public_id):
+            raise ValidationError('Payment session does not match the order total.')
+        if session.url:
+            # A previously created hosted Session must finish through its original flow.
+            return {'payment_url': session.url, 'test_mode': True}
+        return {'client_secret': session.client_secret, 'publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+                'order_id': str(order.public_id), 'test_mode': True}
     return session.url
+
+
+def validate_elements_config():
+    if not settings.STRIPE_PUBLISHABLE_KEY.startswith('pk_test_'):
+        raise ValidationError('Stripe test publishable key is not configured.')
+
+
+def payment_data(order):
+    if order.payment_status in ('paid', 'refunded'):
+        return {'payment_url': f'/track-order/?order={order.public_id}', 'test_mode': True}
+    result = create_session(order, embedded=order.payment_method == 'stripe')
+    return result if isinstance(result, dict) else {'payment_url': result, 'test_mode': True}
+
+
+def reconcile(order):
+    payment = Payment.objects.get(order=order)
+    if order.payment_method == 'stripe' and payment.session_id and order.payment_status not in ('paid', 'refunded'):
+        session = client().v1.checkout.sessions.retrieve(payment.session_id)
+        data = session.to_dict()
+        if data.get('metadata', {}).get('order_id') != str(order.public_id):
+            raise ValidationError('Payment reference does not match this order.')
+        if session.payment_status == 'paid':
+            apply_event({'id': f'reconcile-{session.id}', 'type': 'checkout.session.completed',
+                         'livemode': session.livemode, 'data': {'object': data}})
+        elif session.status == 'expired':
+            apply_event({'id': f'expired-{session.id}', 'type': 'checkout.session.expired',
+                         'livemode': session.livemode, 'data': {'object': data}})
+    order.refresh_from_db()
+    return order
 
 
 @transaction.atomic
@@ -153,7 +204,7 @@ def apply_event(event):
     ProviderEvent.objects.get_or_create(event_id=event_id,defaults={'event_type':kind})
 
 
-def cancel_with_provider(order_id, reason='Cancellation requested'):
+def cancel_with_provider(order_id, reason='Cancellation requested', unpaid_only=False):
     order = Order.objects.get(pk=order_id)
     payment = Payment.objects.get(order=order)
     if order.fulfilment_status == 'cancelled':
@@ -168,9 +219,14 @@ def cancel_with_provider(order_id, reason='Cancellation requested'):
                 session = gateway.v1.checkout.sessions.retrieve(payment.session_id)
                 if session.status == 'open':
                     raise
+        if session.status == 'complete' and session.payment_status == 'unpaid' and order.payment_status != 'failed':
+            raise ValidationError('Payment is still processing. Wait for provider confirmation before cancelling.')
         if session.payment_status == 'paid':
             apply_event({'id':f'reconcile-{session.id}','type':'checkout.session.completed',
                          'livemode':False,'data':{'object':session.to_dict()}})
+    order.refresh_from_db()
+    if unpaid_only and order.payment_status in ('paid', 'refunded'):
+        raise ValidationError('This order has already been paid. Check your order before creating another payment.')
     return finalize_cancel(order_id,reason=reason)
 
 

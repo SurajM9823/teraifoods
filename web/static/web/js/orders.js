@@ -13,14 +13,44 @@
   };
   const notify = message => window.TeraiCatalog?.showToast('Order update',message,'info');
   const read = key => {try{return JSON.parse(sessionStorage.getItem(key)||'null');}catch{return null;}};
-  const store = (key,value) => sessionStorage.setItem(key,JSON.stringify(value));
+  const store = (key,value) => { try { sessionStorage.setItem(key,JSON.stringify(value)); } catch {} };
+  const customerId = () => {try{return String(JSON.parse(document.getElementById('checkout-customer-id')?.textContent||'""'));}catch{return '';}};
+  const customerEmail = () => {try{return JSON.parse(document.getElementById('checkout-customer-email')?.textContent||'""');}catch{return '';}};
+  const authenticated = () => document.getElementById('customer-authenticated')?.textContent==='true';
   const fields = [
     ['name','Full name','text',true],['email','Email address','email',true],['phone','UK contact number','tel',true],
     ['line1','House / street address','text',true],['line2','Address line 2','text',false],
     ['city','Town / city','text',true],['county','County','text',false],['postcode','UK postcode','text',true],
     ['instructions','Delivery instructions','text',false]
   ];
-  let contact=read('order-contact')||{}, pending=false;
+  const safeContact = value => Object.fromEntries([...fields.map(([key])=>key),'country'].map(key=>[key, typeof value?.[key]==='string'?value[key].slice(0,500):'']));
+  const owner = () => authenticated() ? 'account:'+customerId() : 'guest';
+  const browserContact = () => {try{const value=JSON.parse(localStorage.getItem('teraifood_uk_address'));return !authenticated() && value?.remember_checkout && value.expires_at>Date.now()?safeContact(value):{};}catch{return {};}};
+  let contact=read('order-contact-owner')===owner()?safeContact(read('order-contact')):browserContact(), pending=false;
+  let paymentFingerprint=null;
+  function persistContact() {
+    store('order-contact', safeContact(contact));store('order-contact-owner',owner());
+    const remember=document.getElementById('remember-checkout');
+    if(!authenticated() && remember?.checked) {
+      try {localStorage.setItem('teraifood_uk_address',JSON.stringify({...safeContact(contact),remember_checkout:true,expires_at:Date.now()+30*86400000}));}catch{notify('Browser storage is unavailable. Your details can still be used for this checkout.');}
+    }
+  }
+  function fillContact(values) {
+    contact=safeContact(values);
+    for(const [key]of fields){const input=document.querySelector(`#order-contact-form [name="${key}"]`);if(input)input.value=contact[key]||'';}
+    syncContact();
+  }
+  function resetPayment() { paymentFingerprint=null;window.TeraiEmbeddedPayment?.reset(); }
+  function hasPendingCheckout() {
+    const form=document.getElementById('order-contact-form');
+    const address=form?readContact(form):contact;
+    const body={...checkoutBody(),email:address.email,address};
+    return !!read('pending-order')?.id && read('checkout-attempt')?.fingerprint===JSON.stringify(body);
+  }
+  function checkoutBody() {
+    const selected=window.TeraiCatalog?.selectedItems?.()||[];
+    return {voucher_code:voucherPayload().voucher_code||'',email:contact.email,address:contact,items:selected.map(i=>({product_id:Number(i.id),quantity:Number(i.quantity)}))};
+  }
   const voucherPayload=()=>read('checkout-voucher')||{};
 
   function checkUKPhone(phoneStr) {
@@ -225,7 +255,7 @@
     const postcodeInput = root?.querySelector('[name=postcode]');
     if (postcodeInput) postcodeInput.value = postcodeRes.formatted;
 
-    store('order-contact',contact);
+    persistContact();
     syncContact();
     return true;
   }
@@ -234,7 +264,7 @@
       'display-recipient-name':contact.name,'display-recipient-phone':contact.phone,'display-address-full':[contact.line1,contact.line2,contact.city,contact.postcode].filter(Boolean).join(', '),'display-address-landmark':contact.instructions,'display-invoice-email':contact.email};
     for(const [id,value] of Object.entries(values)){const node=document.getElementById(id);if(node)node.textContent=value||'Enter delivery details';}
   }
-  async function checkout() {
+  async function checkout(prepareOnly=false) {
     if(pending) return;
     const params=new URLSearchParams(location.search);
     if(params.get('demo')==='1' && params.get('order')) {
@@ -245,32 +275,94 @@
       }catch(error){notify(error.message);}finally{pending=false;}
       return;
     }
-    if(!addressValid()) {window.TeraiCatalog?.openCheckout();return;}
+    const retryOrder=params.get('order');
+    if(retryOrder && location.pathname.includes('/payment/')) {
+      pending=true;
+      try {
+        if(window.TeraiEmbeddedPayment?.ready){if(!prepareOnly)await window.TeraiEmbeddedPayment.confirm();return;}
+        const result=await api(`/api/orders/${encodeURIComponent(retryOrder)}/payment/`,{});
+        await showPayment(result, document.getElementById('panel-card'));
+      }catch(error){paymentError(error);}finally{pending=false;}
+      return;
+    }
+    if(!addressValid()) {if(!prepareOnly)window.TeraiCatalog?.openCheckout();return;}
     const selected=window.TeraiCatalog?.selectedItems?.()||[];
     if(!selected.length){notify('Your basket is empty.');return;}
-    const body={voucher_code:voucherPayload().voucher_code||'',email:contact.email,address:contact,items:selected.map(i=>({product_id:Number(i.id),quantity:Number(i.quantity)}))};
+    const body=checkoutBody();
     const fingerprint=JSON.stringify(body);
-    let attempt=read('checkout-attempt');
-    if(!attempt || attempt.fingerprint!==fingerprint) {
-      attempt={fingerprint,key:crypto.randomUUID()};store('checkout-attempt',attempt);
+    if(paymentFingerprint===fingerprint && window.TeraiEmbeddedPayment?.ready) {
+      if(!prepareOnly)await window.TeraiEmbeddedPayment.confirm();
+      return;
     }
     pending=true;
     try {
-      const response=await fetch('/api/orders/checkout/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf(),'Idempotency-Key':attempt.key},body:JSON.stringify(body)});
-      const result=await response.json();
-      if(!response.ok) throw new Error(result.errors?.join(' ')||'Unable to start payment.');
+      let attempt=read('checkout-attempt');
+      if(attempt && attempt.fingerprint!==fingerprint) {
+        const previous=read('pending-order');
+        if(previous?.id)await api(`/api/orders/${previous.id}/action/`,{action:'replace_payment'});
+        sessionStorage.removeItem('pending-order');
+        attempt=null;
+      }
+      if(!attempt){attempt={fingerprint,key:crypto.randomUUID()};store('checkout-attempt',attempt);}
+      let result;
+      const existing=read('pending-order');
+      if(existing?.id && hasPendingCheckout()) {
+        result=await api(`/api/orders/${existing.id}/payment/`,{});
+      } else {
+        const response=await fetch('/api/orders/checkout/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf(),'Idempotency-Key':attempt.key},body:JSON.stringify(body)});
+        result=await response.json();
+        if(!response.ok) throw new Error(result.errors?.join(' ')||'Unable to start payment.');
+      }
       store('pending-order',{id:result.order.id,items:body.items});
-      location.assign(result.payment_url);
-    }catch(error){notify(error.message);}finally{pending=false;}
+      const current=readContact(document.getElementById('order-contact-form'));
+      if(JSON.stringify(current)!==JSON.stringify(body.address) || JSON.stringify(checkoutBody())!==fingerprint) {
+        throw new Error('Checkout details changed. Review your details and reopen payment.');
+      }
+      await showPayment(result, location.pathname.includes('/payment/')?document.getElementById('panel-card'):document.getElementById('drawer-card-box'));
+      paymentFingerprint=fingerprint;
+    }catch(error){paymentError(error);}finally{pending=false;}
   }
-  window.TeraiOrders={checkout,addressValid,api,voucherPayload,checkUKPostcode,checkUKPhone};
+  function paymentError(error) {
+    notify(error.message);
+    const root=location.pathname.includes('/payment/')?document.getElementById('panel-card'):document.getElementById('drawer-card-box');
+    if(root && !window.TeraiEmbeddedPayment?.ready){root.replaceChildren();const text=document.createElement('p');text.setAttribute('role','alert');text.textContent=error.message;root.append(text);const retry=document.createElement('button');retry.type='button';retry.className='btn-track-action';retry.textContent='Retry loading payment';retry.onclick=()=>checkout(true);root.append(retry);if(/expired|complete|cancelled|no longer payable/i.test(error.message)){const restart=document.createElement('button');restart.type='button';restart.className='btn-track-action';restart.textContent='Start a new checkout';restart.onclick=async()=>{try{const previous=read('pending-order');const restartId=location.pathname.includes('/payment/')?new URLSearchParams(location.search).get('order'):previous?.id;if(restartId)await api(`/api/orders/${restartId}/action/`,{action:'replace_payment'});sessionStorage.removeItem('checkout-attempt');sessionStorage.removeItem('pending-order');resetPayment();if(location.pathname.includes('/payment/'))location.assign('/cart/');else checkout(true);}catch(e){notify(e.message);}};root.append(restart);}}
+  }
+  async function showPayment(result, root) {
+    if(result.payment_url){location.assign(result.payment_url);return;}
+    if(!root)throw new Error('Open checkout to continue payment.');
+    await window.TeraiEmbeddedPayment.mount(root,result);
+    for(const [id,value] of Object.entries({'drawer-step3-shipping':result.order.delivery_charge,'drawer-step3-total':result.order.total})){const el=document.getElementById(id);if(el)el.textContent='GBP '+value;}
+    for(const id of ['btn-drawer-confirm-pay','btn-final-pay']){const button=document.getElementById(id);if(button)button.textContent='Confirm & Pay';}
+    if(location.pathname.includes('/payment/')) {
+      document.querySelectorAll('.summary-total-amount,.payment-summary-card .summary-line-val').forEach(el=>el.textContent='GBP '+result.order.total);
+    }
+  }
+  window.TeraiOrders={checkout,addressValid,syncContact,hasPendingCheckout,api,voucherPayload,checkUKPostcode,checkUKPhone};
 
   function configureCheckout() {
     const edit=document.getElementById('checkout-address-edit-view');
     if(edit && !document.getElementById('order-contact-form')) {
-      edit.innerHTML=`<form id="order-contact-form">${contactForm('checkout',contact)}<button class="checkout-save-addr-btn" type="submit">Save Address</button></form>`;
+      edit.innerHTML=`<form id="order-contact-form">${contactForm('checkout',contact)}<label class="d-block text-12 mb-2"><input type="checkbox" id="remember-checkout"> <span id="remember-checkout-label">${authenticated()?'Save this address to my account':'Remember delivery details in this browser for 30 days'}</span></label><button class="checkout-save-addr-btn" type="submit">Save Address</button> <button type="button" class="btn-track-action" id="clear-checkout-details">Clear saved checkout details</button></form>`;
       edit.style.display='block';
-      edit.querySelector('form').addEventListener('submit',e=>{e.preventDefault();if(addressValid())notify('Delivery details saved for checkout.');});
+      edit.querySelector('form').addEventListener('submit',async e=>{
+        e.preventDefault();if(!addressValid())return;
+        try {
+          if(authenticated() && document.getElementById('remember-checkout').checked){
+            const selected=document.getElementById('checkout-saved-address')?.value;
+            await api('/api/orders/addresses/'+(selected?selected+'/':''),{...contact,is_default:!selected},selected?'PATCH':'POST');
+            await addresses();
+          }
+          notify('Delivery details saved for checkout.');
+        }catch(error){notify(error.message);}
+      });
+      const remember=edit.querySelector('#remember-checkout');
+      remember.checked=!authenticated() && !!browserContact().line1;
+      remember.onchange=()=>{if(!remember.checked && !authenticated()){try{localStorage.removeItem('teraifood_uk_address');}catch{}}};
+      edit.querySelector('#clear-checkout-details').onclick=()=>{
+        try{localStorage.removeItem('teraifood_uk_address');sessionStorage.removeItem('order-contact');sessionStorage.removeItem('order-contact-owner');}catch{}
+        fillContact({});remember.checked=false;resetPayment();notify('Saved browser checkout details cleared. Account addresses can be removed with Delete saved address.');
+      };
+      edit.querySelector('form').addEventListener('input',()=>resetPayment());
       
       const phoneInput = edit.querySelector('[name=phone]');
       const phoneFeedback = edit.querySelector('#checkout-phone-feedback');
@@ -316,21 +408,22 @@
 
       setupPostcodeLiveValidation(edit, 'checkout');
     }
-    // Collection is hosted by Stripe; this site never reads a PAN or CVC.
+    // Only Stripe-hosted Elements collect payment details.
     const cardBox=document.getElementById('drawer-card-box');
-    if(cardBox) cardBox.innerHTML=document.getElementById('order-demo-payments')?.textContent==='true' ? '<p>Local demo checkout: no card details or real charges. Confirm the simulated payment on the next screen.</p>' : '<p>Continue to Stripe secure checkout to enter your test card details.</p>';
+    if(cardBox) cardBox.innerHTML=document.getElementById('order-demo-payments')?.textContent==='true' ? '<p>Local demo checkout: no card details or real charges. Confirm the simulated payment on the next screen.</p>' : '<p>Secure payment details will appear here. Available methods are provided by Stripe.</p>';
     document.querySelectorAll('.cart-drawer-payment-tile').forEach(tile=>{
       if(tile.dataset.payment!=='card') {tile.hidden=true;tile.querySelectorAll('input').forEach(i=>i.disabled=true);}
     });
     const standalone=document.getElementById('panel-card');
     if(standalone) standalone.innerHTML='<div class="payment-panel-header"><h3>Secure card payment</h3><p>Card details are collected by Stripe. Use a Stripe test card.</p></div>';
-    if (!document.body.classList.contains('terai-payment-page') && !location.pathname.includes('/payment/')) {
+    {
       document.querySelectorAll('.payment-tile-card').forEach(tile=>{
         if(tile.dataset.method!=='card') {tile.hidden=true;tile.setAttribute('aria-disabled','true');}
       });
     }
     syncContact();
     const params=new URLSearchParams(location.search);
+    if(location.pathname.includes('/payment/') && params.get('order') && params.get('demo')!=='1')checkout(true);
     if(params.get('demo')==='1' && params.get('order')) {
       api(`/api/orders/${encodeURIComponent(params.get('order'))}/`).then(order=>{
         if(order.payment_method!=='demo')throw new Error('This order is not a demo payment.');
@@ -364,7 +457,7 @@
       if(!isCheckoutPage && e.target.closest('#btn-proceed-pay, #edit-address-btn, #edit-invoice-btn, #btn-edit-invoice-info')) {
         e.preventDefault();e.stopImmediatePropagation();window.TeraiCatalog?.openCheckout();
       }
-      if(e.target.closest('#confirm-pay-btn')){e.preventDefault();e.stopImmediatePropagation();checkout();}
+      if(e.target.closest('#confirm-pay-btn, #btn-final-pay')){e.preventDefault();e.stopImmediatePropagation();checkout();}
     },true);
     const cart=window.TeraiCatalog?.getCart()||[];
     if(cart.length) window.dispatchEvent(new CustomEvent('delivery:request',{detail:cart}));
@@ -374,7 +467,7 @@
     const q=e.detail.quote;
     const cardBox=document.getElementById('drawer-card-box');
     const confirm=document.getElementById('btn-drawer-confirm-pay');
-    if(cardBox && confirm){
+    if(cardBox && confirm && !window.TeraiEmbeddedPayment?.ready && !pending){
       const covered=q && Number(q.total)===0 && Number(q.voucher_applied)>0;
       if(!cardBox.dataset.standardText)cardBox.dataset.standardText=cardBox.innerHTML;
       if(!confirm.dataset.standardText)confirm.dataset.standardText=confirm.innerHTML;
@@ -492,12 +585,22 @@
     if(document.getElementById('customer-authenticated')?.textContent!=='true')return;
     let data;
     try{data=await api('/api/orders/addresses/');}catch{return;}
+    const identity=document.getElementById('checkout-customer-id');if(identity)identity.textContent=JSON.stringify(data.customer_id);
+    const emailNode=document.getElementById('checkout-customer-email');if(emailNode)emailNode.textContent=JSON.stringify(data.email);
     const edit=document.getElementById('order-contact-form');
-    if(edit && data.addresses.length) {
-      const select=document.createElement('select');select.className='form-control';select.setAttribute('aria-label','Saved delivery address');
-      select.innerHTML='<option value="">Choose a saved address</option>'+data.addresses.map(a=>`<option value="${a.id}">${esc(a.line1+', '+a.postcode)}</option>`).join('');
-      select.onchange=()=>{const a=data.addresses.find(a=>String(a.id)===select.value);if(!a)return;contact={...a,email:contact.email||''};for(const [key]of fields){const input=edit.querySelector(`[name="${key}"]`);if(input)input.value=contact[key]||'';}syncContact();};
-      edit.prepend(select);
+    if(edit) {
+      const previous=document.getElementById('checkout-saved-address')?.value||'';
+      document.getElementById('checkout-address-controls')?.remove();
+      const controls=document.createElement('div');controls.id='checkout-address-controls';
+      controls.innerHTML='<select id="checkout-saved-address" class="form-control mb-2" aria-label="Saved delivery address"><option value="">New delivery address</option>'+data.addresses.map(a=>`<option value="${a.id}">${esc(a.line1+', '+a.postcode)}</option>`).join('')+'</select><button type="button" class="btn-track-action" id="delete-checkout-address">Delete saved address</button>';
+      edit.prepend(controls);
+      const select=controls.querySelector('select');select.value=previous;
+      select.onchange=()=>{const a=data.addresses.find(a=>String(a.id)===select.value);if(a){fillContact({...a,email:customerEmail()||contact.email});persistContact();resetPayment();}};
+      if(!contact.line1){const defaultAddress=data.addresses.find(a=>a.is_default);if(defaultAddress){select.value=defaultAddress.id;select.onchange();}else if(!contact.email){fillContact({...contact,email:customerEmail()});}}
+      controls.querySelector('button').onclick=async()=>{
+        if(!select.value || !confirm('Delete this saved address?'))return;
+        try{await api(`/api/orders/addresses/${select.value}/`,{},'DELETE');fillContact({email:customerEmail()});persistContact();resetPayment();await addresses();}catch(error){notify(error.message);}
+      };
     }
     const pane=document.getElementById('pane-address');if(!pane)return;
     const body=pane.querySelector('.account-card-body');if(!body)return;
@@ -547,6 +650,7 @@
     }catch{container.textContent='Unable to load order updates.';}
   }
   const ready=()=>{configureCheckout();tracking();addresses();reviews();notifications();setInterval(()=>{if(!document.hidden)notifications();},30000);};
-  window.addEventListener('orders:authenticated',()=>{addresses();notifications();});
+  window.addEventListener('orders:authenticated',()=>{fillContact({});persistContact();resetPayment();const label=document.getElementById('remember-checkout-label');if(label)label.textContent='Save this address to my account';const remember=document.getElementById('remember-checkout');if(remember)remember.checked=false;addresses();notifications();});
+  window.addEventListener('checkout:payment-step',()=>{if(document.getElementById('order-demo-payments')?.textContent!=='true')checkout(true);});
   if(document.readyState!=='complete')document.addEventListener('DOMContentLoaded',ready);else ready();
 })();

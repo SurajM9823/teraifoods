@@ -37,6 +37,7 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       throw new Error('Timed out: '+expression);
     };
     await page('Page.enable');
+    if(process.env.STRIPE_ELEMENT_STUB==='1')await page('Page.addScriptToEvaluateOnNewDocument',{source:require('./stripe_element_stub.cjs')});
     if(process.env.BULK_BROWSER_FLOW==='1') {
       await page('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
       await page('Page.navigate',{url:base+'/bulk-order/'});
@@ -143,6 +144,14 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       const contact={name:'Browser Guest',email:'browser@example.com',phone:'07700900123',line1:'1 Test Street',city:'London',postcode:'SW1A 1AA'};
       await evaluate(`Object.entries(${JSON.stringify(contact)}).forEach(([key,value])=>document.querySelector('#order-contact-form [name="'+key+'"]').value=value);document.getElementById('btn-proceed-to-pay').click();`);
       await until("document.getElementById('drawer-pane-3').classList.contains('active')");
+      if(process.env.STRIPE_ELEMENT_STUB==='1') {
+        await until("window.TeraiEmbeddedPayment?.ready");
+        assert.equal(await evaluate("!!document.getElementById('drawer-card-num')"),false);
+        await evaluate("document.getElementById('form-drawer-payment').requestSubmit()");
+        await until("document.querySelector('[data-stripe-message]')?.textContent.includes('Test decline')");
+        assert.equal(await evaluate("location.pathname"),'/shop/');
+        assert.equal(await evaluate("Object.values(sessionStorage).some(v=>v.includes('cs_browser_test_secret')) || Object.values(localStorage).some(v=>v.includes('cs_browser_test_secret'))"),false);
+      }
       await evaluate("document.getElementById('form-drawer-payment').requestSubmit()");
       if(process.env.ORDER_BROWSER_DEMO==='1') {
         await until("location.pathname==='/payment/' && document.getElementById('btn-final-pay')?.textContent.includes('Confirm demo payment')");

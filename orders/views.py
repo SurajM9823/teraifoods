@@ -36,7 +36,16 @@ def api(view):
         except (ValueError,TypeError,KeyError):
             return JsonResponse({'errors':['Invalid request.']},status=400)
         except stripe.StripeError:
-            return JsonResponse({'errors':['Payment provider temporarily unavailable. Retry with the same checkout key.']},status=503)
+            response = JsonResponse({'errors':['Payment provider temporarily unavailable. Retry with the same checkout key.']},status=503)
+            # Django skips session persistence on 5xx responses. Preserve the guest
+            # checkout scope/grant so a provider outage cannot create another order.
+            if request.session.modified:
+                request.session.save()
+                response.set_cookie(settings.SESSION_COOKIE_NAME, request.session.session_key,
+                    max_age=request.session.get_expiry_age(), path=settings.SESSION_COOKIE_PATH,
+                    domain=settings.SESSION_COOKIE_DOMAIN, secure=settings.SESSION_COOKIE_SECURE,
+                    httponly=settings.SESSION_COOKIE_HTTPONLY, samesite=settings.SESSION_COOKIE_SAMESITE)
+            return response
     return wrapped
 
 
@@ -95,9 +104,23 @@ def checkout(request):
         order = services.create_order(request.user,scope,payload(request),request.headers.get('Idempotency-Key',''))
         if order.total and order.payment_method=='stripe':
             payments.client()
+            payments.validate_elements_config()
     services.grant_access(request.session,order)
-    url = payments.create_session(order)
-    return JsonResponse({'order':order_data(order),'payment_url':url,'test_mode':True},status=201)
+    payment = payments.payment_data(order)
+    return JsonResponse({'order':order_data(order), **payment},status=201)
+
+
+@api
+@require_POST
+def payment_details(request, public_id):
+    order = owned_order(request, public_id)
+    return JsonResponse({'order': order_data(order), **payments.payment_data(order)})
+
+
+@api
+@require_POST
+def payment_status(request, public_id):
+    return JsonResponse(order_data(payments.reconcile(owned_order(request, public_id))))
 
 
 @api
@@ -144,8 +167,14 @@ def action(request, public_id):
     elif data.get('action')=='return':
         services.request_return(order.pk,data.get('reason',''),actor,
             refund_preference=data.get('refund_preference','original'),bank_details=data.get('bank_details'))
+    elif data.get('action')=='replace_payment':
+        if order.fulfilment_status == 'cancelled' and order.payment_status not in ('paid', 'refunded'):
+            return JsonResponse(order_data(order))
+        if order.fulfilment_status != 'pending_payment' or order.payment_status in ('paid', 'refunded'):
+            raise ValidationError('Check your existing order before starting another payment.')
+        payments.cancel_with_provider(order.pk, reason='Checkout details changed.', unpaid_only=True)
     elif data.get('action')=='payment':
-        return JsonResponse({'payment_url':payments.create_session(order),'test_mode':True})
+        return JsonResponse({'payment_url':f'/payment/?order={order.public_id}', 'test_mode':True})
     elif data.get('action')=='support':
         services.support_message(order.pk,data.get('reason',''),actor)
     elif data.get('action')=='demo_payment':
@@ -177,10 +206,12 @@ def addresses(request, pk=None):
     if not request.user.is_authenticated:
         raise PermissionDenied
     if request.method=='GET':
-        return JsonResponse({'addresses':list(Address.objects.filter(customer=request.user).values())})
+        return JsonResponse({'addresses':list(Address.objects.filter(customer=request.user).values()), 'customer_id':request.user.pk, 'email':request.user.email})
     with transaction.atomic():
         from django.contrib.auth import get_user_model
         get_user_model().objects.select_for_update().get(pk=request.user.pk)
+        if request.method == 'PATCH' and not pk:
+            raise ValidationError('Select an address to edit.')
         instance = get_object_or_404(Address,pk=pk,customer=request.user) if pk else Address(customer=request.user)
         if request.method=='DELETE':
             if not pk:
@@ -189,6 +220,10 @@ def addresses(request, pk=None):
             return JsonResponse({'ok':True})
         data = payload(request)
         normalized = services.normalize_address(data)
+        if not pk:
+            existing = Address.objects.filter(customer=request.user, **normalized).first()
+            if existing:
+                instance = existing
         for key,value in normalized.items():
             setattr(instance,key,value)
         instance.is_default = data.get('is_default') is True

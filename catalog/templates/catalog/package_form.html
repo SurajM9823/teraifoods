@@ -1,27 +1,28 @@
-{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% extends 'catalog/base.html' %}
+{% load static %}
 {% block title %}{% if package.pk %}Edit Package: {{ package.product.name }}{% else %}Create Product Package{% endif %}{% endblock %}
-{% block breadcrumb %}<a href="{% url 'products:index' %}">Products</a> / Product Packages{% endblock %}
+{% block breadcrumb %}<a href="{% url 'products:index' %}">Products</a> / {% if package.pk %}Edit Package{% else %}New Package{% endif %}{% endblock %}
 
-{% block main_content %}
-<div class="product-edit-page">
+{% block category_content %}
+<div class="product-edit-page full-width-orders-page">
   <!-- Top Header Toolbar -->
-  <div class="product-header-toolbar">
+  <div class="product-header-toolbar" style="margin-bottom: 14px;">
     <div>
-      <h1 class="product-page-title">
-        {% if package.pk %}Edit Package: {{ package.product.name }}{% else %}Product Packages Management{% endif %}
-      </h1>
-      <p style="font-size: 11px; color: #64748b; margin-top: 2px;">
-        Curate bundles of store products that appear as promotional packages with special discount pricing on the storefront.
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <h2 style="font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.2;">
+          {% if package.pk %}Edit Package: {{ package.product.name }}{% else %}Create Product Package{% endif %}
+        </h2>
+        {% if package.slot %}
+          <span class="status-chip chip-live"><i class="fa fa-th-large"></i> Slot #{{ package.slot }}</span>
+        {% endif %}
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">
+        Promotional bundle displayed on homepage promo cards. Price &amp; stock sync automatically from bundled products.
       </p>
     </div>
     <div class="product-header-actions">
-      {% if package.pk %}
-        <a href="{% url 'package-new' %}" class="btn-action btn-outline">
-          <i class="fa fa-plus"></i> New Package
-        </a>
-      {% endif %}
       <a href="{% url 'products:index' %}" class="btn-action btn-outline">
-        <i class="fa fa-arrow-left"></i> Catalog Products
+        <i class="fa fa-arrow-left"></i> All Products
       </a>
       <button type="button" class="btn-action btn-primary" onclick="document.getElementById('package-main-form').requestSubmit();">
         <i class="fa fa-save"></i> Save Package
@@ -30,43 +31,42 @@
   </div>
 
   {% for message in messages %}
-    <div class="alert {% if 'error' in message.tags or 'danger' in message.tags %}alert-danger{% else %}alert-success{% endif %}"
-         style="padding: 10px 14px; margin-bottom: 14px; font-size: 12px; border-radius: 4px; {% if 'error' in message.tags or 'danger' in message.tags %}background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;{% else %}background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;{% endif %}">
-      <i class="fa {% if 'error' in message.tags or 'danger' in message.tags %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i> {{ message }}
+    <div class="alert alert-success" style="padding: 10px 14px; margin-bottom: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12.5px; border-radius: 6px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
     </div>
   {% endfor %}
 
-  <!-- Existing Packages Datatable -->
-  <div class="product-form-box" style="margin-bottom: 16px;">
-    <div class="form-section-divider">
-      <i class="fa fa-cubes"></i> Active Promotional Packages
+  <!-- Active Packages Quick Table -->
+  <div class="orders-table-card" style="margin-bottom: 18px;">
+    <div style="padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">
+      <i class="fa fa-th-large"></i> Configured Homepage Promo Packages (Slots 1, 2, 3)
     </div>
     <div class="category-table-wrap">
-      <table class="category-table">
+      <table class="category-table orders-full-table">
         <thead>
           <tr>
-            <th style="width: 100px;">Banner Slot</th>
-            <th>Package Name</th>
-            <th>Bundle Price</th>
-            <th>Effective Stock</th>
-            <th>Status</th>
-            <th style="width: 120px; text-align: right;">Action</th>
+            <th style="width: 12%;">Slot</th>
+            <th style="width: 38%;">Package Name &amp; Subtitle</th>
+            <th style="width: 14%;">Bundle Price</th>
+            <th style="width: 16%;">Effective Stock</th>
+            <th style="width: 10%;">Status</th>
+            <th style="width: 10%; text-align: right;">Action</th>
           </tr>
         </thead>
         <tbody>
           {% for row in packages %}
             <tr {% if row.pk == package.pk %}style="background: #f0fdf4;"{% endif %}>
-              <td style="font-weight: 700;">Slot #{{ row.slot }}</td>
+              <td style="font-weight: 700; color: #1547A8;">Slot #{{ row.slot }}</td>
               <td>
-                <a href="{% url 'package-edit' row.pk %}" style="color: #1547A8; font-weight: 700;">
+                <a href="{% url 'package-edit' row.pk %}" style="color: #0f172a; font-weight: 700; text-decoration: none;">
                   {{ row.product.name }}
                 </a>
                 {% if row.subtitle %}
-                  <div style="font-size: 11px; color: #64748b;">{{ row.subtitle }}</div>
+                  <div style="font-size: 11.5px; color: #64748b;">{{ row.subtitle }}</div>
                 {% endif %}
               </td>
-              <td style="font-weight: 700; color: #16a34a;">£{{ row.product.price }}</td>
-              <td>{{ row.product.effective_stock }} units available</td>
+              <td style="font-weight: 700; color: #16a34a; font-size: 13.5px;">£{{ row.product.price }}</td>
+              <td style="color: #334155;">{{ row.product.effective_stock }} units available</td>
               <td>
                 {% if row.product.is_published %}
                   <span class="status-chip chip-live">Published</span>
@@ -76,13 +76,13 @@
               </td>
               <td style="text-align: right;">
                 <a href="{% url 'package-edit' row.pk %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
-                  <i class="fa fa-pencil"></i> Edit Package
+                  <i class="fa fa-pencil"></i> Edit
                 </a>
               </td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="6" style="text-align: center; color: #94a3b8; padding: 16px;">
+              <td colspan="6" style="text-align: center; color: #94a3b8; padding: 18px;">
                 No product packages configured yet. Use the form below to create your first package.
               </td>
             </tr>
@@ -94,7 +94,7 @@
 
   <!-- Form Errors -->
   {% if product_form.errors or form.errors or items.errors %}
-    <div class="form-banner-errors" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px; margin-bottom: 16px; font-size: 12px; border-radius: 4px;">
+    <div class="form-banner-errors" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px; margin-bottom: 16px; font-size: 12.5px; border-radius: 6px;">
       <strong style="display: block; margin-bottom: 6px;"><i class="fa fa-exclamation-circle"></i> Please resolve the following errors:</strong>
       <ul style="margin: 0 0 0 16px; padding: 0; line-height: 1.6;">
         {% for field in form %}{% for error in field.errors %}<li><strong>{{ field.label }}:</strong> {{ error }}</li>{% endfor %}{% endfor %}
@@ -109,9 +109,9 @@
   <!-- Package Builder Single Form Box -->
   <form method="post" id="package-main-form" class="product-form" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
-    <div class="product-form-box">
+    <div class="product-form-box" style="padding: 18px; border-radius: 8px;">
       <!-- Section 1: Identification & Slot -->
-      <div class="form-section-divider">
+      <div class="form-section-divider" style="margin-top: 0; padding-top: 0;">
         <i class="fa fa-tag"></i> 1. Package Name &amp; Slot Placement
       </div>
       <div class="grid-4-cols">
@@ -189,58 +189,71 @@
         </div>
       </div>
 
-      <!-- Section 3: Component Products -->
+      <!-- Section 3: Component Products in Package Bundle -->
       <div class="form-section-divider">
-        <i class="fa fa-list"></i> 3. Products in Package
+        <i class="fa fa-cubes"></i> 3. Products in Package Bundle
       </div>
-      <p style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
-        Select products and bundle quantity. Package inventory is automatically calculated from the minimum available item in stock.
+      <p style="font-size: 12px; color: #64748b; margin: 0 0 10px 0;">
+        Select products and bundle quantity. Package inventory is automatically calculated from the minimum available item in stock. (Products already selected in one row are automatically excluded from subsequent rows).
       </p>
 
       {{ items.management_form }}
-      <div id="package-items-container" class="grid-4-cols" style="gap: 8px; margin-bottom: 12px;">
-        {% for item_form in items %}
-          <div class="form-col col-span-2" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px;">
-            {{ item_form.id }}
-            <div style="display: flex; gap: 8px; align-items: flex-end;">
-              <div style="flex: 2;">
-                <label class="form-label" style="margin-bottom: 2px;"><span>Product</span></label>
+
+      <div class="package-items-wrapper" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
+        <!-- Clean Column Header Row -->
+        <div class="package-item-header" style="display: grid; grid-template-columns: 1fr 140px 100px; gap: 12px; background: #f8fafc; padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">
+          <div>Product Specification <span class="req">*</span></div>
+          <div style="text-align: center;">Bundle Qty <span class="req">*</span></div>
+          <div style="text-align: right;">Action</div>
+        </div>
+
+        <!-- Horizontal Item Rows -->
+        <div id="package-items-container">
+          {% for item_form in items %}
+            <div class="package-item-row" style="display: grid; grid-template-columns: 1fr 140px 100px; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid #f1f5f9; background: #fff;">
+              {{ item_form.id }}
+              <div>
                 {{ item_form.product }}
+                {% if item_form.product.errors %}<div class="field-error" style="font-size: 11px; color: #dc2626; margin-top: 2px;">{{ item_form.product.errors }}</div>{% endif %}
               </div>
-              <div style="flex: 1;">
-                <label class="form-label" style="margin-bottom: 2px;"><span>Qty</span></label>
+              <div>
                 {{ item_form.quantity }}
+                {% if item_form.quantity.errors %}<div class="field-error" style="font-size: 11px; color: #dc2626; margin-top: 2px;">{{ item_form.quantity.errors }}</div>{% endif %}
               </div>
-              {% if item_form.instance.pk %}
-                <div style="padding-bottom: 6px;">
-                  <label style="font-size: 10px; color: #dc2626; cursor: pointer;">
-                    {{ item_form.DELETE }} Remove
+              <div style="text-align: right;">
+                {% if item_form.instance.pk %}
+                  <label style="font-size: 11.5px; color: #dc2626; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                    {{ item_form.DELETE }} <span>Remove</span>
                   </label>
-                </div>
-              {% endif %}
+                {% else %}
+                  <button type="button" class="btn-action btn-outline btn-remove-row" style="color: #dc2626; border-color: #fecaca; padding: 4px 10px; font-size: 11px;" onclick="removePackageRow(this)">
+                    <i class="fa fa-trash-o"></i> Remove
+                  </button>
+                {% endif %}
+              </div>
             </div>
-            {% if item_form.errors %}<div class="field-error" style="margin-top: 4px;">{{ item_form.errors }}</div>{% endif %}
-          </div>
-        {% endfor %}
+          {% endfor %}
+        </div>
       </div>
 
       <template id="package-empty-tpl">
-        <div class="form-col col-span-2" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px;">
-          <div style="display: flex; gap: 8px; align-items: flex-end;">
-            <div style="flex: 2;">
-              <label class="form-label" style="margin-bottom: 2px;"><span>Product</span></label>
-              {{ items.empty_form.product }}
-            </div>
-            <div style="flex: 1;">
-              <label class="form-label" style="margin-bottom: 2px;"><span>Qty</span></label>
-              {{ items.empty_form.quantity }}
-            </div>
+        <div class="package-item-row" style="display: grid; grid-template-columns: 1fr 140px 100px; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid #f1f5f9; background: #fff;">
+          <div>
+            {{ items.empty_form.product }}
+          </div>
+          <div>
+            {{ items.empty_form.quantity }}
+          </div>
+          <div style="text-align: right;">
+            <button type="button" class="btn-action btn-outline btn-remove-row" style="color: #dc2626; border-color: #fecaca; padding: 4px 10px; font-size: 11px;" onclick="removePackageRow(this)">
+              <i class="fa fa-trash-o"></i> Remove
+            </button>
           </div>
         </div>
       </template>
 
-      <button type="button" class="btn-action btn-outline" id="add-package-item-btn" style="margin-bottom: 16px;">
-        <i class="fa fa-plus"></i> Add Product Item to Package
+      <button type="button" class="btn-action btn-outline" id="add-package-item-btn" style="margin-bottom: 18px;">
+        <i class="fa fa-plus"></i> Add Another Product to Bundle
       </button>
 
       <!-- Section 4: Banner Artwork & Status -->
@@ -255,8 +268,9 @@
           {{ product_form.banner }}
           {% if product_form.banner.errors %}<div class="field-error">{{ product_form.banner.errors }}</div>{% endif %}
           {% if package.product.main_image %}
-            <div style="margin-top: 6px;">
-              <img src="{{ package.product.main_image.url }}" alt="" style="height: 80px; border: 1px solid #cbd5e1; object-fit: cover;">
+            <div style="margin-top: 8px;">
+              <span style="font-size: 11px; color: #64748b; display: block; margin-bottom: 4px;">Current Active Artwork:</span>
+              <img src="{{ package.product.main_image.url }}" alt="" style="height: 90px; border-radius: 4px; border: 1px solid #cbd5e1; object-fit: cover;">
             </div>
           {% endif %}
         </div>
@@ -281,6 +295,12 @@
           </label>
         </div>
       </div>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="submit" class="btn-action btn-primary" style="padding: 8px 20px; font-size: 13px;">
+          <i class="fa fa-save"></i> Save Package
+        </button>
+      </div>
     </div>
   </form>
 </div>
@@ -292,18 +312,108 @@
   const container = document.getElementById('package-items-container');
   const tpl = document.getElementById('package-empty-tpl');
 
-  if (addBtn && count && container && tpl) {
-    addBtn.addEventListener('click', () => {
-      const idx = Number(count.value);
-      if (idx >= 50) return;
-      const html = tpl.innerHTML.replaceAll('__prefix__', idx);
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      container.appendChild(div.firstElementChild);
-      count.value = idx + 1;
+  function updateProductOptions() {
+    if (!container) return;
+    const selects = Array.from(container.querySelectorAll('select[name$="-product"]'));
+
+    // 1. Gather all currently selected values (ignoring rows marked for DELETE)
+    const chosenValues = new Set();
+    selects.forEach(sel => {
+      const row = sel.closest('.package-item-row');
+      const delCheckbox = row ? row.querySelector('input[name$="-DELETE"]') : null;
+      if (delCheckbox && delCheckbox.checked) {
+        return;
+      }
+      const val = sel.value;
+      if (val) {
+        chosenValues.add(val);
+      }
+    });
+
+    // 2. Hide / disable already chosen products in OTHER rows
+    selects.forEach(sel => {
+      const currentVal = sel.value;
+      Array.from(sel.options).forEach(opt => {
+        if (!opt.value) return; // skip "Select a product..." placeholder
+        if (chosenValues.has(opt.value) && opt.value !== currentVal) {
+          opt.disabled = true;
+          opt.hidden = true;
+          opt.style.display = 'none';
+        } else {
+          opt.disabled = false;
+          opt.hidden = false;
+          opt.style.display = '';
+        }
+      });
     });
   }
 
+  // Row removal handler
+  window.removePackageRow = function(btn) {
+    const row = btn.closest('.package-item-row');
+    if (!row) return;
+    const visibleRows = container.querySelectorAll('.package-item-row');
+    if (visibleRows.length <= 1) {
+      alert('A bundle package must contain at least one product.');
+      return;
+    }
+    row.remove();
+    updateProductOptions();
+  };
+
+  // Add Row click handler
+  if (addBtn && count && container && tpl) {
+    addBtn.addEventListener('click', () => {
+      const idx = Number(count.value);
+      if (idx >= 50) {
+        alert('Maximum of 50 items allowed per package bundle.');
+        return;
+      }
+      const html = tpl.innerHTML.replaceAll('__prefix__', idx);
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      const newRow = div.firstElementChild;
+      container.appendChild(newRow);
+      count.value = idx + 1;
+
+      // Attach change listener to new select
+      const newSelect = newRow.querySelector('select[name$="-product"]');
+      if (newSelect) {
+        newSelect.addEventListener('change', updateProductOptions);
+      }
+
+      updateProductOptions();
+    });
+  }
+
+  // Attach change listener to all initial selects
+  if (container) {
+    container.querySelectorAll('select[name$="-product"]').forEach(sel => {
+      sel.addEventListener('change', updateProductOptions);
+    });
+
+    // Listen to existing DELETE checkboxes
+    container.querySelectorAll('input[name$="-DELETE"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const row = cb.closest('.package-item-row');
+        if (row) {
+          if (cb.checked) {
+            row.style.opacity = '0.4';
+            row.style.background = '#fef2f2';
+          } else {
+            row.style.opacity = '1';
+            row.style.background = '#fff';
+          }
+        }
+        updateProductOptions();
+      });
+    });
+  }
+
+  // Run on initial load
+  updateProductOptions();
+
+  // Toggle card syncing
   ['is_published', 'is_active'].forEach(name => {
     const el = document.getElementById(`id_product-${name}`);
     const card = document.getElementById(`card_id_${name}`);

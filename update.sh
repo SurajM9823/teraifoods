@@ -32,9 +32,9 @@ echo 'Collecting static files and checking the application...'
 
 echo 'Updating Nginx configuration and media permissions...'
 install -m 644 deploy/native/teraifoods.nginx /etc/nginx/sites-available/teraifoods
-if [ -d /opt/teraifoods/media ]; then
-    chmod -R a+rX /opt/teraifoods/media
-fi
+mkdir -p /opt/teraifoods/media/products /opt/teraifoods/staticfiles
+chown -R teraifoods:teraifoods /opt/teraifoods/media /opt/teraifoods/staticfiles
+chmod -R u+rwX,g+rwX,a+rX /opt/teraifoods/media /opt/teraifoods/staticfiles
 nginx -t
 
 echo 'Restarting project services...'

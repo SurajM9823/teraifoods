@@ -902,43 +902,9 @@
 						<div class="payment-form-card">
 
 							<!-- PANEL 1: Credit / Debit Card -->
-							<div class="payment-detail-panel is-visible" id="panel-card">
-								<div class="form-card-title">
-									<span>Credit or Debit Card</span>
-									<div class="d-flex gap-2">
-										<span class="badge border bg-light text-dark font-monospace text-11">VISA</span>
-										<span class="badge border bg-light text-dark font-monospace text-11">MASTERCARD</span>
-										<span class="badge border bg-light text-dark font-monospace text-11">AMEX</span>
-									</div>
-								</div>
-								<p class="text-12 text-gray-600 mb-3">Pay securely with your credit or debit card via encrypted 256-bit SSL checkout.</p>
-								<form id="card-payment-form" onsubmit="event.preventDefault(); window.submitPayment();">
-									<div class="row g-2 mb-2">
-										<div class="col-12">
-											<label class="pay-form-label-compact">Cardholder Name *</label>
-											<input type="text" class="pay-form-input-compact" id="pay-card-name" placeholder="Full name as printed on card" required value="Suraj Mahato">
-										</div>
-										<div class="col-12">
-											<label class="pay-form-label-compact">Card Number *</label>
-											<input type="text" class="pay-form-input-compact" id="pay-card-num" placeholder="4xxx xxxx xxxx xxxx" required value="4532 8920 1284 9912">
-										</div>
-										<div class="col-6">
-											<label class="pay-form-label-compact">Expiry Date *</label>
-											<input type="text" class="pay-form-input-compact" id="pay-card-exp" placeholder="MM/YY" required value="12/28">
-										</div>
-										<div class="col-6">
-											<label class="pay-form-label-compact">CVV / CVC *</label>
-											<input type="password" class="pay-form-input-compact" id="pay-card-cvv" placeholder="123" maxlength="4" required value="892">
-										</div>
-									</div>
-									<div class="form-check text-11 text-muted mb-3">
-										<input class="form-check-input" type="checkbox" id="save-card-check" checked>
-										<label class="form-check-label" for="save-card-check">Save card securely for 1-click future orders</label>
-									</div>
-								</form>
-							</div>
+							<div class="payment-detail-panel is-visible" id="panel-card"><p>Secure payment details will appear here.</p></div>
 
-							<!-- PANEL 2: Apple Pay / GPay -->
+                            <!-- PANEL 2: Apple Pay / GPay -->
 							<div class="payment-detail-panel" id="panel-applepay">
 								<div class="form-card-title">
 									<span>Instant UK Mobile Payment</span>
@@ -1418,7 +1384,7 @@
 			renderDeliverySummary();
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=overlay-lifecycle-v6"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=elements-v1"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 
