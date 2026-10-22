@@ -25,23 +25,7 @@
 
     const closeDrawer = () => {
       clearButtons();
-      if (activeDrawer) {
-        const anim = drawers.get(activeDrawer);
-        if (anim && typeof anim.reverse === 'function') {
-          anim.reverse();
-        } else if (activeDrawer) {
-          activeDrawer.classList.remove('is-active', 'active');
-          activeDrawer.style.visibility = 'hidden';
-          activeDrawer.style.opacity = '0';
-          const inner = activeDrawer.querySelector('.site-drawer-inner');
-          if (inner) inner.style.transform = '';
-          const overlay = activeDrawer.querySelector('.site-drawer-overlay');
-          if (overlay) {
-            overlay.style.opacity = '0';
-            overlay.style.visibility = 'hidden';
-          }
-        }
-      }
+      drawers.forEach(controller => controller.reverse());
       activeDrawer = null;
     };
 
@@ -50,37 +34,20 @@
       const inner = item.querySelector('.site-drawer-inner');
       const overlay = item.querySelector('.site-drawer-overlay');
 
-      if (window.gsap && typeof gsap.timeline === 'function') {
-        const timeline = gsap.timeline({ paused: true });
-        timeline.fromTo(item, 0.1, { autoAlpha: 0 }, { autoAlpha: 1 })
-          .to(inner, 0.45, { x: 0, ease: 'power4.inOut' }, 0)
-          .to(overlay, 0.45, { autoAlpha: 1, ease: 'power4.inOut' }, 0);
-        drawers.set(item, timeline);
-      } else {
-        // Fallback matching GSAP play/reverse API
-        drawers.set(item, {
-          play: () => {
-            item.classList.add('is-active', 'active');
-            item.style.visibility = 'visible';
-            item.style.opacity = '1';
-            if (inner) inner.style.transform = 'translateX(0)';
-            if (overlay) {
-              overlay.style.visibility = 'visible';
-              overlay.style.opacity = '1';
-            }
-          },
-          reverse: () => {
-            item.classList.remove('is-active', 'active');
-            item.style.visibility = 'hidden';
-            item.style.opacity = '0';
-            if (inner) inner.style.transform = '';
-            if (overlay) {
-              overlay.style.opacity = '0';
-              overlay.style.visibility = 'hidden';
-            }
-          }
-        });
-      }
+      // CSS owns transitions. No second animation may restore an invisible backdrop.
+      drawers.set(item, {
+        play: () => {
+          item.classList.add('is-active');
+          item.setAttribute('aria-hidden', 'false');
+          item.inert = false;
+        },
+        reverse: () => {
+          item.classList.remove('is-active', 'active');
+          item.setAttribute('aria-hidden', 'true');
+          item.inert = true;
+        }
+      });
+      drawers.get(item).reverse();
 
       // Close on inner close button and backdrop click
       item.querySelectorAll('.close-button, .close-button a, .site-drawer-close, .site-drawer-overlay').forEach(closeEl => {
@@ -110,7 +77,8 @@
     }
 
     // Register all initial drawers in the DOM
-    document.querySelectorAll('.site-drawer').forEach(registerDrawer);
+    document.querySelectorAll('.site-menu-drawer, .site-categories-drawer, .site-search-drawer').forEach(registerDrawer);
+    window.teraiCloseNavigationDrawers = closeDrawer;
 
     // Global delegated click listener for any trigger button
     document.addEventListener('click', event => {
@@ -176,6 +144,9 @@
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') closeDrawer();
     });
+
+    window.addEventListener('pagehide', closeDrawer);
+    window.matchMedia('(min-width: 1200px)').addEventListener('change', closeDrawer);
 
     // Reset when page is restored from bfcache
     window.addEventListener('pageshow', event => {

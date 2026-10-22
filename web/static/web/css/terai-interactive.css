@@ -7072,3 +7072,11 @@ a.klbwl-btn::after,
   transform: translateX(3px) !important;
 }
 
+
+/* Closed panels must stop hit-testing immediately, even during their exit transition. */
+.cart-widget-side:not(.open),
+.cart-widget-side:not(.open) *,
+.site-drawer[inert],
+.site-drawer[inert] * {
+  pointer-events: none !important;
+}

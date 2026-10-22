@@ -116,7 +116,7 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       await evaluate("document.getElementById('checkout-button').click()");
       await until("document.getElementById('terai-account-dialog')?.open");
       assert.equal(await evaluate("document.getElementById('drawer-pane-2').classList.contains('active')"),false);
-      assert.equal(await evaluate("getComputedStyle(document.getElementById('continue-as-guest')).display"),'inline-flex');
+      await until("!!document.querySelector('#terai-account-dialog iframe')?.contentDocument?.getElementById('btn-continue-as-guest')");
       await page('Page.navigate',{url:base+'/shop/'});
       await until('!!window.TeraiCatalog?.getCart');
     }
@@ -135,8 +135,8 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       await evaluate(`window.TeraiCatalog.saveCart(${JSON.stringify([grams])});window.TeraiCatalog.openSideCart(1);document.getElementById("btn-drawer-proceed-checkout").click();`);
       await until("document.getElementById('terai-account-dialog')?.open");
       assert.equal(await evaluate("document.getElementById('drawer-pane-2').classList.contains('active')"),false);
-      assert.equal(await evaluate("document.getElementById('continue-as-guest').hidden"),false);
-      await evaluate("document.getElementById('continue-as-guest').click()");
+      await until("!!document.querySelector('#terai-account-dialog iframe')?.contentDocument?.getElementById('btn-continue-as-guest')");
+      await evaluate("document.querySelector('#terai-account-dialog iframe').contentDocument.getElementById('btn-continue-as-guest').click()");
       await until("document.getElementById('drawer-pane-2').classList.contains('active')");
       assert.equal(await evaluate("document.getElementById('terai-account-dialog').open"),false);
       assert.equal(await evaluate("!!document.querySelector('#drawer-pane-2 #continue-as-guest')"),false);

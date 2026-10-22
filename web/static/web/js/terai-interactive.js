@@ -305,10 +305,12 @@
 
   // --- Side Cart Drawer Open / Close (70% Screen Width Right Drawer) ---
   function openSideCart(step = 1) {
+    window.teraiCloseNavigationDrawers?.();
     if (!sideCartDrawer) initSideCartDrawer();
     closeWishlistDrawer();
     goToDrawerStep(step);
     document.querySelectorAll('.cart-widget-side, #cart-widget-side').forEach(el => {
+      el.inert = false;
       el.classList.add('open');
     });
     document.querySelectorAll('.cart-side-overlay, #cart-side-overlay').forEach(el => {
@@ -320,6 +322,7 @@
   function closeSideCart() {
     document.querySelectorAll('.cart-widget-side, #cart-widget-side').forEach(el => {
       el.classList.remove('open');
+      el.inert = true;
       el.style.transform = '';
     });
     document.querySelectorAll('.cart-side-overlay, #cart-side-overlay').forEach(el => {
@@ -330,6 +333,7 @@
     document.body.classList.remove('cart-widget-side-active');
   }
   window.teraiCloseCart = closeSideCart;
+  window.addEventListener('pagehide', () => { closeSideCart(); closeWishlistDrawer(); closeCompareModal(); closeLoginModal(); });
 
   // --- Wishlist Sidebar Drawer System (Expanded Width: 440px) ---
   let wishlistDrawer = null;
@@ -2959,12 +2963,22 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
   function closeLoginModal() {
     if (!accountDialog?.open) return;
     accountDialog.close();
+    cleanupAccountDialog();
+  }
+  function cleanupAccountDialog() {
+    document.body.style.overflow = previousBodyOverflow || '';
+    accountFrame.src = 'about:blank';
+    const focus = accountReturnFocus;
+    accountReturnFocus = null;
+    focus?.focus();
   }
   function openLoginModal(options = {}) {
     if (isUserAuthenticated()) {
       window.location.assign('/manage-profile/');
       return;
     }
+    if (accountDialog?.open) return;
+    window.teraiCloseNavigationDrawers?.();
     accountReturnFocus = document.activeElement;
     if (!accountDialog) {
       const style = document.createElement('style');
@@ -2995,9 +3009,8 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
         if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeLoginModal();
       });
       accountDialog.addEventListener('close', () => {
-        document.body.style.overflow = previousBodyOverflow;
-        accountReturnFocus?.focus();
-        accountFrame.src = 'about:blank';
+        // A queued close event may belong to an earlier opening.
+        if (!accountDialog.open && accountReturnFocus) cleanupAccountDialog();
       });
       window.addEventListener('message', event => {
         if (event.origin !== window.location.origin || event.source !== accountFrame.contentWindow || !accountDialog.open) return;

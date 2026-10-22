@@ -8,11 +8,11 @@
       this.themeHeaderCategoriesHolder();
       this.themeSearchOverlay();
       this.themeModalSelector();
-      this.themeDrawerAnimation();
+      // Navigation drawers have one owner: storefront-categories.js.
       this.themeMobileMenu();
       this.themeMyAccountMenu();
       this.minicartmobile();
-	  this.themeCategoriesDrawer();
+      // Category accordion events are owned by storefront-categories.js.
     },
     dom() {
       this.body = document.body;
