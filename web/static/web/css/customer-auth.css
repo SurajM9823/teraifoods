@@ -524,3 +524,106 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     gap: 5px;
   }
 }
+
+
+/* ==========================================================================
+   Prominently Highlighted Continue as Guest Card
+   ========================================================================== */
+.auth-guest-highlight-box {
+  margin: 0 0 14px 0;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1.5px solid #16a34a;
+  border-radius: 0;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.12);
+  transition: all 0.2s ease;
+}
+.auth-guest-highlight-box:hover {
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.18);
+  border-color: #15803d;
+}
+.auth-guest-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.auth-guest-icon-badge {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: #16a34a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+}
+.auth-guest-text {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.auth-guest-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+.auth-guest-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #14532d;
+}
+.auth-guest-badge {
+  display: inline-block;
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+.auth-guest-desc {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #374151;
+}
+.auth-guest-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 38px !important;
+  padding: 0 16px !important;
+  background: #16a34a !important;
+  border: 1px solid #15803d !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0.2px !important;
+  border-radius: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25) !important;
+}
+.auth-guest-btn:hover {
+  background: #15803d !important;
+  border-color: #166534 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35) !important;
+  transform: translateY(-1px);
+}
+.auth-guest-btn svg {
+  transition: transform 0.15s ease;
+}
+.auth-guest-btn:hover svg {
+  transform: translateX(3px);
+}

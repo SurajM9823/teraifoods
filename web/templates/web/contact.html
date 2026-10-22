@@ -840,8 +840,9 @@
 
 										<div class="row g-2 mb-2">
 											<div class="col-sm-6">
-												<label class="form-label" for="contact-phone">Contact Phone</label>
-												<input type="tel" id="contact-phone" class="form-control" placeholder="e.g. +44 7700 900077">
+												<label class="form-label" for="contact-phone">Contact Phone (UK)</label>
+												<input type="tel" id="contact-phone" class="form-control" placeholder="e.g. 07946 091234 or +44 7946 091234">
+												<div id="contact-phone-feedback" class="text-11 mt-1" style="font-size: 11px; font-weight: 600; display: none;"></div>
 											</div>
 											<div class="col-sm-6">
 												<label class="form-label" for="contact-subject">Inquiry Topic *</label>
@@ -1190,8 +1191,44 @@
 						this.setAttribute('aria-expanded', 'true');
 					}
 				});
-			});
+			// Live UK Phone Validation on Contact Form
+			const contactPhone = document.getElementById('contact-phone');
+			const contactPhoneFeedback = document.getElementById('contact-phone-feedback');
+			if (contactPhone) {
+				['input', 'keyup', 'blur', 'change'].forEach(function(evt) {
+					contactPhone.addEventListener(evt, function() {
+						const val = this.value.trim();
+						if (!val) {
+							this.style.borderColor = '';
+							this.style.backgroundColor = '';
+							if (contactPhoneFeedback) contactPhoneFeedback.style.display = 'none';
+							return;
+						}
+						let clean = val.replace(/[\s().-]/g, '');
+						if (clean.startsWith('+440')) clean = '+44' + clean.slice(4);
+						else if (clean.startsWith('00440')) clean = '0044' + clean.slice(5);
 
+						const valid = /^(?:\+44|0044|0)\d{9,10}$/.test(clean);
+						if (valid) {
+							this.style.borderColor = '#16a34a';
+							this.style.backgroundColor = '#f0fdf4';
+							if (contactPhoneFeedback) {
+								contactPhoneFeedback.style.display = 'block';
+								contactPhoneFeedback.style.color = '#16a34a';
+								contactPhoneFeedback.textContent = '✓ Valid UK contact number';
+							}
+						} else {
+							this.style.borderColor = '#dc2626';
+							this.style.backgroundColor = '#fef2f2';
+							if (contactPhoneFeedback) {
+								contactPhoneFeedback.style.display = 'block';
+								contactPhoneFeedback.style.color = '#dc2626';
+								contactPhoneFeedback.textContent = '⚠️ Enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).';
+							}
+						}
+					});
+				});
+			}
 
 		});
 	</script>

@@ -667,6 +667,100 @@
 			box-sizing: border-box;
 		}
 
+		/* Order Flow Stepper (Step 3 of 3) */
+		.payment-flow-stepper-bar {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 7px 0;
+		}
+		.order-flow-stepper {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.flow-step-pill {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 4px 10px;
+			font-size: 11.5px;
+			font-weight: 600;
+			border: 1px solid transparent;
+			transition: all 0.15s ease;
+			border-radius: 0 !important;
+		}
+		.flow-step-prev {
+			color: #634c9f;
+			background: #f5f3ff;
+			border-color: #ede9fe;
+		}
+		.flow-step-prev:hover {
+			background: #634c9f;
+			color: #ffffff;
+		}
+		.flow-step-active {
+			background: #0f172a;
+			color: #ffffff;
+			font-weight: 700;
+		}
+		.flow-step-next {
+			color: #94a3b8;
+			background: #f8fafc;
+			border-color: #e2e8f0;
+		}
+		.step-num {
+			width: 16px;
+			height: 16px;
+			border-radius: 50% !important;
+			background: rgba(255, 255, 255, 0.25);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 9.5px;
+			font-weight: 700;
+		}
+		.flow-step-prev .step-num {
+			background: #634c9f;
+			color: #ffffff;
+		}
+		.flow-step-prev:hover .step-num {
+			background: #ffffff;
+			color: #634c9f;
+		}
+
+		/* Sidebar Flow Back Buttons */
+		.btn-sidebar-back {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			width: 100%;
+			height: 36px;
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			color: #334155;
+			font-size: 12px;
+			font-weight: 600;
+			transition: all 0.15s ease;
+			cursor: pointer;
+			border-radius: 0 !important;
+		}
+		.btn-sidebar-back:hover {
+			background: #f8fafc;
+			border-color: #634c9f;
+			color: #634c9f;
+		}
+		.btn-sidebar-back-primary {
+			border-color: #634c9f;
+			color: #634c9f;
+			background: #f5f3ff;
+			font-weight: 700;
+		}
+		.btn-sidebar-back-primary:hover {
+			background: #634c9f;
+			color: #ffffff;
+		}
+
 		/* Responsive Breakdown */
 		@media (max-width: 991px) {
 			.payment-layout-row {
@@ -699,6 +793,41 @@
 					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
 					<span class="breadcrumb-current">Select Payment Method</span>
 				</nav>
+			</div>
+		</div>
+
+		<!-- Order Flow Stepper (Step 3 of 3) -->
+		<div class="payment-flow-stepper-bar">
+			<div class="container-fluid px-3 px-xl-4">
+				<div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+					<div class="order-flow-stepper">
+						<a href="{% url 'web:cart' %}" class="flow-step-pill flow-step-prev text-decoration-none" title="Return to Shopping Cart">
+							<i class="klb-icon-arrow-left"></i>
+							<span class="step-num">1</span>
+							<span>Shopping Cart</span>
+						</a>
+						<i class="klb-icon-arrow-right text-muted" style="font-size: 9px;"></i>
+						<a href="{% url 'web:checkout' %}" class="flow-step-pill flow-step-prev text-decoration-none" title="Return to Delivery Address">
+							<i class="klb-icon-arrow-left"></i>
+							<span class="step-num">2</span>
+							<span>Delivery Address</span>
+						</a>
+						<i class="klb-icon-arrow-right text-muted" style="font-size: 9px;"></i>
+						<div class="flow-step-pill flow-step-active">
+							<span class="step-num">3</span>
+							<span>Payment Method</span>
+						</div>
+					</div>
+					<div class="d-flex align-items-center gap-3">
+						<a href="{% url 'web:checkout' %}" class="text-decoration-none text-12 text-muted fw-semibold hover-primary" title="Go back to delivery address and packages">
+							<i class="klb-icon-arrow-left me-1"></i> Back to Delivery Address
+						</a>
+						<span class="text-muted" style="font-size: 11px;">|</span>
+						<a href="{% url 'web:cart' %}" class="text-decoration-none text-12 text-muted fw-semibold hover-primary" title="Go back to shopping cart">
+							<i class="klb-icon-arrow-left me-1"></i> Back to Cart
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -875,6 +1004,20 @@
 						<div class="payment-summary-card">
 							<h3 class="summary-header-title">Order Summary</h3>
 
+							<!-- Delivery Details Preview in Order Summary Sidebar -->
+							<div class="payment-dest-box mb-3 p-2 border" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+								<div class="d-flex justify-content-between align-items-center mb-1">
+									<span class="text-11 fw-bold text-uppercase text-muted" style="font-size: 10px; letter-spacing: 0.3px;"><i class="klb-icon-map-pin me-1 text-primary"></i> Delivery To</span>
+									<a href="{% url 'web:checkout' %}" class="text-11 text-primary fw-bold text-decoration-none" title="Change delivery address or contact number"><i class="klb-icon-edit me-1"></i>Edit</a>
+								</div>
+								<div class="text-12 fw-bold text-dark" id="payment-dest-name">Suraj Mahato</div>
+								<div class="text-11 text-gray-600 d-flex align-items-center gap-1 mt-0.5" id="payment-dest-phone-wrap">
+									<span id="payment-dest-phone">07946 091234</span>
+									<span id="payment-phone-badge" class="badge bg-success text-white" style="font-size: 9.5px; padding: 2px 5px; border-radius: 0 !important;">✓ UK Phone</span>
+								</div>
+								<div class="text-11 text-gray-500 text-truncate mt-1" id="payment-dest-address" title="">Flat 4B, 25 Greenwich High Road, London SE10 8NB</div>
+							</div>
+
 							<div class="summary-line-item">
 								<span id="payment-summary-subtotal-label">Subtotal (0 items and delivery included)</span>
 								<span class="summary-line-val" id="payment-summary-subtotal-val">&pound;0.00</span>
@@ -888,6 +1031,16 @@
 							<button type="button" class="btn-pay-confirm" id="btn-final-pay" onclick="window.submitPayment();">
 								Confirm &amp; Pay &pound;<span id="btn-final-pay-amt">0.00</span>
 							</button>
+
+							<!-- Order Flow Sidebar Back Navigation -->
+							<div class="sidebar-back-actions mt-3 d-flex flex-column gap-2">
+								<a href="{% url 'web:checkout' %}" class="btn-sidebar-back btn-sidebar-back-primary text-decoration-none" id="btn-sidebar-back-address" title="Return to edit delivery address and package details">
+									<i class="klb-icon-arrow-left"></i> Back to Delivery Address
+								</a>
+								<a href="{% url 'web:cart' %}" class="btn-sidebar-back text-decoration-none" id="btn-sidebar-back-cart" title="Return to Shopping Cart to change quantities">
+									<i class="klb-icon-arrow-left"></i> Back to Shopping Cart
+								</a>
+							</div>
 
 							<div class="security-trust-box">
 								<div class="security-trust-item">
@@ -1047,6 +1200,32 @@
 			const STORAGE_CART = 'teraifood_cart';
 			const STORAGE_ADDRESS = 'teraifood_uk_address';
 
+			const DEFAULT_ADDRESS = {
+				name: 'Suraj Mahato',
+				phone: '07946 091234',
+				tag: 'OFFICE',
+				address: 'Flat 4B, 25 Greenwich High Road, Greenwich, London SE10 8NB, United Kingdom',
+				note: 'Leave with reception or concierge if unattended'
+			};
+
+			function checkUKPhone(phoneStr) {
+				if (!phoneStr) return { valid: false, error: 'Contact phone number is required.' };
+				let clean = String(phoneStr).trim().replace(/[\s().-]/g, '');
+				if (clean.startsWith('+440')) clean = '+44' + clean.slice(4);
+				else if (clean.startsWith('00440')) clean = '0044' + clean.slice(5);
+
+				if (!clean.startsWith('0') && !clean.startsWith('+44') && !clean.startsWith('0044')) {
+					return { valid: false, error: 'Must start with a UK prefix (0, +44, or 0044).' };
+				}
+				const ukRegex = /^(?:\+44|0044|0)\d{9,10}$/;
+				if (!ukRegex.test(clean)) {
+					if (clean.length < 10) return { valid: false, error: 'Number too short for UK (10–11 digits required).' };
+					if (clean.length > 14) return { valid: false, error: 'Number too long for UK contact number.' };
+					return { valid: false, error: 'Enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).' };
+				}
+				return { valid: true, clean: clean };
+			}
+
 			function getCart() {
 				try {
 					const data = localStorage.getItem(STORAGE_CART);
@@ -1059,15 +1238,43 @@
 			function getAddress() {
 				try {
 					const data = localStorage.getItem(STORAGE_ADDRESS);
-					if (data) return JSON.parse(data);
+					if (data) {
+						const parsed = JSON.parse(data);
+						if (parsed.phone === '9805996874' || !checkUKPhone(parsed.phone).valid) {
+							parsed.phone = DEFAULT_ADDRESS.phone;
+							parsed.address = DEFAULT_ADDRESS.address;
+							try { localStorage.setItem(STORAGE_ADDRESS, JSON.stringify(parsed)); } catch (e) {}
+						}
+						return parsed;
+					}
 				} catch (e) {}
-				return {
-					name: 'Suraj Mahato',
-					phone: '9805996874',
-					tag: 'OFFICE',
-					address: 'Bagmati, Kathmandu, Kathmandu Inside Ring Road, Kathmandu Thamel, Ward 29, Tridevi Sadak',
-					note: 'Opposite Himalayan Bank • Leave with reception if unattended'
-				};
+				return DEFAULT_ADDRESS;
+			}
+
+			function renderDeliverySummary() {
+				const addr = getAddress();
+				const nameEl = document.getElementById('payment-dest-name');
+				const phoneEl = document.getElementById('payment-dest-phone');
+				const addrEl = document.getElementById('payment-dest-address');
+				const phoneBadge = document.getElementById('payment-phone-badge');
+
+				if (nameEl) nameEl.textContent = addr.name || DEFAULT_ADDRESS.name;
+				if (phoneEl) phoneEl.textContent = addr.phone || DEFAULT_ADDRESS.phone;
+				if (addrEl) {
+					addrEl.textContent = addr.address || DEFAULT_ADDRESS.address;
+					addrEl.title = addr.address || DEFAULT_ADDRESS.address;
+				}
+
+				const chk = checkUKPhone(addr.phone);
+				if (phoneBadge) {
+					if (chk.valid) {
+						phoneBadge.className = 'badge bg-success text-white';
+						phoneBadge.textContent = '✓ UK Phone Verified';
+					} else {
+						phoneBadge.className = 'badge bg-danger text-white';
+						phoneBadge.textContent = '⚠️ Invalid UK Phone';
+					}
+				}
 			}
 
 			// Read session summary or calculate fresh from cart
@@ -1142,8 +1349,15 @@
 
 			// Submit Payment Function
 			window.submitPayment = function() {
-				const orderId = '#TF-' + Math.floor(100000 + Math.random() * 900000);
 				const addr = getAddress();
+				const phoneChk = checkUKPhone(addr.phone);
+				if (!phoneChk.valid) {
+					alert('Please enter a valid UK contact number before completing payment. Returning to address step...');
+					window.location.href = "{% url 'web:checkout' %}";
+					return;
+				}
+
+				const orderId = '#TF-' + Math.floor(100000 + Math.random() * 900000);
 
 				const modalOrderId = document.getElementById('payment-success-order-id');
 				const modalAmount = document.getElementById('payment-success-amount');
@@ -1152,7 +1366,7 @@
 
 				if (modalOrderId) modalOrderId.textContent = orderId;
 				if (modalAmount) modalAmount.textContent = grandTotal.toFixed(2);
-				if (modalAddress) modalAddress.textContent = addr.address || 'London, United Kingdom';
+				if (modalAddress) modalAddress.textContent = (addr.address || 'London, United Kingdom') + ' (Tel: ' + addr.phone + ')';
 
 				// Clear cart
 				localStorage.removeItem(STORAGE_CART);
@@ -1170,6 +1384,9 @@
 					successModal.style.display = 'flex';
 				}
 			};
+
+			// Initialize delivery summary
+			renderDeliverySummary();
 		});
 	</script>
 	<script src="{% static 'web/' %}js/terai-interactive.js?v=vouchers-packages-v4"></script>

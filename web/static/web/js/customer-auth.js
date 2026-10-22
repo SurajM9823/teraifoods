@@ -329,7 +329,23 @@
     errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  function initGuestButton() {
+    const guestBtn = document.getElementById('btn-continue-as-guest');
+    if (!guestBtn || guestBtn.dataset.hasListener) return;
+    guestBtn.dataset.hasListener = 'true';
+
+    guestBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (embedded) {
+        notify('terai-auth-guest');
+      } else {
+        window.location.assign('/');
+      }
+    });
+  }
+
   function initAll() {
+    initGuestButton();
     initPasswordToggles();
     initPasswordLiveValidation();
     initOtpBoxes();

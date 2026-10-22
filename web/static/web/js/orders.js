@@ -22,8 +22,35 @@
   ];
   let contact=read('order-contact')||{}, pending=false;
   const voucherPayload=()=>read('checkout-voucher')||{};
+
+  function checkUKPhone(phoneStr) {
+    if (!phoneStr) return { valid: false, error: 'Contact phone number is required.' };
+    let clean = String(phoneStr).trim().replace(/[\s().-]/g, '');
+    if (clean.startsWith('+440')) clean = '+44' + clean.slice(4);
+    else if (clean.startsWith('00440')) clean = '0044' + clean.slice(5);
+
+    if (!clean.startsWith('0') && !clean.startsWith('+44') && !clean.startsWith('0044')) {
+      return { valid: false, error: 'Must start with a UK prefix (0, +44, or 0044).' };
+    }
+    const ukRegex = /^(?:\+44|0044|0)\d{9,10}$/;
+    if (!ukRegex.test(clean)) {
+      if (clean.length < 10) return { valid: false, error: 'Number too short for UK (10–11 digits required).' };
+      if (clean.length > 14) return { valid: false, error: 'Number too long for UK contact number.' };
+      return { valid: false, error: 'Enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).' };
+    }
+    return { valid: true, clean: clean };
+  }
+
   function contactForm(prefix, values={}) {
-    return fields.map(([key,label,type,required])=>`<label class="d-block mb-2">${label}${required?' *':''}<input class="cart-drawer-form-input form-control" name="${key}" id="${prefix}-${key}" type="${type}" value="${esc(values[key])}" maxlength="${key==='instructions'?500:150}" ${required?'required':''}></label>`).join('');
+    return fields.map(([key,label,type,required])=>{
+      let extra = '';
+      let placeholder = '';
+      if (key === 'phone') {
+        placeholder = ' placeholder="e.g. 07946 091234 or +44 7946 091234"';
+        extra = `<div id="${prefix}-phone-feedback" class="text-11 mt-1" style="font-size:11px; font-weight:600; display:none;"></div><small class="text-muted d-block mt-0.5" style="font-size:10px;">UK format: starts with 0 (10–11 digits) or +44 / 0044.</small>`;
+      }
+      return `<label class="d-block mb-2">${label}${required?' *':''}<input class="cart-drawer-form-input form-control" name="${key}" id="${prefix}-${key}" type="${type}" value="${esc(values[key])}" maxlength="${key==='instructions'?500:150}" ${required?'required':''}${placeholder}>${extra}</label>`;
+    }).join('');
   }
   function readContact(root) {
     const data={country:'GB'};
@@ -39,6 +66,26 @@
       notify('Enter your contact details and UK delivery address.');
       return false;
     }
+    const phoneRes = checkUKPhone(contact.phone);
+    if(!phoneRes.valid) {
+      const edit=document.getElementById('checkout-address-edit-view');
+      if(edit) edit.style.display='block';
+      const phoneInput = root?.querySelector('[name=phone]');
+      if(phoneInput) {
+        phoneInput.focus();
+        phoneInput.style.borderColor = '#dc2626';
+        phoneInput.style.backgroundColor = '#fef2f2';
+        const feedback = root.querySelector('#checkout-phone-feedback');
+        if(feedback) {
+          feedback.style.display = 'block';
+          feedback.style.color = '#dc2626';
+          feedback.textContent = '⚠️ ' + phoneRes.error;
+        }
+      }
+      notify(phoneRes.error || 'Enter a valid UK contact number.');
+      return false;
+    }
+    contact.phone = phoneRes.clean;
     store('order-contact',contact);
     syncContact();
     return true;
@@ -85,6 +132,49 @@
       edit.innerHTML=`<form id="order-contact-form">${contactForm('checkout',contact)}<button class="checkout-save-addr-btn" type="submit">Save Address</button></form>`;
       edit.style.display='block';
       edit.querySelector('form').addEventListener('submit',e=>{e.preventDefault();if(addressValid())notify('Delivery details saved for checkout.');});
+      
+      const phoneInput = edit.querySelector('[name=phone]');
+      const phoneFeedback = edit.querySelector('#checkout-phone-feedback');
+      function validatePhoneLive() {
+        if (!phoneInput) return false;
+        const val = phoneInput.value.trim();
+        if (!val) {
+          phoneInput.style.borderColor = '#cbd5e1';
+          phoneInput.style.backgroundColor = '#ffffff';
+          if (phoneFeedback) {
+            phoneFeedback.style.display = 'block';
+            phoneFeedback.style.color = '#64748b';
+            phoneFeedback.textContent = 'Please enter your UK contact number.';
+          }
+          return false;
+        }
+        const res = checkUKPhone(val);
+        if (res.valid) {
+          phoneInput.style.borderColor = '#16a34a';
+          phoneInput.style.backgroundColor = '#f0fdf4';
+          if (phoneFeedback) {
+            phoneFeedback.style.display = 'block';
+            phoneFeedback.style.color = '#16a34a';
+            phoneFeedback.textContent = '✓ Valid UK contact number';
+          }
+          return true;
+        } else {
+          phoneInput.style.borderColor = '#dc2626';
+          phoneInput.style.backgroundColor = '#fef2f2';
+          if (phoneFeedback) {
+            phoneFeedback.style.display = 'block';
+            phoneFeedback.style.color = '#dc2626';
+            phoneFeedback.textContent = '⚠️ ' + res.error;
+          }
+          return false;
+        }
+      }
+      if (phoneInput) {
+        ['input', 'keyup', 'blur', 'change'].forEach(evt => {
+          phoneInput.addEventListener(evt, validatePhoneLive);
+        });
+      }
+
       edit.querySelector('[name=postcode]').addEventListener('blur',async e=>{
         const postcode=e.target.value.trim();if(!postcode)return;
         try {
@@ -105,9 +195,11 @@
     });
     const standalone=document.getElementById('panel-card');
     if(standalone) standalone.innerHTML='<div class="payment-panel-header"><h3>Secure card payment</h3><p>Card details are collected by Stripe. Use a Stripe test card.</p></div>';
-    document.querySelectorAll('.payment-tile-card').forEach(tile=>{
-      if(tile.dataset.method!=='card') {tile.hidden=true;tile.setAttribute('aria-disabled','true');}
-    });
+    if (!document.body.classList.contains('terai-payment-page') && !location.pathname.includes('/payment/')) {
+      document.querySelectorAll('.payment-tile-card').forEach(tile=>{
+        if(tile.dataset.method!=='card') {tile.hidden=true;tile.setAttribute('aria-disabled','true');}
+      });
+    }
     syncContact();
     const params=new URLSearchParams(location.search);
     if(params.get('demo')==='1' && params.get('order')) {
@@ -139,7 +231,8 @@
         }catch(error){notify(error.message);}finally{apply.disabled=false;}
         return;
       }
-      if(e.target.closest('#btn-proceed-pay, #edit-address-btn, #edit-invoice-btn, #btn-edit-invoice-info')) {
+      const isCheckoutPage = document.body.classList.contains('terai-checkout-page') || location.pathname.includes('/checkout/');
+      if(!isCheckoutPage && e.target.closest('#btn-proceed-pay, #edit-address-btn, #edit-invoice-btn, #btn-edit-invoice-info')) {
         e.preventDefault();e.stopImmediatePropagation();window.TeraiCatalog?.openCheckout();
       }
       if(e.target.closest('#confirm-pay-btn')){e.preventDefault();e.stopImmediatePropagation();checkout();}

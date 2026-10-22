@@ -548,6 +548,100 @@
 			background: #fafafa;
 		}
 
+		/* Order Flow Stepper */
+		.checkout-flow-stepper-bar {
+			background: #ffffff;
+			border-bottom: 1px solid #e2e8f0;
+			padding: 7px 0;
+		}
+		.order-flow-stepper {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.flow-step-pill {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 4px 10px;
+			font-size: 11.5px;
+			font-weight: 600;
+			border: 1px solid transparent;
+			transition: all 0.15s ease;
+			border-radius: 0 !important;
+		}
+		.flow-step-prev {
+			color: #634c9f;
+			background: #f5f3ff;
+			border-color: #ede9fe;
+		}
+		.flow-step-prev:hover {
+			background: #634c9f;
+			color: #ffffff;
+		}
+		.flow-step-active {
+			background: #0f172a;
+			color: #ffffff;
+			font-weight: 700;
+		}
+		.flow-step-next {
+			color: #94a3b8;
+			background: #f8fafc;
+			border-color: #e2e8f0;
+		}
+		.step-num {
+			width: 16px;
+			height: 16px;
+			border-radius: 50% !important;
+			background: rgba(255, 255, 255, 0.25);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 9.5px;
+			font-weight: 700;
+		}
+		.flow-step-prev .step-num {
+			background: #634c9f;
+			color: #ffffff;
+		}
+		.flow-step-prev:hover .step-num {
+			background: #ffffff;
+			color: #634c9f;
+		}
+
+		/* Sidebar Flow Back Buttons */
+		.btn-sidebar-back {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			width: 100%;
+			height: 36px;
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			color: #334155;
+			font-size: 12px;
+			font-weight: 600;
+			transition: all 0.15s ease;
+			cursor: pointer;
+			border-radius: 0 !important;
+		}
+		.btn-sidebar-back:hover {
+			background: #f8fafc;
+			border-color: #634c9f;
+			color: #634c9f;
+		}
+		.btn-sidebar-back-primary {
+			border-color: #634c9f;
+			color: #634c9f;
+			background: #f5f3ff;
+			font-weight: 700;
+		}
+		.btn-sidebar-back-primary:hover {
+			background: #634c9f;
+			color: #ffffff;
+		}
+
 		/* Responsive Breakdown */
 		@media (max-width: 991px) {
 			.checkout-layout-row {
@@ -576,8 +670,38 @@
 					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
 					<a href="{% url 'web:cart' %}">Shopping Cart</a>
 					<span class="breadcrumb-separator"><i class="klb-icon-arrow-right" style="font-size: 9px;"></i></span>
-					<span class="breadcrumb-current">Checkout</span>
+					<span class="breadcrumb-current">Delivery Address &amp; Checkout</span>
 				</nav>
+			</div>
+		</div>
+
+		<!-- Order Flow Stepper (Step 2 of 3) -->
+		<div class="checkout-flow-stepper-bar">
+			<div class="container-fluid px-3 px-xl-4">
+				<div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+					<div class="order-flow-stepper">
+						<a href="{% url 'web:cart' %}" class="flow-step-pill flow-step-prev text-decoration-none" title="Return to Shopping Cart">
+							<i class="klb-icon-arrow-left"></i>
+							<span class="step-num">1</span>
+							<span>Shopping Cart</span>
+						</a>
+						<i class="klb-icon-arrow-right text-muted" style="font-size: 9px;"></i>
+						<div class="flow-step-pill flow-step-active">
+							<span class="step-num">2</span>
+							<span>Delivery Address</span>
+						</div>
+						<i class="klb-icon-arrow-right text-muted" style="font-size: 9px;"></i>
+						<div class="flow-step-pill flow-step-next">
+							<span class="step-num">3</span>
+							<span>Payment</span>
+						</div>
+					</div>
+					<div>
+						<a href="{% url 'web:cart' %}" class="text-decoration-none text-12 text-muted fw-semibold hover-primary">
+							<i class="klb-icon-arrow-left me-1"></i> Back to Cart
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -592,12 +716,13 @@
 						<!-- CARD 1: Shipping Address -->
 						<div class="daraz-card" id="address-card">
 							<div class="address-card-header">
-								<h3 class="address-card-title">Shipping Address</h3>
-								<a href="#" class="card-edit-link" id="edit-address-btn">EDIT</a>
+								<h3 class="address-card-title">Shipping Address (United Kingdom)</h3>
+								<a href="#" class="card-edit-link" id="edit-address-btn"><i class="klb-icon-edit me-1"></i>EDIT</a>
 							</div>
-							<div class="address-recipient-row">
+							<div class="address-recipient-row flex-wrap align-items-center">
 								<span id="display-recipient-name"></span>
 								<span id="display-recipient-phone"></span>
+								<span id="display-phone-badge" class="badge" style="display: none; font-size: 10px; padding: 2px 6px;"></span>
 							</div>
 							<p class="address-details-text">
 								<span class="address-tag-badge" id="display-address-tag">OFFICE</span>
@@ -606,6 +731,9 @@
 							<p class="address-landmark-text" id="display-address-landmark">
 								Opposite River Thames Pier &bull; Leave with reception if unattended
 							</p>
+							<div id="address-phone-alert" class="alert alert-danger py-1 px-2 mt-2 mb-0 text-11" style="display: none; border-radius: 0 !important;">
+								<i class="klb-icon-alert-triangle me-1"></i> <strong>Invalid UK Phone Number:</strong> Please click <strong>EDIT</strong> above to enter a valid UK contact number before proceeding.
+							</div>
 						</div>
 
 						<!-- CARD 2: Package 1 of 1 -->
@@ -694,6 +822,11 @@
 
 							<a href="{% url 'web:payment' %}" class="btn-proceed-pay" id="btn-proceed-pay">
 								Proceed to Pay
+							</a>
+
+							<!-- Sidebar Back Navigation -->
+							<a href="{% url 'web:cart' %}" class="btn-sidebar-back mt-2 text-decoration-none" id="btn-sidebar-back-cart" title="Go back to Shopping Cart">
+								<i class="klb-icon-arrow-left"></i> Back to Shopping Cart
 							</a>
 						</div>
 
@@ -804,8 +937,13 @@
 						<input type="text" id="modal-name-input" class="form-control" value="" required style="height: 32px; font-size: 12px;">
 					</div>
 					<div class="mb-2">
-						<label class="form-label text-11 fw-bold">Contact Phone Number *</label>
-						<input type="text" id="modal-phone-input" class="form-control" value="" required style="height: 32px; font-size: 12px;">
+						<label class="form-label text-11 fw-bold" for="modal-phone-input">Contact Phone Number (UK) *</label>
+						<div class="position-relative">
+							<input type="tel" id="modal-phone-input" class="form-control" value="" placeholder="e.g. 07946 091234 or +44 7946 091234" required autocomplete="tel" style="height: 34px; font-size: 12px; padding-right: 30px;">
+							<span id="modal-phone-icon" style="position: absolute; right: 8px; top: 8px; font-size: 13px; display: none;"></span>
+						</div>
+						<div id="modal-phone-feedback" class="text-11 mt-1" style="font-weight: 600;"></div>
+						<small class="text-muted text-10 d-block mt-0.5">UK format: starts with 0 (10–11 digits) or +44 / 0044.</small>
 					</div>
 					<div class="mb-2">
 						<label class="form-label text-11 fw-bold">Address Tag</label>
@@ -910,11 +1048,29 @@
 
 			const DEFAULT_ADDRESS = {
 				name: 'Suraj Mahato',
-				phone: '9805996874',
+				phone: '07946 091234',
 				tag: 'OFFICE',
-				address: 'Bagmati, Kathmandu, Kathmandu Inside Ring Road, Kathmandu Thamel, Ward 29, Tridevi Sadak',
-				note: 'Opposite Himalayan Bank • Leave with reception if unattended'
+				address: 'Flat 4B, 25 Greenwich High Road, Greenwich, London SE10 8NB, United Kingdom',
+				note: 'Leave with reception or concierge if unattended'
 			};
+
+			function checkUKPhone(phoneStr) {
+				if (!phoneStr) return { valid: false, error: 'Contact phone number is required.' };
+				let clean = String(phoneStr).trim().replace(/[\s().-]/g, '');
+				if (clean.startsWith('+440')) clean = '+44' + clean.slice(4);
+				else if (clean.startsWith('00440')) clean = '0044' + clean.slice(5);
+
+				if (!clean.startsWith('0') && !clean.startsWith('+44') && !clean.startsWith('0044')) {
+					return { valid: false, error: 'Must start with a UK prefix (0, +44, or 0044).' };
+				}
+				const ukRegex = /^(?:\+44|0044|0)\d{9,10}$/;
+				if (!ukRegex.test(clean)) {
+					if (clean.length < 10) return { valid: false, error: 'Number too short for UK (10–11 digits required).' };
+					if (clean.length > 14) return { valid: false, error: 'Number too long for UK contact number.' };
+					return { valid: false, error: 'Enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).' };
+				}
+				return { valid: true, clean: clean };
+			}
 
 			function escapeHTML(str) {
 				const p = document.createElement('p');
@@ -954,7 +1110,15 @@
 			function getAddress() {
 				try {
 					const data = localStorage.getItem(STORAGE_ADDRESS);
-					if (data) return JSON.parse(data);
+					if (data) {
+						const parsed = JSON.parse(data);
+						if (parsed.phone === '9805996874' || !checkUKPhone(parsed.phone).valid) {
+							parsed.phone = DEFAULT_ADDRESS.phone;
+							parsed.address = DEFAULT_ADDRESS.address;
+							try { localStorage.setItem(STORAGE_ADDRESS, JSON.stringify(parsed)); } catch (e) {}
+						}
+						return parsed;
+					}
 				} catch (e) {}
 				return DEFAULT_ADDRESS;
 			}
@@ -966,12 +1130,30 @@
 				const tagEl = document.getElementById('display-address-tag');
 				const fullEl = document.getElementById('display-address-full');
 				const landmarkEl = document.getElementById('display-address-landmark');
+				const phoneBadge = document.getElementById('display-phone-badge');
+				const phoneAlert = document.getElementById('address-phone-alert');
+
+				const phoneCheck = checkUKPhone(addr.phone);
 
 				if (nameEl) nameEl.textContent = addr.name || DEFAULT_ADDRESS.name;
 				if (phoneEl) phoneEl.textContent = addr.phone || DEFAULT_ADDRESS.phone;
 				if (tagEl) tagEl.textContent = addr.tag || 'OFFICE';
 				if (fullEl) fullEl.textContent = addr.address || DEFAULT_ADDRESS.address;
 				if (landmarkEl) landmarkEl.textContent = addr.note || DEFAULT_ADDRESS.note;
+
+				if (phoneBadge) {
+					phoneBadge.style.display = 'inline-block';
+					if (phoneCheck.valid) {
+						phoneBadge.className = 'badge bg-success text-white ms-2';
+						phoneBadge.textContent = '✓ UK Phone Verified';
+					} else {
+						phoneBadge.className = 'badge bg-danger text-white ms-2';
+						phoneBadge.textContent = '⚠️ Invalid UK Phone';
+					}
+				}
+				if (phoneAlert) {
+					phoneAlert.style.display = phoneCheck.valid ? 'none' : 'block';
+				}
 
 				// Pre-fill modal
 				const modalName = document.getElementById('modal-name-input');
@@ -981,7 +1163,10 @@
 				const modalLandmark = document.getElementById('modal-landmark-input');
 
 				if (modalName) modalName.value = addr.name || DEFAULT_ADDRESS.name;
-				if (modalPhone) modalPhone.value = addr.phone || DEFAULT_ADDRESS.phone;
+				if (modalPhone) {
+					modalPhone.value = addr.phone || DEFAULT_ADDRESS.phone;
+					validatePhoneLive();
+				}
 				if (modalTag) modalTag.value = addr.tag || 'OFFICE';
 				if (modalAddress) modalAddress.value = addr.address || DEFAULT_ADDRESS.address;
 				if (modalLandmark) modalLandmark.value = addr.note || DEFAULT_ADDRESS.note;
@@ -1157,10 +1342,65 @@
 			const cancelAddressModalBtn = document.getElementById('cancel-address-modal-btn');
 			const saveAddressModalBtn = document.getElementById('save-address-modal-btn');
 
+			const modalPhoneInput = document.getElementById('modal-phone-input');
+			const phoneFeedback = document.getElementById('modal-phone-feedback');
+			const phoneIcon = document.getElementById('modal-phone-icon');
+
+			function validatePhoneLive() {
+				if (!modalPhoneInput) return false;
+				const val = modalPhoneInput.value.trim();
+				if (!val) {
+					modalPhoneInput.style.borderColor = '#e2e8f0';
+					if (phoneFeedback) {
+						phoneFeedback.textContent = 'Please enter a UK contact number (e.g. 07946 091234 or +44 7946 091234)';
+						phoneFeedback.className = 'text-11 mt-1 text-muted';
+					}
+					if (phoneIcon) phoneIcon.style.display = 'none';
+					return false;
+				}
+
+				const res = checkUKPhone(val);
+				if (res.valid) {
+					modalPhoneInput.style.borderColor = '#16a34a';
+					modalPhoneInput.style.backgroundColor = '#f0fdf4';
+					if (phoneFeedback) {
+						phoneFeedback.textContent = '✓ Valid UK contact number';
+						phoneFeedback.className = 'text-11 mt-1 text-success';
+					}
+					if (phoneIcon) {
+						phoneIcon.style.display = 'block';
+						phoneIcon.innerHTML = '<i class="klb-icon-check text-success" style="font-weight: 700;"></i>';
+					}
+					return true;
+				} else {
+					modalPhoneInput.style.borderColor = '#dc2626';
+					modalPhoneInput.style.backgroundColor = '#fef2f2';
+					if (phoneFeedback) {
+						phoneFeedback.textContent = '⚠️ ' + res.error;
+						phoneFeedback.className = 'text-11 mt-1 text-danger';
+					}
+					if (phoneIcon) {
+						phoneIcon.style.display = 'block';
+						phoneIcon.innerHTML = '<i class="klb-icon-x text-danger" style="font-weight: 700;"></i>';
+					}
+					return false;
+				}
+			}
+
+			if (modalPhoneInput) {
+				['input', 'keyup', 'blur', 'change'].forEach(evt => {
+					modalPhoneInput.addEventListener(evt, validatePhoneLive);
+				});
+			}
+
 			if (editAddressBtn && addressModal) {
 				editAddressBtn.addEventListener('click', function(e) {
 					e.preventDefault();
 					addressModal.style.display = 'flex';
+					if (modalPhoneInput) {
+						validatePhoneLive();
+						setTimeout(() => modalPhoneInput.focus(), 100);
+					}
 				});
 
 				function closeAddressModal() {
@@ -1182,7 +1422,15 @@
 							return;
 						}
 
-						const newAddr = { name, phone, tag, address, note: landmark };
+						const phoneRes = checkUKPhone(phone);
+						if (!phoneRes.valid) {
+							validatePhoneLive();
+							modalPhoneInput.focus();
+							alert('Please enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).');
+							return;
+						}
+
+						const newAddr = { name, phone: phoneRes.clean, tag, address, note: landmark };
 						try {
 							localStorage.setItem(STORAGE_ADDRESS, JSON.stringify(newAddr));
 						} catch (e) {}
@@ -1205,7 +1453,7 @@
 				});
 			}
 
-			// Proceed to Pay
+			// Proceed to Pay (Validates everything on frontend BEFORE submit)
 			const proceedPayBtn = document.getElementById('btn-proceed-pay');
 			if (proceedPayBtn) {
 				proceedPayBtn.addEventListener('click', function(e) {
@@ -1213,6 +1461,21 @@
 					if (cart.length === 0) {
 						e.preventDefault();
 						alert('Your basket is empty. Please add items to proceed.');
+						return;
+					}
+
+					const addr = getAddress();
+					const phoneRes = checkUKPhone(addr.phone);
+					if (!phoneRes.valid) {
+						e.preventDefault();
+						alert('Please enter a valid UK contact number before proceeding to payment.');
+						if (addressModal) {
+							addressModal.style.display = 'flex';
+							if (modalPhoneInput) {
+								modalPhoneInput.focus();
+								validatePhoneLive();
+							}
+						}
 						return;
 					}
 					// Will navigate naturally to {% url 'web:payment' %}

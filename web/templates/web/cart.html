@@ -775,6 +775,35 @@
 			</div>
 		</div>
 
+		<!-- Order Flow Stepper (Step 1 of 3) -->
+		<div class="cart-flow-stepper-bar" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 7px 0;">
+			<div class="container-fluid px-3 px-xl-4">
+				<div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+					<div class="order-flow-stepper" style="display: flex; align-items: center; gap: 8px;">
+						<div class="flow-step-pill flow-step-active" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 11.5px; font-weight: 700; background: #0f172a; color: #ffffff; border-radius: 0 !important;">
+							<span class="step-num" style="width: 16px; height: 16px; border-radius: 50% !important; background: rgba(255, 255, 255, 0.25); display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 700;">1</span>
+							<span>Shopping Cart</span>
+						</div>
+						<i class="klb-icon-arrow-right text-muted" style="font-size: 9px;"></i>
+						<a href="{% url 'web:checkout' %}" class="flow-step-pill flow-step-next text-decoration-none" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 11.5px; font-weight: 600; color: #94a3b8; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 !important;" title="Proceed to Delivery Address">
+							<span class="step-num" style="width: 16px; height: 16px; border-radius: 50% !important; background: rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 700;">2</span>
+							<span>Delivery Address</span>
+						</a>
+						<i class="klb-icon-arrow-right text-muted" style="font-size: 9px;"></i>
+						<div class="flow-step-pill flow-step-next" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 11.5px; font-weight: 600; color: #94a3b8; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 !important;">
+							<span class="step-num" style="width: 16px; height: 16px; border-radius: 50% !important; background: rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 700;">3</span>
+							<span>Payment</span>
+						</div>
+					</div>
+					<div>
+						<a href="{% url 'web:shop' %}" class="text-decoration-none text-12 text-muted fw-semibold hover-primary" title="Browse more products">
+							<i class="klb-icon-arrow-left me-1"></i> Continue Shopping
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- Main Cart Content Section -->
 		<main class="cart-main-layout">
 			<div class="container-fluid px-3 px-xl-4">
@@ -839,6 +868,11 @@
 							<!-- Checkout Call to Action -->
 							<a href="{% url 'web:checkout' %}" class="checkout-proceed-btn" id="checkout-button">
 								PROCEED TO CHECKOUT (<span id="checkout-btn-count">5</span>)
+							</a>
+
+							<!-- Continue Shopping Back Button -->
+							<a href="{% url 'web:shop' %}" class="btn-sidebar-back mt-2 text-decoration-none" style="height: 36px; background: #ffffff; border: 1px solid #cbd5e1; color: #334155; font-size: 11.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 0 !important;" title="Continue shopping for more groceries">
+								<i class="klb-icon-arrow-left"></i> Continue Shopping
 							</a>
 						</div>
 					</aside>

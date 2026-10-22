@@ -6863,3 +6863,210 @@ a.klbwl-btn::after,
 
 
 
+
+
+/* ==========================================================================
+   Prominently Highlighted Continue as Guest Card & Button
+   ========================================================================== */
+.auth-guest-highlight-box {
+  margin: 0 0 14px 0 !important;
+  padding: 12px 14px !important;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%) !important;
+  border: 1.5px solid #16a34a !important;
+  border-radius: 0 !important;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.12) !important;
+  transition: all 0.2s ease !important;
+}
+.auth-guest-highlight-box:hover {
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.18) !important;
+  border-color: #15803d !important;
+}
+.auth-guest-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+}
+.auth-guest-icon-badge {
+  flex-shrink: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: #16a34a !important;
+  color: #fff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0 !important;
+}
+.auth-guest-text {
+  flex: 1 !important;
+  min-width: 0 !important;
+  text-align: left !important;
+}
+.auth-guest-title-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 2px !important;
+}
+.auth-guest-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #14532d !important;
+}
+.auth-guest-badge {
+  display: inline-block !important;
+  background: #dcfce7 !important;
+  color: #15803d !important;
+  border: 1px solid #86efac !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.4px !important;
+  padding: 1px 6px !important;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+}
+.auth-guest-desc {
+  margin: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  color: #374151 !important;
+}
+.auth-guest-btn, #continue-as-guest {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 38px !important;
+  padding: 0 16px !important;
+  background: #16a34a !important;
+  border: 1px solid #15803d !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0.2px !important;
+  border-radius: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25) !important;
+}
+.auth-guest-btn:hover, #continue-as-guest:hover {
+  background: #15803d !important;
+  border-color: #166534 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+.auth-guest-btn svg, #continue-as-guest svg {
+  transition: transform 0.15s ease !important;
+}
+.auth-guest-btn:hover svg, #continue-as-guest:hover svg {
+  transform: translateX(3px) !important;
+}
+
+
+/* ==========================================================================
+   Prominently Highlighted Continue as Guest Card & Button
+   ========================================================================== */
+.auth-guest-highlight-box {
+  margin: 0 0 14px 0 !important;
+  padding: 12px 14px !important;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%) !important;
+  border: 1.5px solid #16a34a !important;
+  border-radius: 0 !important;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.12) !important;
+  transition: all 0.2s ease !important;
+}
+.auth-guest-highlight-box:hover {
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.18) !important;
+  border-color: #15803d !important;
+}
+.auth-guest-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+}
+.auth-guest-icon-badge {
+  flex-shrink: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: #16a34a !important;
+  color: #fff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0 !important;
+}
+.auth-guest-text {
+  flex: 1 !important;
+  min-width: 0 !important;
+  text-align: left !important;
+}
+.auth-guest-title-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 2px !important;
+}
+.auth-guest-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #14532d !important;
+}
+.auth-guest-badge {
+  display: inline-block !important;
+  background: #dcfce7 !important;
+  color: #15803d !important;
+  border: 1px solid #86efac !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.4px !important;
+  padding: 1px 6px !important;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+}
+.auth-guest-desc {
+  margin: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  color: #374151 !important;
+}
+.auth-guest-btn, #continue-as-guest {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 38px !important;
+  padding: 0 16px !important;
+  background: #16a34a !important;
+  border: 1px solid #15803d !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0.2px !important;
+  border-radius: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25) !important;
+}
+.auth-guest-btn:hover, #continue-as-guest:hover {
+  background: #15803d !important;
+  border-color: #166534 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+.auth-guest-btn svg, #continue-as-guest svg {
+  transition: transform 0.15s ease !important;
+}
+.auth-guest-btn:hover svg, #continue-as-guest:hover svg {
+  transform: translateX(3px) !important;
+}
+

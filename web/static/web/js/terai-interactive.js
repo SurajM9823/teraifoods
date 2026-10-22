@@ -564,13 +564,42 @@
   let lastOrderDetails = null;
 
   const DEFAULT_DARAZ_ADDRESS = {
-    name: '', phone: '', tag: 'HOME', address: '', note: ''
+    name: 'Suraj Mahato',
+    phone: '07946 091234',
+    tag: 'OFFICE',
+    address: 'Flat 4B, 25 Greenwich High Road, Greenwich, London SE10 8NB, United Kingdom',
+    note: 'Leave with reception or concierge if unattended'
   };
+
+  function checkUKPhone(phoneStr) {
+    if (!phoneStr) return { valid: false, error: 'Contact phone number is required.' };
+    let clean = String(phoneStr).trim().replace(/[\s().-]/g, '');
+    if (clean.startsWith('+440')) clean = '+44' + clean.slice(4);
+    else if (clean.startsWith('00440')) clean = '0044' + clean.slice(5);
+
+    if (!clean.startsWith('0') && !clean.startsWith('+44') && !clean.startsWith('0044')) {
+      return { valid: false, error: 'Must start with a UK prefix (0, +44, or 0044).' };
+    }
+    const ukRegex = /^(?:\+44|0044|0)\d{9,10}$/;
+    if (!ukRegex.test(clean)) {
+      if (clean.length < 10) return { valid: false, error: 'Number too short for UK (10–11 digits required).' };
+      if (clean.length > 14) return { valid: false, error: 'Number too long for UK contact number.' };
+      return { valid: false, error: 'Enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).' };
+    }
+    return { valid: true, clean: clean };
+  }
 
   function getSavedAddress() {
     try {
       const data = JSON.parse(localStorage.getItem(STORAGE_ADDRESS));
-      if (data && data.name) return Object.assign({}, DEFAULT_DARAZ_ADDRESS, data);
+      if (data && data.name) {
+        if (data.phone === '9805996874' || !checkUKPhone(data.phone).valid) {
+          data.phone = DEFAULT_DARAZ_ADDRESS.phone;
+          data.address = DEFAULT_DARAZ_ADDRESS.address;
+          try { localStorage.setItem(STORAGE_ADDRESS, JSON.stringify(data)); } catch (e) {}
+        }
+        return Object.assign({}, DEFAULT_DARAZ_ADDRESS, data);
+      }
     } catch (e) {}
     return DEFAULT_DARAZ_ADDRESS;
   }
@@ -702,15 +731,16 @@
                 
                 <!-- Display View -->
                 <div id="checkout-address-display-view">
-                  <div class="checkout-addr-name-row">
-                    <span id="disp-cust-name">${addr.name}</span>
-                    <span id="disp-cust-phone" style="font-weight: 500; color: #475569;">${addr.phone}</span>
+                  <div class="checkout-addr-name-row" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span id="disp-cust-name">${escapeHTML(addr.name)}</span>
+                    <span id="disp-cust-phone" style="font-weight: 500; color: #475569;">${escapeHTML(addr.phone)}</span>
+                    <span id="disp-cust-phone-badge" class="badge bg-success text-white" style="font-size: 9.5px; padding: 2px 5px; border-radius: 0 !important;">✓ UK Phone</span>
                   </div>
                   <div class="checkout-addr-detail-row">
-                    <span class="checkout-addr-badge" id="disp-cust-tag">${addr.tag || 'OFFICE'}</span>
-                    <span id="disp-cust-address">${addr.address}</span>
+                    <span class="checkout-addr-badge" id="disp-cust-tag">${escapeHTML(addr.tag || 'OFFICE')}</span>
+                    <span id="disp-cust-address">${escapeHTML(addr.address)}</span>
                   </div>
-                  <div class="checkout-addr-note" id="disp-cust-note">${addr.note}</div>
+                  <div class="checkout-addr-note" id="disp-cust-note">${escapeHTML(addr.note)}</div>
                 </div>
 
                 <!-- Inline Edit Form (Hidden by default) -->
@@ -718,11 +748,13 @@
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                     <div>
                       <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Full Name *</label>
-                      <input type="text" id="edit-cust-name" class="cart-drawer-form-input" value="${addr.name}">
+                      <input type="text" id="edit-cust-name" class="cart-drawer-form-input" value="${escapeHTML(addr.name)}">
                     </div>
                     <div>
-                      <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Phone Number *</label>
-                      <input type="text" id="edit-cust-phone" class="cart-drawer-form-input" value="${addr.phone}">
+                      <label style="font-size: 10.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Phone Number (UK) *</label>
+                      <input type="tel" id="edit-cust-phone" class="cart-drawer-form-input" value="${escapeHTML(addr.phone)}" placeholder="e.g. 07946 091234 or +44 7946 091234" autocomplete="tel">
+                      <div id="edit-cust-phone-feedback" style="font-size: 10.5px; font-weight: 600; margin-top: 3px; display: none;"></div>
+                      <small style="font-size: 9.5px; color: #64748b; display: block; margin-top: 2px;">UK format: 10–11 digits starting with 0, or +44 / 0044.</small>
                     </div>
                   </div>
                   <div style="margin-bottom: 8px;">
@@ -817,8 +849,8 @@
                 <button type="button" class="checkout-btn-proceed-pay" id="btn-proceed-to-pay">
                   Proceed to Pay
                 </button>
-                <button type="button" class="cart-drawer-btn-secondary" id="btn-checkout-back-to-cart" style="margin-top: 10px; width: 100%;">
-                  &larr; Back to Basket
+                <button type="button" class="cart-drawer-btn-secondary" id="btn-checkout-back-to-cart" style="margin-top: 10px; width: 100%; height: 36px; background: #ffffff; border: 1px solid #cbd5e1; color: #334155; font-size: 11.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border-radius: 0 !important;">
+                  <i class="klb-icon-arrow-left"></i> Back to Shopping Cart
                 </button>
               </div>
             </div>
@@ -921,9 +953,14 @@
                   <button type="submit" class="checkout-btn-proceed-pay" id="btn-drawer-confirm-pay">
                     Confirm &amp; Place Order
                   </button>
-                  <button type="button" class="cart-drawer-btn-secondary" id="btn-drawer-back-to-2" style="margin-top: 10px; width: 100%;">
-                    &larr; Back to Checkout
-                  </button>
+                  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                    <button type="button" class="cart-drawer-btn-secondary" id="btn-drawer-back-to-2" style="width: 100%; height: 36px; background: #f5f3ff; border: 1px solid #634c9f; color: #634c9f; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border-radius: 0 !important;">
+                      <i class="klb-icon-arrow-left"></i> Back to Delivery Address
+                    </button>
+                    <button type="button" class="cart-drawer-btn-secondary" id="btn-drawer-back-to-1" style="width: 100%; height: 36px; background: #ffffff; border: 1px solid #cbd5e1; color: #334155; font-size: 11.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border-radius: 0 !important;">
+                      <i class="klb-icon-arrow-left"></i> Back to Shopping Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1040,16 +1077,76 @@
       });
     });
 
+    // Live UK Phone Validation on typing in drawer
+    const drawerPhoneInput = sideCartDrawer.querySelector('#edit-cust-phone');
+    const drawerPhoneFeedback = sideCartDrawer.querySelector('#edit-cust-phone-feedback');
+
+    function validateDrawerPhoneLive() {
+      if (!drawerPhoneInput) return false;
+      const val = drawerPhoneInput.value.trim();
+      if (!val) {
+        drawerPhoneInput.style.borderColor = '#cbd5e1';
+        drawerPhoneInput.style.backgroundColor = '#ffffff';
+        if (drawerPhoneFeedback) {
+          drawerPhoneFeedback.style.display = 'block';
+          drawerPhoneFeedback.style.color = '#64748b';
+          drawerPhoneFeedback.textContent = 'Please enter your UK contact number.';
+        }
+        return false;
+      }
+      const res = checkUKPhone(val);
+      if (res.valid) {
+        drawerPhoneInput.style.borderColor = '#16a34a';
+        drawerPhoneInput.style.backgroundColor = '#f0fdf4';
+        if (drawerPhoneFeedback) {
+          drawerPhoneFeedback.style.display = 'block';
+          drawerPhoneFeedback.style.color = '#16a34a';
+          drawerPhoneFeedback.textContent = '✓ Valid UK contact number';
+        }
+        return true;
+      } else {
+        drawerPhoneInput.style.borderColor = '#dc2626';
+        drawerPhoneInput.style.backgroundColor = '#fef2f2';
+        if (drawerPhoneFeedback) {
+          drawerPhoneFeedback.style.display = 'block';
+          drawerPhoneFeedback.style.color = '#dc2626';
+          drawerPhoneFeedback.textContent = '⚠️ ' + res.error;
+        }
+        return false;
+      }
+    }
+
+    if (drawerPhoneInput) {
+      ['input', 'keyup', 'blur', 'change'].forEach(evt => {
+        drawerPhoneInput.addEventListener(evt, validateDrawerPhoneLive);
+      });
+    }
+
     // Save Address
     sideCartDrawer.querySelector('#btn-save-address')?.addEventListener('click', () => {
-      const name = sideCartDrawer.querySelector('#edit-cust-name')?.value.trim() || 'Suraj Mahato';
-      const phone = sideCartDrawer.querySelector('#edit-cust-phone')?.value.trim() || '9805996874';
+      const name = sideCartDrawer.querySelector('#edit-cust-name')?.value.trim() || DEFAULT_DARAZ_ADDRESS.name;
+      const phone = sideCartDrawer.querySelector('#edit-cust-phone')?.value.trim() || '';
       const activeTagBtn = sideCartDrawer.querySelector('.btn-tag-select.active');
       const tag = activeTagBtn ? activeTagBtn.getAttribute('data-tag') : 'OFFICE';
       const address = sideCartDrawer.querySelector('#edit-cust-address')?.value.trim() || DEFAULT_DARAZ_ADDRESS.address;
       const note = sideCartDrawer.querySelector('#edit-cust-note')?.value.trim() || '';
 
-      const updatedAddr = { name, phone, tag, address, note };
+      if (!name || !phone || !address) {
+        showToast('Missing Fields', 'Please complete all required fields.', 'warning');
+        return;
+      }
+
+      const phoneRes = checkUKPhone(phone);
+      if (!phoneRes.valid) {
+        showToast('Invalid Phone', 'Please enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).', 'error');
+        if (drawerPhoneInput) {
+          drawerPhoneInput.focus();
+          validateDrawerPhoneLive();
+        }
+        return;
+      }
+
+      const updatedAddr = { name, phone: phoneRes.clean, tag, address, note };
       try {
         localStorage.setItem(STORAGE_ADDRESS, JSON.stringify(updatedAddr));
       } catch (e) {}
@@ -1057,19 +1154,25 @@
       // Update display elements
       const dispName = sideCartDrawer.querySelector('#disp-cust-name');
       const dispPhone = sideCartDrawer.querySelector('#disp-cust-phone');
+      const dispBadge = sideCartDrawer.querySelector('#disp-cust-phone-badge');
       const dispTag = sideCartDrawer.querySelector('#disp-cust-tag');
       const dispAddress = sideCartDrawer.querySelector('#disp-cust-address');
       const dispNote = sideCartDrawer.querySelector('#disp-cust-note');
 
       if (dispName) dispName.textContent = name;
-      if (dispPhone) dispPhone.textContent = phone;
+      if (dispPhone) dispPhone.textContent = phoneRes.clean;
+      if (dispBadge) {
+        dispBadge.className = 'badge bg-success text-white';
+        dispBadge.textContent = '✓ UK Phone Verified';
+        dispBadge.style.display = 'inline-block';
+      }
       if (dispTag) dispTag.textContent = tag;
       if (dispAddress) dispAddress.textContent = address;
       if (dispNote) dispNote.textContent = note;
 
       sideCartDrawer.querySelector('#checkout-address-edit-view').style.display = 'none';
       sideCartDrawer.querySelector('#checkout-address-display-view').style.display = 'block';
-      showToast('Address Updated', 'Shipping address saved successfully.', 'success');
+      showToast('Address Updated', 'UK delivery address verified and saved.', 'success');
       renderDrawerSummaries();
     });
 
@@ -1084,14 +1187,35 @@
       goToDrawerStep(1);
     });
 
-    // Step 2: Proceed to Pay -> Go to Step 3
+    // Step 2: Proceed to Pay -> Verify UK Phone BEFORE Step 3
     sideCartDrawer.querySelector('#btn-proceed-to-pay')?.addEventListener('click', () => {
+      const addr = getSavedAddress();
+      const phoneRes = checkUKPhone(addr.phone);
+      if (!phoneRes.valid) {
+        showToast('Invalid UK Phone', 'Please enter a valid UK contact number before proceeding to payment.', 'warning');
+        const editView = sideCartDrawer.querySelector('#checkout-address-edit-view');
+        const dispView = sideCartDrawer.querySelector('#checkout-address-display-view');
+        if (editView && dispView) {
+          editView.style.display = 'block';
+          dispView.style.display = 'none';
+        }
+        if (drawerPhoneInput) {
+          drawerPhoneInput.focus();
+          validateDrawerPhoneLive();
+        }
+        return;
+      }
       goToDrawerStep(3);
     });
 
-    // Step 3: Back to Checkout
+    // Step 3: Back to Delivery Address
     sideCartDrawer.querySelector('#btn-drawer-back-to-2')?.addEventListener('click', () => {
       goToDrawerStep(2);
+    });
+
+    // Step 3: Back to Shopping Cart
+    sideCartDrawer.querySelector('#btn-drawer-back-to-1')?.addEventListener('click', () => {
+      goToDrawerStep(1);
     });
 
     // Step 3: Payment method tiles
@@ -2725,7 +2849,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     accountReturnFocus = document.activeElement;
     if (!accountDialog) {
       const style = document.createElement('style');
-      style.textContent = '#terai-account-dialog{width:360px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 32px);padding:0;border:0;border-radius:0;background:#fff;box-shadow:0 15px 55px #0003;overflow:hidden}#terai-account-dialog::backdrop{background:rgba(15,23,42,.48)}#terai-account-dialog iframe{display:block;width:100%;height:440px;max-height:calc(100dvh - 32px);border:0;background:#fff}';
+      style.textContent = '#terai-account-dialog{width:380px;max-width:calc(100vw - 20px);max-height:calc(100dvh - 24px);padding:0;border:1px solid #e2e8f0;border-radius:0;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,0.25);overflow:hidden}#terai-account-dialog::backdrop{background:rgba(15,23,42,.55);backdrop-filter:blur(2px)}#terai-account-dialog iframe{display:block;width:100%;height:520px;max-height:calc(100dvh - 24px);border:0;background:#fff}';
       document.head.append(style);
       accountDialog = document.createElement('dialog');
       accountDialog.id = 'terai-account-dialog';
@@ -2758,6 +2882,16 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
       window.addEventListener('message', event => {
         if (event.origin !== window.location.origin || event.source !== accountFrame.contentWindow || !accountDialog.open) return;
         if (event.data?.type === 'terai-auth-close') closeLoginModal();
+        if (event.data?.type === 'terai-auth-guest') {
+          checkoutGuestAccepted = true;
+          closeLoginModal();
+          if (accountCheckout || (getCart && getCart().length > 0)) {
+            openSideCart(2);
+          } else {
+            showToast('Guest Access Active', 'You are continuing as guest. Add items and checkout anytime without signing in.', 'info');
+          }
+          return;
+        }
         if (event.data?.type === 'terai-auth-size' && Number.isFinite(event.data.height)) {
           accountFrame.style.height = Math.max(160, Math.min(event.data.height, window.innerHeight - 32)) + 'px';
         }
@@ -2781,9 +2915,9 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     }
     if (accountDialog.open) return;
     accountCheckout = options.checkout === true;
-    accountGuestButton.hidden = !accountCheckout;
-    accountGuestButton.style.setProperty('display', accountCheckout ? 'inline-flex' : 'none', 'important');
-    accountFrame.style.maxHeight = accountCheckout ? 'calc(100dvh - 100px)' : 'calc(100dvh - 32px)';
+    accountGuestButton.hidden = true;
+    accountGuestButton.style.setProperty('display', 'none', 'important');
+    accountFrame.style.maxHeight = 'calc(100dvh - 24px)';
     previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     accountFrame.src = '/accounts/login/';
