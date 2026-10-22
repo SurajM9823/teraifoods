@@ -24,6 +24,12 @@
     confirming = true;
     const current = mounted;
     current.message.textContent = 'Checking payment…';
+    const confirmBtn = document.getElementById('btn-drawer-confirm-pay') || document.getElementById('btn-final-pay');
+    const originalBtnText = confirmBtn ? confirmBtn.textContent : '';
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Processing Payment…';
+    }
     try {
       const order = await window.TeraiOrders.api(`/api/orders/${current.orderId}/payment-status/`, {});
       if (order.payment_status === 'paid' || order.payment_status === 'refunded') {
@@ -34,12 +40,29 @@
         ...(expressEvent ? {expressCheckoutConfirmEvent: expressEvent} : {})});
       if (result.type === 'error') throw new Error(result.error.message);
       current.message.textContent = 'Payment submitted. Verifying your order…';
+      current.message.style.display = 'block';
+      current.message.style.background = '#f0fdf4';
+      current.message.style.border = '1px solid #bbf7d0';
+      current.message.style.color = '#166534';
       // A browser success is never used to mark an order paid.
       await window.TeraiOrders.api(`/api/orders/${current.orderId}/payment-status/`, {});
       location.assign('/track-order/?order=' + current.orderId);
     } catch (error) {
       current.message.textContent = error.message;
-    } finally { confirming = false; }
+      current.message.style.display = 'block';
+      current.message.style.background = '#fef2f2';
+      current.message.style.border = '1px solid #fecaca';
+      current.message.style.color = '#b91c1c';
+      if (window.TeraiCatalog?.showToast) {
+        window.TeraiCatalog.showToast('Payment Issue', error.message, 'warning');
+      }
+    } finally {
+      confirming = false;
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = originalBtnText;
+      }
+    }
   }
   async function mount(root, data) {
     reset();
@@ -55,7 +78,7 @@
     const loaded = await checkout.loadActions();
     if (version !== serial) return;
     if (loaded.type === 'error') throw new Error(loaded.error.message);
-    root.innerHTML = '<div data-stripe-express></div><div data-stripe-payment></div><p data-stripe-total class="text-13 fw-bold mt-2"></p><p data-stripe-message role="status" aria-live="polite"></p>';
+    root.innerHTML = '<div data-stripe-express></div><div data-stripe-payment></div><p data-stripe-total class="text-13 fw-bold mt-2"></p><p data-stripe-message role="status" aria-live="polite" style="margin-top: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; border-radius: 4px; display: none;"></p>';
     const message = root.querySelector('[data-stripe-message]');
     const update = session => { root.querySelector('[data-stripe-total]').textContent = 'Total to pay: ' + session.total.total.amount; };
     update(loaded.actions.getSession());
