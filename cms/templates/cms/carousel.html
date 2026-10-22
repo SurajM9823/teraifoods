@@ -4,7 +4,7 @@
 <div class="slider-item"><div class="site-banner overflow-hidden rounded-base" style="--banner-tablet-height: 420px; --banner-mobile-height: 360px;" data-color="dark">
   <div class="entry-wrapper d-flex align-items-start strech p-20 sm-p-40 lg-p-60"><div class="entry-inner max-w-80 sm-max-w-60 md-max-w-50">
     {% if banner.badge %}<div class="entry-header mb-10"><span class="banner-badge green">{{ banner.badge }}</span></div>{% endif %}
-    <div class="entry-body mb-10 sm-mb-24 md-mb-40"><h2 class="entry-title text-26 sm-text-36 md-text-42 fw-bold text-primary-active">{{ banner.title }}</h2>
+    <div class="entry-body mb-10 sm-mb-24 md-mb-40">{% if forloop.first %}<h1 class="entry-title text-26 sm-text-36 md-text-42 fw-bold text-primary-active">{{ banner.title }}</h1>{% else %}<h2 class="entry-title text-26 sm-text-36 md-text-42 fw-bold text-primary-active">{{ banner.title }}</h2>{% endif %}
       {% if banner.description %}<div class="entry-content pr-0 md-pr-30"><p class="text-13 sm-text-14 md-text-16 lh-base">{{ banner.description }}</p></div>{% endif %}
     </div>
     <div class="entry-footer d-flex flex-wrap align-items-center gap-3"><a href="{{ banner.destination }}" class="btn btn-primary mobile-small icon-right">{{ banner.button_label }} <i class="klb-icon-move-right" aria-hidden="true"></i></a></div>

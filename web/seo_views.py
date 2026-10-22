@@ -26,6 +26,10 @@ Disallow: /payment/
 Disallow: /manage-profile/
 Disallow: /accounts/
 
+User-agent: Googlebot-Image
+Allow: /media/
+Allow: /static/
+
 Sitemap: {SITE_DOMAIN}/sitemap.xml
 """
     return HttpResponse(content, content_type="text/plain; charset=utf-8")
@@ -61,7 +65,7 @@ def sitemap_section(request, section):
         pages = [
             ("", "1.0", "daily"),
             ("shop/", "0.9", "daily"),
-            ("bulk-order/", "0.8", "weekly"),
+            ("bulk-order/", "0.9", "daily"),
             ("blogs/", "0.8", "daily"),
             ("contact/", "0.7", "monthly"),
             ("about/", "0.6", "monthly"),

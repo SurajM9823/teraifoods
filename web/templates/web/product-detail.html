@@ -7,9 +7,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<title>{% if product %}{{ product.name }} – Buy Online UK | Terai Food{% else %}Buy Fresh Organic Groceries UK – Terai Food{% endif %}</title>
-	<meta name="description" content="{% if product %}Buy {{ product.name }} online at Terai Food UK. Authentic Himalayan &amp; organic produce, £{{ product.price }}. Fast nationwide UK delivery.{% else %}Shop premium Himalayan and organic groceries online with nationwide delivery from Terai Food UK.{% endif %}">
-	<meta name="keywords" content="{% if product %}{{ product.name }}, buy {{ product.name }} UK, {{ product.category.name|default:'groceries' }} online UK, Terai Food{% else %}online groceries UK, Himalayan spices, organic rice, lentils{% endif %}">
+	<title>{% if product %}{{ product.name }} – Buy Online UK (Retail &amp; Bulk) | Terai Food{% else %}Buy Fresh Organic Groceries UK – Terai Food{% endif %}</title>
+	<meta name="description" content="{% if product %}Buy {{ product.name }} online at Terai Food UK. Authentic Himalayan &amp; organic produce, £{{ product.price }}. Retail or wholesale bulk orders with fast nationwide UK delivery.{% else %}Shop premium Himalayan and organic groceries online with nationwide delivery from Terai Food UK.{% endif %}">
+	<meta name="keywords" content="{% if product %}{{ product.name }}, buy {{ product.name }} UK, bulk buy {{ product.name }}, {{ product.category.name|default:'groceries' }} online UK, wholesale groceries UK, Terai Food{% else %}online groceries UK, Himalayan spices, organic rice, lentils, bulk food UK{% endif %}">
 	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 	<link rel="canonical" href="https://teraifoods.co.uk/product-detail/{% if product %}?product={{ product.slug }}{% endif %}">
 
@@ -57,6 +57,46 @@
 	    "seller": {
 	      "@type": "Organization",
 	      "name": "Terai Food UK"
+	    },
+	    "shippingDetails": {
+	      "@type": "OfferShippingDetails",
+	      "shippingRate": {
+	        "@type": "MonetaryAmount",
+	        "value": "4.99",
+	        "currency": "GBP"
+	      },
+	      "shippingDestination": {
+	        "@type": "DefinedRegion",
+	        "addressCountry": "GB"
+	      },
+	      "deliveryTime": {
+	        "@type": "ShippingDeliveryTime",
+	        "businessDays": {
+	          "@type": "OpeningHoursSpecification",
+	          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+	        },
+	        "cutoffTime": "14:00:00Z",
+	        "handlingTime": {
+	          "@type": "QuantitativeValue",
+	          "minValue": 0,
+	          "maxValue": 1,
+	          "unitCode": "d"
+	        },
+	        "transitTime": {
+	          "@type": "QuantitativeValue",
+	          "minValue": 1,
+	          "maxValue": 2,
+	          "unitCode": "d"
+	        }
+	      }
+	    },
+	    "hasMerchantReturnPolicy": {
+	      "@type": "MerchantReturnPolicy",
+	      "applicableCountry": "GB",
+	      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+	      "merchantReturnDays": 14,
+	      "returnMethod": "https://schema.org/ReturnByMail",
+	      "returnFees": "https://schema.org/FreeReturn"
 	    }
 	  },
 	  "aggregateRating": {
