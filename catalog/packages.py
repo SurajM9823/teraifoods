@@ -1,4 +1,5 @@
 from collections import defaultdict
+from decimal import Decimal
 from django.core.exceptions import ValidationError
 from .models import Product, PackageItem
 from .services import require_public
@@ -7,11 +8,29 @@ from .services import require_public
 def present(product):
     """Fill existing template fields on a read-only display instance."""
     if product and product.is_package:
-        product.stock=product.effective_stock
-        product.regular_price=product.base_price
-        product.sale_price=product.price if product.price<product.regular_price else None
-        contents='\n'.join(f'{line.quantity} x {line.product.name}' for line in product.package_config.components.select_related('product'))
-        product.description=(product.description+'\n\nPackage contents:\n'+contents).strip()
+        product.stock = product.effective_stock
+        product.regular_price = product.base_price
+        product.sale_price = product.price if product.price < product.regular_price else None
+
+        lines = product.package_lines
+        for line in lines:
+            line.unit_price = line.product.price
+            line.line_total = (line.quantity * line.product.price).quantize(Decimal('.01')) if line.product.price else Decimal('0.00')
+            if line.product.weight:
+                line.unit_weight_display = f"{line.product.weight} {line.product.get_weight_unit_display()}"
+            else:
+                line.unit_weight_display = ""
+
+        product.bundle_lines = lines
+        product.bundle_items_count = sum(line.quantity for line in lines)
+        product.bundle_products_count = len(lines)
+        product.bundle_savings = max(Decimal('0.00'), (product.base_price - product.price)).quantize(Decimal('.01'))
+
+        contents = ', '.join(f"{line.quantity}x {line.product.name}" for line in lines)
+        pkg_config = getattr(product, 'package_config', None)
+        tagline = f"{pkg_config.tagline}. " if pkg_config and pkg_config.tagline else ""
+        if not product.description or 'Package contents:' in product.description:
+            product.description = f"{tagline}Special curated grocery bundle containing {product.bundle_items_count} items ({contents}). Handpicked for authentic freshness and exceptional savings."
     return product
 
 

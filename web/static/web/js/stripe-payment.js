@@ -36,7 +36,7 @@
         location.assign('/track-order/?order=' + current.orderId); return;
       }
       if (order.fulfilment_status !== 'pending_payment' || order.cancellation_status !== 'none') throw new Error('This order is no longer payable. Check its status before trying again.');
-      const result = await current.actions.confirm({redirect: 'if_required', savePaymentMethod: false,
+      const result = await current.actions.confirm({redirect: 'if_required',
         ...(expressEvent ? {expressCheckoutConfirmEvent: expressEvent} : {})});
       if (result.type === 'error') throw new Error(result.error.message);
       current.message.textContent = 'Payment submitted. Verifying your order…';

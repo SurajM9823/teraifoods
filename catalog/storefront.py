@@ -10,7 +10,7 @@ LAYOUTS = json.loads((Path(__file__).parent / 'data/layouts.json').read_text(enc
 
 
 def context(request, page_key):
-    prefix = {'home':'index', 'shop':'shop', 'search':'shop', 'product':'product', 'product-detail':'product_detail'}.get(page_key)
+    prefix = {'home':'index', 'shop':'shop', 'search':'shop', 'product':'product', 'product-detail':'product_detail', 'package':'product_detail', 'package-detail':'product_detail'}.get(page_key)
     if not prefix:
         return {}
     from .models import CatalogRevision
@@ -27,6 +27,13 @@ def context(request, page_key):
         selected=present(selected)
         result['product'] = selected
         result['product_payload'] = serialize(selected) if selected else None
+        if selected and selected.is_package:
+            result['is_package'] = True
+            result['bundle_lines'] = getattr(selected, 'bundle_lines', [])
+            result['bundle_savings'] = getattr(selected, 'bundle_savings', 0)
+            result['bundle_items_count'] = getattr(selected, 'bundle_items_count', 0)
+            result['bundle_products_count'] = getattr(selected, 'bundle_products_count', 0)
+            result['package_config'] = getattr(selected, 'package_config', None)
     for group, layout in LAYOUTS.items():
         if not group.startswith(prefix + '_'):
             continue

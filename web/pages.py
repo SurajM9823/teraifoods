@@ -24,6 +24,8 @@ PAGES = {
     'manage-profile': Page('manage-profile', 'manage-profile/', 'web/manage-profile.html'),
     'payment': Page('payment', 'payment/', 'web/payment.html'),
     'product-detail': Page('product-detail', 'product-detail/', 'web/product-detail.html'),
+    'package': Page('package', 'package/', 'web/product-detail.html'),
+    'package-detail': Page('package-detail', 'package-detail/', 'web/product-detail.html'),
     'product': Page('product', 'product/', 'web/product.html'),
     'search': Page('search', 'search/', 'web/shop.html'),
     'shop': Page('shop', 'shop/', 'web/shop.html'),

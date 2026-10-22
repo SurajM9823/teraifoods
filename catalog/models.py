@@ -126,7 +126,7 @@ class Product(models.Model):
 
     @cached_property
     def package_lines(self):
-        return list(self.package_config.components.select_related('product','product__category','product__subcategory'))
+        return list(self.package_config.components.select_related('product','product__category','product__subcategory').prefetch_related('product__images'))
 
     @property
     def weight_grams(self):

@@ -7,8 +7,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<title>{% if product %}{{ product.name }} – Buy Online UK (Retail &amp; Bulk) | Terai Food{% else %}Buy Fresh Organic Groceries UK – Terai Food{% endif %}</title>
-	<meta name="description" content="{% if product %}Buy {{ product.name }} online at Terai Food UK. Authentic Himalayan &amp; organic produce, £{{ product.price }}. Retail or wholesale bulk orders with fast nationwide UK delivery.{% else %}Shop premium Himalayan and organic groceries online with nationwide delivery from Terai Food UK.{% endif %}">
+	<title>{% if product %}{% if product.is_package %}{{ product.name }} – Weekly Curated Grocery Bundle | Terai Food UK{% else %}{{ product.name }} – Buy Online UK (Retail &amp; Bulk) | Terai Food{% endif %}{% else %}Buy Fresh Organic Groceries UK – Terai Food{% endif %}</title>
+	<meta name="description" content="{% if product %}{% if product.is_package %}Special bundle offer: {{ product.name }} online at Terai Food UK. Includes {{ product.bundle_items_count }} essential grocery items for only £{{ product.price }} (Save £{{ product.bundle_savings }}). Fast UK nationwide delivery.{% else %}Buy {{ product.name }} online at Terai Food UK. Authentic Himalayan &amp; organic produce, £{{ product.price }}. Retail or wholesale bulk orders with fast nationwide UK delivery.{% endif %}{% else %}Shop premium Himalayan and organic groceries online with nationwide delivery from Terai Food UK.{% endif %}">
 	<meta name="keywords" content="{% if product %}{{ product.name }}, buy {{ product.name }} UK, bulk buy {{ product.name }}, {{ product.category.name|default:'groceries' }} online UK, wholesale groceries UK, Terai Food{% else %}online groceries UK, Himalayan spices, organic rice, lentils, bulk food UK{% endif %}">
 	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 	<link rel="canonical" href="https://teraifoods.co.uk/product-detail/{% if product %}?product={{ product.slug }}{% endif %}">
@@ -112,8 +112,13 @@
 	  "@type": "BreadcrumbList",
 	  "itemListElement": [
 	    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://teraifoods.co.uk/" },
-	    { "@type": "ListItem", "position": 2, "name": "Shops", "item": "https://teraifoods.co.uk/shop/" },
+	    {% if product.is_package %}
+	    { "@type": "ListItem", "position": 2, "name": "Weekly Curated Packages", "item": "https://teraifoods.co.uk/" },
 	    { "@type": "ListItem", "position": 3, "name": "{{ product.name|escapejs }}", "item": "https://teraifoods.co.uk/product-detail/?product={{ product.slug }}" }
+	    {% else %}
+	    { "@type": "ListItem", "position": 2, "name": "{{ product.category.name|default:'Groceries'|escapejs }}", "item": "https://teraifoods.co.uk/shop/?category={{ product.category.slug }}" },
+	    { "@type": "ListItem", "position": 3, "name": "{{ product.name|escapejs }}", "item": "https://teraifoods.co.uk/product-detail/?product={{ product.slug }}" }
+	    {% endif %}
 	  ]
 	}
 	</script>
@@ -714,6 +719,453 @@
 			color: #94a3b8;
 			font-weight: 600;
 		}
+	
+		/* ========================================================
+		   PACKAGE / BUNDLE SPECIFIC PDP STYLES
+		   ======================================================== */
+		.pdp-badge-package {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			background: linear-gradient(135deg, #634c9f 0%, #4338ca 100%);
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 800;
+			padding: 4px 10px;
+			border-radius: 4px;
+			letter-spacing: 0.5px;
+			z-index: 2;
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			box-shadow: 0 2px 6px rgba(99, 76, 159, 0.35);
+		}
+		.pdp-package-strip {
+			background: linear-gradient(90deg, #ecfdf5 0%, #f0fdf4 100%);
+			border: 1px solid #a7f3d0;
+			border-radius: 6px;
+			padding: 8px 14px;
+			margin-bottom: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+		.pdp-package-strip-tag {
+			color: #047857;
+			font-weight: 800;
+			font-size: 12.5px;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+		}
+		.pdp-package-strip-info {
+			font-size: 12px;
+			color: #334155;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+		.pdp-package-tagline {
+			font-size: 14.5px;
+			color: #475569;
+			font-weight: 500;
+			margin-top: -4px;
+			margin-bottom: 10px;
+			line-height: 1.45;
+		}
+		.pdp-package-price-box {
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			border-radius: 6px;
+			padding: 14px 16px;
+		}
+		.pdp-discount-pill-green {
+			background: #ecfdf5 !important;
+			color: #047857 !important;
+			border: 1px solid #a7f3d0 !important;
+			font-weight: 800 !important;
+			font-size: 12px !important;
+			padding: 3px 8px !important;
+			border-radius: 4px !important;
+		}
+		.pdp-package-price-note {
+			font-size: 12px;
+			color: #059669;
+			font-weight: 600;
+			margin-top: 6px;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+		.pdp-package-highlights {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin: 14px 0 16px;
+		}
+		.pdp-highlight-chip {
+			background: #ffffff;
+			border: 1px solid #cbd5e1;
+			border-radius: 6px;
+			padding: 5px 10px;
+			font-size: 12px;
+			font-weight: 600;
+			color: #334155;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+		}
+		.pdp-highlight-chip i {
+			color: #634c9f;
+		}
+		.pdp-bundle-summary-card {
+			background: #f0fdf4;
+			border: 1px solid #bbf7d0;
+			border-radius: 6px;
+			padding: 14px;
+			margin-bottom: 14px;
+		}
+		.pdp-bundle-math-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 12.5px;
+			color: #475569;
+			margin-bottom: 6px;
+		}
+		.pdp-bundle-math-total {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 14px;
+			font-weight: 700;
+			color: #0f172a;
+			border-top: 1px dashed #86efac;
+			padding-top: 8px;
+			margin-top: 8px;
+		}
+		.pdp-bundle-math-total .deal-price {
+			font-size: 19px;
+			color: #059669;
+			font-weight: 800;
+		}
+		.pdp-bundle-savings-alert {
+			background: #dcfce7;
+			border: 1px solid #86efac;
+			border-radius: 4px;
+			padding: 7px 10px;
+			margin-top: 10px;
+			font-size: 12px;
+			color: #166534;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+		/* Items Section */
+		.pdp-package-items-section {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 6px;
+			padding: 24px;
+			margin-bottom: 20px;
+		}
+		.package-section-title-wrap {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			flex-wrap: wrap;
+			gap: 12px;
+			border-bottom: 1px solid #f1f5f9;
+			padding-bottom: 14px;
+			margin-bottom: 18px;
+		}
+		.package-section-badge {
+			background: #634c9f;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 800;
+			padding: 3px 8px;
+			border-radius: 4px;
+			letter-spacing: 0.5px;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			margin-bottom: 6px;
+		}
+		.package-verified-pill {
+			background: #ecfdf5;
+			color: #047857;
+			border: 1px solid #a7f3d0;
+			border-radius: 20px;
+			padding: 4px 12px;
+			font-size: 12px;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.package-items-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+		.package-item-card {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 6px;
+			padding: 14px 18px;
+			transition: all 0.2s ease;
+		}
+		.package-item-card:hover {
+			border-color: #634c9f;
+			box-shadow: 0 4px 14px rgba(99, 76, 159, 0.08);
+			transform: translateY(-1px);
+		}
+		.package-item-img-col {
+			width: 84px;
+			height: 84px;
+			flex: 0 0 84px;
+			position: relative;
+			border: 1px solid #f1f5f9;
+			border-radius: 6px;
+			background: #f8fafc;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 4px;
+		}
+		.package-item-img-link {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+		}
+		.package-item-img-col img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+		.package-item-qty-badge {
+			position: absolute;
+			bottom: -6px;
+			right: -6px;
+			background: #634c9f;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 800;
+			padding: 2px 7px;
+			border-radius: 12px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+		}
+		.package-item-details-col {
+			flex: 1;
+			min-width: 0;
+		}
+		.package-item-cat {
+			font-size: 11px;
+			text-transform: uppercase;
+			color: #64748b;
+			font-weight: 700;
+			letter-spacing: 0.3px;
+			margin-bottom: 2px;
+		}
+		.package-item-title {
+			font-size: 15px;
+			font-weight: 700;
+			color: #0f172a;
+			margin-bottom: 6px;
+			line-height: 1.35;
+		}
+		.package-item-title a {
+			color: #0f172a;
+			text-decoration: none;
+			transition: color 0.15s ease;
+		}
+		.package-item-title a:hover {
+			color: #634c9f;
+		}
+		.package-item-meta-pills {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+			margin-bottom: 4px;
+		}
+		.meta-pill {
+			font-size: 11.5px;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			border-radius: 4px;
+			padding: 2px 8px;
+			color: #475569;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+		.package-item-desc {
+			font-size: 12px;
+			color: #64748b;
+			margin: 4px 0 0;
+			line-height: 1.4;
+		}
+		.package-item-price-col {
+			width: 160px;
+			flex: 0 0 160px;
+			text-align: right;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+			border-left: 1px solid #f1f5f9;
+			padding-left: 16px;
+		}
+		.pkg-qty-count {
+			display: inline-flex;
+			align-items: baseline;
+			gap: 4px;
+			background: #f5f3ff;
+			border: 1px solid #ede9fe;
+			border-radius: 4px;
+			padding: 2px 8px;
+			margin-bottom: 6px;
+		}
+		.pkg-qty-count .qty-big {
+			font-size: 13px;
+			font-weight: 800;
+			color: #634c9f;
+		}
+		.pkg-qty-count .qty-sub {
+			font-size: 11px;
+			color: #634c9f;
+		}
+		.pkg-unit-price {
+			font-size: 13px;
+			color: #475569;
+		}
+		.pkg-unit-price .price-val {
+			font-weight: 700;
+			color: #0f172a;
+		}
+		.pkg-unit-price .price-each {
+			font-size: 11px;
+			color: #94a3b8;
+		}
+		.pkg-line-total {
+			margin-top: 3px;
+			display: flex;
+			align-items: baseline;
+			gap: 4px;
+		}
+		.pkg-line-total .tot-lbl {
+			font-size: 11px;
+			color: #64748b;
+		}
+		.pkg-line-total .tot-val {
+			font-size: 16px;
+			font-weight: 800;
+			color: #059669;
+		}
+		.pkg-view-item-btn {
+			font-size: 11.5px;
+			color: #634c9f;
+			font-weight: 700;
+			text-decoration: none;
+			margin-top: 6px;
+			display: inline-flex;
+			align-items: center;
+			gap: 3px;
+		}
+		.pkg-view-item-btn:hover {
+			text-decoration: underline;
+			color: #4338ca;
+		}
+		.package-bottom-bar {
+			background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+			border: 1px solid #e2e8f0;
+			border-radius: 6px;
+			padding: 16px 20px;
+			margin-top: 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 14px;
+		}
+		.package-bottom-info .bottom-title {
+			font-size: 15px;
+			font-weight: 700;
+			color: #0f172a;
+		}
+		.package-bottom-info .bottom-desc {
+			font-size: 12.5px;
+			color: #64748b;
+		}
+		.package-bottom-pricing {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+		.bottom-reg-price {
+			font-size: 13px;
+			color: #64748b;
+		}
+		.bottom-deal-price {
+			font-size: 22px;
+			font-weight: 800;
+			color: #059669;
+		}
+		.bottom-save-tag {
+			background: #ecfdf5;
+			color: #047857;
+			border: 1px solid #a7f3d0;
+			font-size: 12px;
+			font-weight: 800;
+			padding: 3px 8px;
+			border-radius: 4px;
+		}
+		.bottom-add-btn {
+			padding: 10px 20px !important;
+			font-size: 13px !important;
+			font-weight: 700 !important;
+		}
+		@media (max-width: 767px) {
+			.package-item-card {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+			.package-item-price-col {
+				width: 100%;
+				flex: auto;
+				border-left: none;
+				border-top: 1px solid #f1f5f9;
+				padding-left: 0;
+				padding-top: 10px;
+				margin-top: 8px;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.package-bottom-bar {
+				flex-direction: column;
+				align-items: stretch;
+			}
+			.package-bottom-pricing {
+				justify-content: space-between;
+			}
+			.bottom-add-btn {
+				width: 100%;
+			}
+		}
+
 	</style>
 
 	<style>
@@ -1695,15 +2147,23 @@
 							<ul class="pdp-breadcrumb">
 								<li><a href="{% url 'web:home' %}">Home</a></li>
 								<li class="sep">&gt;</li>
-								<li><a href="{% url 'web:shop' %}">Groceries</a></li>
-								<li class="sep">&gt;</li>
-								<li><a href="{% url 'web:shop' %}">Cooking &amp; Baking Ingredients</a></li>
-								<li class="sep">&gt;</li>
-								<li><a href="{% url 'web:shop' %}">Condiment Dressing</a></li>
-								<li class="sep">&gt;</li>
-								<li><a href="{% url 'web:shop' %}">Chilli Sauce</a></li>
+								{% if product.is_package %}
+								<li><a href="{% url 'web:home' %}">Weekly Special Bundles</a></li>
 								<li class="sep">&gt;</li>
 								<li class="current">{{ product.name }}</li>
+								{% else %}
+								<li><a href="{% url 'web:shop' %}">Groceries</a></li>
+								{% if product.category %}
+								<li class="sep">&gt;</li>
+								<li><a href="/shop/?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+								{% endif %}
+								{% if product.subcategory %}
+								<li class="sep">&gt;</li>
+								<li><a href="/shop/?subcategory={{ product.subcategory.slug }}">{{ product.subcategory.name }}</a></li>
+								{% endif %}
+								<li class="sep">&gt;</li>
+								<li class="current">{{ product.name }}</li>
+								{% endif %}
 							</ul>
 						</div>
 
@@ -1714,7 +2174,7 @@
 								<!-- Column 1: Gallery -->
 								<div class="pdp-gallery-col">
 									<div class="pdp-main-img-box">
-										<span class="pdp-badge-flash"><i class="klb-icon-zap"></i> PRODUCT DETAILS</span>
+										{% if product.is_package %}<span class="pdp-badge-package"><i class="klb-icon-gift"></i> {{ product.package_config.subtitle|default:"SPECIAL BUNDLE" }}</span>{% else %}<span class="pdp-badge-flash"><i class="klb-icon-zap"></i> PRODUCT DETAILS</span>{% endif %}
 										<img src="{{ product.image_url }}" alt="{{ product.name }}" id="pdp-active-image">
 									</div>
 
@@ -1728,7 +2188,21 @@
 								<!-- Column 2: Product Purchase Details -->
 								<div class="pdp-info-col">
 
-									<!-- Flash Sale Strip -->
+									<!-- Top Strip -->
+									{% if product.is_package %}
+									<div class="pdp-package-strip">
+										<span class="pdp-package-strip-tag"><i class="klb-icon-gift"></i> {{ product.package_config.subtitle|default:"ONLY THIS WEEK SPECIAL" }}</span>
+										<div class="pdp-package-strip-info">
+											<span>Contains:</span>
+											<strong>{{ product.bundle_items_count }} items ({{ product.bundle_products_count }} products)</strong>
+											<span class="text-muted ms-2">| ~{{ product.weight_grams|floatformat:0 }}g</span>
+										</div>
+									</div>
+									<h1 class="pdp-product-title">{{ product.name }}</h1>
+									{% if product.package_config.tagline %}
+									<p class="pdp-package-tagline">{{ product.package_config.tagline }}</p>
+									{% endif %}
+									{% else %}
 									<div class="pdp-flash-strip">
 										<span class="pdp-flash-title"><i class="klb-icon-zap"></i> PRODUCT DETAILS</span>
 										<div class="pdp-flash-timer">
@@ -1737,8 +2211,8 @@
 											<span class="text-muted ms-2">| {{ product.stock }} available</span>
 										</div>
 									</div>
-
 									<h1 class="pdp-product-title">{{ product.name }}</h1>
+									{% endif %}
 
 									<!-- Ratings & Social Meta -->
 									<div class="pdp-meta-row">
@@ -1754,6 +2228,32 @@
 										</div>
 									</div>
 
+									{% if product.is_package %}
+									<div class="pdp-brand-row">
+										<span class="badge" style="background:#634c9f; color:#fff; font-size:11px; padding:3px 8px; border-radius:4px;"><i class="klb-icon-gift"></i> CURATED PACKAGE</span>
+										<span class="text-muted ms-2" style="font-size:12.5px;">Category: <a href="/shop/?category={{ product.category.slug }}">{{ product.category.name }}</a></span>
+									</div>
+
+									<!-- Package Price Box -->
+									<div class="pdp-price-box pdp-package-price-box">
+										<div class="pdp-main-price">&pound;{{ product.price }}</div>
+										<div class="pdp-strike-price">
+											<del>&pound;{{ product.base_price }}</del> 
+											<span class="pdp-discount-pill pdp-discount-pill-green">SAVE {{ product.discount_percent }}% (&pound;{{ product.bundle_savings }} OFF)</span>
+										</div>
+										<div class="pdp-package-price-note">
+											<i class="klb-icon-check-circle"></i> Price includes all {{ product.bundle_items_count }} grocery items listed below
+										</div>
+									</div>
+
+									<!-- Package Highlight Chips -->
+									<div class="pdp-package-highlights">
+										<div class="pdp-highlight-chip"><i class="klb-icon-box"></i> {{ product.bundle_products_count }} Distinct Products</div>
+										<div class="pdp-highlight-chip"><i class="klb-icon-shopping-bag"></i> {{ product.bundle_items_count }} Total Items</div>
+										<div class="pdp-highlight-chip"><i class="klb-icon-truck"></i> 1 Delivery Fee</div>
+										<div class="pdp-highlight-chip"><i class="klb-icon-percent"></i> {{ product.discount_percent }}% Bundle Savings</div>
+									</div>
+									{% else %}
 									<div class="pdp-brand-row"><a href="/shop/?category={{ product.category.slug }}">{{ product.category.name }}</a></div>
 
 									<!-- Price Box -->
@@ -1768,6 +2268,7 @@
 										<span class="pdp-promo-badge">{% if product.sale_price %}Sale price applied{% else %}Current price shown{% endif %}</span>
 										<span class="pdp-promo-badge">Prices checked at checkout</span>
 									</div>
+									{% endif %}
 
 									<!-- Quantity Stepper -->
 									<div class="pdp-qty-row">
@@ -1782,14 +2283,41 @@
 
 									<!-- Action CTA Buttons -->
 									<div class="pdp-actions-row">
-										<button class="pdp-btn-buynow" id="pdp-btn-buy">Buy Now</button>
-										<button class="pdp-btn-addcart" id="pdp-btn-cart"><i class="klb-icon-shopping-cart"></i> Add to Cart</button>
+										<button class="pdp-btn-buynow" id="pdp-btn-buy">{% if product.is_package %}Buy Package Now{% else %}Buy Now{% endif %}</button>
+										<button class="pdp-btn-addcart" id="pdp-btn-cart"><i class="klb-icon-shopping-cart"></i> {% if product.is_package %}Add Package to Cart{% else %}Add to Cart{% endif %}</button>
 									</div>
 
 								</div>
 
 								<!-- Column 3: Delivery Options & Seller Profile -->
 								<div class="pdp-delivery-col">
+
+									{% if product.is_package %}
+									<!-- Package Savings Card -->
+									<div class="pdp-bundle-summary-card">
+										<div class="pdp-box-header mb-2" style="border-bottom:1px solid #bbf7d0; padding-bottom:6px;">
+											<span class="fw-bold text-dark"><i class="klb-icon-gift text-success me-1"></i> Bundle Value Summary</span>
+										</div>
+										<div class="pdp-bundle-math">
+											<div class="pdp-bundle-math-row">
+												<span>Combined Retail Value:</span>
+												<span><del>&pound;{{ product.base_price }}</del></span>
+											</div>
+											<div class="pdp-bundle-math-row text-success fw-semibold">
+												<span>Package Discount ({{ product.discount_percent }}%):</span>
+												<span>-&pound;{{ product.bundle_savings }}</span>
+											</div>
+											<div class="pdp-bundle-math-total">
+												<span>Special Bundle Price:</span>
+												<span class="deal-price">&pound;{{ product.price }}</span>
+											</div>
+											<div class="pdp-bundle-savings-alert">
+												<i class="klb-icon-check-circle"></i> You save <strong>&pound;{{ product.bundle_savings }}</strong> with this package!
+											</div>
+										</div>
+									</div>
+									<div class="pdp-divider"></div>
+									{% endif %}
 
 									<div class="pdp-box-header">
 										<span>Delivery Options</span>
@@ -1891,9 +2419,94 @@
 							</div>
 						</div>
 
+						{% if product.is_package %}
+						<!-- 2.5 Package Included Items Section -->
+						<div class="pdp-section-card pdp-package-items-section" id="package-items-section">
+							<div class="package-section-title-wrap">
+								<div class="package-title-left">
+									<span class="package-section-badge"><i class="klb-icon-shopping-bag"></i> PACKAGE CONTENTS BREAKDOWN</span>
+									<h2 class="pdp-section-title mb-1" style="border-bottom:none; padding-bottom:0;">Items Included in this Package ({{ product.bundle_items_count }} Total Items)</h2>
+									<p class="text-muted mb-0" style="font-size: 13.5px;">All {{ product.bundle_products_count }} products below are bundled together in this weekly special package.</p>
+								</div>
+								<div class="package-title-right">
+									<span class="package-verified-pill"><i class="klb-icon-shield-check text-success"></i> 100% Quality Guaranteed</span>
+								</div>
+							</div>
+
+							<!-- Items Grid -->
+							<div class="package-items-grid">
+								{% for line in product.bundle_lines %}
+								<div class="package-item-card">
+									<div class="package-item-img-col">
+										<a href="/product-detail/?product={{ line.product.slug }}" target="_blank" class="package-item-img-link" title="Click to view {{ line.product.name }}">
+											<img src="{{ line.product.image_url }}" alt="{{ line.product.name }}" loading="lazy">
+										</a>
+										<span class="package-item-qty-badge">&times;{{ line.quantity }} Included</span>
+									</div>
+									<div class="package-item-details-col">
+										<div class="package-item-cat">{{ line.product.category.name|default:"Grocery Item" }}{% if line.product.subcategory %} &rsaquo; {{ line.product.subcategory.name }}{% endif %}</div>
+										<h4 class="package-item-title">
+											<a href="/product-detail/?product={{ line.product.slug }}" target="_blank">{{ line.product.name }}</a>
+										</h4>
+										<div class="package-item-meta-pills">
+											{% if line.product.weight %}
+											<span class="meta-pill"><i class="klb-icon-package"></i> Unit size: <strong>{{ line.product.weight }} {{ line.product.get_weight_unit_display }}</strong></span>
+											{% endif %}
+											{% if line.product.sku %}
+											<span class="meta-pill"><i class="klb-icon-tag"></i> SKU: {{ line.product.sku }}</span>
+											{% endif %}
+											<span class="meta-pill text-success"><i class="klb-icon-check"></i> In Stock</span>
+										</div>
+										{% if line.product.description %}
+										<p class="package-item-desc">{{ line.product.description|striptags|truncatewords:18 }}</p>
+										{% endif %}
+									</div>
+									<div class="package-item-price-col">
+										<div class="pkg-qty-count">
+											<span class="qty-big">{{ line.quantity }}</span>
+											<span class="qty-sub">in bundle</span>
+										</div>
+										<div class="pkg-unit-price">
+											<span class="price-val">&pound;{{ line.product.price }}</span>
+											<span class="price-each">each</span>
+										</div>
+										<div class="pkg-line-total">
+											<span class="tot-lbl">Line value:</span>
+											<span class="tot-val">&pound;{{ line.line_total|floatformat:2 }}</span>
+										</div>
+										<a href="/product-detail/?product={{ line.product.slug }}" target="_blank" class="pkg-view-item-btn">
+											View Product <i class="klb-icon-external-link"></i>
+										</a>
+									</div>
+								</div>
+								{% empty %}
+								<div class="alert alert-info">No products currently configured in this package.</div>
+								{% endfor %}
+							</div>
+
+							<!-- Package Bottom Bar -->
+							<div class="package-bottom-bar">
+								<div class="package-bottom-info">
+									<div class="bottom-title">All-in-One Package Deal</div>
+									<div class="bottom-desc">Save {{ product.discount_percent }}% compared to purchasing these items individually.</div>
+								</div>
+								<div class="package-bottom-pricing">
+									<div class="bottom-reg-price">Individual Total: <del>&pound;{{ product.base_price }}</del></div>
+									<div class="bottom-deal-price">&pound;{{ product.price }}</div>
+									<div class="bottom-save-tag">SAVE &pound;{{ product.bundle_savings }} ({{ product.discount_percent }}% OFF)</div>
+								</div>
+								<div class="package-bottom-action">
+									<button class="pdp-btn-addcart bottom-add-btn" onclick="document.getElementById('pdp-btn-cart').click();">
+										<i class="klb-icon-shopping-cart"></i> Add Package to Cart
+									</button>
+								</div>
+							</div>
+						</div>
+						{% endif %}
+
 						<!-- 3. Section: Product Description Box -->
 						<div class="pdp-section-card" id="description-section">
-							<h2 class="pdp-section-title">Description</h2>
+							<h2 class="pdp-section-title">{% if product.is_package %}About This Curated Package{% else %}Description{% endif %}</h2>
 
 							<!-- Disclaimer Notice -->
 							<div class="pdp-notice-banner">
