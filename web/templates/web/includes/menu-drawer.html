@@ -47,8 +47,8 @@
 							<i class="klb-icon-phone-call"></i>
 						</div><!-- contact-icon -->
 						<div class="contact-detail">
-							<div><a class="phone" href="tel:555-555-5555">555-555-5555</a></div>
-							<span>You can call anytime from 9 am to 6 pm.</span>
+							<div><a class="phone" href="tel:{{ contact_info.phone_clean }}">{{ contact_info.phone }}</a></div>
+							<span>{{ contact_info.operating_hours }}</span>
 						</div><!-- contact-detail -->
 					</li>
 					<li>
@@ -56,7 +56,7 @@
 							<i class="klb-icon-send"></i>
 						</div><!-- contact-icon -->
 						<div class="contact-detail">
-							<div><a class="email" href="mailto:support@teraifoods.co.uk">support@teraifoods.co.uk</a></div>
+							<div><a class="email" href="mailto:{{ contact_info.support_email }}">{{ contact_info.support_email }}</a></div>
 							<span>We will gladly assist you in the shortest time.</span>
 						</div><!-- contact-detail -->
 					</li>

@@ -600,66 +600,7 @@
 		</section>
 
 		<!-- Footer -->
-		<footer class="site-footer" role="contentinfo">
-			<div class="footer-row footer-widgets py-5 border-top bg-white">
-				<div class="container">
-					<div class="row g-4">
-						<div class="col-lg-4 col-md-6">
-							<div class="site-brand mb-3">
-								<a href="{% url 'web:home' %}">
-									<img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food" width="180">
-								</a>
-							</div>
-							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
-							<div class="text-13 text-gray-700">
-								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
-								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
-							</div>
-						</div>
-
-						<div class="col-lg-2 col-md-3 col-6">
-							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Quick Links</h4>
-							<ul class="list-unstyled text-13 mb-0">
-								<li class="mb-2"><a href="{% url 'web:home' %}" class="text-gray-600 hover-primary">Home</a></li>
-								<li class="mb-2"><a href="{% url 'web:about' %}" class="text-gray-600 hover-primary">About Us</a></li>
-								<li class="mb-2"><a href="{% url 'web:blogs' %}" class="text-primary fw-semibold">Blogs &amp; Journal</a></li>
-								<li class="mb-2"><a href="{% url 'web:checkout' %}" class="text-gray-600 hover-primary">Checkout</a></li>
-								<li class="mb-2"><a href="{% url 'web:home' %}#order-tracking" class="text-gray-600 hover-primary">Track Order</a></li>
-							</ul>
-						</div>
-
-						<div class="col-lg-3 col-md-3 col-6">
-							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">Customer Service</h4>
-							<ul class="list-unstyled text-13 mb-0">
-								<li class="mb-2"><a href="{% url 'web:home' %}#contact" class="text-gray-600 hover-primary">Help &amp; Support</a></li>
-								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Shipping &amp; Delivery</a></li>
-								<li class="mb-2"><a href="{% url 'web:home' %}#refund-returns" class="text-gray-600 hover-primary">Returns &amp; Refunds</a></li>
-								<li class="mb-2"><a href="{% url 'web:home' %}#privacy" class="text-gray-600 hover-primary">Privacy Policy</a></li>
-							</ul>
-						</div>
-
-						<div class="col-lg-3 col-md-6">
-							<h4 class="text-14 fw-bold text-dark text-uppercase mb-3">UK Delivery Hubs</h4>
-							<p class="text-13 text-gray-600 mb-3">Delivering across Greater London, Birmingham, Manchester, Leeds, Glasgow, and all UK postcodes.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="footer-row footer-copyright py-3 bg-light border-top">
-				<div class="container">
-					<div class="d-flex flex-wrap align-items-center justify-content-between text-12 text-gray-600 gap-2">
-						<div>
-							Copyright &copy; 2026 <a href="https://startupghar.com" target="_blank" rel="noopener" class="text-primary fw-semibold text-decoration-underline">startupghar.com</a>. All rights reserved.
-						</div>
-						<div class="d-flex align-items-center gap-3">
-							<span>Secure Payment:</span>
-							<img src="{% static 'web/' %}images/payment.svg" alt="Payments" height="18">
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
+		{% include 'web/footer.html' %}
 	</div>
 
 	<!-- Scripts -->

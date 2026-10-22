@@ -28,8 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   if (typeof L === 'undefined') return;
   const map = L.map('contact-delivery-map', {center: [53.5, -2], zoom: 6, scrollWheelZoom: false});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
   }).addTo(map);
   const hubs = JSON.parse(document.getElementById('contact-hubs-data').textContent);
   hubs.forEach(hub => {
