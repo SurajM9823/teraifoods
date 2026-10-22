@@ -1,6 +1,44 @@
 from django.conf import settings
 from django.db import models
 from catalog.models import Order, OrderLine, Product
+import uuid
+
+
+class BulkRequest(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT)
+    submission_key = models.CharField(max_length=64, unique=True)
+    digest = models.CharField(max_length=64)
+    company = models.CharField(max_length=150)
+    contact_name = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30)
+    address = models.CharField(max_length=500)
+    city_postcode = models.CharField(max_length=150)
+    requested_date = models.DateField(null=True, blank=True)
+    items = models.JSONField(default=list)
+    notes = models.TextField(blank=True, max_length=3000)
+    status = models.CharField(max_length=30, default='new')
+    quoted_total = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    delivery_terms = models.TextField(blank=True, max_length=2000)
+    payment_terms = models.TextField(blank=True, max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def number(self):
+        return f'TF-BQ-{self.pk:06d}'
+
+
+class BulkReply(models.Model):
+    request = models.ForeignKey(BulkRequest, on_delete=models.PROTECT, related_name='replies')
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT)
+    message = models.TextField(max_length=3000)
+    status = models.CharField(max_length=30)
+    quote = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    email_status = models.CharField(max_length=20, default='pending')
+    email_claimed_at = models.DateTimeField(null=True, blank=True)
 
 
 class Address(models.Model):
@@ -133,3 +171,19 @@ class ReviewImage(models.Model):
     def url(self):
         from catalog.media import media_url
         return media_url(self.source)
+
+
+class Voucher(models.Model):
+    source_order = models.OneToOneField(Order, on_delete=models.PROTECT, related_name='issued_voucher')
+    code = models.CharField(max_length=40, unique=True)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    email = models.EmailField()
+    reserved_order = models.OneToOneField(Order, null=True, blank=True, on_delete=models.PROTECT, related_name='reserved_voucher')
+    redeemed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class VoucherUse(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.PROTECT, related_name='voucher_use')
+    voucher = models.ForeignKey(Voucher, on_delete=models.PROTECT)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)

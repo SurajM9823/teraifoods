@@ -44,3 +44,37 @@ class GuestCheckoutConcurrencyTests(TransactionTestCase):
             result=list(pool.map(self.buy,['same','same']))
         self.assertIsNotNone(result[0]);self.assertEqual(result[0],result[1])
         self.assertEqual(Order.objects.count(),1)
+
+    @patch('orders.tasks.dispatch_pending.apply_async')
+    def test_same_voucher_cannot_fund_two_concurrent_orders(self,queue):
+        from .vouchers import issue
+        self.product.stock=20;self.product.save()
+        source=create_order(AnonymousUser(),'source',self.body,'source')
+        voucher=issue(source,10)
+        self.body['voucher_code']=voucher.code
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            result=list(pool.map(self.buy,['first','second']))
+        self.assertEqual(len([r for r in result if r]),1)
+        voucher.refresh_from_db();self.assertIsNotNone(voucher.redeemed_at)
+        self.assertEqual(Order.objects.count(),2)
+
+    @patch('orders.tasks.dispatch_pending.apply_async')
+    def test_package_and_regular_purchase_compete_for_same_stock(self,queue):
+        from catalog.models import Package,PackageItem
+        product=Product.objects.create(name='Single package',slug='single-package',category=self.product.category,
+            regular_price=4,is_package=True,is_published=True,stock_confirmed=True)
+        package=Package.objects.create(product=product,slot=1)
+        PackageItem.objects.create(package=package,product=self.product,quantity=1)
+        def buy_package(key):
+            close_old_connections()
+            try:
+                body={**self.body,'items':[{'product_id':product.pk if key=='package' else self.product.pk,'quantity':1}]}
+                return create_order(AnonymousUser(),key,body,key).pk
+            except ValidationError:
+                return None
+            finally:
+                close_old_connections()
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            result=list(pool.map(buy_package,['package','regular']))
+        self.assertEqual(len([r for r in result if r]),1)
+        self.product.refresh_from_db();self.assertEqual(self.product.stock,0)

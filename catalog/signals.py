@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from .models import Category, Subcategory
 from django.core.cache import cache
 from .content import invalidate_categories, CACHE_ERRORS
-from .models import Product, ProductImage, CatalogRevision
+from .models import Product, ProductImage, CatalogRevision, PackageItem
 from django.db.models import F
 
 
@@ -42,6 +42,9 @@ def product_cache_changed(sender, instance=None, **kwargs):
                 recent = []
             if product_id not in recent:
                 recent.append(product_id)
+            for package_id in PackageItem.objects.filter(product_id=product_id).values_list('package__product_id',flat=True):
+                if package_id not in recent:
+                    recent.append(package_id)
             cache.set('catalog:revision:changed_ids', recent[-50:], 300)
     except CACHE_ERRORS:
         pass

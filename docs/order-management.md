@@ -27,6 +27,11 @@ added. Page screenshots are in `scratch/orders-baseline/` and
 
 ## Local Docker demo
 
+Checkout asks signed-out visitors to sign in at the cart-to-checkout transition.
+The existing login modal includes **Continue as guest** for this flow. Either
+choice resumes the checkout address step; the later payment step has no guest
+prompt. Normal account sign-in does not show the guest button.
+
 Local Compose defaults to `ORDER_PAYMENT_MODE=demo`. This also requires `DEBUG`.
 It cannot confirm demo payments when `DEBUG=False`. The payment page explicitly
 states that no card or money is involved; this is a local simulation, **not a
@@ -98,17 +103,16 @@ API/WebSocket/event payloads, and removed after manual settlement. Staff with or
 change permission can view them on the order detail page while handling the return.
 
 Use `/admin/orders/?returns=1` to find return requests. Approve/reject first, then
-record receipt and explicitly select whether stock is suitable for resale. Bank
-and voucher requests wait for manual settlement; the background Stripe refund
-worker cannot process them. For original-payment requests, select manual handling
+record receipt and explicitly select whether stock is suitable for resale. Bank requests wait for manual settlement. Voucher requests automatically issue
+single-use checkout credit on receipt; the Stripe refund worker does not process them. For original-payment requests, select manual handling
 at receipt if an alternative payment method has been agreed with the customer.
 
-After actually making the payment or issuing a voucher, record the method and
-payment reference / voucher code in **Record completed refund**. This supports
+After actually making a bank/cash payment, record its method and reference in
+**Record completed refund**. Selecting voucher instead automatically generates valid credit. This supports
 bank, voucher, cash and other methods, records the administrator and timestamp,
 notifies the customer, and shows the reference on their authorized tracking page.
-It does not execute a bank transfer or create/redeem a store checkout voucher;
-the code must identify a voucher already issued by the store. A pending provider
+It does not execute a bank transfer. Return vouchers are now created automatically
+on receipt and can be redeemed once at checkout; see `vouchers-and-packages.md`. A pending provider
 refund cannot also be settled manually, preventing duplicate payouts.
 
 Verified purchase reviews remain available after delivery, including when an item

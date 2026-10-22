@@ -52,7 +52,7 @@
 	          "name": "What is the minimum order quantity for wholesale groceries?",
 	          "acceptedAnswer": {
 	            "@type": "Answer",
-	            "text": "Our wholesale purchase orders start from single carton packs up to full pallet consignments with tiered trade discounts."
+	            "text": "Request carton or pallet quantities. Availability, minimum quantities and prices are confirmed in your quote."
 	          }
 	        },
 	        {
@@ -60,7 +60,7 @@
 	          "name": "How fast is bulk pallet delivery across the UK?",
 	          "acceptedAnswer": {
 	            "@type": "Answer",
-	            "text": "We provide 24-48 hour tail-lift pallet delivery across England, Scotland, Wales, and Northern Ireland."
+	            "text": "Delivery timing and arrangements across the UK are confirmed in your individual quote."
 	          }
 	        }
 	      ]
@@ -730,7 +730,7 @@
 		     ======================================================== -->
 		<main id="main" class="site-primary bulk-main-layout">
 			<div class="container-fluid ps-0 pe-4 pe-xl-5 bulk-main-container">
-				<form id="bulk-po-form" onsubmit="event.preventDefault(); submitPurchaseOrder();">
+				<form id="bulk-po-form" >
 					<div class="bulk-main-row">
 
 						<!-- Left Column: Exactly 280px, Sticky on Scroll, Flush Left (0 Space), No Radius -->
@@ -743,29 +743,30 @@
 								<div class="d-flex flex-column gap-2">
 									<div class="po-side-field">
 										<label class="po-side-label" for="buyer-company-name">Company / Business *</label>
-										<input type="text" id="buyer-company-name" class="po-side-input fw-semibold" placeholder="Company Name" required value="Henderson Gourmet Kitchens Ltd">
+										<input type="text" id="buyer-company-name" class="po-side-input fw-semibold" placeholder="Company Name" required value="">
 									</div>
 									<div class="po-side-field">
 										<label class="po-side-label" for="buyer-contact-name">Contact Person *</label>
-										<input type="text" id="buyer-contact-name" class="po-side-input" placeholder="Contact Person" required value="Alex Henderson">
+										<input type="text" id="buyer-contact-name" class="po-side-input" placeholder="Contact Person" required value="">
 									</div>
 									<div class="po-side-field">
 										<label class="po-side-label" for="buyer-address">Delivery Address *</label>
-										<input type="text" id="buyer-address" class="po-side-input" placeholder="Street Address" required value="42 Baker Street, Marylebone">
+										<input type="text" id="buyer-address" class="po-side-input" placeholder="Street Address" required value="">
 									</div>
 									<div class="po-side-field">
 										<label class="po-side-label" for="buyer-city-postcode">City &amp; Postcode *</label>
-										<input type="text" id="buyer-city-postcode" class="po-side-input" placeholder="City, Postcode" required value="London, W1U 7AL">
+										<input type="text" id="buyer-city-postcode" class="po-side-input" placeholder="City, Postcode" required value="">
 									</div>
 									<div class="po-side-field">
-										<label class="po-side-label" for="buyer-phone-email">Phone / Email *</label>
-										<input type="text" id="buyer-phone-email" class="po-side-input" placeholder="Phone or Email" required value="+44 7700 900543">
+										<label class="po-side-label" for="buyer-phone-email">Phone *</label>
+										<input type="text" id="buyer-phone-email" class="po-side-input" placeholder="UK phone number" required value="">
 									</div>
-									<div class="po-side-field">
+									<div class="po-side-field"><label class="po-side-label" for="buyer-email">Email *</label><input type="email" id="buyer-email" class="po-side-input" required maxlength="254"></div>
+<div class="po-side-field">
 										<label class="po-side-label" for="po-delivery-date">Requested Delivery Date</label>
-										<input type="date" id="po-delivery-date" class="po-side-input" value="2026-10-18">
+										<input type="date" id="po-delivery-date" class="po-side-input" value="">
 									</div>
-									<div class="pt-2">
+									<div class="po-side-field"><label class="po-side-label" for="buyer-notes">Additional requirements</label><textarea id="buyer-notes" class="po-side-input" maxlength="3000"></textarea></div><div class="pt-2">
 										<button type="button" class="btn-po-side-save" onclick="saveDeliveryDetails()">
 											<i class="klb-icon-check"></i> Save Details
 										</button>
@@ -805,82 +806,12 @@
 													<th style="width: 100px;">Item #</th>
 													<th style="min-width: 260px;">Description (Search or Type Product)</th>
 													<th style="width: 95px;">Pack / Unit</th>
-													<th style="width: 95px;">Unit Price (&pound;)</th>
+													<th style="width: 95px;">Target Unit Price (&pound;)</th>
 													<th style="width: 105px;">Line Total (&pound;)</th>
 													<th style="width: 30px;"></th>
 												</tr>
 											</thead>
-											<tbody id="po-items-body">
-												<!-- Line 1 -->
-												<tr class="po-row">
-													<td><input type="number" class="cell-input cell-qty row-qty" value="12" min="1" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-item-code row-sku" value="TF-APP-01" readonly></td>
-													<td>
-														<input type="text" class="cell-input row-desc" value="Organic Honeycrisp &amp; Gala Apples" placeholder="Type product name to search..." onkeyup="handleProductSearch(this)">
-														<div class="item-suggest-dropdown"></div>
-													</td>
-													<td><input type="text" class="cell-input text-center row-unit" value="1.5kg Bag"></td>
-													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="2.80" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-total row-total" value="33.60" readonly></td>
-													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
-												</tr>
-
-												<!-- Line 2 -->
-												<tr class="po-row">
-													<td><input type="number" class="cell-input cell-qty row-qty" value="10" min="1" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-item-code row-sku" value="TF-LEN-04" readonly></td>
-													<td>
-														<input type="text" class="cell-input row-desc" value="Organic Yellow Moong Lentils (Dhal)" placeholder="Type product name to search..." onkeyup="handleProductSearch(this)">
-														<div class="item-suggest-dropdown"></div>
-													</td>
-													<td><input type="text" class="cell-input text-center row-unit" value="5kg Sack"></td>
-													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="11.50" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-total row-total" value="115.00" readonly></td>
-													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
-												</tr>
-
-												<!-- Line 3 -->
-												<tr class="po-row">
-													<td><input type="number" class="cell-input cell-qty row-qty" value="50" min="1" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-item-code row-sku" value="TF-OIL-02" readonly></td>
-													<td>
-														<input type="text" class="cell-input row-desc" value="Raw Cold-Pressed Himalayan Mustard Oil" placeholder="Type product name to search..." onkeyup="handleProductSearch(this)">
-														<div class="item-suggest-dropdown"></div>
-													</td>
-													<td><input type="text" class="cell-input text-center row-unit" value="1L Glass"></td>
-													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="5.20" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-total row-total" value="260.00" readonly></td>
-													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
-												</tr>
-
-												<!-- Line 4 (Empty Ready for typing) -->
-												<tr class="po-row">
-													<td><input type="number" class="cell-input cell-qty row-qty" value="" placeholder="1" min="1" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-item-code row-sku" value="" placeholder="-" readonly></td>
-													<td>
-														<input type="text" class="cell-input row-desc" value="" placeholder="Type to search e.g. Turmeric, Flour, Ghee..." onkeyup="handleProductSearch(this)">
-														<div class="item-suggest-dropdown"></div>
-													</td>
-													<td><input type="text" class="cell-input text-center row-unit" value="" placeholder="Unit"></td>
-													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="" placeholder="0.00" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-total row-total" value="0.00" readonly></td>
-													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
-												</tr>
-
-												<!-- Line 5 (Empty Ready for typing) -->
-												<tr class="po-row">
-													<td><input type="number" class="cell-input cell-qty row-qty" value="" placeholder="1" min="1" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-item-code row-sku" value="" placeholder="-" readonly></td>
-													<td>
-														<input type="text" class="cell-input row-desc" value="" placeholder="Type to search e.g. Timur, Rice, Sourdough..." onkeyup="handleProductSearch(this)">
-														<div class="item-suggest-dropdown"></div>
-													</td>
-													<td><input type="text" class="cell-input text-center row-unit" value="" placeholder="Unit"></td>
-													<td><input type="number" step="0.01" class="cell-input cell-price row-price" value="" placeholder="0.00" oninput="calcRow(this)"></td>
-													<td><input type="text" class="cell-input cell-total row-total" value="0.00" readonly></td>
-													<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
-												</tr>
-											</tbody>
+											<tbody id="po-items-body"></tbody>
 										</table>
 									</div>
 
@@ -897,19 +828,19 @@
 											<tbody>
 												<tr>
 													<td class="label-col">Subtotal:</td>
-													<td class="val-col">&pound;<span id="po-subtotal">408.60</span></td>
+													<td class="val-col">&pound;<span id="po-subtotal">0.00</span></td>
 												</tr>
 												<tr>
-													<td class="label-col">Wholesale Volume Discount (5%):</td>
-													<td class="val-col text-success">&minus;&pound;<span id="po-discount">20.43</span></td>
+													<td class="label-col">Discount (confirmed in quote):</td>
+													<td class="val-col text-success">&minus;&pound;<span id="po-discount">0.00</span></td>
 												</tr>
 												<tr>
-													<td class="label-col">UK VAT / Tax (0% Food Groceries):</td>
+													<td class="label-col">Tax (confirmed in quote):</td>
 													<td class="val-col">&pound;<span id="po-tax">0.00</span></td>
 												</tr>
 												<tr class="total-row">
-													<td class="label-col">Estimated Total:</td>
-													<td class="val-col">&pound;<span id="po-grand-total">388.17</span></td>
+													<td class="label-col">Requested items estimate:</td>
+													<td class="val-col">&pound;<span id="po-grand-total">0.00</span></td>
 												</tr>
 											</tbody>
 										</table>
@@ -918,15 +849,15 @@
 									<!-- Legal Terms & Instructions -->
 									<div class="po-terms-wrap">
 										<ol class="ps-3 mb-0">
-											<li>Please send one duplicate copy of your purchase order invoice for accounting records.</li>
+											<li>This is a quotation request. Submitting it does not place a paid order or reserve stock.</li>
 											<li>Enter product description, desired packaging unit, and expected quantity. Custom off-catalog materials can be typed in freely.</li>
-											<li>Payment will be invoiced under approved Net 30 terms or pre-delivery bank clearance.</li>
-											<li>Direct inquiries and pallet delivery scheduling: Contact +44 20 7946 0912 or b2b@teraifood.co.uk.</li>
+											<li>Prices, applicable taxes, delivery and payment terms will be confirmed by the store in its quote.</li>
+											<li>Track status and read store replies in My Bulk Requests below.</li>
 										</ol>
 
 										<div class="po-signature-row">
 											<div class="sig-line">Authorized Buyer Signature</div>
-											<div class="sig-line">Date: October 17, 2026</div>
+											<div class="sig-line">Date: {% now 'j F Y' %}</div>
 										</div>
 									</div>
 
@@ -949,7 +880,7 @@
 							</div>
 						</div>
 					</div>
-				</form>
+				</form><section id="bulk-tracking" class="po-document-container mt-4 p-3"><h2 class="text-17">My Bulk Requests</h2><p id="bulk-message" role="status"></p><a href="/bulk-order/" class="btn-po-action-mini">All my requests / new request</a><button type="button" id="bulk-refresh" class="btn-po-action-mini">Refresh status</button><div id="bulk-request-list" aria-live="polite"></div><button type="button" id="bulk-more" class="btn-po-action-mini" hidden>Load more requests</button></section>
 			</div>
 		</main>
 
@@ -1013,21 +944,7 @@
 	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
 	<script>
 		// Catalog of Wholesale Materials for Instant Autocomplete
-		const wholesaleCatalog = [
-			{ sku: "TF-APP-01", name: "Organic Honeycrisp & Gala Apples", unit: "1.5kg Bag", price: 2.80 },
-			{ sku: "TF-LEN-04", name: "Organic Yellow Moong Lentils (Dhal)", unit: "5kg Sack", price: 11.50 },
-			{ sku: "TF-OIL-02", name: "Raw Cold-Pressed Himalayan Mustard Oil", unit: "1L Glass", price: 5.20 },
-			{ sku: "TF-TUR-01", name: "Single-Origin Himalayan Stone-Ground Turmeric", unit: "1kg Tub", price: 8.90 },
-			{ sku: "TF-TIM-03", name: "Wild Foraged Himalayan Timur Pepper", unit: "500g Bag", price: 14.50 },
-			{ sku: "TF-RIC-05", name: "Premium Aged Himalayan Basmati Rice", unit: "10kg Sack", price: 18.00 },
-			{ sku: "TF-FLR-02", name: "Chakki Fresh Stoneground Atta Wholewheat", unit: "10kg Bag", price: 9.50 },
-			{ sku: "TF-GHE-01", name: "Grass-Fed Pure Desi Cow Ghee", unit: "1kg Tin", price: 12.00 },
-			{ sku: "TF-BAK-08", name: "Artisanal Organic Sourdough Loaves", unit: "Box of 6", price: 15.00 },
-			{ sku: "TF-TEA-02", name: "Organic Single-Estate Himalayan Black Tea", unit: "1kg Bulk", price: 16.50 },
-			{ sku: "TF-SAL-01", name: "Crushed Himalayan Pink & Black Rock Salt", unit: "5kg Bag", price: 6.00 },
-			{ sku: "TF-CAR-04", name: "Green Cardamom Pods (Bold 8mm)", unit: "500g Pack", price: 22.00 },
-			{ sku: "TF-CUM-01", name: "Whole High-Altitude Cumin Seeds (Jeera)", unit: "2kg Bag", price: 9.80 }
-		];
+		const wholesaleCatalog = [];
 
 		// Live Calculation for Single Row
 		function calcRow(inputElem) {
@@ -1046,8 +963,8 @@
 				subtotal += parseFloat(input.value) || 0;
 			});
 
-			// 5% discount for bulk orders over £200
-			const discount = subtotal >= 200 ? (subtotal * 0.05) : 0;
+			// Adjustments are confirmed in the store quote.
+			const discount = 0;
 			const grandTotal = subtotal - discount;
 
 			document.getElementById('po-subtotal').textContent = subtotal.toFixed(2);
@@ -1142,19 +1059,10 @@
 		}
 
 		// Save Delivery & Ship-To Details
-		function saveDeliveryDetails() {
-			const company = document.getElementById('buyer-company-name').value;
-			alert(`✅ Delivery & Ship-To details saved successfully for "${company || 'Authorized Buyer'}".`);
-		}
+		function saveDeliveryDetails() { document.getElementById("bulk-message").textContent="Details are saved when you submit the request."; }
 
 		// Submit Purchase Order Request
-		function submitPurchaseOrder() {
-			const poNum = 'PO-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
-			const buyerCompany = document.getElementById('buyer-company-name').value;
-			const total = document.getElementById('po-grand-total').textContent;
-
-			alert(`✅ Purchase Order Submitted Successfully!\n\nOrder Ref Generated: ${poNum}\nCompany: ${buyerCompany}\nEstimated Total: £${total}\n\nA formal PDF confirmation and B2B pricing verification has been dispatched to your email. Our commercial procurement team will phone you within 2 hours.`);
-		}
+		function submitPurchaseOrder() { document.getElementById("bulk-po-form").requestSubmit(); }
 
 		// Export CSV
 		function exportExcelCSV() {
@@ -1199,11 +1107,12 @@
 			}
 		}
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=dyn-checkout-v2"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=vouchers-packages-v4"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 
 
 
+<script src="{% static 'web/js/bulk-orders.js' %}?v=1" defer></script>
 </body>
 </html>

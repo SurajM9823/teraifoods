@@ -50,6 +50,9 @@ def send_notification(self, pk):
 
 @shared_task
 def dispatch_pending():
+    from .models import BulkReply
+    for pk in BulkReply.objects.filter(Q(email_status='pending')|Q(email_status='sending',email_claimed_at__lt=timezone.now()-timedelta(minutes=5))).values_list('pk',flat=True)[:100]:
+        send_bulk_notification.delay(pk)
     for event in OrderEvent.objects.filter(broadcast_at__isnull=True).select_related('order')[:200]:
         try:
             async_to_sync(get_channel_layer().group_send)(f'order.{event.order.public_id}',
@@ -83,3 +86,28 @@ def expire_reservations():
             cancel_with_provider(order.pk,'Payment reservation expired.')
         except Exception:
             logger.warning('Reservation reconciliation pending for order %s',order.pk)
+
+
+@shared_task(bind=True,max_retries=5)
+def send_bulk_notification(self, pk):
+    from .models import BulkReply
+    from .bulk import token
+    with transaction.atomic():
+        reply=BulkReply.objects.select_for_update().select_related('request').get(pk=pk)
+        if reply.email_status=='sent' or (reply.email_status=='sending' and reply.email_claimed_at and reply.email_claimed_at>timezone.now()-timedelta(minutes=5)):
+            return
+        reply.email_status='sending';reply.email_claimed_at=timezone.now();reply.save()
+    row=reply.request
+    link=f'{settings.ORDER_PUBLIC_ORIGIN}/bulk-order/?request={row.public_id}#access={token(row)}'
+    body=f'{row.number}\nStatus: {reply.status}\n\n{reply.message}\n'
+    if reply.quote.get('total') is not None:
+        body+=f"\nQuoted total GBP {reply.quote['total']}\nDelivery: {reply.quote.get('delivery','')}\nPayment: {reply.quote.get('payment','')}\n"
+    body+=f'\nView your request and all responses: {link}'
+    try:
+        sent=EmailMessage(f'Terai Foods bulk request {row.number}: {reply.status}',body,settings.DEFAULT_FROM_EMAIL,[row.email],
+            connection=get_connection(settings.EMAIL_DELIVERY_BACKEND),headers={'Message-ID':f'<bulk-reply-{reply.pk}@teraifoods.co.uk>'}).send()
+        if sent!=1: raise RuntimeError('Email not accepted')
+    except Exception:
+        BulkReply.objects.filter(pk=pk).update(email_status='pending')
+        raise self.retry(exc=RuntimeError('Bulk email delivery failed'),countdown=60)
+    BulkReply.objects.filter(pk=pk).update(email_status='sent')

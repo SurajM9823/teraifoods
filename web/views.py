@@ -21,6 +21,8 @@ def page_view(request, page_key):
     if page.key == "home":
         from cms.content import homepage_content
         context["cms_home"] = homepage_content()
+        from catalog.models import Package
+        context['homepage_packages']={row.slot:row for row in Package.objects.filter(product__is_published=True,product__is_active=True,product__is_archived=False,product__category__is_active=True).select_related('product')}
     return render(request, page.template, context)
 
 

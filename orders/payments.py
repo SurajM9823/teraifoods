@@ -30,6 +30,8 @@ def confirm_demo(order_id):
     payment.save()
     order.payment_status = 'paid'
     order.fulfilment_status = 'placed'
+    from .vouchers import consume
+    consume(order)
     emit(order,'payment_confirmed','Demo payment confirmed. No money was charged.')
     return order
 
@@ -42,6 +44,8 @@ def client():
 
 
 def create_session(order):
+    if order.payment_method == 'voucher' and order.payment_status == 'paid':
+        return f'/track-order/?order={order.public_id}'
     # Stripe idempotency serializes concurrent requests without holding a DB
     # transaction open during the remote call.
     if order.payment_method == 'demo':
@@ -117,6 +121,8 @@ def apply_event(event):
                     order.refund_status = 'pending'
                 else:
                     order.fulfilment_status = 'placed'
+                    from .vouchers import consume
+                    consume(order)
                 emit(order,'payment_confirmed','Payment confirmed.')
         elif kind == 'checkout.session.expired' and order.payment_status not in ('paid','refunded'):
             payment.status = 'expired'

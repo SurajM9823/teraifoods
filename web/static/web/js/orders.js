@@ -21,6 +21,7 @@
     ['instructions','Delivery instructions','text',false]
   ];
   let contact=read('order-contact')||{}, pending=false;
+  const voucherPayload=()=>read('checkout-voucher')||{};
   function contactForm(prefix, values={}) {
     return fields.map(([key,label,type,required])=>`<label class="d-block mb-2">${label}${required?' *':''}<input class="cart-drawer-form-input form-control" name="${key}" id="${prefix}-${key}" type="${type}" value="${esc(values[key])}" maxlength="${key==='instructions'?500:150}" ${required?'required':''}></label>`).join('');
   }
@@ -61,7 +62,7 @@
     if(!addressValid()) {window.TeraiCatalog?.openCheckout();return;}
     const selected=window.TeraiCatalog?.selectedItems?.()||[];
     if(!selected.length){notify('Your basket is empty.');return;}
-    const body={email:contact.email,address:contact,items:selected.map(i=>({product_id:Number(i.id),quantity:Number(i.quantity)}))};
+    const body={voucher_code:voucherPayload().voucher_code||'',email:contact.email,address:contact,items:selected.map(i=>({product_id:Number(i.id),quantity:Number(i.quantity)}))};
     const fingerprint=JSON.stringify(body);
     let attempt=read('checkout-attempt');
     if(!attempt || attempt.fingerprint!==fingerprint) {
@@ -76,7 +77,7 @@
       location.assign(result.payment_url);
     }catch(error){notify(error.message);}finally{pending=false;}
   }
-  window.TeraiOrders={checkout,addressValid,api};
+  window.TeraiOrders={checkout,addressValid,api,voucherPayload};
 
   function configureCheckout() {
     const edit=document.getElementById('checkout-address-edit-view');
@@ -107,13 +108,6 @@
     document.querySelectorAll('.payment-tile-card').forEach(tile=>{
       if(tile.dataset.method!=='card') {tile.hidden=true;tile.setAttribute('aria-disabled','true');}
     });
-    const proceed=document.getElementById('btn-proceed-to-pay');
-    if(proceed && document.getElementById('customer-authenticated')?.textContent!=='true' && !document.getElementById('continue-as-guest')) {
-      const guest=document.createElement('button');guest.type='button';guest.id='continue-as-guest';
-      guest.className='cart-drawer-btn-secondary';guest.textContent='Continue as Guest';
-      guest.addEventListener('click',()=>{edit.style.display='block';edit.querySelector('input')?.focus();});
-      proceed.before(guest);
-    }
     syncContact();
     const params=new URLSearchParams(location.search);
     if(params.get('demo')==='1' && params.get('order')) {
@@ -125,9 +119,25 @@
         const button=document.getElementById('btn-final-pay');if(button)button.textContent='Confirm demo payment · £'+order.total;
       }).catch(error=>notify(error.message));
     }
-    document.addEventListener('click',e=>{
-      if(e.target.closest('#btn-checkout-apply-promo, #promo-apply-btn, #apply-voucher-btn')) {
-        e.preventDefault();e.stopImmediatePropagation();notify('No promotional codes are configured. Product sale prices are already included.');return;
+    document.addEventListener('click',async e=>{
+      const apply=e.target.closest('#btn-drawer-apply-voucher, #btn-checkout-apply-promo, #promo-apply-btn, #apply-voucher-btn');
+      if(apply) {
+        e.preventDefault();e.stopImmediatePropagation();
+        const ids={'btn-drawer-apply-voucher':'drawer-voucher-input','btn-checkout-apply-promo':'checkout-promo-input','promo-apply-btn':'promo-code-input','apply-voucher-btn':'voucher-code-input'};
+        const code=document.getElementById(ids[apply.id])?.value.trim().toUpperCase()||'';
+        const items=window.TeraiCatalog?.selectedItems?.()||[];
+        if(!code){sessionStorage.removeItem('checkout-voucher');window.dispatchEvent(new CustomEvent('delivery:request',{detail:items}));notify('Voucher removed.');return;}
+        const email=document.querySelector('#order-contact-form [name=email]')?.value.trim()||contact.email||prompt('Email address used for this return voucher:');
+        if(!email)return;
+        apply.disabled=true;
+        try {
+          const quote=await api('/api/cart/quote/',{voucher_code:code,email,items:items.map(i=>({product_id:Number(i.id),quantity:Number(i.quantity)}))});
+          store('checkout-voucher',{voucher_code:code,email});
+          window.dispatchEvent(new CustomEvent('delivery:quote',{detail:{items,quote}}));
+          const text='Voucher applied: GBP '+quote.voucher_applied+'. Remaining to pay: GBP '+quote.total+'. Single use: unused value is forfeited. Clear the code and apply to remove it.';
+          document.querySelectorAll('#drawer-voucher-feedback,#checkout-promo-feedback,#promo-status-msg').forEach(el=>{el.style.display='block';el.textContent=text;});notify(text);
+        }catch(error){notify(error.message);}finally{apply.disabled=false;}
+        return;
       }
       if(e.target.closest('#btn-proceed-pay, #edit-address-btn, #edit-invoice-btn, #btn-edit-invoice-info')) {
         e.preventDefault();e.stopImmediatePropagation();window.TeraiCatalog?.openCheckout();
@@ -140,6 +150,15 @@
   window.addEventListener('delivery:quote',e=>{
     if(new URLSearchParams(location.search).get('demo')==='1')return;
     const q=e.detail.quote;
+    const cardBox=document.getElementById('drawer-card-box');
+    const confirm=document.getElementById('btn-drawer-confirm-pay');
+    if(cardBox && confirm){
+      const covered=q && Number(q.total)===0 && Number(q.voucher_applied)>0;
+      if(!cardBox.dataset.standardText)cardBox.dataset.standardText=cardBox.innerHTML;
+      if(!confirm.dataset.standardText)confirm.dataset.standardText=confirm.innerHTML;
+      cardBox.innerHTML=covered?'<p>Your voucher covers this order. No additional payment is needed. Any unused voucher value is forfeited.</p>':cardBox.dataset.standardText;
+      confirm.innerHTML=covered?'Confirm order':confirm.dataset.standardText;
+    }
     for(const [id,value] of Object.entries({'summary-items-total':q?.subtotal,'summary-delivery-fee':q?.delivery_charge,'summary-total-val':q?.total,'modal-pay-amount':q?.total})) {
       const el=document.getElementById(id);if(el)el.textContent=value||'—';
     }
@@ -162,6 +181,8 @@
       ${o.tracking_url && /^https:\/\//.test(o.tracking_url)?`<a href="${esc(o.tracking_url)}" target="_blank" rel="noopener">Courier tracking ${esc(o.tracking_reference)}</a>`:''}</div>
       ${o.items.map(i=>`<div class="order-item-row">${i.image?`<img class="order-item-thumb" src="${esc(i.image)}" alt="${esc(i.name)}">`:''}<div class="order-item-info"><h6 class="order-item-title">${esc(i.name)}</h6>${i.can_review?`<button class="btn-track-action" data-review-line="${i.id}" data-product="${i.product_id}">Write a review</button>`:''}</div><div class="order-item-price">£${esc(i.unit_price)}</div><div class="order-item-qty">Qty: ${i.quantity}</div></div>`).join('')}
       <div class="order-group-footer"><span>Total £${esc(o.total)} · Delivery £${esc(o.delivery_charge)}</span><div>${o.can_cancel?'<button class="btn-track-action" data-order-action="cancel">Cancel order</button>':''}${o.can_return?'<button class="btn-track-action" data-order-action="return">Request return</button>':''}${o.fulfilment_status==='pending_payment' && o.cancellation_status==='none'?'<button class="btn-track-action" data-order-action="payment">Retry payment</button>':''}<button class="btn-track-action" data-order-action="support">Contact support</button></div></div>
+      ${Number(o.voucher_applied)>0?`<p class="p-3">Voucher applied: GBP ${esc(o.voucher_applied)}. Remaining payment: GBP ${esc(o.total)}.</p>`:''}
+      ${o.issued_voucher?`<div class="p-3"><strong>Return voucher: ${esc(o.issued_voucher.code)}</strong><p>Value GBP ${esc(o.issued_voucher.amount)} ? ${o.issued_voucher.used?'Used':'Single use'}. Use with your original email at checkout. Any unused value is forfeited.</p></div>`:''}
       ${o.return_request?`<div class="p-3"><strong>Return: ${esc(label(o.return_request.status))}</strong><p>Refund preference: ${esc(label(o.return_request.preference))} · £${esc(o.return_request.amount)}</p><p>${esc(o.return_request.note)}</p>${o.return_request.reference?`<p>Refund completed via ${esc(label(o.return_request.method))}. ${o.return_request.method==='voucher'?'Issued voucher code':'Payment reference'}: <strong>${esc(o.return_request.reference)}</strong></p>`:''}</div>`:''}
       <details class="p-3"><summary>Order updates</summary><ol>${o.events.map(e=>`<li>${new Date(e.created_at).toLocaleString('en-GB')} · ${esc(e.message)}</li>`).join('')}</ol></details></article>`;
   }
@@ -184,7 +205,7 @@
       if(o.payment_status==='paid' && pending?.id===o.id) {
         const bought=new Map(pending.items.map(i=>[String(i.product_id),i.quantity]));
         window.TeraiCatalog?.saveCart(window.TeraiCatalog.getCart().map(i=>({...i,quantity:i.quantity-(bought.get(String(i.id))||0)})).filter(i=>i.quantity>0));
-        sessionStorage.removeItem('pending-order');sessionStorage.removeItem('checkout-attempt');
+        sessionStorage.removeItem('pending-order');sessionStorage.removeItem('checkout-attempt');sessionStorage.removeItem('checkout-voucher');
       }
     };
     const connect=id=>{
@@ -295,5 +316,6 @@
     }catch{container.textContent='Unable to load order updates.';}
   }
   const ready=()=>{configureCheckout();tracking();addresses();reviews();notifications();setInterval(()=>{if(!document.hidden)notifications();},30000);};
+  window.addEventListener('orders:authenticated',()=>{addresses();notifications();});
   if(document.readyState!=='complete')document.addEventListener('DOMContentLoaded',ready);else ready();
 })();

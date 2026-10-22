@@ -7,8 +7,20 @@ from customers.views import profile
 from catalog import api as product_api
 from catalog import admin_api
 from orders import backoffice as order_admin
+from orders import bulk
+from catalog import package_admin
 
 urlpatterns = [
+    path('admin/packages/',package_admin.manage,name='package-new'),
+    path('admin/packages/<int:pk>/',package_admin.manage,name='package-edit'),
+    path('api/bulk/requests/',bulk.requests),
+    path('api/bulk/access/',bulk.access),
+    path('api/bulk/requests/<uuid:public_id>/',bulk.detail),
+    path('admin/bulk-orders',bulk.admin_index),
+    path('admin/bulk-orders/',bulk.admin_index),
+    path('admin/bulk-inquiries',bulk.admin_index),
+    path('admin/bulk-inquiries/',bulk.admin_index),
+    path('admin/bulk-orders/<uuid:public_id>/',bulk.admin_detail,name='bulk-admin-detail'),
     path("admin/orders", order_admin.index),
     path("admin/orders/", order_admin.index),
     path("admin/orders/reviews/", order_admin.reviews, name="order-admin-reviews"),

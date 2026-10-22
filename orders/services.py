@@ -16,6 +16,8 @@ from catalog.services import adjust_stock, require_public
 from delivery.services import quote_delivery
 from .models import CheckoutAttempt, Payment, OrderEvent, Notification, Refund, ReturnRequest, DeliveryAttempt
 
+from . import vouchers
+
 TRANSITIONS = {
     'placed':{'confirmed','cancelled'},
     'confirmed':{'preparing','cancelled'},
@@ -134,7 +136,9 @@ def create_order(user, scope, payload, key):
         if not isinstance(item,dict) or type(item.get('product_id')) is not int or type(item.get('quantity')) is not int or not 1 <= item['quantity'] <= 10000:
             raise ValidationError('Invalid basket item.')
         quantities[item['product_id']] = quantities.get(item['product_id'],0) + item['quantity']
-    digest = hashlib.sha256(json.dumps({'items':sorted(quantities.items()),'address':address,'email':email},sort_keys=True).encode()).hexdigest()
+    voucher_code=payload.get('voucher_code','')
+    if not isinstance(voucher_code,str): raise ValidationError('Invalid voucher code.')
+    digest = hashlib.sha256(json.dumps({'items':sorted(quantities.items()),'address':address,'email':email,'voucher':voucher_code},sort_keys=True).encode()).hexdigest()
     scoped_key = hashlib.sha256(f'{scope}:{key}'.encode()).hexdigest()
     attempt, _ = CheckoutAttempt.objects.get_or_create(key=scoped_key,defaults={'digest':digest})
     attempt = CheckoutAttempt.objects.select_for_update().get(pk=attempt.pk)
@@ -142,16 +146,15 @@ def create_order(user, scope, payload, key):
         raise ValidationError('This checkout key was already used for a different basket or address.')
     if attempt.order_id:
         return attempt.order
-    products = list(Product.objects.select_for_update().filter(pk__in=quantities).order_by('pk').prefetch_related('images'))
-    if len(products) != len(quantities):
-        raise ValidationError('A product no longer exists.')
+    from catalog.packages import lock_basket
+    products,physical_quantities,package_snapshots=lock_basket(quantities)
     subtotal, discount = Decimal('0'), Decimal('0')
     for product in products:
         require_public(product)
-        if not product.stock_confirmed or product.stock < quantities[product.pk]:
+        if product.effective_stock < quantities[product.pk]:
             raise ValidationError(f'{product.name}: insufficient stock.')
         subtotal += product.price * quantities[product.pk]
-        discount += (product.regular_price-product.price) * quantities[product.pk]
+        discount += (product.base_price-product.price) * quantities[product.pk]
     shipping = quote_delivery(products, quantities, lock=True)
     if subtotal + shipping['charge'] > Decimal('999999999999.99'):
         raise ValidationError('This order exceeds the supported total. Contact the store for a bulk order.')
@@ -165,20 +168,37 @@ def create_order(user, scope, payload, key):
     for product in products:
         quantity = quantities[product.pk]
         OrderLine.objects.create(order=order,product=product,quantity=quantity,unit_price=product.price,
-            unit_weight_grams=product.weight_grams,product_name=product.name,product_image=product.image_url,product_sku=product.sku)
-        adjust_stock(product.pk,-quantity,reason='Checkout reservation',actor=user if user.is_authenticated else None,
-            key=f'order:{order.pk}:{product.pk}',kind='order',reference=order.number)
+            unit_weight_grams=product.weight_grams,product_name=product.name,product_image=product.image_url,product_sku=product.sku,components_snapshot=package_snapshots.get(product.pk,[]))
+    for product_id,quantity in sorted(physical_quantities.items()):
+        adjust_stock(product_id,-quantity,reason='Checkout reservation',actor=user if user.is_authenticated else None,
+            key=f'order:{order.pk}:{product_id}',kind='order',reference=order.number)
+    if voucher_code:
+        vouchers.reserve(order,vouchers.validate(voucher_code,email,lock=True))
     Payment.objects.create(order=order,amount=order.total)
     attempt.order = order
     attempt.save(update_fields=['order'])
     emit(order,'placed','Order created; payment is pending.',user if user.is_authenticated else None)
+    if order.total == 0:
+        order.payment_method='voucher';order.payment_status='paid';order.fulfilment_status='placed'
+        Payment.objects.filter(order=order).update(status='paid')
+        vouchers.consume(order)
+        emit(order,'payment_confirmed','Paid with a single-use return voucher. Unused value is forfeited.')
     return order
 
 
 def restore_stock(order, actor, kind='cancellation'):
-    for line in order.lines.order_by('product_id'):
-        adjust_stock(line.product_id,line.quantity,reason=f'Order {kind}',actor=actor,
-            key=f'{kind}:{order.pk}:{line.product_id}',kind=kind,reference=order.number)
+    from collections import defaultdict
+    quantities=defaultdict(int)
+    for line in order.lines.all():
+        if line.components_snapshot:
+            for component in line.components_snapshot:
+                quantities[component['product_id']]+=component['quantity']*line.quantity
+        else:
+            quantities[line.product_id]+=line.quantity
+    for pk,quantity in sorted(quantities.items()):
+        adjust_stock(pk,quantity,reason=f'Order {kind}',actor=actor,
+            key=f'{kind}:{order.pk}:{pk}',kind=kind,reference=order.number)
+
 
 
 @transaction.atomic
@@ -192,9 +212,13 @@ def finalize_cancel(order_id, actor=None, reason='Cancellation requested'):
     order.fulfilment_status = 'cancelled'
     order.status = 'cancelled'
     order.cancellation_status = 'cancelled'
+    if order.payment_status != 'paid':
+        vouchers.release(order)
+    elif vouchers.applied(order):
+        vouchers.issue(order,vouchers.applied(order))
     if order.payment_status == 'paid':
-        Refund.objects.get_or_create(order=order,defaults={'amount':order.total,'reason':reason})
-        order.refund_status = 'pending'
+        Refund.objects.get_or_create(order=order,defaults={'amount':order.total,'reason':reason,'status':'pending' if order.total else 'succeeded'})
+        order.refund_status = 'pending' if order.total else 'refunded'
     emit(order,'cancelled',reason,actor)
     return order
 
@@ -277,6 +301,13 @@ def decide_return(order_id, target, reason, actor, restock=False, manual_refund=
         status = 'pending' if request.refund_preference == 'original' and not manual_refund else 'awaiting_manual'
         Refund.objects.get_or_create(order=order,defaults={'amount':order.total,'reason':reason,'status':status})
         order.refund_status = status
+        if request.refund_preference == 'voucher' or order.payment_method == 'voucher':
+            voucher=vouchers.issue(order,order.total+vouchers.applied(order))
+            Refund.objects.filter(order=order).update(status='succeeded')
+            order.payment_status=order.refund_status='refunded'
+            request.status='refunded';request.settlement_method='voucher';request.settlement_reference=voucher.code
+            request.settled_at=timezone.now();request.settled_by=actor;request.bank_details_encrypted='';request.save()
+            emit(order,'voucher_issued','Your single-use return voucher is ready. View its code in secure order details.',actor)
     emit(order,'return_'+target,'Return '+target+'.',actor)
     return request
 
@@ -297,6 +328,8 @@ def settle_return(order_id, method, reference, actor):
     refund = Refund.objects.select_for_update().filter(order=order).first()
     if not request or request.status != 'received' or not refund or refund.status != 'awaiting_manual' or refund.provider_id:
         raise ValidationError('Receive the return first. Only manual refunds awaiting payment can be completed here; provider refunds cannot be paid twice.')
+    if method == 'voucher':
+        reference=vouchers.issue(order,order.total+vouchers.applied(order)).code
     request.status = 'refunded'
     request.settlement_method,request.settlement_reference = method,reference
     request.settled_at,request.settled_by = timezone.now(),actor

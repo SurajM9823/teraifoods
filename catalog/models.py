@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from decimal import Decimal
 from django.core.validators import MinValueValidator
 import uuid
+from django.utils.functional import cached_property
 
 
 class CategoryFields(models.Model):
@@ -81,6 +82,7 @@ class Product(models.Model):
     best_seller = models.BooleanField(default=False)
     stock = models.PositiveIntegerField(default=0, editable=False)
     stock_confirmed = models.BooleanField(default=False, editable=False)
+    is_package = models.BooleanField(default=False, editable=False)
     low_stock_threshold = models.PositiveIntegerField(default=5)
     display_order = models.PositiveIntegerField(default=100000)
     rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
@@ -122,17 +124,43 @@ class Product(models.Model):
         if errors:
             raise ValidationError(errors)
 
+    @cached_property
+    def package_lines(self):
+        return list(self.package_config.components.select_related('product','product__category','product__subcategory'))
+
     @property
     def weight_grams(self):
+        if self.is_package:
+            return sum((line.product.weight_grams*line.quantity for line in self.package_lines),Decimal('0'))
         return self.weight * (Decimal('1000') if self.weight_unit == 'kg' else Decimal('1'))
 
     @property
     def price(self):
+        if self.is_package:
+            package=self.package_config
+            base=self.base_price
+            discount=base*package.discount_value/100 if package.discount_type=='percent' else package.discount_value
+            return max(Decimal('0'),base-discount).quantize(Decimal('.01'))
         return self.sale_price if self.sale_price is not None else self.regular_price
 
     @property
+    def base_price(self):
+        if self.is_package:
+            return sum((line.product.price*line.quantity for line in self.package_lines),Decimal('0'))
+        return self.regular_price
+
+    @property
+    def effective_stock(self):
+        if self.is_package:
+            components=self.package_lines
+            if not components or any(not line.product.available or not line.product.category.is_active or (line.product.subcategory_id and not line.product.subcategory.is_active) for line in components):
+                return 0
+            return min(line.product.stock//line.quantity for line in components)
+        return self.stock if self.stock_confirmed else 0
+
+    @property
     def discount_percent(self):
-        return int(((self.regular_price - self.price) * 100 / self.regular_price).quantize(Decimal('1'))) if self.regular_price else 0
+        return int(((self.base_price - self.price) * 100 / self.base_price).quantize(Decimal('1'))) if self.base_price else 0
 
     @property
     def main_image(self):
@@ -144,7 +172,7 @@ class Product(models.Model):
 
     @property
     def available(self):
-        return self.is_active and self.is_published and not self.is_archived and self.stock_confirmed and self.stock > 0
+        return self.is_active and self.is_published and not self.is_archived and self.effective_stock > 0
 
     def __str__(self):
         return self.name
@@ -267,6 +295,7 @@ class Order(models.Model):
 
 
 class OrderLine(models.Model):
+    components_snapshot = models.JSONField(default=list, blank=True)
     order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='lines')
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
@@ -279,3 +308,31 @@ class OrderLine(models.Model):
 
 class CatalogRevision(models.Model):
     version = models.PositiveBigIntegerField(default=1)
+
+
+class Package(models.Model):
+    product = models.OneToOneField(Product,on_delete=models.PROTECT,related_name='package_config')
+    slot = models.PositiveSmallIntegerField(unique=True, help_text='Homepage banner position: 1, 2 or 3')
+    subtitle = models.CharField(max_length=80,default='Only This Week')
+    tagline = models.CharField(max_length=150,blank=True)
+    discount_type = models.CharField(max_length=10,choices=[('percent','Percentage'),('amount','GBP amount')],default='percent')
+    discount_value = models.DecimalField(max_digits=12,decimal_places=2,default=0)
+
+    def clean(self):
+        if self.slot not in (1,2,3): raise ValidationError('Choose banner slot 1, 2 or 3.')
+        if self.discount_value < 0 or (self.discount_type=='percent' and self.discount_value>100):
+            raise ValidationError('Discount must be non-negative and percentage cannot exceed 100.')
+
+    class Meta:
+        constraints=[models.CheckConstraint(condition=models.Q(slot__gte=1,slot__lte=3),name='package_slot_range'),
+            models.CheckConstraint(condition=models.Q(discount_value__gte=0),name='package_discount_nonnegative')]
+
+
+class PackageItem(models.Model):
+    package = models.ForeignKey(Package,on_delete=models.CASCADE,related_name='components')
+    product = models.ForeignKey(Product,on_delete=models.PROTECT,related_name='package_memberships')
+    quantity = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints=[models.UniqueConstraint(fields=['package','product'],name='unique_package_component'),
+            models.CheckConstraint(condition=models.Q(quantity__gte=1),name='package_positive_quantity')]

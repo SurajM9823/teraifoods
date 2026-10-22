@@ -3,7 +3,8 @@
   let key = '', requestedAt = 0, controller, timer;
   window.addEventListener('delivery:request', event => {
     const items = event.detail || [];
-    const next = JSON.stringify(items.map(i => [String(i.id), Number(i.quantity)]).sort());
+    const voucher=window.TeraiOrders?.voucherPayload?.()||{};
+    const next = JSON.stringify([items.map(i => [String(i.id), Number(i.quantity)]).sort(),voucher]);
     if (next === key && Date.now() - requestedAt < 20000) return;
     key = next; requestedAt = Date.now();
     controller?.abort(); clearTimeout(timer);
@@ -15,7 +16,7 @@
           document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
         const response = await fetch('/api/cart/quote/', {method:'POST', signal:controller.signal,
           headers:{'Content-Type':'application/json', 'X-CSRFToken':decodeURIComponent(csrf)},
-          body:JSON.stringify({items:items.map(i => ({product_id:Number(i.id), quantity:Number(i.quantity)})), country:'GB'})});
+          body:JSON.stringify({...voucher,items:items.map(i => ({product_id:Number(i.id), quantity:Number(i.quantity)})), country:'GB'})});
         const quote = await response.json();
         if (next !== key) return;
         if (response.ok) window.dispatchEvent(new CustomEvent('delivery:quote', {detail:{items, quote}}));

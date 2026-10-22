@@ -4,6 +4,7 @@ from pathlib import Path
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from .api import public_products, paginate, serialize
+from .packages import present
 
 LAYOUTS = json.loads((Path(__file__).parent / 'data/layouts.json').read_text(encoding='utf-8'))
 
@@ -23,6 +24,7 @@ def context(request, page_key):
         selected = public_products().filter(slug=slug).first() if slug else public_products().filter(metadata__legacy_detail=True).first()
         if slug and selected is None:
             raise Http404('Product not available')
+        selected=present(selected)
         result['product'] = selected
         result['product_payload'] = serialize(selected) if selected else None
     for group, layout in LAYOUTS.items():
@@ -44,7 +46,7 @@ def context(request, page_key):
             rows = sorted(queryset[:200], key=lambda p:(p.metadata.get('positions', {}).get(group, 100000), p.pk))[:layout['limit']]
         result['catalog_groups'][group] = []
         for row in rows:
-            product = copy.copy(row)
+            product = present(copy.copy(row))
             template = product.metadata.get('cards', {}).get(group, layout['template'])
             # Only generated, repository-owned templates may be selected.
             product.card_template = template if template.startswith('catalog/storefront/card_') and '..' not in template else layout['template']

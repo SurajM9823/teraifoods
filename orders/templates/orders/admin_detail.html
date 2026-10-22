@@ -24,11 +24,12 @@
 {% if return_bank %}<details><summary>Bank details for the return transfer</summary><p>Account holder: {{ return_bank.account_name }}<br>Sort code: {{ return_bank.sort_code }}<br>Account number: {{ return_bank.account_number }}</p></details>{% endif %}
 {% if order.refund_status == 'awaiting_manual' %}
 <h2>Record completed refund</h2>
-<p>Transfer the refund or issue the voucher first. This records completion; it does not send money or create a checkout voucher.</p>
-<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="settle_return"><label>Actual method <select name="method"><option value="bank">Bank transfer</option><option value="voucher">Issued voucher</option><option value="cash">Cash</option><option value="other">Other payment method</option></select></label><label>Payment reference or issued voucher code <input name="reference" maxlength="150" required></label><button class="category-primary">Confirm refund completed</button></form>
+<p>Transfer a bank/cash refund before recording it. Selecting voucher creates a valid single-use checkout voucher automatically.</p>
+<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="settle_return"><label>Actual method <select name="method"><option value="bank">Bank transfer</option><option value="voucher">Create return voucher</option><option value="cash">Cash</option><option value="other">Other payment method</option></select></label><label>Payment reference / reason (voucher code is generated) <input name="reference" maxlength="150" required></label><button class="category-primary">Confirm refund completed</button></form>
 {% endif %}
 {% if order.return_request.settled_at %}<p>Refund completed via {{ order.return_request.settlement_method }} · Reference / voucher: {{ order.return_request.settlement_reference }} · {{ order.return_request.settled_at }} · {{ order.return_request.settled_by }}</p>{% endif %}
 {% endif %}
 {% endif %}
+{% if order.issued_voucher %}<p>Return voucher: {{ order.issued_voucher.code }} ? Value GBP {{ order.issued_voucher.amount }} ? Redeemed: {{ order.issued_voucher.redeemed_at|default:"Not yet" }}</p>{% endif %}
 <h2>History</h2><ol>{% for event in order.events.all %}<li>{{ event.created_at }} · {{ event.message }} · {{ event.actor|default:'System / customer' }}</li>{% endfor %}</ol>
 {% endblock %}

@@ -1142,7 +1142,7 @@
     const subtotal = quoted ? Number(quoted.subtotal) : calculateDrawerSubtotal();
     const quoteShipping = calculateDrawerShipping();
     const shipping = quoteShipping;
-    const discount = 0;
+    const discount = Number(quoted?.voucher_applied||0);
     const total = quoted ? Number(quoted.total) : null;
     const cart = getCart();
     window.dispatchEvent(new CustomEvent('delivery:request', {detail:cart.filter(i => !unselectedItemIds.has(String(i.id)))}));
@@ -1380,6 +1380,10 @@
   }
 
   async function goToDrawerStep(step) {
+    if ((step === 2 || step === 3) && !isUserAuthenticated() && !checkoutGuestAccepted) {
+      openLoginModal({checkout: true});
+      return;
+    }
     if (step === 3 && window.TeraiOrders && !window.TeraiOrders.addressValid()) return;
     if (step === 2 || step === 3) {
       const selected = getCart().filter(item => !unselectedItemIds.has(String(item.id)));
@@ -2436,11 +2440,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const randomRef = Math.floor(1000 + Math.random() * 9000);
-      refNum.textContent = randomRef;
-      form.style.display = 'none';
-      successState.style.display = 'block';
-      showToast('Wholesale Quote Requested', `Quote request #TF-BQ-${randomRef} submitted successfully!`, 'success');
+      window.location.assign('/bulk-order/');
     });
 
     doneBtn.addEventListener('click', () => {
@@ -2454,8 +2454,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
   }
 
   function openBulkQuote() {
-    if (!bulkModalBackdrop) initBulkQuoteModal();
-    bulkModalBackdrop.classList.add('active');
+    window.location.assign('/bulk-order/');
   }
 
   function closeBulkQuote() {
@@ -2708,6 +2707,9 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
   }
 
   let accountDialog;
+  let checkoutGuestAccepted = false;
+  let accountCheckout = false;
+  let accountGuestButton;
   let accountFrame;
   let accountReturnFocus;
   let previousBodyOverflow;
@@ -2715,7 +2717,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     if (!accountDialog?.open) return;
     accountDialog.close();
   }
-  function openLoginModal() {
+  function openLoginModal(options = {}) {
     if (isUserAuthenticated()) {
       window.location.assign('/manage-profile/');
       return;
@@ -2731,6 +2733,17 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
       accountFrame = document.createElement('iframe');
       accountFrame.title = 'Sign in or create your Terai Food account';
       accountDialog.append(accountFrame);
+      accountGuestButton = document.createElement('button');
+      accountGuestButton.type = 'button';
+      accountGuestButton.id = 'continue-as-guest';
+      accountGuestButton.className = 'cart-drawer-btn-secondary';
+      accountGuestButton.textContent = 'Continue as guest';
+      accountGuestButton.addEventListener('click', () => {
+        checkoutGuestAccepted = true;
+        closeLoginModal();
+        openSideCart(2);
+      });
+      accountDialog.append(accountGuestButton);
       document.body.append(accountDialog);
       accountDialog.addEventListener('click', event => {
         if (event.target !== accountDialog) return;
@@ -2750,6 +2763,16 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
         }
         if (event.data?.type === 'terai-auth-complete') {
           syncGuestDataOnLogin();
+          if (accountCheckout) {
+            const meta = document.querySelector('meta[name="customer-authenticated"]');
+            if (meta) meta.content = 'true';
+            const flag = document.getElementById('customer-authenticated');
+            if (flag) flag.textContent = 'true';
+            closeLoginModal();
+            window.dispatchEvent(new Event('orders:authenticated'));
+            openSideCart(2);
+            return;
+          }
           closeLoginModal();
           const target = event.data?.next || '/';
           window.location.assign(target);
@@ -2757,6 +2780,10 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
       });
     }
     if (accountDialog.open) return;
+    accountCheckout = options.checkout === true;
+    accountGuestButton.hidden = !accountCheckout;
+    accountGuestButton.style.setProperty('display', accountCheckout ? 'inline-flex' : 'none', 'important');
+    accountFrame.style.maxHeight = accountCheckout ? 'calc(100dvh - 100px)' : 'calc(100dvh - 32px)';
     previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     accountFrame.src = '/accounts/login/';

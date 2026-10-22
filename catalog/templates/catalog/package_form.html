@@ -1,0 +1,10 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Product packages{% endblock %}{% block breadcrumb %}Product packages{% endblock %}
+{% block category_content %}
+<h1>Product packages</h1><p><a href="{% url 'package-new' %}">New package</a> · <a href="/admin/products/">Products</a></p>
+<table class="category-table"><tr><th>Banner slot</th><th>Package</th><th>Published</th><th>Price</th><th>Available packages</th></tr>{% for row in packages %}<tr><td>{{ row.slot }}</td><td><a href="{% url 'package-edit' row.pk %}">{{ row.product.name }}</a></td><td>{{ row.product.is_published }}</td><td>£{{ row.product.price }}</td><td>{{ row.product.effective_stock }}</td></tr>{% endfor %}</table>
+<h2>{% if package.pk %}Edit package{% else %}Create package{% endif %}</h2>
+<p>Choose regular products and quantities per package. Stock and weight come from those products. Banner uploads are cropped to 867 × 441; place artwork to the right to leave room for the existing text overlay.</p>
+<form method="post" enctype="multipart/form-data" class="category-form">{% csrf_token %}{{ product_form.as_p }}{{ form.as_p }}{{ items.management_form }}{{ items.non_form_errors }}<div id="package-items">{% for item in items %}<div class="package-component">{{ item.as_p }}</div>{% endfor %}</div><template id="package-empty">{{ items.empty_form.as_p }}</template><button type="button" id="add-package-item">Add product</button><button class="category-primary">Save package</button></form>
+<script>document.getElementById('add-package-item').onclick=()=>{const count=document.getElementById('id_items-TOTAL_FORMS');if(Number(count.value)>=50)return;const row=document.createElement('div');row.className='package-component';row.innerHTML=document.getElementById('package-empty').innerHTML.replaceAll('__prefix__',count.value);document.getElementById('package-items').append(row);count.value=Number(count.value)+1;};</script>
+{% endblock %}

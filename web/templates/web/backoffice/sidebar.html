@@ -41,6 +41,7 @@
       {% include 'web/backoffice/icon.html' with name='box' %}
       <span class="sidebar-label">Products</span>
     </a>
+    <a href="/admin/packages/" class="nav-item"><span class="sidebar-label">Product packages</span></a>
     {% if perms.delivery.view_weightband %}
     <a href="{% url 'delivery:settings' %}" class="nav-item {% if active_page == 'delivery' %}active{% endif %}" title="UK delivery">
       {% include 'web/backoffice/icon.html' with name='box' %}<span class="sidebar-label">UK delivery</span>

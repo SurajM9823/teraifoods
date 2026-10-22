@@ -254,10 +254,11 @@ class OrderTests(TestCase):
         services.request_return(order.pk,'Return please',refund_preference='voucher')
         services.decide_return(order.pk,'approved','Accepted',self.staff)
         services.decide_return(order.pk,'received','Received',self.staff)
-        services.settle_return(order.pk,'voucher','ISSUED-VOUCHER-001',self.staff)
+        order.refresh_from_db()
+        self.assertTrue(order.issued_voucher.code.startswith('TF-'))
         self.grant(order)
         data=self.client.get(f'/api/orders/{order.public_id}/').json()
-        self.assertEqual(data['return_request']['reference'],'ISSUED-VOUCHER-001')
+        self.assertEqual(data['return_request']['reference'],order.issued_voucher.code)
         self.assertEqual(data['return_request']['method'],'voucher')
         self.assertTrue(data['items'][0]['can_review'])
 

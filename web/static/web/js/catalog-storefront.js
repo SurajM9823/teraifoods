@@ -25,7 +25,7 @@
           document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
         const response = await fetch('/api/cart/quote/', {method:'POST',
           headers:{'Content-Type':'application/json','X-CSRFToken':decodeURIComponent(csrf)},
-          body:JSON.stringify({items:cart.map(item => ({product_id:Number(item.id), quantity:item.quantity}))})});
+          body:JSON.stringify({...window.TeraiOrders?.voucherPayload?.(),items:cart.map(item => ({product_id:Number(item.id), quantity:item.quantity}))})});
         const data = await response.json();
         if (!response.ok) { notify(data.errors?.join(' ') || 'Unable to validate basket.'); return false; }
         const refreshed = new Map(data.items.map(item => [String(item.id), {id:String(item.id),title:item.name,

@@ -37,6 +37,30 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       throw new Error('Timed out: '+expression);
     };
     await page('Page.enable');
+    if(process.env.BULK_BROWSER_FLOW==='1') {
+      await page('Page.navigate',{url:base+'/bulk-order/'});
+      await until("!!document.querySelector('.po-row') && !!document.querySelector('#buyer-email')");
+      await evaluate(`Object.entries({'buyer-company-name':'Browser Grocer','buyer-contact-name':'Test Buyer','buyer-email':'browser@example.invalid','buyer-phone-email':'07700900123','buyer-address':'1 Example Street','buyer-city-postcode':'London SW1A 1AA','buyer-notes':'Morning delivery'}).forEach(([id,value])=>document.getElementById(id).value=value);document.querySelector('.row-desc').value='Custom rice';document.querySelector('.row-unit').value='5kg bag';document.querySelector('.row-price').value='4.50';document.getElementById('bulk-po-form').requestSubmit();`);
+      await until("document.getElementById('bulk-request-list').textContent.includes('TF-BQ-')");
+      const requestId=await evaluate("new URLSearchParams(location.search).get('request')");
+      assert(requestId);
+      const adminUrl=base+'/admin/bulk-orders/'+requestId+'/';
+      const adminResponse=await fetch(adminUrl,{headers:{Cookie:process.env.BULK_ADMIN_COOKIE}});
+      assert.equal(adminResponse.status,200);
+      const html=await adminResponse.text();
+      assert.match(html,/Morning delivery/);
+      const csrf=html.match(/name="csrfmiddlewaretoken" value="([^"]+)"/)[1];
+      const cookie=process.env.BULK_ADMIN_COOKIE+'; '+adminResponse.headers.getSetCookie().map(c=>c.split(';')[0]).join('; ');
+      const posted=await fetch(adminUrl,{method:'POST',redirect:'manual',headers:{Cookie:cookie,Referer:adminUrl,'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({csrfmiddlewaretoken:csrf,version:'1',status:'quoted',quoted_total:'55.00',delivery_terms:'Delivery within 4 days',payment_terms:'Invoice before dispatch',message:'Your requested rice is available.'})});
+      assert.equal(posted.status,302,await posted.text());
+      await evaluate("document.getElementById('bulk-refresh').click()");
+      await until("document.getElementById('bulk-request-list').textContent.includes('Your requested rice is available.')");
+      assert.match(await evaluate("document.getElementById('bulk-request-list').textContent"),/55.00/);
+      await page('Page.navigate',{url:base+'/bulk-order/'});
+      await until("document.getElementById('bulk-request-list').textContent.includes('Your requested rice is available.')");
+      console.log('Bulk browser flow passed: submission, admin quote, same-page tracking and persistent history.');
+      return;
+    }
     if(process.env.ORDER_RETURN_URL) {
       await page('Page.navigate',{url:base+process.env.ORDER_RETURN_URL});
       await until("!!document.querySelector('[data-order-action=return]')");
@@ -80,6 +104,10 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       await until("document.getElementById('summary-grand-total').textContent === '—'");
       await evaluate("document.querySelector('.item-select-checkbox').click()");
       await until("document.getElementById('summary-grand-total').textContent === '10.50'");
+      await evaluate("document.getElementById('checkout-button').click()");
+      await until("document.getElementById('terai-account-dialog')?.open");
+      assert.equal(await evaluate("document.getElementById('drawer-pane-2').classList.contains('active')"),false);
+      assert.equal(await evaluate("getComputedStyle(document.getElementById('continue-as-guest')).display"),'inline-flex');
       await page('Page.navigate',{url:base+'/shop/'});
       await until('!!window.TeraiCatalog?.getCart');
     }
@@ -91,8 +119,18 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
     await until("document.getElementById('drawer-shipping-val')?.textContent === 'Unavailable'");
     assert.equal(await evaluate("document.getElementById('drawer-total-val').textContent"),'—');
     if(process.env.ORDER_BROWSER_FLOW==='1') {
-      await evaluate(`window.TeraiCatalog.saveCart(${JSON.stringify([grams])});window.TeraiCatalog.openCheckout();`);
+      await evaluate("window.teraiOpenLoginModal()");
+      await until("document.getElementById('terai-account-dialog')?.open");
+      assert.equal(await evaluate("getComputedStyle(document.getElementById('continue-as-guest')).display"),'none');
+      await evaluate("window.teraiCloseLoginModal()");
+      await evaluate(`window.TeraiCatalog.saveCart(${JSON.stringify([grams])});window.TeraiCatalog.openSideCart(1);document.getElementById("btn-drawer-proceed-checkout").click();`);
+      await until("document.getElementById('terai-account-dialog')?.open");
+      assert.equal(await evaluate("document.getElementById('drawer-pane-2').classList.contains('active')"),false);
+      assert.equal(await evaluate("document.getElementById('continue-as-guest').hidden"),false);
+      await evaluate("document.getElementById('continue-as-guest').click()");
       await until("document.getElementById('drawer-pane-2').classList.contains('active')");
+      assert.equal(await evaluate("document.getElementById('terai-account-dialog').open"),false);
+      assert.equal(await evaluate("!!document.querySelector('#drawer-pane-2 #continue-as-guest')"),false);
       const contact={name:'Browser Guest',email:'browser@example.com',phone:'07700900123',line1:'1 Test Street',city:'London',postcode:'SW1A 1AA'};
       await evaluate(`Object.entries(${JSON.stringify(contact)}).forEach(([key,value])=>document.querySelector('#order-contact-form [name="'+key+'"]').value=value);document.getElementById('btn-proceed-to-pay').click();`);
       await until("document.getElementById('drawer-pane-3').classList.contains('active')");

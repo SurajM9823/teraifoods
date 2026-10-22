@@ -61,9 +61,9 @@ def serialize(product):
         review_count=product.review_count,
         category=product.category.slug, category_key=product.category.legacy_key or product.category.slug,
         subcategory=product.subcategory.slug if product.subcategory_id else None,
-        regular_price=str(product.regular_price), sale_price=str(product.sale_price) if product.sale_price is not None else None,
+        regular_price=str(product.base_price), sale_price=str(product.sale_price) if product.sale_price is not None else None,
         price=str(product.price), discount=product.discount_percent, available=product.available,
-        stock=product.stock if product.stock_confirmed else None,
+        stock=product.effective_stock if product.is_package or product.stock_confirmed else None,
         sections=[key for key, value in [('new_arrival',product.new_arrival),('featured',product.featured),('best_seller',product.best_seller),('for_you',True)] if value],
         image=product.image_url, url=f'/product-detail/?product={product.slug}',
         images=[dict(id=image.pk, url=image.url, avif=image.avif_srcset, webp=image.webp_srcset,
@@ -216,7 +216,8 @@ def paginate(params):
     if more:
         last = rows[-1]
         next_cursor = signing.dumps(dict(filter=fingerprint, revision=revision.version, id=last.pk, value=str(getattr(last, field.lstrip('-')))), salt='catalog-page')
-    return rows, dict(next_cursor=next_cursor, has_more=more, total=count)
+    from .packages import present
+    return [present(row) for row in rows], dict(next_cursor=next_cursor, has_more=more, total=count)
 
 
 def cached_payload(request, loader):
@@ -311,17 +312,23 @@ def cart_quote(request):
         products = list(public_products().filter(pk__in=quantities))
         if len(products) != len(quantities):
             raise ValidationError('A basket item is no longer available. Remove it before continuing.')
+        from .packages import basket
+        basket(products,quantities)
         lines, total = [], Decimal('0')
         for product in products:
             quantity = quantities[product.pk]
-            if not product.available or quantity > product.stock:
+            if not product.available or quantity > product.effective_stock:
                 raise ValidationError(f'{product.name}: insufficient confirmed stock.')
             total += product.price * quantity
             lines.append(dict(**serialize(product), quantity=quantity))
         from delivery.services import quote_delivery
         delivery = quote_delivery(products, quantities, country=data.get('country', 'GB'))
-        return JsonResponse({'items':lines, 'subtotal':str(total),
-            'delivery_charge':str(delivery['charge']), 'total':str(total + delivery['charge']),
+        voucher_value=Decimal('0')
+        if data.get('voucher_code'):
+            from orders.vouchers import validate
+            voucher_value=min(validate(data['voucher_code'],data.get('email','')).amount,total+delivery['charge'])
+        return JsonResponse({'items':lines, 'subtotal':str(total),'voucher_applied':str(voucher_value),
+            'delivery_charge':str(delivery['charge']), 'total':str(total + delivery['charge']-voucher_value),
             'total_weight_grams':str(delivery['weight_grams']),
             'delivery':{'country':'GB', 'minimum_days':delivery['minimum_days'], 'maximum_days':delivery['maximum_days'],
                         'estimate':f"{delivery['minimum_days']}–{delivery['maximum_days']} days"}})

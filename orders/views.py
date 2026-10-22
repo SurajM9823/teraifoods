@@ -64,6 +64,8 @@ def order_data(order):
     return dict(id=str(order.public_id),number=order.number,version=order.version,
         created_at=order.created_at.isoformat(),payment_status=order.payment_status,payment_method=order.payment_method,fulfilment_status=stage,
         cancellation_status=order.cancellation_status,refund_status=order.refund_status,group=group,
+        voucher_applied=str(services.vouchers.applied(order)),
+        issued_voucher=(dict(code=order.issued_voucher.code,amount=str(order.issued_voucher.amount),used=bool(order.issued_voucher.redeemed_at)) if hasattr(order,'issued_voucher') else None),
         return_request=(dict(status=order.return_request.status,preference=order.return_request.refund_preference,
             method=order.return_request.settlement_method,reference=order.return_request.settlement_reference,
             note=order.return_request.admin_reason,amount=str(order.total)) if hasattr(order,'return_request') else None),
@@ -85,13 +87,14 @@ def order_data(order):
 @api
 @require_POST
 def checkout(request):
-    # Validate provider setup before reserving inventory.
-    if not payments.demo_enabled():
-        payments.client()
+    # A fully voucher-funded checkout does not need Stripe.
     if not request.session.get('checkout_scope'):
         request.session['checkout_scope'] = uuid.uuid4().hex
     scope = f'user:{request.user.pk}' if request.user.is_authenticated else 'guest:'+request.session['checkout_scope']
-    order = services.create_order(request.user,scope,payload(request),request.headers.get('Idempotency-Key',''))
+    with transaction.atomic():
+        order = services.create_order(request.user,scope,payload(request),request.headers.get('Idempotency-Key',''))
+        if order.total and order.payment_method=='stripe':
+            payments.client()
     services.grant_access(request.session,order)
     url = payments.create_session(order)
     return JsonResponse({'order':order_data(order),'payment_url':url,'test_mode':True},status=201)
