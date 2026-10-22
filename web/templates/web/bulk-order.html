@@ -502,6 +502,21 @@
 			border-color: #503d82;
 			color: #ffffff;
 		}
+		.po-side-input.is-invalid {
+			border-color: #dc2626 !important;
+			background-color: #fef2f2 !important;
+		}
+		.side-save-status {
+			line-height: 1.4;
+			animation: poFadeIn 0.2s ease;
+		}
+		.po-submit-feedback {
+			animation: poFadeIn 0.2s ease;
+		}
+		@keyframes poFadeIn {
+			from { opacity: 0; transform: translateY(-4px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
 		.btn-po-action-mini {
 			background: #ffffff;
 			border: 1px solid #cbd5e1;
@@ -774,21 +789,24 @@
 									</div>
 									<div class="po-side-field">
 										<label class="po-side-label" for="buyer-city-postcode">City &amp; Postcode *</label>
-										<input type="text" id="buyer-city-postcode" class="po-side-input" placeholder="City, Postcode" required value="">
+										<input type="text" id="buyer-city-postcode" class="po-side-input" placeholder="e.g. London SW1A 1AA" required value="">
+										<small class="text-muted d-block mt-1" style="font-size: 11px;">Town/City &amp; UK postcode</small>
 									</div>
 									<div class="po-side-field">
 										<label class="po-side-label" for="buyer-phone-email">Phone *</label>
-										<input type="text" id="buyer-phone-email" class="po-side-input" placeholder="UK phone number" required value="">
+										<input type="text" id="buyer-phone-email" class="po-side-input" placeholder="e.g. 07700 900123" required value="">
+										<small class="text-muted d-block mt-1" style="font-size: 11px;">UK phone (e.g. 07700 900123)</small>
 									</div>
-									<div class="po-side-field"><label class="po-side-label" for="buyer-email">Email *</label><input type="email" id="buyer-email" class="po-side-input" required maxlength="254"></div>
+									<div class="po-side-field"><label class="po-side-label" for="buyer-email">Email *</label><input type="email" id="buyer-email" class="po-side-input" placeholder="buyer@example.co.uk" required maxlength="254"></div>
 <div class="po-side-field">
 										<label class="po-side-label" for="po-delivery-date">Requested Delivery Date</label>
 										<input type="date" id="po-delivery-date" class="po-side-input" value="">
 									</div>
-									<div class="po-side-field"><label class="po-side-label" for="buyer-notes">Additional requirements</label><textarea id="buyer-notes" class="po-side-input" maxlength="3000"></textarea></div><div class="pt-2">
-										<button type="button" class="btn-po-side-save" onclick="saveDeliveryDetails()">
+									<div class="po-side-field"><label class="po-side-label" for="buyer-notes">Additional requirements</label><textarea id="buyer-notes" class="po-side-input" maxlength="3000" placeholder="E.g. Tail-lift required, morning delivery..."></textarea></div><div class="pt-2">
+										<button type="button" id="btn-save-delivery" class="btn-po-side-save" onclick="saveDeliveryDetails()">
 											<i class="klb-icon-check"></i> Save Details
 										</button>
+										<div id="side-save-status" class="side-save-status mt-2 text-12" style="display:none;" role="status" aria-live="polite"></div>
 									</div>
 								</div>
 							</div>
@@ -896,6 +914,7 @@
 									</div>
 
 									<!-- Bottom Action Toolbar -->
+									<div id="po-submit-feedback" class="po-submit-feedback mb-2" style="display:none;" role="alert" aria-live="polite"></div>
 									<div class="po-actions-bar">
 										<div class="d-flex gap-2">
 											<button type="button" class="btn-po-print" onclick="window.print()">
@@ -1133,7 +1152,13 @@
 		}
 
 		// Save Delivery & Ship-To Details
-		function saveDeliveryDetails() { document.getElementById("bulk-message").textContent="Details are saved when you submit the request."; }
+		function saveDeliveryDetails() {
+			if (typeof window._doSaveDelivery === 'function') {
+				return window._doSaveDelivery();
+			} else if (typeof window.saveDeliveryDetails === 'function' && window.saveDeliveryDetails !== saveDeliveryDetails) {
+				return window.saveDeliveryDetails();
+			}
+		}
 
 		// Submit Purchase Order Request
 		function submitPurchaseOrder() { document.getElementById("bulk-po-form").requestSubmit(); }
@@ -1187,6 +1212,6 @@
 
 
 
-<script src="{% static 'web/js/bulk-orders.js' %}?v=mobile-v2" defer></script>
+<script src="{% static 'web/js/bulk-orders.js' %}?v=save-fix-v3" defer></script>
 </body>
 </html>

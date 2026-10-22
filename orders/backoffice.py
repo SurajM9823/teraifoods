@@ -29,16 +29,27 @@ def index(request):
         rows = rows.filter(fulfilment_status=request.GET['status'])
     if request.GET.get('returns') == '1':
         rows = rows.filter(return_request__isnull=False)
-    summary = dict(total_orders=rows.count(),
+    summary = dict(
+        total_orders=rows.count(),
         processing=rows.filter(fulfilment_status__in=['placed','confirmed','preparing','ready_for_dispatch']).count(),
         dispatched=rows.filter(fulfilment_status__in=['dispatched','out_for_delivery']).count(),
-        total_revenue='£'+str(rows.filter(payment_status='paid').aggregate(total=Sum('total'))['total'] or '0.00'))
+        total_revenue='£'+str(rows.filter(payment_status='paid').aggregate(total=Sum('total'))['total'] or '0.00')
+    )
     page = Paginator(rows, 30).get_page(request.GET.get('page'))
-    formatted = [dict(id=o.number,public_id=o.public_id,customer=o.recipient_name or 'Legacy order',email=o.email,
-        type='Registered' if o.customer_id else 'Guest',items_summary=', '.join(f'{i.product_name} × {i.quantity}' for i in o.lines.all()),
-        total='£'+str(o.total),payment_status=o.payment_status.title(),
+    formatted = [dict(
+        id=o.number,
+        public_id=o.public_id,
+        customer=o.recipient_name or 'Legacy order',
+        email=o.email,
+        type='Registered' if o.customer_id else 'Guest',
+        items_count=sum(line.quantity for line in o.lines.all()),
+        unique_items=len(o.lines.all()),
+        total='£'+str(o.total),
+        payment_status=o.payment_status.title(),
         fulfillment_status=o.fulfilment_status.replace('_',' ').title(),
-        return_status=o.return_request.status if hasattr(o,'return_request') else '',date=o.created_at) for o in page]
+        return_status=o.return_request.status if hasattr(o,'return_request') else '',
+        date=o.created_at
+    ) for o in page]
     return render(request,'web/backoffice/orders.html',dict(active_page='orders',orders_list=formatted,summary=summary,page=page))
 
 
@@ -48,7 +59,7 @@ def index(request):
 def detail(request,public_id):
     if not request.user.has_perm('catalog.view_order'):
         raise PermissionDenied
-    order = get_object_or_404(Order,public_id=public_id)
+    order = get_object_or_404(Order.objects.prefetch_related('lines', 'events'), public_id=public_id)
     if request.method == 'POST':
         if not request.user.has_perm('catalog.change_order'):
             raise PermissionDenied
@@ -56,6 +67,24 @@ def detail(request,public_id):
         try:
             if action == 'status':
                 services.transition(order.pk,request.POST.get('status'),request.user,request.POST.get('reason',''))
+            elif action == 'payment_status':
+                new_status = request.POST.get('payment_status')
+                if new_status not in ('pending', 'paid', 'refunded', 'failed'):
+                    raise ValidationError('Invalid payment status.')
+                reason = request.POST.get('reason', '').strip()
+                from django.db import transaction
+                with transaction.atomic():
+                    locked = Order.objects.select_for_update().get(pk=order.pk)
+                    old_payment = locked.payment_status
+                    locked.payment_status = new_status
+                    if new_status == 'paid' and locked.fulfilment_status == 'pending_payment':
+                        locked.fulfilment_status = 'placed'
+                    locked.save()
+                    msg = f"Payment status updated from {old_payment.title()} to {new_status.title()}."
+                    if reason:
+                        msg += f" Note: {reason}"
+                    services.emit(locked, f"payment_{new_status}", msg, request.user)
+                messages.success(request, f"Payment status successfully set to {new_status.title()}.")
             elif action == 'cancel':
                 services.request_cancel(order.pk,request.POST.get('reason',''),request.user)
             elif action == 'pin':
@@ -91,10 +120,26 @@ def detail(request,public_id):
         else:
             messages.success(request,'Order updated.')
         return redirect('order-admin-detail',public_id=public_id)
-    return render(request,'orders/admin_detail.html',dict(active_page='orders',order=order,
+
+    ALL_FULFILMENT_STAGES = [
+        ('placed', 'Placed (Order Received)'),
+        ('confirmed', 'Confirmed (Inventory Accepted)'),
+        ('preparing', 'Preparing (Packing in Depot)'),
+        ('ready_for_dispatch', 'Ready for Dispatch (Sealed & Labeled)'),
+        ('dispatched', 'Dispatched (Handed to Courier)'),
+        ('out_for_delivery', 'Out for Delivery (On Driver Route)'),
+        ('delivered', 'Delivered (Successfully Handover)'),
+        ('delivery_failed', 'Delivery Failed (Customer Unavailable)'),
+    ]
+    available_statuses = [(code, label) for code, label in ALL_FULFILMENT_STAGES if code != order.fulfilment_status]
+
+    return render(request,'orders/admin_detail.html',dict(
+        active_page='orders',
+        order=order,
         return_bank=order.return_request.bank_details if request.user.has_perm('catalog.change_order') and hasattr(order,'return_request') else {},
-        statuses=sorted(services.TRANSITIONS.get(order.fulfilment_status,set())-{'cancelled'}),
-        drivers=get_user_model().objects.filter(is_staff=True,is_active=True)))
+        statuses=available_statuses,
+        drivers=get_user_model().objects.filter(is_staff=True,is_active=True)
+    ))
 
 
 @never_cache

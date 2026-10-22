@@ -517,8 +517,56 @@ body.dashboard-page,
 
 /* Topbar & Sidebar High Contrast Visibility */
 .topbar {
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 20px !important;
   background: #ffffff;
-  border-bottom: 1px solid #bbbbbb;
+  border-bottom: 1px solid #cbd5e1;
+  gap: 12px;
+}
+
+.topbar-left,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar .avatar.small {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 11px !important;
+  border-radius: 50%;
+}
+
+.topbar .topbar-divider {
+  height: 16px !important;
+}
+
+.topbar .mobile-menu {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.topbar .mobile-menu .icon {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.topbar .store-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.topbar .store-link .icon {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.dashboard-content {
+  padding: 16px 24px 20px !important;
 }
 
 .breadcrumb,

@@ -244,12 +244,18 @@ def transition(order_id, target, actor, reason=''):
         return order
     if target == 'cancelled':
         raise ValidationError('Use the cancellation workflow to release inventory and refund payments.')
-    if order.payment_status != 'paid' or order.cancellation_status == 'requested':
-        raise ValidationError('Confirm payment and resolve cancellation before fulfilment.')
-    if target not in TRANSITIONS.get(order.fulfilment_status,set()):
+    if order.cancellation_status == 'requested':
+        raise ValidationError('Resolve the cancellation request before updating fulfilment.')
+    if order.payment_status != 'paid' and target not in ('pending_payment', 'placed'):
+        raise ValidationError('Confirm and verify payment as Paid before advancing fulfilment.')
+    valid_targets = {'placed', 'confirmed', 'preparing', 'ready_for_dispatch', 'dispatched', 'out_for_delivery', 'delivered', 'delivery_failed'}
+    if target not in valid_targets:
         raise ValidationError('Invalid order status transition.')
     order.fulfilment_status = target
-    emit(order,target,reason or target.replace('_',' ').capitalize(),actor)
+    if target == 'delivered' and not order.delivered_at:
+        order.delivered_at = timezone.now()
+    order.save(update_fields=['fulfilment_status', 'delivered_at', 'updated_at'])
+    emit(order, target, reason or target.replace('_', ' ').capitalize(), actor)
     return order
 
 

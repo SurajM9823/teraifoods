@@ -4,11 +4,12 @@
 
 {% block main_content %}
 <div class="categories-page">
-  <!-- Heading Toolbar -->
-  <div class="category-heading">
+  <!-- Heading Toolbar: compact subheader style without large text or paragraph description -->
+  <div class="category-heading" style="margin-bottom: 12px; align-items: center;">
     <div>
-      <h1>Orders &amp; Fulfilment</h1>
-      <p>Manage customer orders, track dispatches, update delivery status and review returns.</p>
+      <h2 style="font-size: 16px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.2;">
+        Orders &amp; Fulfilment
+      </h2>
     </div>
     <div style="display: flex; gap: 8px;">
       <a class="btn-action btn-outline" href="/admin/orders/reviews/">
@@ -55,44 +56,50 @@
     </form>
   </div>
 
-  <!-- Sweet Datatable -->
+  <!-- Sweet Datatable: Clickable rows, item counts only, order date & time, no action button -->
   <div class="product-form-box">
     <div class="category-table-wrap">
-      <table class="category-table">
+      <table class="category-table clickable-rows-table">
         <thead>
           <tr>
             <th>Order #</th>
+            <th>Order Date &amp; Time</th>
             <th>Customer</th>
             <th>Channel</th>
-            <th>Items Summary</th>
+            <th>Items</th>
             <th>Total</th>
             <th>Payment</th>
             <th>Fulfilment</th>
-            <th>Date</th>
-            <th style="text-align: right;">Action</th>
           </tr>
         </thead>
         <tbody>
           {% for order in orders_list %}
-            <tr>
-              <td style="font-weight: 700;">
-                <a href="{% url 'order-admin-detail' order.public_id %}" style="color: #1547A8;">
+            <tr onclick="window.location.href='{% url 'order-admin-detail' order.public_id %}';" style="cursor: pointer;" title="Click to view &amp; manage Order #{{ order.id }}">
+              <td style="font-weight: 700; white-space: nowrap;">
+                <a href="{% url 'order-admin-detail' order.public_id %}" style="color: #1547A8; text-decoration: none;">
                   #{{ order.id }}
                 </a>
               </td>
+              <td style="font-size: 11.5px; color: #475569; white-space: nowrap;">
+                <i class="fa fa-clock-o" style="color: #94a3b8; margin-right: 3px;"></i>
+                {{ order.date|date:"d M Y, H:i" }}
+              </td>
               <td>
-                <strong>{{ order.customer }}</strong>
+                <strong style="color: #0f172a;">{{ order.customer }}</strong>
                 <div style="font-size: 11px; color: #64748b;">
-                  <a href="mailto:{{ order.email }}" style="color: inherit;">{{ order.email }}</a>
+                  {{ order.email }}
                 </div>
               </td>
               <td>
                 <span class="status-chip chip-archived">{{ order.type }}</span>
               </td>
-              <td style="font-size: 12px; color: #475569; max-width: 260px; white-space: normal; line-height: 1.4;">
-                {{ order.items_summary }}
+              <td style="font-weight: 600; color: #334155; white-space: nowrap;">
+                {{ order.items_count }} item{{ order.items_count|pluralize }}
+                {% if order.unique_items and order.unique_items != order.items_count %}
+                  <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">({{ order.unique_items }} SKUs)</span>
+                {% endif %}
               </td>
-              <td style="font-weight: 700; color: #0f172a;">
+              <td style="font-weight: 700; color: #0f172a; white-space: nowrap;">
                 {{ order.total }}
               </td>
               <td>
@@ -120,18 +127,10 @@
                   </div>
                 {% endif %}
               </td>
-              <td style="font-size: 11px; color: #64748b; white-space: nowrap;">
-                {{ order.date|date:"d M Y, H:i" }}
-              </td>
-              <td style="text-align: right;">
-                <a href="{% url 'order-admin-detail' order.public_id %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
-                  <i class="fa fa-pencil-square-o"></i> View &amp; Fulfil
-                </a>
-              </td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="9" style="text-align: center; padding: 28px; color: #94a3b8;">
+              <td colspan="8" style="text-align: center; padding: 28px; color: #94a3b8;">
                 No orders found matching the filter criteria.
               </td>
             </tr>
@@ -158,4 +157,13 @@
     </div>
   {% endif %}
 </div>
+
+<style>
+.clickable-rows-table tbody tr {
+  transition: background-color 0.12s ease;
+}
+.clickable-rows-table tbody tr:hover {
+  background-color: #f1f5f9 !important;
+}
+</style>
 {% endblock %}

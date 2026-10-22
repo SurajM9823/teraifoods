@@ -305,6 +305,19 @@ class OrderLine(models.Model):
     product_image = models.CharField(max_length=1000, blank=True)
     product_sku = models.CharField(max_length=80, blank=True)
 
+    @property
+    def total(self):
+        return (self.unit_price or 0) * self.quantity
+
+    @property
+    def total_weight_display(self):
+        if not self.unit_weight_grams:
+            return ""
+        total_g = float(self.unit_weight_grams) * self.quantity
+        if total_g >= 1000:
+            return f"{total_g / 1000:.2f} kg"
+        return f"{int(total_g)} g"
+
 
 class CatalogRevision(models.Model):
     version = models.PositiveBigIntegerField(default=1)
