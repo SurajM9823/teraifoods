@@ -3,12 +3,18 @@
 {% block breadcrumb %}Bulk Inquiries{% endblock %}
 
 {% block main_content %}
-<div class="categories-page">
-  <!-- Heading Toolbar -->
-  <div class="category-heading">
+<div class="categories-page full-width-orders-page">
+  <!-- Heading Toolbar: compact subheader style -->
+  <div class="category-heading full-width-toolbar" style="margin-bottom: 12px; align-items: center;">
     <div>
-      <h1>Bulk &amp; Wholesale Inquiries</h1>
-      <p>Review customer wholesale RFQs, formulate delivery &amp; payment quotes, and manage commercial order pipelines.</p>
+      <h2 style="font-size: 16px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.2;">
+        Bulk &amp; Wholesale Inquiries
+      </h2>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a class="btn-action btn-outline" href="/admin/orders/">
+        <i class="fa fa-shopping-bag"></i> Retail Orders
+      </a>
     </div>
   </div>
 
@@ -18,13 +24,13 @@
     </div>
   {% endfor %}
 
-  <!-- Filters Toolbar -->
-  <div class="category-toolbar">
+  <!-- Filters Toolbar: Full width with spacious controls -->
+  <div class="category-toolbar full-width-toolbar">
     <div class="category-stats-badge">
       <strong>{{ page.paginator.count }}</strong> inquiries in pipeline
     </div>
     <form class="category-filters" method="get">
-      <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Reference, company or email..." aria-label="Search inquiries">
+      <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Reference, company or email..." aria-label="Search inquiries" style="min-width: 240px;">
       <select name="status" aria-label="Status filter">
         <option value="">All Statuses</option>
         {% for st in statuses %}
@@ -38,42 +44,48 @@
     </form>
   </div>
 
-  <!-- Sweet Datatable -->
-  <div class="product-form-box">
+  <!-- Full-Width Bulk Inquiries Table Card -->
+  <div class="orders-table-card">
     <div class="category-table-wrap">
-      <table class="category-table">
+      <table class="category-table bulk-full-table">
         <thead>
           <tr>
-            <th>Reference</th>
-            <th>Company &amp; Contact</th>
-            <th>Status</th>
-            <th>Quoted Total</th>
-            <th>Requested Date</th>
-            <th>Received</th>
-            <th style="text-align: right;">Action</th>
+            <th class="th-ref">Reference</th>
+            <th class="th-company">Company &amp; Contact</th>
+            <th class="th-status">Status</th>
+            <th class="th-quote">Quoted Total</th>
+            <th class="th-req-date">Requested Date</th>
+            <th class="th-received">Received</th>
+            <th class="th-action">Action</th>
           </tr>
         </thead>
         <tbody>
           {% for row in page %}
-            <tr>
-              <td style="font-weight: 700;">
-                <a href="{% url 'bulk-admin-detail' row.public_id %}" style="color: #1547A8;">
+            <tr onclick="window.location.href='{% url 'bulk-admin-detail' row.public_id %}';" title="Click to view &amp; quote inquiry {{ row.number }}">
+              <td class="td-ref">
+                <a href="{% url 'bulk-admin-detail' row.public_id %}" class="inquiry-ref-link">
                   {{ row.number }}
                 </a>
               </td>
-              <td>
-                <strong>{{ row.company|default:'Independent Buyer' }}</strong>
-                <div style="font-size: 11px; color: #64748b;">
-                  {{ row.contact_name }} · <a href="mailto:{{ row.email }}" style="color: inherit;">{{ row.email }}</a>
+              <td class="td-company">
+                <div class="company-name">{{ row.company|default:'Independent Trade Buyer' }}</div>
+                <div class="contact-sub">
+                  <span class="contact-name">{{ row.contact_name }}</span>
+                  <span class="contact-sep">·</span>
+                  <a href="mailto:{{ row.email }}" class="contact-email" onclick="event.stopPropagation();">{{ row.email }}</a>
+                  {% if row.phone %}
+                    <span class="contact-sep">·</span>
+                    <span class="contact-phone">{{ row.phone }}</span>
+                  {% endif %}
                 </div>
               </td>
-              <td>
+              <td class="td-status">
                 {% if row.status == 'new' %}
-                  <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">New</span>
+                  <span class="status-chip chip-new">New RFQ</span>
                 {% elif row.status == 'under_review' %}
-                  <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">Under Review</span>
+                  <span class="status-chip chip-review">Under Review</span>
                 {% elif row.status == 'quoted' %}
-                  <span class="status-chip" style="background:#e0e7ff; color:#3730a3; border-color:#c7d2fe;">Quoted</span>
+                  <span class="status-chip chip-quoted">Quoted</span>
                 {% elif row.status == 'accepted' %}
                   <span class="status-chip chip-live">Accepted</span>
                 {% elif row.status == 'completed' %}
@@ -82,43 +94,250 @@
                   <span class="status-chip chip-archived">{{ row.status|title }}</span>
                 {% endif %}
               </td>
-              <td style="font-weight: 700; color: #16a34a;">
-                {% if row.quoted_total != None %}£{{ row.quoted_total }}{% else %}<span style="color: #94a3b8; font-weight: normal;">Pending Quote</span>{% endif %}
+              <td class="td-quote">
+                {% if row.quoted_total != None %}
+                  <span class="quote-amount">£{{ row.quoted_total }}</span>
+                {% else %}
+                  <span class="quote-pending">Pending Quote</span>
+                {% endif %}
               </td>
-              <td style="font-size: 11.5px; color: #475569;">
-                {{ row.requested_date|default:'Flexible' }}
+              <td class="td-req-date">
+                <span class="req-date-text">{{ row.requested_date|default:'Flexible' }}</span>
               </td>
-              <td style="font-size: 11px; color: #64748b; white-space: nowrap;">
-                {{ row.created_at|date:"d M Y, H:i" }}
+              <td class="td-received">
+                <div class="received-date">{{ row.created_at|date:"d M Y" }}</div>
+                <div class="received-time">{{ row.created_at|date:"H:i" }}</div>
               </td>
-              <td style="text-align: right;">
-                <a href="{% url 'bulk-admin-detail' row.public_id %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+              <td class="td-action">
+                <a href="{% url 'bulk-admin-detail' row.public_id %}" class="btn-action btn-outline btn-quote-action" onclick="event.stopPropagation();">
                   <i class="fa fa-pencil-square-o"></i> View &amp; Quote
                 </a>
               </td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 18px;">
-                No bulk wholesale inquiries found.
+              <td colspan="7" class="inquiries-empty-state">
+                <i class="fa fa-inbox" style="font-size: 26px; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+                No bulk wholesale inquiries found in pipeline.
               </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-
-    {% if page.has_other_pages %}
-      <nav aria-label="Pagination" class="category-pagination" style="margin-top: 10px;">
-        {% if page.has_previous %}
-          <a href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}" class="btn-action btn-outline" style="padding: 2px 8px;">&laquo; Previous</a>
-        {% endif %}
-        <span style="font-size: 11px; color: #64748b;">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
-        {% if page.has_next %}
-          <a href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}" class="btn-action btn-outline" style="padding: 2px 8px;">Next &raquo;</a>
-        {% endif %}
-      </nav>
-    {% endif %}
   </div>
+
+  <!-- Pagination: Full width aligned -->
+  {% if page.has_other_pages %}
+    <div class="category-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; width: 100%;">
+      <span style="font-size: 12px; color: #64748b;">
+        Page {{ page.number }} of {{ page.paginator.num_pages }} ({{ page.paginator.count }} inquiries)
+      </span>
+      <div style="display: flex; gap: 6px;">
+        {% if page.has_previous %}
+          <a class="btn-action btn-outline" style="padding: 4px 12px; font-size: 12px;" href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}">Previous</a>
+        {% endif %}
+        {% if page.has_next %}
+          <a class="btn-action btn-outline" style="padding: 4px 12px; font-size: 12px;" href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}">Next</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
 </div>
+
+<style>
+/* Full-Width Page & Toolbars */
+.full-width-orders-page {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.full-width-toolbar {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Card Container */
+.orders-table-card {
+  width: 100% !important;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.orders-table-card .category-table-wrap {
+  width: 100% !important;
+  overflow-x: auto;
+}
+
+/* Full Width Proportional Bulk Inquiries Table */
+.bulk-full-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  margin: 0 !important;
+}
+
+/* Table Header */
+.bulk-full-table thead {
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.bulk-full-table th {
+  padding: 13px 18px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.6px !important;
+  color: #475569 !important;
+  border: none !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  box-sizing: border-box;
+}
+
+/* Column Width Distributions (Total = 100%) */
+.th-ref, .td-ref             { width: 13%; text-align: left; }
+.th-company, .td-company     { width: 32%; text-align: left; }
+.th-status, .td-status       { width: 12%; text-align: center; }
+.th-quote, .td-quote         { width: 12%; text-align: right; }
+.th-req-date, .td-req-date   { width: 11%; text-align: center; }
+.th-received, .td-received   { width: 10%; text-align: center; }
+.th-action, .td-action       { width: 10%; text-align: right; }
+
+/* Table Body Rows & Cells */
+.bulk-full-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bulk-full-table tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+.bulk-full-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.bulk-full-table td {
+  padding: 13px 18px !important;
+  vertical-align: middle !important;
+  font-size: 13px !important;
+  color: #1e293b;
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  box-sizing: border-box;
+}
+
+/* Typography & Cell Content */
+.inquiry-ref-link {
+  color: #1547A8;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 13.5px;
+}
+.inquiry-ref-link:hover {
+  text-decoration: underline;
+}
+
+.company-name {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 13.5px;
+  line-height: 1.3;
+}
+
+.contact-sub {
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.contact-name {
+  color: #334155;
+  font-weight: 500;
+}
+
+.contact-sep {
+  color: #cbd5e1;
+}
+
+.contact-email {
+  color: #1547A8;
+  text-decoration: none;
+}
+.contact-email:hover {
+  text-decoration: underline;
+}
+
+.contact-phone {
+  color: #475569;
+}
+
+.quote-amount {
+  font-weight: 800;
+  color: #16a34a;
+  font-size: 14px;
+}
+
+.quote-pending {
+  color: #94a3b8;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.req-date-text {
+  font-size: 12px;
+  color: #475569;
+}
+
+.received-date {
+  font-size: 12px;
+  color: #334155;
+  font-weight: 500;
+}
+
+.received-time {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.btn-quote-action {
+  padding: 4px 10px !important;
+  font-size: 11.5px !important;
+  white-space: nowrap;
+}
+
+/* Status Chips */
+.chip-new {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+  border-color: #fca5a5 !important;
+}
+
+.chip-review {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #fcd34d !important;
+}
+
+.chip-quoted {
+  background: #e0e7ff !important;
+  color: #3730a3 !important;
+  border-color: #c7d2fe !important;
+}
+
+.inquiries-empty-state {
+  text-align: center !important;
+  padding: 40px 18px !important;
+  color: #94a3b8 !important;
+}
+</style>
 {% endblock %}

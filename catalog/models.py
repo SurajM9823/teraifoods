@@ -153,9 +153,10 @@ class Product(models.Model):
     def effective_stock(self):
         if self.is_package:
             components=self.package_lines
-            if not components or any(not line.product.available or not line.product.category.is_active or (line.product.subcategory_id and not line.product.subcategory.is_active) for line in components):
+            if not components or any(not line.product.available or not line.product.category or not line.product.category.is_active or (line.product.subcategory_id and not line.product.subcategory.is_active) for line in components):
                 return 0
-            return min(line.product.stock//line.quantity for line in components)
+            valid_lines = [line for line in components if line.quantity > 0]
+            return min(line.product.stock // line.quantity for line in valid_lines) if valid_lines else 0
         return self.stock if self.stock_confirmed else 0
 
     @property

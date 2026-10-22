@@ -30,8 +30,9 @@
   </div>
 
   {% for message in messages %}
-    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
-      <i class="fa fa-check-circle"></i> {{ message }}
+    <div class="alert {% if 'error' in message.tags or 'danger' in message.tags %}alert-danger{% else %}alert-success{% endif %}"
+         style="padding: 10px 14px; margin-bottom: 14px; font-size: 12px; border-radius: 4px; {% if 'error' in message.tags or 'danger' in message.tags %}background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;{% else %}background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;{% endif %}">
+      <i class="fa {% if 'error' in message.tags or 'danger' in message.tags %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i> {{ message }}
     </div>
   {% endfor %}
 
@@ -93,11 +94,15 @@
 
   <!-- Form Errors -->
   {% if product_form.errors or form.errors or items.errors %}
-    <div class="form-banner-errors">
-      <strong><i class="fa fa-exclamation-circle"></i> Please resolve the following errors:</strong>
-      {{ product_form.non_field_errors }}
-      {{ form.non_field_errors }}
-      {{ items.non_form_errors }}
+    <div class="form-banner-errors" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px; margin-bottom: 16px; font-size: 12px; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 6px;"><i class="fa fa-exclamation-circle"></i> Please resolve the following errors:</strong>
+      <ul style="margin: 0 0 0 16px; padding: 0; line-height: 1.6;">
+        {% for field in form %}{% for error in field.errors %}<li><strong>{{ field.label }}:</strong> {{ error }}</li>{% endfor %}{% endfor %}
+        {% for field in product_form %}{% for error in field.errors %}<li><strong>{{ field.label }}:</strong> {{ error }}</li>{% endfor %}{% endfor %}
+        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        {% for error in product_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        {% for error in items.non_form_errors %}<li>{{ error }}</li>{% endfor %}
+      </ul>
     </div>
   {% endif %}
 
@@ -128,7 +133,7 @@
 
         <div class="form-col col-span-1 {% if form.slot.errors %}has-error{% endif %}">
           <label class="form-label" for="{{ form.slot.id_for_label }}">
-            <span>Homepage Slot (1–10) <span class="req">*</span></span>
+            <span>Homepage Banner Slot (1, 2, or 3) <span class="req">*</span></span>
           </label>
           {{ form.slot }}
           {% if form.slot.errors %}<div class="field-error">{{ form.slot.errors }}</div>{% endif %}
