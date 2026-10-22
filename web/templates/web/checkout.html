@@ -11,7 +11,9 @@
 	<meta name="description" content="Secure checkout for Terai Food UK. Confirm delivery address, review package dispatch options, apply voucher promotions, and proceed to payment.">
 	<link rel="canonical" href="{% url 'web:checkout' %}">
 
-	<link rel="icon" href="{% static 'web/' %}images/terai_food_logo.png" type="image/png">
+	<link rel="icon" href="{% static 'web/images/favicon-32x32.png' %}" sizes="32x32" type="image/png">
+	<link rel="icon" href="{% static 'web/images/teraifood-icon.svg' %}" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="{% static 'web/images/apple-touch-icon.png' %}">
 
 	<!-- Preconnect Google Fonts with secure HTTPS -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -850,7 +852,10 @@
 						<div class="col-lg-4 col-md-6">
 							<div class="site-brand mb-3">
 								<a href="{% url 'web:home' %}">
-									<img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food" width="180">
+									<picture>
+										<source type="image/webp" srcset="{% static 'web/images/terai_food_logo.webp' %}">
+										<img src="{% static 'web/images/terai_food_logo.png' %}" alt="Terai Food" width="180" height="77" loading="lazy" decoding="async">
+									</picture>
 								</a>
 							</div>
 							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>

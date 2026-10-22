@@ -5,7 +5,10 @@
 		<div class="site-drawer-row site-drawer-header d-flex align-items-center justify-content-between">
 			<div class="site-brand">
 				<a href="{% url 'web:home' %}" title="Terai Food – Fresh Grocery &amp; Organic Food Store">
-					<img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food – Fresh Grocery &amp; Organic Food Store" width="200" height="84">
+					<picture>
+						<source type="image/webp" srcset="{% static 'web/images/terai_food_logo.webp' %}">
+						<img src="{% static 'web/images/terai_food_logo.png' %}" alt="Terai Food – Fresh Grocery &amp; Organic Food Store" width="200" height="84" loading="lazy" decoding="async">
+					</picture>
 				</a>
 			</div><!-- site-brand -->
 			<div class="site-button close-button">

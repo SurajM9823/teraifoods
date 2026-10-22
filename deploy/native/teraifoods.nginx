@@ -32,7 +32,8 @@ server {
     add_header X-Frame-Options DENY always;
     location /static/ {
         alias /opt/teraifoods/staticfiles/;
-        expires 7d;
+        expires 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
         access_log off;
         autoindex off;
     }
@@ -46,7 +47,8 @@ server {
         alias /opt/teraifoods/media/;
         autoindex off;
         add_header X-Content-Type-Options nosniff always;
-        expires 1h;
+        add_header Cache-Control "public, max-age=2592000";
+        expires 30d;
     }
     location ^~ /.well-known/acme-challenge/ {
         root /var/www/letsencrypt;

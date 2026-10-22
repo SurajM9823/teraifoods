@@ -1,0 +1,99 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}{% if instance %}Edit FAQ{% else %}Add FAQ{% endif %}{% endblock %}
+{% block breadcrumb %}<a href="{% url 'cms:faqs-index' %}">Contact FAQs</a> / {% if instance %}Edit FAQ{% else %}Add FAQ{% endif %}{% endblock %}
+
+{% block main_content %}
+<div class="product-edit-page">
+  <!-- Top Header Toolbar -->
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        {% if instance %}Edit FAQ: {{ instance.question|truncatechars:40 }}{% else %}Add New FAQ{% endif %}
+      </h1>
+      {% if instance %}
+        <div class="product-badge-strip" style="margin-top: 4px;">
+          <span class="product-id-pill">Order #{{ instance.order }}</span>
+          {% if instance.is_active %}
+            <span class="status-chip chip-live">Active</span>
+          {% else %}
+            <span class="status-chip chip-draft">Hidden</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="product-header-actions">
+      <a href="{% url 'cms:faqs-index' %}" class="btn-action btn-outline">
+        <i class="fa fa-arrow-left"></i> Back to FAQs
+      </a>
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('faq-edit-form').requestSubmit();">
+        <i class="fa fa-save"></i> Save FAQ
+      </button>
+    </div>
+  </div>
+
+  {% if form.non_field_errors %}
+    <div class="form-banner-errors">
+      <strong><i class="fa fa-exclamation-circle"></i> Please fix the following errors:</strong>
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <!-- Main Form Box -->
+  <form method="post" id="faq-edit-form" class="product-form" novalidate>
+    {% csrf_token %}
+    <div class="product-form-box">
+      <div class="form-section-divider">
+        <i class="fa fa-question-circle"></i> FAQ Question &amp; Answer Content
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-3 {% if form.question.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.question.id_for_label }}">
+            <span>Question Headline <span class="req">*</span></span>
+          </label>
+          {{ form.question }}
+          {% if form.question.errors %}<div class="field-error">{{ form.question.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.order.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.order.id_for_label }}">
+            <span>Display Order</span>
+          </label>
+          {{ form.order }}
+          {% if form.order.errors %}<div class="field-error">{{ form.order.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-4 {% if form.answer.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.answer.id_for_label }}">
+            <span>Helpful Answer <span class="req">*</span></span>
+          </label>
+          {{ form.answer }}
+          {% if form.answer.errors %}<div class="field-error">{{ form.answer.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-4">
+          <label class="toggle-card {% if form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
+            <span class="toggle-card-label">
+              <span class="toggle-card-icon icon-green"><i class="fa fa-check"></i></span>
+              Display FAQ on Storefront Contact Page
+            </span>
+            {{ form.is_active }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+(() => {
+  const chk = document.getElementById('id_is_active');
+  const card = document.getElementById('card_id_is_active');
+  if (chk && card) {
+    const sync = () => chk.checked ? card.classList.add('is-checked') : card.classList.remove('is-checked');
+    chk.addEventListener('change', sync);
+    sync();
+  }
+})();
+</script>
+{% endblock %}
+

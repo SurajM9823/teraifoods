@@ -1,9 +1,124 @@
-{% extends 'web/backoffice/app_base.html' %}
-{% block title %}Bulk requests{% endblock %}
-{% block breadcrumb %}Bulk requests{% endblock %}
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Bulk Order Inquiries{% endblock %}
+{% block breadcrumb %}Bulk Inquiries{% endblock %}
+
 {% block main_content %}
-<form class="filter-strip" method="get"><input class="filter-control" name="q" value="{{ request.GET.q }}" placeholder="Reference, company or email"><select class="filter-control" name="status"><option value="">All statuses</option>{% for status in statuses %}<option {% if request.GET.status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select><button class="btn btn-primary">Filter</button><a href="/admin/bulk-orders/">Reset</a></form>
-<p>{{ page.paginator.count }} requests</p>
-<table class="admin-table"><thead><tr><th>Reference</th><th>Company / Contact</th><th>Status</th><th>Quoted total</th><th>Requested delivery</th><th>Received</th></tr></thead><tbody>{% for row in page %}<tr><td><a href="{% url 'bulk-admin-detail' row.public_id %}">{{ row.number }}</a></td><td>{{ row.company }}<br>{{ row.contact_name }} · {{ row.email }}</td><td>{{ row.status }}</td><td>{% if row.quoted_total != None %}£{{ row.quoted_total }}{% else %}Not quoted{% endif %}</td><td>{{ row.requested_date|default:'Not specified' }}</td><td>{{ row.created_at }}</td></tr>{% empty %}<tr><td colspan="6">No bulk requests.</td></tr>{% endfor %}</tbody></table>
-<p>Page {{ page.number }} of {{ page.paginator.num_pages }} {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}">Previous</a>{% endif %} {% if page.has_next %}<a href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}">Next</a>{% endif %}</p>
+<div class="categories-page">
+  <!-- Heading Toolbar -->
+  <div class="category-heading">
+    <div>
+      <h1>Bulk &amp; Wholesale Inquiries</h1>
+      <p>Review customer wholesale RFQs, formulate delivery &amp; payment quotes, and manage commercial order pipelines.</p>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <!-- Filters Toolbar -->
+  <div class="category-toolbar">
+    <div class="category-stats-badge">
+      <strong>{{ page.paginator.count }}</strong> inquiries in pipeline
+    </div>
+    <form class="category-filters" method="get">
+      <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Reference, company or email..." aria-label="Search inquiries">
+      <select name="status" aria-label="Status filter">
+        <option value="">All Statuses</option>
+        {% for st in statuses %}
+          <option value="{{ st }}" {% if request.GET.status == st %}selected{% endif %}>{{ st|title }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn-filter">Filter</button>
+      {% if request.GET.q or request.GET.status %}
+        <a href="/admin/bulk-orders/" class="btn-clear">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Sweet Datatable -->
+  <div class="product-form-box">
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Company &amp; Contact</th>
+            <th>Status</th>
+            <th>Quoted Total</th>
+            <th>Requested Date</th>
+            <th>Received</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in page %}
+            <tr>
+              <td style="font-weight: 700;">
+                <a href="{% url 'bulk-admin-detail' row.public_id %}" style="color: #1547A8;">
+                  {{ row.number }}
+                </a>
+              </td>
+              <td>
+                <strong>{{ row.company|default:'Independent Buyer' }}</strong>
+                <div style="font-size: 11px; color: #64748b;">
+                  {{ row.contact_name }} · <a href="mailto:{{ row.email }}" style="color: inherit;">{{ row.email }}</a>
+                </div>
+              </td>
+              <td>
+                {% if row.status == 'new' %}
+                  <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">New</span>
+                {% elif row.status == 'under_review' %}
+                  <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">Under Review</span>
+                {% elif row.status == 'quoted' %}
+                  <span class="status-chip" style="background:#e0e7ff; color:#3730a3; border-color:#c7d2fe;">Quoted</span>
+                {% elif row.status == 'accepted' %}
+                  <span class="status-chip chip-live">Accepted</span>
+                {% elif row.status == 'completed' %}
+                  <span class="status-chip chip-live">Completed</span>
+                {% else %}
+                  <span class="status-chip chip-archived">{{ row.status|title }}</span>
+                {% endif %}
+              </td>
+              <td style="font-weight: 700; color: #16a34a;">
+                {% if row.quoted_total != None %}£{{ row.quoted_total }}{% else %}<span style="color: #94a3b8; font-weight: normal;">Pending Quote</span>{% endif %}
+              </td>
+              <td style="font-size: 11.5px; color: #475569;">
+                {{ row.requested_date|default:'Flexible' }}
+              </td>
+              <td style="font-size: 11px; color: #64748b; white-space: nowrap;">
+                {{ row.created_at|date:"d M Y, H:i" }}
+              </td>
+              <td style="text-align: right;">
+                <a href="{% url 'bulk-admin-detail' row.public_id %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                  <i class="fa fa-pencil-square-o"></i> View &amp; Quote
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 18px;">
+                No bulk wholesale inquiries found.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page.has_other_pages %}
+      <nav aria-label="Pagination" class="category-pagination" style="margin-top: 10px;">
+        {% if page.has_previous %}
+          <a href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}" class="btn-action btn-outline" style="padding: 2px 8px;">&laquo; Previous</a>
+        {% endif %}
+        <span style="font-size: 11px; color: #64748b;">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+        {% if page.has_next %}
+          <a href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}" class="btn-action btn-outline" style="padding: 2px 8px;">Next &raquo;</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

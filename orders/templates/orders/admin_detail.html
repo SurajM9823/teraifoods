@@ -1,35 +1,360 @@
-{% extends 'catalog/base.html' %}
-{% block title %}{{ order.number }}{% endblock %}{% block breadcrumb %}Orders / {{ order.number }}{% endblock %}
-{% block category_content %}
-<h1>{{ order.number }}</h1><p><a href="/admin/orders/">All orders</a> · <a href="/admin/orders/reviews/">Moderate reviews</a></p>
-<p>{{ order.recipient_name }} · {{ order.email }} · {{ order.phone }}</p>
-<p>{{ order.address.line1 }} {{ order.address.line2 }}, {{ order.address.city }} {{ order.address.postcode }} · {{ order.address.country }}</p>
-<p>Delivery instructions: {{ order.address.instructions|default:'None' }}</p>
-<p>Payment: {{ order.payment_status }} ({{ order.payment_method }}) · Fulfilment: {{ order.fulfilment_status }} · Cancellation: {{ order.cancellation_status }} · Refund: {{ order.refund_status }}</p>
-<p>Subtotal £{{ order.subtotal }} · Delivery £{{ order.delivery_charge }} · Total £{{ order.total }} · {{ order.total_weight_grams }} gm · Estimated {{ order.delivery_min_days }}–{{ order.delivery_max_days }} days</p>
-<table class="category-table"><thead><tr><th>Product</th><th>Quantity</th><th>Unit price</th><th>Unit weight</th></tr></thead><tbody>{% for line in order.lines.all %}<tr><td>{{ line.product_name }}</td><td>{{ line.quantity }}</td><td>£{{ line.unit_price }}</td><td>{{ line.unit_weight_grams }} gm</td></tr>{% endfor %}</tbody></table>
-{% if perms.catalog.change_order %}
-<h2>Fulfilment</h2>
-<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="status"><label>Next status <select name="status">{% for status in statuses %}<option>{{ status }}</option>{% endfor %}</select></label><label>Note <input name="reason" maxlength="500"></label><button class="category-primary">Update status</button></form>
-<h2>Courier / delivery assignment</h2>
-<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="tracking"><label>Tracking reference <input name="tracking_reference" value="{{ order.tracking_reference }}" maxlength="150"></label><label>Tracking link <input type="url" name="tracking_url" value="{{ order.tracking_url }}"></label><label>Driver <select name="driver"><option value="">Unassigned</option>{% for driver in drivers %}<option value="{{ driver.pk }}" {% if driver.pk == order.assigned_driver_id %}selected{% endif %}>{{ driver }}</option>{% endfor %}</select></label><button class="category-primary">Save tracking</button></form>
-<h2>Delivery verification</h2>
-<form method="post">{% csrf_token %}<button name="action" value="pin" class="category-primary">Email recipient a delivery PIN</button></form>
-<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="deliver"><label>Recipient's PIN <input name="pin" inputmode="numeric" autocomplete="off" maxlength="6"></label><label>Alternative proof reason (only when PIN policy permits) <input name="reason" maxlength="500"></label><button class="category-primary">Confirm handover</button></form>
-<h2>Cancellation</h2><form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="cancel"><label>Reason <input name="reason" required maxlength="500"></label><button>Request cancellation and refund</button></form>
-<h2>Customer support reply</h2><form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="support_reply"><label>Message <textarea name="reason" required maxlength="500"></textarea></label><button class="category-primary">Send order update</button></form>
-{% if order.return_request %}<h2>Return: {{ order.return_request.status }}</h2><p>{{ order.return_request.reason }}</p><form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="return"><select name="status"><option value="approved">Approve</option><option value="rejected">Reject</option><option value="received">Received / refund</option></select><label>Reason <input name="reason" required maxlength="500"></label><label><input type="checkbox" name="restock">Received items are suitable for restocking</label><label><input type="checkbox" name="manual_refund">Handle refund manually instead of the original payment provider</label><button>Record return decision</button></form>{% endif %}
-{% if order.return_request %}
-<p>Requested refund: {{ order.return_request.get_refund_preference_display }} · Amount £{{ order.total }}</p>
-{% if return_bank %}<details><summary>Bank details for the return transfer</summary><p>Account holder: {{ return_bank.account_name }}<br>Sort code: {{ return_bank.sort_code }}<br>Account number: {{ return_bank.account_number }}</p></details>{% endif %}
-{% if order.refund_status == 'awaiting_manual' %}
-<h2>Record completed refund</h2>
-<p>Transfer a bank/cash refund before recording it. Selecting voucher creates a valid single-use checkout voucher automatically.</p>
-<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="settle_return"><label>Actual method <select name="method"><option value="bank">Bank transfer</option><option value="voucher">Create return voucher</option><option value="cash">Cash</option><option value="other">Other payment method</option></select></label><label>Payment reference / reason (voucher code is generated) <input name="reference" maxlength="150" required></label><button class="category-primary">Confirm refund completed</button></form>
-{% endif %}
-{% if order.return_request.settled_at %}<p>Refund completed via {{ order.return_request.settlement_method }} · Reference / voucher: {{ order.return_request.settlement_reference }} · {{ order.return_request.settled_at }} · {{ order.return_request.settled_by }}</p>{% endif %}
-{% endif %}
-{% endif %}
-{% if order.issued_voucher %}<p>Return voucher: {{ order.issued_voucher.code }} ? Value GBP {{ order.issued_voucher.amount }} ? Redeemed: {{ order.issued_voucher.redeemed_at|default:"Not yet" }}</p>{% endif %}
-<h2>History</h2><ol>{% for event in order.events.all %}<li>{{ event.created_at }} · {{ event.message }} · {{ event.actor|default:'System / customer' }}</li>{% endfor %}</ol>
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Order #{{ order.number }}{% endblock %}
+{% block breadcrumb %}<a href="/admin/orders/">Orders</a> / #{{ order.number }}{% endblock %}
+
+{% block main_content %}
+<div class="product-edit-page">
+  <!-- Top Header Toolbar -->
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        Order #{{ order.number }}
+      </h1>
+      <div class="product-badge-strip" style="margin-top: 4px;">
+        <span class="product-id-pill">UUID: {{ order.public_id|stringformat:".8s" }}...</span>
+        {% if order.payment_status == 'paid' %}
+          <span class="status-chip chip-live">Paid ({{ order.payment_method|upper }})</span>
+        {% else %}
+          <span class="status-chip chip-draft">{{ order.payment_status|title }}</span>
+        {% endif %}
+        <span class="status-chip" style="background:#e0e7ff; color:#3730a3; border-color:#c7d2fe;">
+          {{ order.fulfilment_status|title }}
+        </span>
+        {% if order.cancellation_status != 'none' %}
+          <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">Cancel: {{ order.cancellation_status }}</span>
+        {% endif %}
+        {% if order.refund_status != 'none' %}
+          <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">Refund: {{ order.refund_status }}</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="product-header-actions">
+      <a href="/admin/orders/" class="btn-action btn-outline">
+        <i class="fa fa-arrow-left"></i> All Orders
+      </a>
+      <a href="/admin/orders/reviews/" class="btn-action btn-outline">
+        <i class="fa fa-star"></i> Moderate Reviews
+      </a>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <!-- Section 1: Customer & Delivery Details -->
+  <div class="product-form-box" style="margin-bottom: 16px;">
+    <div class="form-section-divider">
+      <i class="fa fa-user"></i> 1. Customer &amp; UK Delivery Destination
+    </div>
+    <div class="grid-4-cols">
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Recipient Name</span></label>
+        <div style="font-weight: 700; font-size: 13px;">{{ order.recipient_name|default:'Guest Customer' }}</div>
+      </div>
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Contact Email</span></label>
+        <div><a href="mailto:{{ order.email }}" style="color: #1547A8; font-weight: 600;">{{ order.email }}</a></div>
+      </div>
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Contact Phone</span></label>
+        <div style="font-weight: 600;">{{ order.phone|default:'Not provided' }}</div>
+      </div>
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Order Date &amp; Channel</span></label>
+        <div>{{ order.created_at|date:"d M Y, H:i" }} ({% if order.customer_id %}Registered{% else %}Guest{% endif %})</div>
+      </div>
+
+      <div class="form-col col-span-3">
+        <label class="form-label"><span>Delivery Address</span></label>
+        <div style="font-size: 12.5px; color: #1e293b;">
+          {{ order.address.line1 }} {{ order.address.line2 }}, {{ order.address.city }} <strong>{{ order.address.postcode }}</strong>, {{ order.address.country }}
+        </div>
+      </div>
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Special Instructions</span></label>
+        <div style="font-size: 11.5px; color: #64748b;">{{ order.address.instructions|default:'None' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Items & Order Totals -->
+  <div class="product-form-box" style="margin-bottom: 16px;">
+    <div class="form-section-divider">
+      <i class="fa fa-shopping-basket"></i> 2. Order Items &amp; Breakdown
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Unit Weight</th>
+            <th style="text-align: right;">Line Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for line in order.lines.all %}
+            <tr>
+              <td style="font-weight: 600;">{{ line.product_name }}</td>
+              <td>{{ line.quantity }}</td>
+              <td>£{{ line.unit_price }}</td>
+              <td>{{ line.unit_weight_grams }} g</td>
+              <td style="text-align: right; font-weight: 700;">£{{ line.total }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="background: #f8fafc; font-weight: 700;">
+            <td colspan="4" style="text-align: right;">Subtotal:</td>
+            <td style="text-align: right;">£{{ order.subtotal }}</td>
+          </tr>
+          <tr style="background: #f8fafc; font-weight: 700;">
+            <td colspan="4" style="text-align: right;">Delivery Charge ({{ order.total_weight_grams }}g, {{ order.delivery_min_days }}–{{ order.delivery_max_days }} days):</td>
+            <td style="text-align: right;">£{{ order.delivery_charge }}</td>
+          </tr>
+          <tr style="background: #f0fdf4; font-weight: 800; font-size: 14px; color: #166534;">
+            <td colspan="4" style="text-align: right;">Grand Total:</td>
+            <td style="text-align: right;">£{{ order.total }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  {% if perms.catalog.change_order %}
+    <!-- Section 3: Fulfilment Actions & Driver Tracking -->
+    <div class="product-form-box" style="margin-bottom: 16px;">
+      <div class="form-section-divider">
+        <i class="fa fa-truck"></i> 3. Fulfilment Progression &amp; Courier Tracking
+      </div>
+      <div class="grid-4-cols" style="gap: 16px;">
+        <div class="form-col col-span-2" style="background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0;">
+          <h4 style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">Update Status</h4>
+          <form method="post" class="product-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="status">
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Next Stage</span></label>
+              <select name="status" style="width: 100%; height: 32px; font-size: 12px;">
+                {% for st in statuses %}
+                  <option value="{{ st }}">{{ st|title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Audit Note</span></label>
+              <input type="text" name="reason" placeholder="e.g. Dispatched via DPD cold-chain" maxlength="500" style="width: 100%; height: 32px; font-size: 12px;">
+            </div>
+            <button type="submit" class="btn-action btn-primary" style="width: 100%;">
+              <i class="fa fa-check"></i> Advance Status
+            </button>
+          </form>
+        </div>
+
+        <div class="form-col col-span-2" style="background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0;">
+          <h4 style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">Courier Tracking &amp; Driver</h4>
+          <form method="post" class="product-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="tracking">
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Tracking Reference</span></label>
+              <input type="text" name="tracking_reference" value="{{ order.tracking_reference }}" placeholder="e.g. DPD-UK-8921" maxlength="150" style="width: 100%; height: 32px; font-size: 12px;">
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Tracking URL (https://)</span></label>
+              <input type="url" name="tracking_url" value="{{ order.tracking_url }}" placeholder="https://tracking.carrier.co.uk/..." style="width: 100%; height: 32px; font-size: 12px;">
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Assigned Staff Driver</span></label>
+              <select name="driver" style="width: 100%; height: 32px; font-size: 12px;">
+                <option value="">Unassigned</option>
+                {% for d in drivers %}
+                  <option value="{{ d.pk }}" {% if d.pk == order.assigned_driver_id %}selected{% endif %}>{{ d }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn-action btn-primary" style="width: 100%;">
+              <i class="fa fa-save"></i> Save Tracking &amp; Driver
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Secure Delivery PIN Handover -->
+    <div class="product-form-box" style="margin-bottom: 16px;">
+      <div class="form-section-divider">
+        <i class="fa fa-shield"></i> 4. Contactless Delivery Handover &amp; Verification PIN
+      </div>
+      <div class="grid-4-cols" style="align-items: flex-end;">
+        <div class="form-col col-span-1">
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="action" value="pin" class="btn-action btn-outline" style="width: 100%; height: 34px;">
+              <i class="fa fa-envelope"></i> Resend Delivery PIN
+            </button>
+          </form>
+        </div>
+        <div class="form-col col-span-3">
+          <form method="post" class="product-form" style="display: flex; gap: 8px; align-items: flex-end;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="deliver">
+            <div style="flex: 1;">
+              <label class="form-label"><span>Customer 6-Digit PIN</span></label>
+              <input type="text" name="pin" placeholder="e.g. 123456" maxlength="6" inputmode="numeric" style="height: 34px; font-weight: 700; font-size: 13px;">
+            </div>
+            <div style="flex: 2;">
+              <label class="form-label"><span>Or Alternative Proof Reason</span></label>
+              <input type="text" name="reason" placeholder="Handed to building concierge" maxlength="500" style="height: 34px; font-size: 12px;">
+            </div>
+            <button type="submit" class="btn-action btn-primary" style="height: 34px; white-space: nowrap;">
+              <i class="fa fa-check-circle"></i> Confirm Delivery Handover
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Support Message & Cancellation -->
+    <div class="product-form-box" style="margin-bottom: 16px;">
+      <div class="form-section-divider">
+        <i class="fa fa-comments"></i> 5. Support Message &amp; Order Updates
+      </div>
+      <div class="grid-4-cols" style="gap: 16px;">
+        <div class="form-col col-span-3">
+          <form method="post" class="product-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="support_reply">
+            <label class="form-label"><span>Message to Customer (appended to order tracking page &amp; notifications) <span class="req">*</span></span></label>
+            <textarea name="reason" rows="2" placeholder="e.g. Your produce has been packed in insulated cold-chain foil..." required style="width: 100%; padding: 8px; font-size: 12px;"></textarea>
+            <button type="submit" class="btn-action btn-primary" style="margin-top: 6px;">
+              <i class="fa fa-paper-plane"></i> Send Order Update
+            </button>
+          </form>
+        </div>
+        <div class="form-col col-span-1" style="background: #fff1f2; border: 1px solid #fecdd3; padding: 12px;">
+          <h4 style="font-size: 11.5px; font-weight: 700; color: #be123c; margin-bottom: 6px;">Cancellation</h4>
+          <form method="post" class="product-form" onsubmit="return confirm('Cancel this order and trigger refund workflow?');">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="cancel">
+            <input type="text" name="reason" placeholder="Reason for cancel" required maxlength="500" style="width: 100%; height: 30px; font-size: 11px; margin-bottom: 6px;">
+            <button type="submit" class="btn-action btn-outline" style="width: 100%; color: #dc2626; border-color: #fca5a5;">
+              <i class="fa fa-ban"></i> Cancel Order
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if order.return_request %}
+  <!-- Section 6: Return Request & Settlement -->
+  <div class="product-form-box" style="margin-bottom: 16px;">
+    <div class="form-section-divider">
+      <i class="fa fa-undo"></i> 6. Return Request &amp; Refund Settlement
+    </div>
+    <div style="font-size: 13px; margin-bottom: 12px;">
+      <div><strong>Status:</strong> {{ order.return_request.status|title }}</div>
+      <div><strong>Reason:</strong> {{ order.return_request.reason }}</div>
+      <div><strong>Requested Refund:</strong> {{ order.return_request.get_refund_preference_display }} · Amount £{{ order.total }}</div>
+      {% if return_bank %}
+      <details style="margin-top: 8px; padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0;" open>
+        <summary style="font-weight: 600; cursor: pointer;">Bank details for return transfer</summary>
+        <p style="margin: 6px 0 0 0;">
+          Account holder: {{ return_bank.account_name }}<br>
+          Sort code: {{ return_bank.sort_code }}<br>
+          Account number: {{ return_bank.account_number }}
+        </p>
+      </details>
+      {% endif %}
+      {% if order.return_request.settled_at %}
+      <div style="margin-top: 8px; color: #166534; font-weight: 600;">
+        Refund completed via {{ order.return_request.settlement_method }} · Reference / voucher: {{ order.return_request.settlement_reference }} · {{ order.return_request.settled_at }} · {{ order.return_request.settled_by }}
+      </div>
+      {% endif %}
+    </div>
+
+    {% if perms.catalog.change_order %}
+      <div class="grid-4-cols" style="gap: 16px;">
+        <div class="form-col col-span-2" style="background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0;">
+          <h4 style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">Record Return Decision</h4>
+          <form method="post" class="product-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="return">
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Status</span></label>
+              <select name="status" style="width: 100%; height: 32px; font-size: 12px;">
+                <option value="approved">Approve</option>
+                <option value="rejected">Reject</option>
+                <option value="received">Received / refund</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Reason</span></label>
+              <input type="text" name="reason" required maxlength="500" style="width: 100%; height: 32px; font-size: 12px;">
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label><input type="checkbox" name="restock"> Received items are suitable for restocking</label><br>
+              <label><input type="checkbox" name="manual_refund"> Handle refund manually instead of original provider</label>
+            </div>
+            <button type="submit" class="btn-action btn-primary" style="width: 100%;">
+              Record Return Decision
+            </button>
+          </form>
+        </div>
+
+        {% if order.refund_status == 'awaiting_manual' %}
+        <div class="form-col col-span-2" style="background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0;">
+          <h4 style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">Record Completed Refund</h4>
+          <form method="post" class="product-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="settle_return">
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Actual Method</span></label>
+              <select name="method" style="width: 100%; height: 32px; font-size: 12px;">
+                <option value="bank">Bank transfer</option>
+                <option value="voucher">Create return voucher</option>
+                <option value="cash">Cash</option>
+                <option value="other">Other payment method</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label class="form-label"><span>Payment reference / reason</span></label>
+              <input type="text" name="reference" maxlength="150" required style="width: 100%; height: 32px; font-size: 12px;">
+            </div>
+            <button type="submit" class="btn-action btn-primary" style="width: 100%;">
+              Confirm Refund Completed
+            </button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Audit Event History Timeline -->
+  <div class="product-form-box">
+    <div class="form-section-divider">
+      <i class="fa fa-history"></i> Order Audit &amp; Event History
+    </div>
+    <div style="padding: 6px 0;">
+      <ol style="margin: 0; padding-left: 20px; font-size: 12px; color: #334155; line-height: 1.8;">
+        {% for event in order.events.all %}
+          <li>
+            <strong>{{ event.created_at|date:"d M Y, H:i" }}</strong> ·
+            <span style="font-weight: 600;">{{ event.message }}</span>
+            <span style="color: #64748b; font-size: 11px;">(by {{ event.actor|default:'System / Customer' }})</span>
+          </li>
+        {% empty %}
+          <li style="color: #94a3b8;">No events recorded yet.</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</div>
 {% endblock %}

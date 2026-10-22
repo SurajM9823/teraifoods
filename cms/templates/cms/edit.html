@@ -1,13 +1,175 @@
 {% extends 'web/backoffice/app_base.html' %}{% load static %}
-{% block title %}Edit website content{% endblock %}
-{% block breadcrumb %}Website content{% endblock %}
+{% block title %}{% if instance %}Edit {{ kind|title }}{% else %}Add {{ kind|title }}{% endif %}{% endblock %}
+{% block breadcrumb %}<a href="{% url 'cms:dashboard' %}">Website Content</a> / {% if instance %}Edit {{ kind|title }}{% else %}Add {{ kind|title }}{% endif %}{% endblock %}
+
 {% block main_content %}
-<link rel="stylesheet" href="{% static 'web/css/cms.css' %}">
-<div class="cms-page"><a href="{% url 'cms:dashboard' %}">← Website content</a>
-<h1>Edit {{ kind }}</h1>
-{% if kind == 'banner' %}<p>Product and discount pricing: coming later. The button can currently link to a page such as /shop/.</p>{% endif %}
-<form method="post" enctype="multipart/form-data" class="cms-form">{% csrf_token %}
-{{ form.as_p }}
-<button type="submit" class="btn btn-primary">Save content</button>
-</form></div>
+<div class="product-edit-page">
+  <!-- Top Header Toolbar -->
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        {% if instance %}Edit {{ kind|title }}: {{ instance.title }}{% else %}Add New {{ kind|title }}{% endif %}
+      </h1>
+      {% if instance %}
+        <div class="product-badge-strip" style="margin-top: 4px;">
+          <span class="product-id-pill">ID #{{ instance.pk }}</span>
+          {% if instance.is_active %}
+            <span class="status-chip chip-live">Active</span>
+          {% else %}
+            <span class="status-chip chip-draft">Inactive</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="product-header-actions">
+      <a href="{% url 'cms:dashboard' %}" class="btn-action btn-outline">
+        <i class="fa fa-arrow-left"></i> Back to Content
+      </a>
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('cms-edit-form').requestSubmit();">
+        <i class="fa fa-save"></i> Save {{ kind|title }}
+      </button>
+    </div>
+  </div>
+
+  {% if form.non_field_errors %}
+    <div class="form-banner-errors">
+      <strong><i class="fa fa-exclamation-circle"></i> Please fix the following errors:</strong>
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <!-- Main Form Box -->
+  <form method="post" id="cms-edit-form" class="product-form" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="product-form-box">
+      <div class="form-section-divider">
+        <i class="fa fa-edit"></i> {{ kind|title }} Content Details
+      </div>
+
+      {% if kind == 'banner' %}
+        <div class="grid-4-cols">
+          <div class="form-col col-span-2 {% if form.title.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.title.id_for_label }}">
+              <span>Headline Title <span class="req">*</span></span>
+            </label>
+            {{ form.title }}
+            {% if form.title.errors %}<div class="field-error">{{ form.title.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-1 {% if form.badge.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.badge.id_for_label }}">
+              <span>Accent Badge (e.g. ORGANIC)</span>
+            </label>
+            {{ form.badge }}
+            {% if form.badge.errors %}<div class="field-error">{{ form.badge.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-1 {% if form.position.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.position.id_for_label }}">
+              <span>Display Order <span class="req">*</span></span>
+            </label>
+            {{ form.position }}
+            {% if form.position.errors %}<div class="field-error">{{ form.position.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-2 {% if form.button_label.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.button_label.id_for_label }}">
+              <span>Button Label <span class="req">*</span></span>
+            </label>
+            {{ form.button_label }}
+            {% if form.button_label.errors %}<div class="field-error">{{ form.button_label.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-2 {% if form.destination.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.destination.id_for_label }}">
+              <span>Button Destination URL <span class="req">*</span></span>
+            </label>
+            {{ form.destination }}
+            {% if form.destination.errors %}<div class="field-error">{{ form.destination.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-4 {% if form.description.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.description.id_for_label }}">
+              <span>Subtext / Description</span>
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}<div class="field-error">{{ form.description.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-2 {% if form.image.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.image.id_for_label }}">
+              <span>Upload Banner Image (1170 × 548)</span>
+            </label>
+            {{ form.image }}
+            {% if form.image.errors %}<div class="field-error">{{ form.image.errors }}</div>{% endif %}
+            {% if instance and instance.image_url %}
+              <div style="margin-top: 6px;">
+                <img src="{{ instance.image_url }}" alt="" style="max-width: 100%; height: 90px; object-fit: cover; border: 1px solid #cbd5e1;">
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-col col-span-2 {% if form.image_alt.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.image_alt.id_for_label }}">
+              <span>Image Alt Text (for SEO)</span>
+            </label>
+            {{ form.image_alt }}
+            {% if form.image_alt.errors %}<div class="field-error">{{ form.image_alt.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-4">
+            <label class="toggle-card {% if form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
+              <span class="toggle-card-label">
+                <span class="toggle-card-icon icon-green"><i class="fa fa-check"></i></span>
+                Publish Banner on Storefront
+              </span>
+              {{ form.is_active }}
+            </label>
+          </div>
+        </div>
+      {% else %}
+        <!-- Information Block Form -->
+        <div class="grid-4-cols">
+          <div class="form-col col-span-3 {% if form.title.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.title.id_for_label }}">
+              <span>Block Title <span class="req">*</span></span>
+            </label>
+            {{ form.title }}
+            {% if form.title.errors %}<div class="field-error">{{ form.title.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-col col-span-1">
+            <label class="toggle-card {% if form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
+              <span class="toggle-card-label">
+                <span class="toggle-card-icon icon-green"><i class="fa fa-check"></i></span>
+                Active
+              </span>
+              {{ form.is_active }}
+            </label>
+          </div>
+
+          <div class="form-col col-span-4 {% if form.description.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.description.id_for_label }}">
+              <span>Description Claim <span class="req">*</span></span>
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}<div class="field-error">{{ form.description.errors }}</div>{% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<script>
+(() => {
+  const chk = document.getElementById('id_is_active');
+  const card = document.getElementById('card_id_is_active');
+  if (chk && card) {
+    const sync = () => chk.checked ? card.classList.add('is-checked') : card.classList.remove('is-checked');
+    chk.addEventListener('change', sync);
+    sync();
+  }
+})();
+</script>
 {% endblock %}

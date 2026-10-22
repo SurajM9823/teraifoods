@@ -1,138 +1,131 @@
 {% extends 'web/backoffice/app_base.html' %}{% load static %}
-{% block title %}Pricing &amp; Tier Group{% endblock %}
-{% block breadcrumb %}Pricing &amp; Tier Group{% endblock %}
+{% block title %}Pricing &amp; Tier Groups{% endblock %}
+{% block breadcrumb %}Pricing &amp; Tier Groups{% endblock %}
+
 {% block main_content %}
-<!-- Filters above the datatable -->
-<div class="filter-strip">
-  <div class="filter-group">
-    <label for="filter_tier">Tier Group:</label>
-    <select id="filter_tier" class="filter-control">
-      <option value="">All Tiers</option>
-      <option value="RETAIL">Retail Standard</option>
-      <option value="WHOLESALE_SILVER">Wholesale Silver</option>
-      <option value="WHOLESALE_GOLD">Wholesale Gold</option>
-      <option value="HOSPITALITY">Restaurant Partner</option>
-    </select>
+<div class="categories-page">
+  <!-- Heading Toolbar -->
+  <div class="category-heading">
+    <div>
+      <h1>Pricing &amp; Wholesale Tier Groups</h1>
+      <p>Configure wholesale margin tiers, contract rates, and minimum order quantity (MOQ) matrices.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a class="btn-action btn-outline" href="/admin/bulk-orders/">
+        <i class="fa fa-envelope-open-o"></i> View Inquiries
+      </a>
+    </div>
   </div>
-  <div class="filter-group">
-    <label for="filter_type">Rule Type:</label>
-    <select id="filter_type" class="filter-control">
-      <option value="">All Pricing Rules</option>
-      <option value="catalog">Catalog-wide %</option>
-      <option value="moq">SKU Volume MOQ</option>
-    </select>
+
+  <!-- Filters & Stats Toolbar -->
+  <div class="category-toolbar">
+    <div class="category-stats-badge">
+      <strong>{{ tier_groups|length }}</strong> active tier groups <span class="stats-sep">·</span>
+      <strong>{{ pricing_rules|length }}</strong> SKU volume rules <span class="stats-sep">·</span>
+      <span style="color: #16a34a; font-weight: 700;">Max discount 20%</span>
+    </div>
   </div>
-  <input type="text" class="filter-control filter-search" placeholder="Search pricing matrix by product or SKU..." aria-label="Search pricing">
-  <button type="button" class="btn btn-primary btn-sm">Filter</button>
-  <button type="button" class="btn btn-outline btn-sm">Reset</button>
 
-  <div class="filter-actions-right">
-    <button class="btn btn-outline btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='file' %} Export Matrix</button>
-    <button class="btn btn-primary btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='plus' %} Add Tier Group</button>
+  <!-- Table 1: Tier Groups -->
+  <div class="product-form-box" style="margin-bottom: 24px;">
+    <div class="form-section-divider" style="margin-top: 0; padding-top: 0;">
+      <i class="fa fa-users"></i> Configured Customer Tier Groups
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Tier Group</th>
+            <th>Code</th>
+            <th>Catalog Discount</th>
+            <th>Min Order Value</th>
+            <th>Payment Terms</th>
+            <th>Assigned Buyers</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tier in tier_groups %}
+            <tr>
+              <td style="font-weight: 700; color: #1e293b;">
+                {{ tier.name }}
+              </td>
+              <td style="font-family: monospace; font-size: 11px; color: #475569;">
+                <code>{{ tier.code }}</code>
+              </td>
+              <td style="font-weight: 700; color: #16a34a;">
+                {{ tier.discount }}
+              </td>
+              <td style="font-size: 12px; color: #334155;">
+                {{ tier.min_order }}
+              </td>
+              <td style="font-size: 12px; color: #64748b;">
+                {{ tier.payment_terms }}
+              </td>
+              <td style="font-weight: 700; color: #2563eb;">
+                {{ tier.members_count }} buyers
+              </td>
+              <td>
+                {% if tier.is_default %}
+                  <span class="status-chip chip-live">Default</span>
+                {% else %}
+                  <span class="status-chip chip-archived">Assigned</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 
-<!-- Summary statistics in simple key-value pairs without boxes -->
-<div class="summary-strip">
-  <span class="summary-item">Configured Tiers: <strong>{{ tier_groups|length }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Total Assigned Buyers: <strong>84</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Active Volume MOQ Rules: <strong>{{ pricing_rules|length }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Max Discount Level: <strong>20%</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Default Tier: <strong>Retail Standard (0%)</strong></span>
-</div>
-
-<!-- Table 1: Tier Groups -->
-<div class="table-responsive">
-  <table class="admin-table">
-    <thead>
-      <tr>
-        <th>Tier Group</th>
-        <th>Code</th>
-        <th>Catalog Discount</th>
-        <th>Min Order Value</th>
-        <th>Payment Terms</th>
-        <th>Assigned Buyers</th>
-        <th>Type</th>
-        <th style="text-align: right;">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for tier in tier_groups %}
-      <tr>
-        <td class="table-cell-bold">{{ tier.name }}</td>
-        <td class="table-cell-muted"><code>{{ tier.code }}</code></td>
-        <td class="table-cell-bold">{{ tier.discount }}</td>
-        <td class="table-cell-bold">{{ tier.min_order }}</td>
-        <td class="table-cell-muted">{{ tier.payment_terms }}</td>
-        <td>{{ tier.members_count }} accounts</td>
-        <td>
-          {% if tier.is_default %}
-            <span class="badge badge-neutral">Default</span>
-          {% else %}
-            <span class="badge badge-success"><span class="badge-dot"></span> Active</span>
-          {% endif %}
-        </td>
-        <td style="text-align: right;">
-          <button class="btn btn-outline btn-sm" type="button">Configure</button>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-
-<!-- Pagination 1 2 3 >> -->
-<div class="pagination-bar">
-  <span>Showing 1 to {{ tier_groups|length }} of {{ tier_groups|length }} tier groups</span>
-  <div class="pagination-links">
-    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
-    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
-    <a href="#" class="page-link active">1</a>
-    <a href="#" class="page-link">2</a>
-    <a href="#" class="page-link">3</a>
-    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
-    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
-  </div>
-</div>
-
-<!-- Table 2: Volume / MOQ Rules -->
-<div style="margin-top: 14px;">
-  <div class="filter-strip" style="background: #f7f7f7; border-bottom: 1px solid #bbbbbb;">
-    <strong style="font-size: 10px; text-transform: uppercase; color: #000000;">SKU Volume &amp; Minimum Order Quantity (MOQ) Discount Matrix</strong>
-  </div>
-  <div class="table-responsive" style="border-top: 0;">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Product / Package</th>
-          <th>Eligible Tier Group</th>
-          <th>Min. Quantity (MOQ)</th>
-          <th>Tier Unit Price</th>
-          <th>Savings Margin</th>
-          <th>Status</th>
-          <th style="text-align: right;">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for rule in pricing_rules %}
-        <tr>
-          <td class="table-cell-bold">{{ rule.product }}</td>
-          <td><span class="badge badge-info">{{ rule.tier }}</span></td>
-          <td class="table-cell-bold">{{ rule.moq }}</td>
-          <td class="table-cell-bold">{{ rule.unit_price }}</td>
-          <td><span class="badge badge-success">{{ rule.savings }}</span></td>
-          <td><span class="badge badge-success"><span class="badge-dot"></span> {{ rule.status }}</span></td>
-          <td style="text-align: right;">
-            <button class="btn btn-outline btn-sm" type="button">Edit</button>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <!-- Table 2: Pricing Rules Matrix -->
+  <div class="product-form-box">
+    <div class="form-section-divider" style="margin-top: 0; padding-top: 0;">
+      <i class="fa fa-tags"></i> SKU Volume &amp; Minimum Order Quantity (MOQ) Rules
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Product Specification</th>
+            <th>Applicable Tier</th>
+            <th>MOQ Requirement</th>
+            <th>Negotiated Unit Price</th>
+            <th>Buyer Savings</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rule in pricing_rules %}
+            <tr>
+              <td style="font-weight: 600; color: #1e293b;">
+                {{ rule.product }}
+              </td>
+              <td style="font-size: 12px; color: #2563eb; font-weight: 600;">
+                {{ rule.tier }}
+              </td>
+              <td style="font-size: 12px; color: #475569;">
+                {{ rule.moq }}
+              </td>
+              <td style="font-weight: 700; color: #0f172a;">
+                {{ rule.unit_price }}
+              </td>
+              <td>
+                <span class="status-chip" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;">
+                  {{ rule.savings }}
+                </span>
+              </td>
+              <td>
+                <span class="status-chip chip-live">
+                  {{ rule.status }}
+                </span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 {% endblock %}

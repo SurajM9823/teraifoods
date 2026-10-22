@@ -1,10 +1,313 @@
-{% extends 'catalog/base.html' %}
-{% block title %}Product packages{% endblock %}{% block breadcrumb %}Product packages{% endblock %}
-{% block category_content %}
-<h1>Product packages</h1><p><a href="{% url 'package-new' %}">New package</a> · <a href="/admin/products/">Products</a></p>
-<table class="category-table"><tr><th>Banner slot</th><th>Package</th><th>Published</th><th>Price</th><th>Available packages</th></tr>{% for row in packages %}<tr><td>{{ row.slot }}</td><td><a href="{% url 'package-edit' row.pk %}">{{ row.product.name }}</a></td><td>{{ row.product.is_published }}</td><td>£{{ row.product.price }}</td><td>{{ row.product.effective_stock }}</td></tr>{% endfor %}</table>
-<h2>{% if package.pk %}Edit package{% else %}Create package{% endif %}</h2>
-<p>Choose regular products and quantities per package. Stock and weight come from those products. Banner uploads are cropped to 867 × 441; place artwork to the right to leave room for the existing text overlay.</p>
-<form method="post" enctype="multipart/form-data" class="category-form">{% csrf_token %}{{ product_form.as_p }}{{ form.as_p }}{{ items.management_form }}{{ items.non_form_errors }}<div id="package-items">{% for item in items %}<div class="package-component">{{ item.as_p }}</div>{% endfor %}</div><template id="package-empty">{{ items.empty_form.as_p }}</template><button type="button" id="add-package-item">Add product</button><button class="category-primary">Save package</button></form>
-<script>document.getElementById('add-package-item').onclick=()=>{const count=document.getElementById('id_items-TOTAL_FORMS');if(Number(count.value)>=50)return;const row=document.createElement('div');row.className='package-component';row.innerHTML=document.getElementById('package-empty').innerHTML.replaceAll('__prefix__',count.value);document.getElementById('package-items').append(row);count.value=Number(count.value)+1;};</script>
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}{% if package.pk %}Edit Package: {{ package.product.name }}{% else %}Create Product Package{% endif %}{% endblock %}
+{% block breadcrumb %}<a href="{% url 'products:index' %}">Products</a> / Product Packages{% endblock %}
+
+{% block main_content %}
+<div class="product-edit-page">
+  <!-- Top Header Toolbar -->
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        {% if package.pk %}Edit Package: {{ package.product.name }}{% else %}Product Packages Management{% endif %}
+      </h1>
+      <p style="font-size: 11px; color: #64748b; margin-top: 2px;">
+        Curate bundles of store products that appear as promotional packages with special discount pricing on the storefront.
+      </p>
+    </div>
+    <div class="product-header-actions">
+      {% if package.pk %}
+        <a href="{% url 'package-new' %}" class="btn-action btn-outline">
+          <i class="fa fa-plus"></i> New Package
+        </a>
+      {% endif %}
+      <a href="{% url 'products:index' %}" class="btn-action btn-outline">
+        <i class="fa fa-arrow-left"></i> Catalog Products
+      </a>
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('package-main-form').requestSubmit();">
+        <i class="fa fa-save"></i> Save Package
+      </button>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <!-- Existing Packages Datatable -->
+  <div class="product-form-box" style="margin-bottom: 16px;">
+    <div class="form-section-divider">
+      <i class="fa fa-cubes"></i> Active Promotional Packages
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Banner Slot</th>
+            <th>Package Name</th>
+            <th>Bundle Price</th>
+            <th>Effective Stock</th>
+            <th>Status</th>
+            <th style="width: 120px; text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in packages %}
+            <tr {% if row.pk == package.pk %}style="background: #f0fdf4;"{% endif %}>
+              <td style="font-weight: 700;">Slot #{{ row.slot }}</td>
+              <td>
+                <a href="{% url 'package-edit' row.pk %}" style="color: #1547A8; font-weight: 700;">
+                  {{ row.product.name }}
+                </a>
+                {% if row.subtitle %}
+                  <div style="font-size: 11px; color: #64748b;">{{ row.subtitle }}</div>
+                {% endif %}
+              </td>
+              <td style="font-weight: 700; color: #16a34a;">£{{ row.product.price }}</td>
+              <td>{{ row.product.effective_stock }} units available</td>
+              <td>
+                {% if row.product.is_published %}
+                  <span class="status-chip chip-live">Published</span>
+                {% else %}
+                  <span class="status-chip chip-draft">Draft</span>
+                {% endif %}
+              </td>
+              <td style="text-align: right;">
+                <a href="{% url 'package-edit' row.pk %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                  <i class="fa fa-pencil"></i> Edit Package
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" style="text-align: center; color: #94a3b8; padding: 16px;">
+                No product packages configured yet. Use the form below to create your first package.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Form Errors -->
+  {% if product_form.errors or form.errors or items.errors %}
+    <div class="form-banner-errors">
+      <strong><i class="fa fa-exclamation-circle"></i> Please resolve the following errors:</strong>
+      {{ product_form.non_field_errors }}
+      {{ form.non_field_errors }}
+      {{ items.non_form_errors }}
+    </div>
+  {% endif %}
+
+  <!-- Package Builder Single Form Box -->
+  <form method="post" id="package-main-form" class="product-form" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="product-form-box">
+      <!-- Section 1: Identification & Slot -->
+      <div class="form-section-divider">
+        <i class="fa fa-tag"></i> 1. Package Name &amp; Slot Placement
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if product_form.name.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ product_form.name.id_for_label }}">
+            <span>Package Name <span class="req">*</span></span>
+          </label>
+          {{ product_form.name }}
+          {% if product_form.name.errors %}<div class="field-error">{{ product_form.name.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if product_form.slug.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ product_form.slug.id_for_label }}">
+            <span>Slug <span class="req">*</span></span>
+          </label>
+          {{ product_form.slug }}
+          {% if product_form.slug.errors %}<div class="field-error">{{ product_form.slug.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.slot.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.slot.id_for_label }}">
+            <span>Homepage Slot (1–10) <span class="req">*</span></span>
+          </label>
+          {{ form.slot }}
+          {% if form.slot.errors %}<div class="field-error">{{ form.slot.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-2 {% if product_form.category.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ product_form.category.id_for_label }}">
+            <span>Category <span class="req">*</span></span>
+          </label>
+          {{ product_form.category }}
+          {% if product_form.category.errors %}<div class="field-error">{{ product_form.category.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.subtitle.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.subtitle.id_for_label }}">
+            <span>Card Subtitle</span>
+          </label>
+          {{ form.subtitle }}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.tagline.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.tagline.id_for_label }}">
+            <span>Promo Tagline</span>
+          </label>
+          {{ form.tagline }}
+        </div>
+
+        <div class="form-col col-span-4 {% if product_form.description.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ product_form.description.id_for_label }}">
+            <span>Package Description</span>
+          </label>
+          {{ product_form.description }}
+        </div>
+      </div>
+
+      <!-- Section 2: Discount & Pricing -->
+      <div class="form-section-divider">
+        <i class="fa fa-percent"></i> 2. Bundle Discount Rules
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if form.discount_type.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.discount_type.id_for_label }}">
+            <span>Discount Type <span class="req">*</span></span>
+          </label>
+          {{ form.discount_type }}
+        </div>
+
+        <div class="form-col col-span-2 {% if form.discount_value.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.discount_value.id_for_label }}">
+            <span>Discount Amount or % <span class="req">*</span></span>
+          </label>
+          {{ form.discount_value }}
+        </div>
+      </div>
+
+      <!-- Section 3: Component Products -->
+      <div class="form-section-divider">
+        <i class="fa fa-list"></i> 3. Products in Package
+      </div>
+      <p style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
+        Select products and bundle quantity. Package inventory is automatically calculated from the minimum available item in stock.
+      </p>
+
+      {{ items.management_form }}
+      <div id="package-items-container" class="grid-4-cols" style="gap: 8px; margin-bottom: 12px;">
+        {% for item_form in items %}
+          <div class="form-col col-span-2" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px;">
+            {{ item_form.id }}
+            <div style="display: flex; gap: 8px; align-items: flex-end;">
+              <div style="flex: 2;">
+                <label class="form-label" style="margin-bottom: 2px;"><span>Product</span></label>
+                {{ item_form.product }}
+              </div>
+              <div style="flex: 1;">
+                <label class="form-label" style="margin-bottom: 2px;"><span>Qty</span></label>
+                {{ item_form.quantity }}
+              </div>
+              {% if item_form.instance.pk %}
+                <div style="padding-bottom: 6px;">
+                  <label style="font-size: 10px; color: #dc2626; cursor: pointer;">
+                    {{ item_form.DELETE }} Remove
+                  </label>
+                </div>
+              {% endif %}
+            </div>
+            {% if item_form.errors %}<div class="field-error" style="margin-top: 4px;">{{ item_form.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <template id="package-empty-tpl">
+        <div class="form-col col-span-2" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px;">
+          <div style="display: flex; gap: 8px; align-items: flex-end;">
+            <div style="flex: 2;">
+              <label class="form-label" style="margin-bottom: 2px;"><span>Product</span></label>
+              {{ items.empty_form.product }}
+            </div>
+            <div style="flex: 1;">
+              <label class="form-label" style="margin-bottom: 2px;"><span>Qty</span></label>
+              {{ items.empty_form.quantity }}
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <button type="button" class="btn-action btn-outline" id="add-package-item-btn" style="margin-bottom: 16px;">
+        <i class="fa fa-plus"></i> Add Product Item to Package
+      </button>
+
+      <!-- Section 4: Banner Artwork & Status -->
+      <div class="form-section-divider">
+        <i class="fa fa-image"></i> 4. Banner Artwork &amp; Publishing Status
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if product_form.banner.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ product_form.banner.id_for_label }}">
+            <span>Upload Package Banner Artwork (867 × 441 px)</span>
+          </label>
+          {{ product_form.banner }}
+          {% if product_form.banner.errors %}<div class="field-error">{{ product_form.banner.errors }}</div>{% endif %}
+          {% if package.product.main_image %}
+            <div style="margin-top: 6px;">
+              <img src="{{ package.product.main_image.url }}" alt="" style="height: 80px; border: 1px solid #cbd5e1; object-fit: cover;">
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="toggle-card {% if product_form.is_published.value %}is-checked{% endif %}" id="card_id_is_published">
+            <span class="toggle-card-label">
+              <span class="toggle-card-icon icon-green"><i class="fa fa-globe"></i></span>
+              Published
+            </span>
+            {{ product_form.is_published }}
+          </label>
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="toggle-card {% if product_form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
+            <span class="toggle-card-label">
+              <span class="toggle-card-icon icon-blue"><i class="fa fa-check"></i></span>
+              Active
+            </span>
+            {{ product_form.is_active }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+(() => {
+  const addBtn = document.getElementById('add-package-item-btn');
+  const count = document.getElementById('id_items-TOTAL_FORMS');
+  const container = document.getElementById('package-items-container');
+  const tpl = document.getElementById('package-empty-tpl');
+
+  if (addBtn && count && container && tpl) {
+    addBtn.addEventListener('click', () => {
+      const idx = Number(count.value);
+      if (idx >= 50) return;
+      const html = tpl.innerHTML.replaceAll('__prefix__', idx);
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      container.appendChild(div.firstElementChild);
+      count.value = idx + 1;
+    });
+  }
+
+  ['is_published', 'is_active'].forEach(name => {
+    const el = document.getElementById(`id_product-${name}`);
+    const card = document.getElementById(`card_id_${name}`);
+    if (el && card) {
+      const sync = () => el.checked ? card.classList.add('is-checked') : card.classList.remove('is-checked');
+      el.addEventListener('change', sync);
+      sync();
+    }
+  });
+})();
+</script>
 {% endblock %}

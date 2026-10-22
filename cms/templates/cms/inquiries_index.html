@@ -1,0 +1,110 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Customer Support Enquiries{% endblock %}
+{% block breadcrumb %}Customer Enquiries{% endblock %}
+
+{% block main_content %}
+<div class="categories-page">
+  <div class="category-heading">
+    <div>
+      <h1>Customer Support Enquiries</h1>
+      <p>Messages, feedback, order assistance and cold-chain queries submitted by shoppers.</p>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <!-- Toolbar with Filters -->
+  <div class="category-toolbar">
+    <div class="category-stats-badge">
+      <strong>{{ total }}</strong> total <span class="stats-sep">·</span> <span class="active-pill">{{ new_count }} new unread</span>
+    </div>
+    <form method="get" class="category-filters">
+      <input type="search" name="q" value="{{ query }}" placeholder="Search customer, email, text..." aria-label="Search enquiries">
+      <select name="status" aria-label="Status filter">
+        <option value="">All Statuses</option>
+        <option value="new" {% if status_filter == 'new' %}selected{% endif %}>New</option>
+        <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+        <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
+        <option value="closed" {% if status_filter == 'closed' %}selected{% endif %}>Closed</option>
+      </select>
+      <button type="submit" class="btn-filter">Filter</button>
+      {% if query or status_filter %}<a href="{% url 'cms:inquiries-index' %}" class="btn-clear">Clear</a>{% endif %}
+    </form>
+  </div>
+
+  <div class="product-form-box">
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer &amp; Contact</th>
+            <th>Topic</th>
+            <th>Message Snippet</th>
+            <th>Status</th>
+            <th>Date Received</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inq in page %}
+            <tr>
+              <td style="font-weight: 700;">#{{ inq.id }}</td>
+              <td>
+                <strong>{{ inq.name }}</strong>
+                <div style="font-size: 11px; color: #64748b;">{{ inq.email }}{% if inq.phone %} · {{ inq.phone }}{% endif %}</div>
+              </td>
+              <td><span class="status-chip chip-live">{{ inq.topic_display }}</span></td>
+              <td style="max-width: 320px; color: #475569; font-size: 11.5px;">
+                {{ inq.message|truncatewords:14 }}
+              </td>
+              <td>
+                {% if inq.status == 'new' %}
+                  <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">New</span>
+                {% elif inq.status == 'in_progress' %}
+                  <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">In Progress</span>
+                {% elif inq.status == 'resolved' %}
+                  <span class="status-chip chip-live">Resolved</span>
+                {% else %}
+                  <span class="status-chip chip-archived">Closed</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 11px; color: #64748b; white-space: nowrap;">
+                {{ inq.created_at|date:"d M Y, H:i" }}
+              </td>
+              <td style="text-align: right;">
+                <a href="{% url 'cms:inquiry-detail' inq.pk %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                  <i class="fa fa-folder-open-o"></i> View &amp; Manage
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 18px;">
+                No customer inquiries matching this criteria.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page.has_other_pages %}
+      <nav aria-label="Pagination" class="category-pagination" style="margin-top: 10px;">
+        {% if page.has_previous %}
+          <a href="?page={{ page.previous_page_number }}&q={{ query|urlencode }}&status={{ status_filter|urlencode }}" class="btn-action btn-outline" style="padding: 2px 8px;">&laquo; Previous</a>
+        {% endif %}
+        <span style="font-size: 11px; color: #64748b;">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+        {% if page.has_next %}
+          <a href="?page={{ page.next_page_number }}&q={{ query|urlencode }}&status={{ status_filter|urlencode }}" class="btn-action btn-outline" style="padding: 2px 8px;">Next &raquo;</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

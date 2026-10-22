@@ -1,0 +1,119 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}{% if instance %}Edit Depot Hub{% else %}Add Depot Hub{% endif %}{% endblock %}
+{% block breadcrumb %}<a href="{% url 'cms:hubs-index' %}">Delivery Map Hubs</a> / {% if instance %}Edit Hub{% else %}Add Hub{% endif %}{% endblock %}
+
+{% block main_content %}
+<div class="product-edit-page">
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        {% if instance %}Edit Depot Hub: {{ instance.name }}{% else %}Add New Depot Pin{% endif %}
+      </h1>
+      {% if instance %}
+        <div class="product-badge-strip" style="margin-top: 4px;">
+          <span class="product-id-pill">Hub #{{ instance.pk }}</span>
+          <span class="status-chip chip-live">{{ instance.tag }}</span>
+        </div>
+      {% endif %}
+    </div>
+    <div class="product-header-actions">
+      <a href="{% url 'cms:hubs-index' %}" class="btn-action btn-outline">
+        <i class="fa fa-arrow-left"></i> Back to Hubs
+      </a>
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('hub-edit-form').requestSubmit();">
+        <i class="fa fa-save"></i> Save Depot Pin
+      </button>
+    </div>
+  </div>
+
+  {% if form.non_field_errors %}
+    <div class="form-banner-errors">
+      <strong><i class="fa fa-exclamation-circle"></i> Please fix the following errors:</strong>
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <form method="post" id="hub-edit-form" class="product-form" novalidate>
+    {% csrf_token %}
+    <div class="product-form-box">
+      <div class="form-section-divider">
+        <i class="fa fa-map-pin"></i> Depot Location &amp; Map Coordinates
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if form.name.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.name.id_for_label }}">
+            <span>Depot Name <span class="req">*</span></span>
+          </label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="field-error">{{ form.name.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.tag.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.tag.id_for_label }}">
+            <span>Region Tag (e.g. LONDON HQ) <span class="req">*</span></span>
+          </label>
+          {{ form.tag }}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.order.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.order.id_for_label }}">
+            <span>Display Order</span>
+          </label>
+          {{ form.order }}
+        </div>
+
+        <div class="form-col col-span-2 {% if form.legend.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.legend.id_for_label }}">
+            <span>SLA Legend (e.g. Next-Day 100% Guaranteed) <span class="req">*</span></span>
+          </label>
+          {{ form.legend }}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.latitude.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.latitude.id_for_label }}">
+            <span>Latitude (-90 to 90) <span class="req">*</span></span>
+          </label>
+          {{ form.latitude }}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.longitude.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.longitude.id_for_label }}">
+            <span>Longitude (-180 to 180) <span class="req">*</span></span>
+          </label>
+          {{ form.longitude }}
+        </div>
+
+        <div class="form-col col-span-4 {% if form.description.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.description.id_for_label }}">
+            <span>Depot Description</span>
+          </label>
+          {{ form.description }}
+        </div>
+
+        <div class="form-col col-span-4">
+          <label class="toggle-card {% if form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
+            <span class="toggle-card-label">
+              <span class="toggle-card-icon icon-green"><i class="fa fa-check"></i></span>
+              Display on Interactive Storefront Map
+            </span>
+            {{ form.is_active }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+(() => {
+  const chk = document.getElementById('id_is_active');
+  const card = document.getElementById('card_id_is_active');
+  if (chk && card) {
+    const sync = () => chk.checked ? card.classList.add('is-checked') : card.classList.remove('is-checked');
+    chk.addEventListener('change', sync);
+    sync();
+  }
+})();
+</script>
+{% endblock %}
+

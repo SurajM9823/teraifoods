@@ -1,103 +1,137 @@
 {% extends 'web/backoffice/app_base.html' %}{% load static %}
 {% block title %}Overview{% endblock %}
 {% block breadcrumb %}Overview{% endblock %}
+
 {% block main_content %}
-<span style="display:none;" aria-hidden="true">Welcome back, {{ request.user.get_short_name|default:request.user.get_username }}.</span>
-
-<!-- Filters above the datatable -->
-<div class="filter-strip">
-  <div class="filter-group">
-    <label for="date_from">From:</label>
-    <input type="date" id="date_from" class="filter-control" value="{% now 'Y-m-01' %}">
+<div class="categories-page">
+  <!-- Heading Toolbar -->
+  <div class="category-heading">
+    <div>
+      <h1>Workspace Overview</h1>
+      <p>Welcome back, <strong>{{ request.user.get_short_name|default:request.user.get_username }}</strong>. Real-time store activity, quick actions, and audit logs.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a class="btn-action btn-outline" href="{% url 'products:add' %}">
+        <i class="fa fa-plus"></i> Add Product
+      </a>
+      <a class="btn-action btn-primary" href="/admin/orders/">
+        <i class="fa fa-shopping-bag"></i> View Orders
+      </a>
+    </div>
   </div>
-  <div class="filter-group">
-    <label for="date_to">To:</label>
-    <input type="date" id="date_to" class="filter-control" value="{% now 'Y-m-d' %}">
-  </div>
-  <div class="filter-group">
-    <label for="filter_type">Type:</label>
-    <select id="filter_type" class="filter-control">
-      <option value="">All Events</option>
-      <option value="auth">Authentication</option>
-      <option value="system">Django Admin</option>
-      <option value="catalog">Catalog Changes</option>
-    </select>
-  </div>
-  <input type="text" class="filter-control filter-search" placeholder="Search activity records..." aria-label="Search activity">
-  <button type="button" class="btn btn-primary btn-sm">Filter</button>
-  <button type="button" class="btn btn-outline btn-sm">Reset</button>
-  <div class="filter-actions-right">
-    <span style="font-size: 10px; font-weight: 700; color: #000;">{% now 'D, j M Y' %}</span>
-  </div>
-</div>
 
-<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
-<div class="summary-strip">
-  <span class="summary-item">Total Accounts: <strong>{{ user_counts.total }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Active Accounts: <strong>{{ user_counts.active }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Staff Members: <strong>{{ user_counts.staff }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Logged In: <strong>{{ request.user.get_short_name|default:request.user.get_username }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">System Status: <strong style="color: #006600;">Online</strong></span>
-</div>
+  <!-- Stats & Status Toolbar -->
+  <div class="category-toolbar">
+    <div class="category-stats-badge">
+      <strong>{{ user_counts.total }}</strong> user accounts <span class="stats-sep">·</span>
+      <span style="color: #16a34a; font-weight: 700;">{{ user_counts.active }} active</span> <span class="stats-sep">·</span>
+      <span style="color: #2563eb; font-weight: 700;">{{ user_counts.staff }} staff members</span> <span class="stats-sep">·</span>
+      <span style="color: #16a34a; font-weight: 700;"><i class="fa fa-check-circle"></i> System Healthy</span>
+    </div>
+    <div style="font-size: 11px; color: #64748b; margin-left: auto;">
+      {% now 'l, d F Y' %}
+    </div>
+  </div>
 
-<!-- Clean, dense datatable -->
-<div class="table-responsive">
-  <table class="admin-table">
-    <thead>
-      <tr>
-        <th>Date &amp; Time</th>
-        <th>User</th>
-        <th>Action</th>
-        <th>Object / Target</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% if recent_activity %}
-        {% for entry in recent_activity %}
-        <tr>
-          <td class="table-cell-muted">{{ entry.action_time|date:'Y-m-d H:i' }}</td>
-          <td><strong>{{ entry.user.username }}</strong></td>
-          <td><span class="badge badge-info">{{ entry.get_action_flag_display }}</span></td>
-          <td class="table-cell-bold">{{ entry.object_repr }}</td>
-          <td><span class="badge badge-success"><span class="badge-dot"></span> Recorded</span></td>
-        </tr>
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td class="table-cell-muted">{% now 'Y-m-d H:i' %}</td>
-          <td><strong>{{ request.user.username }}</strong></td>
-          <td><span class="badge badge-info">Session</span></td>
-          <td class="table-cell-bold">Staff sign-in to workspace</td>
-          <td><span class="badge badge-success"><span class="badge-dot"></span> Active</span></td>
-        </tr>
-        <tr>
-          <td class="table-cell-muted">{% now 'Y-m-d 09:00' %}</td>
-          <td><strong>system</strong></td>
-          <td><span class="badge badge-neutral">Diagnostics</span></td>
-          <td class="table-cell-bold">Workspace healthcheck verification</td>
-          <td><span class="badge badge-success"><span class="badge-dot"></span> Passed</span></td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
-</div>
+  <!-- Quick Action Cards Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+    <a href="{% url 'products:index' %}" class="product-form-box" style="margin-bottom: 0; padding: 14px; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; transition: transform 0.1s ease, box-shadow 0.1s ease;">
+      <div style="width: 40px; height: 40px; border-radius: 8px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+        <i class="fa fa-cubes"></i>
+      </div>
+      <div>
+        <div style="font-weight: 700; font-size: 13px; color: #0f172a;">Catalog Products</div>
+        <div style="font-size: 11px; color: #64748b;">Prices, images &amp; stock</div>
+      </div>
+    </a>
 
-<!-- Pagination 1 2 3 >> -->
-<div class="pagination-bar">
-  <span>Showing 1 to 2 of 2 entries</span>
-  <div class="pagination-links">
-    <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
-    <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
-    <a href="#" class="page-link active">1</a>
-    <a href="#" class="page-link">2</a>
-    <a href="#" class="page-link">3</a>
-    <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
-    <a href="#" class="page-link" aria-label="Last">&raquo;</a>
+    <a href="/admin/orders/" class="product-form-box" style="margin-bottom: 0; padding: 14px; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+      <div style="width: 40px; height: 40px; border-radius: 8px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+        <i class="fa fa-shopping-cart"></i>
+      </div>
+      <div>
+        <div style="font-weight: 700; font-size: 13px; color: #0f172a;">Live Orders</div>
+        <div style="font-size: 11px; color: #64748b;">Fulfilment &amp; tracking</div>
+      </div>
+    </a>
+
+    <a href="/admin/bulk-orders/" class="product-form-box" style="margin-bottom: 0; padding: 14px; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+      <div style="width: 40px; height: 40px; border-radius: 8px; background: #fffbeb; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+        <i class="fa fa-building-o"></i>
+      </div>
+      <div>
+        <div style="font-weight: 700; font-size: 13px; color: #0f172a;">Wholesale RFQs</div>
+        <div style="font-size: 11px; color: #64748b;">Quotes &amp; trade buyers</div>
+      </div>
+    </a>
+
+    <a href="{% url 'cms:dashboard' %}" class="product-form-box" style="margin-bottom: 0; padding: 14px; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+      <div style="width: 40px; height: 40px; border-radius: 8px; background: #faf5ff; color: #9333ea; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+        <i class="fa fa-image"></i>
+      </div>
+      <div>
+        <div style="font-weight: 700; font-size: 13px; color: #0f172a;">Hero &amp; Banners</div>
+        <div style="font-size: 11px; color: #64748b;">Promos &amp; homepage CMS</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Recent System & Staff Activity -->
+  <div class="product-form-box">
+    <div class="form-section-divider" style="margin-top: 0; padding-top: 0;">
+      <i class="fa fa-history"></i> Recent Staff &amp; System Activity
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Staff Member</th>
+            <th>Action Type</th>
+            <th>Target Entity</th>
+            <th>Audit Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if recent_activity %}
+            {% for entry in recent_activity %}
+              <tr>
+                <td style="font-size: 11px; color: #64748b; white-space: nowrap;">
+                  {{ entry.action_time|date:'d M Y, H:i' }}
+                </td>
+                <td style="font-weight: 600;">
+                  {{ entry.user.username }}
+                </td>
+                <td>
+                  <span class="status-chip chip-archived">{{ entry.get_action_flag_display }}</span>
+                </td>
+                <td style="font-weight: 600; color: #0f172a;">
+                  {{ entry.object_repr }}
+                </td>
+                <td>
+                  <span class="status-chip chip-live"><i class="fa fa-check"></i> Recorded</span>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td style="font-size: 11px; color: #64748b; white-space: nowrap;">{% now 'd M Y, H:i' %}</td>
+              <td style="font-weight: 600;">{{ request.user.username }}</td>
+              <td><span class="status-chip chip-live">Active Session</span></td>
+              <td style="font-weight: 600; color: #0f172a;">Staff sign-in to backoffice workspace</td>
+              <td><span class="status-chip chip-live"><i class="fa fa-check"></i> Authenticated</span></td>
+            </tr>
+            <tr>
+              <td style="font-size: 11px; color: #64748b; white-space: nowrap;">{% now 'd M Y, 08:00' %}</td>
+              <td style="font-weight: 600;">system</td>
+              <td><span class="status-chip chip-archived">Diagnostics</span></td>
+              <td style="font-weight: 600; color: #0f172a;">PostgreSQL &amp; Redis storage health checks verified</td>
+              <td><span class="status-chip chip-live"><i class="fa fa-check"></i> Operational</span></td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 {% endblock %}

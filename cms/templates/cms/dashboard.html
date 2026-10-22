@@ -1,24 +1,140 @@
 {% extends 'web/backoffice/app_base.html' %}{% load static %}
-{% block title %}Website content{% endblock %}
-{% block breadcrumb %}Website content{% endblock %}
+{% block title %}Website Content & Banners{% endblock %}
+{% block breadcrumb %}Website Content{% endblock %}
 {% block main_content %}
-<link rel="stylesheet" href="{% static 'web/css/cms.css' %}">
-<div class="cms-page">
-<h1>Website content</h1>
-{% for message in messages %}<p role="status">{{ message }}</p>{% endfor %}
-<section><h2>Homepage carousel</h2>
-<p>Recommended size: 1170 x 548 pixels. Use a landscape image with space on the left for text. Product linking and automatic prices will be available later; no placeholder prices appear to shoppers.</p>
-{% if perms.cms.add_banner %}<a class="btn btn-primary" href="{% url 'cms:banner-add' %}">Add banner</a>{% endif %}
-<div class="cms-grid">
-{% for banner in banners %}<article>
-<img class="cms-preview" src="{{ banner.image_url }}" alt="{{ banner.image_alt }}">
-<h3>{{ banner.title }}</h3><p>Order {{ banner.position }} · {{ banner.is_active|yesno:'Published,Hidden' }}</p>
-{% if perms.cms.change_banner %}<a href="{% url 'cms:banner-edit' banner.pk %}">Edit banner</a>{% endif %}
-{% if perms.cms.delete_banner %}<form method="post" action="{% url 'cms:banner-delete' banner.pk %}">{% csrf_token %}<button type="submit">Delete banner</button></form>{% endif %}
-</article>{% empty %}<p>No banners yet.</p>{% endfor %}
-</div></section>
-<section><h2>Four information blocks</h2><p>Short, helpful text displayed below the carousel. Keep claims accurate; these headings and descriptions are visible to search engines.</p>
-<div class="cms-grid">{% for item in information %}<article><h3>{{ item.slot }}. {{ item.title }}</h3><p>{{ item.description }}</p><p>{{ item.is_active|yesno:'Published,Hidden' }}</p>
-{% if perms.cms.change_informationblock %}<a href="{% url 'cms:information-edit' item.pk %}">Edit information</a>{% endif %}</article>{% endfor %}</div>
-</section></div>
+<div class="categories-page">
+  <!-- Top Heading Toolbar -->
+  <div class="category-heading">
+    <div>
+      <h1>Website Content Management</h1>
+      <p>Manage your UK homepage hero carousel banners and 4 information assurance blocks.</p>
+    </div>
+    {% if perms.cms.add_banner %}
+      <a class="btn-action btn-primary" href="{% url 'cms:banner-add' %}">
+        <i class="fa fa-plus"></i> Add New Banner
+      </a>
+    {% endif %}
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <!-- Homepage Carousel Section -->
+  <div class="product-form-box" style="margin-bottom: 16px;">
+    <div class="form-section-divider">
+      <i class="fa fa-picture-o"></i> Homepage Hero Carousel Banners (1170 × 548)
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Preview</th>
+            <th>Title &amp; Badge</th>
+            <th>Button &amp; Link</th>
+            <th>Status</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for banner in banners %}
+            <tr>
+              <td style="font-weight: 700;">#{{ banner.position }}</td>
+              <td>
+                <img src="{{ banner.image_url }}" alt="" style="width: 80px; height: 38px; object-fit: cover; border: 1px solid #e2e8f0;">
+              </td>
+              <td>
+                <strong>{{ banner.title }}</strong>
+                {% if banner.badge %}
+                  <span class="status-chip chip-live" style="margin-left: 6px;">{{ banner.badge }}</span>
+                {% endif %}
+                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">{{ banner.description|truncatewords:10 }}</div>
+              </td>
+              <td>
+                <span style="font-weight: 600;">{{ banner.button_label }}</span>
+                <div style="font-size: 10px; color: #64748b;">{{ banner.destination }}</div>
+              </td>
+              <td>
+                {% if banner.is_active %}
+                  <span class="status-chip chip-live">Published</span>
+                {% else %}
+                  <span class="status-chip chip-draft">Hidden</span>
+                {% endif %}
+              </td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 6px;">
+                  {% if perms.cms.change_banner %}
+                    <a href="{% url 'cms:banner-edit' banner.pk %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                      <i class="fa fa-pencil"></i> Edit
+                    </a>
+                  {% endif %}
+                  {% if perms.cms.delete_banner %}
+                    <form method="post" action="{% url 'cms:banner-delete' banner.pk %}" style="display: inline;" onsubmit="return confirm('Delete this banner?');">
+                      {% csrf_token %}
+                      <button type="submit" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px; color: #dc2626; border-color: #fca5a5;">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" style="text-align: center; color: #94a3b8; padding: 18px;">
+                No carousel banners added yet. Click <strong>Add New Banner</strong> to create one.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Four Information Assurance Blocks -->
+  <div class="product-form-box">
+    <div class="form-section-divider">
+      <i class="fa fa-th-large"></i> Homepage 4 Value Assurance Blocks
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Slot</th>
+            <th>Title &amp; Claim</th>
+            <th>Customer Explanation</th>
+            <th>Status</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in information %}
+            <tr>
+              <td style="font-weight: 700;">Slot #{{ item.slot }}</td>
+              <td><strong>{{ item.title }}</strong></td>
+              <td style="color: #475569; font-size: 11.5px;">{{ item.description }}</td>
+              <td>
+                {% if item.is_active %}
+                  <span class="status-chip chip-live">Active</span>
+                {% else %}
+                  <span class="status-chip chip-draft">Inactive</span>
+                {% endif %}
+              </td>
+              <td style="text-align: right;">
+                {% if perms.cms.change_informationblock %}
+                  <a href="{% url 'cms:information-edit' item.pk %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                    <i class="fa fa-pencil"></i> Edit Block
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock %}

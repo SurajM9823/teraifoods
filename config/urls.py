@@ -58,6 +58,12 @@ urlpatterns = [
 ]
 
 from django.conf import settings
-from django.conf.urls.static import static
+from django.urls import re_path
+from django.views.static import serve
+from django.views.decorators.cache import cache_control
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    media_url = settings.MEDIA_URL.lstrip('/')
+    urlpatterns += [
+        re_path(rf'^{media_url}(?P<path>.*)$', cache_control(public=True, max_age=86400)(serve), {'document_root': settings.MEDIA_ROOT}),
+    ]

@@ -1,7 +1,105 @@
-{% extends 'catalog/base.html' %}
-{% block title %}Reviews{% endblock %}{% block breadcrumb %}Order reviews{% endblock %}
-{% block category_content %}<h1>Product reviews</h1><a href="/admin/orders/">Orders</a>
-{% for review in reviews %}<article><h2>{{ review.product.name }} · {{ review.rating }}/5 · {{ review.status }}</h2><p>{{ review.display_name }} · {{ review.created_at }} · Verified purchase{% if review.reported %} · Reported{% endif %}</p><h3>{{ review.title }}</h3><p>{{ review.text }}</p>{% for image in review.images.all %}<a href="{{ image.url }}"><img src="{{ image.url }}" alt="Review photo" width="120" loading="lazy"></a>{% endfor %}
-<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="id" value="{{ review.pk }}"><select name="status"><option value="approved">Approve</option><option value="rejected">Reject</option><option value="pending">Pending</option></select><input name="reason" placeholder="Moderation reason" maxlength="500"><button>Save moderation</button></form></article>{% empty %}<p>No reviews yet.</p>{% endfor %}
-{% if reviews.has_previous %}<a href="?page={{ reviews.previous_page_number }}">Previous</a>{% endif %} {% if reviews.has_next %}<a href="?page={{ reviews.next_page_number }}">Next</a>{% endif %}
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Product Reviews Moderation{% endblock %}
+{% block breadcrumb %}<a href="/admin/orders/">Orders</a> / Product Reviews{% endblock %}
+
+{% block main_content %}
+<div class="categories-page">
+  <div class="category-heading">
+    <div>
+      <h1>Product Customer Reviews Moderation</h1>
+      <p>Approve, reject, or verify customer ratings, feedback, and customer-uploaded unboxing photos.</p>
+    </div>
+    <a href="/admin/orders/" class="btn-action btn-outline">
+      <i class="fa fa-arrow-left"></i> Back to Orders
+    </a>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <div class="product-form-box">
+    <div class="form-section-divider">
+      <i class="fa fa-star"></i> Customer Reviews Pipeline
+    </div>
+
+    {% for review in reviews %}
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+          <div>
+            <span style="font-weight: 700; font-size: 13px; color: #1547A8;">{{ review.product.name }}</span>
+            <span style="color: #f59e0b; font-size: 13px; margin-left: 8px;">
+              {% for i in "12345" %}
+                {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+              {% endfor %}
+              <strong style="color: #334155; font-size: 12px;">({{ review.rating }}/5)</strong>
+            </span>
+            {% if review.reported %}
+              <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5; margin-left: 6px;">Reported by Customer</span>
+            {% endif %}
+          </div>
+          <div>
+            {% if review.status == 'approved' %}
+              <span class="status-chip chip-live">Approved</span>
+            {% elif review.status == 'rejected' %}
+              <span class="status-chip chip-archived">Rejected</span>
+            {% else %}
+              <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">Pending Review</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
+          By <strong>{{ review.display_name }}</strong> on {{ review.created_at|date:"d M Y, H:i" }} · <span style="color: #16a34a;">✓ Verified Purchase</span>
+        </div>
+
+        {% if review.title %}
+          <div style="font-weight: 700; font-size: 12.5px; color: #0f172a; margin-bottom: 4px;">{{ review.title }}</div>
+        {% endif %}
+        <div style="font-size: 12px; color: #334155; line-height: 1.5; margin-bottom: 8px;">{{ review.text }}</div>
+
+        {% if review.images.all %}
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            {% for image in review.images.all %}
+              <a href="{{ image.url }}" target="_blank" rel="noopener">
+                <img src="{{ image.url }}" alt="Review photo" style="width: 70px; height: 70px; object-fit: cover; border: 1px solid #cbd5e1;">
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" style="display: flex; gap: 8px; align-items: center; padding-top: 8px; border-top: 1px solid #e2e8f0;">
+          {% csrf_token %}
+          <input type="hidden" name="id" value="{{ review.pk }}">
+          <div style="font-size: 11px; font-weight: 700; color: #475569;">Moderation Decision:</div>
+          <select name="status" style="height: 28px; font-size: 11.5px;">
+            <option value="approved" {% if review.status == 'approved' %}selected{% endif %}>Approve</option>
+            <option value="rejected" {% if review.status == 'rejected' %}selected{% endif %}>Reject</option>
+            <option value="pending" {% if review.status == 'pending' %}selected{% endif %}>Pending</option>
+          </select>
+          <input type="text" name="reason" value="{{ review.moderation_reason }}" placeholder="Internal moderation reason (optional)" maxlength="500" style="flex: 1; height: 28px; font-size: 11.5px;">
+          <button type="submit" class="btn-action btn-primary" style="height: 28px; padding: 0 10px; font-size: 11px;">
+            <i class="fa fa-save"></i> Save Decision
+          </button>
+        </form>
+      </div>
+    {% empty %}
+      <p style="color: #94a3b8; padding: 18px; text-align: center;">No product reviews submitted yet.</p>
+    {% endfor %}
+
+    {% if reviews.has_other_pages %}
+      <nav aria-label="Review pagination" class="category-pagination" style="margin-top: 10px;">
+        {% if reviews.has_previous %}
+          <a href="?page={{ reviews.previous_page_number }}" class="btn-action btn-outline" style="padding: 2px 8px;">&laquo; Previous</a>
+        {% endif %}
+        <span style="font-size: 11px; color: #64748b;">Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}</span>
+        {% if reviews.has_next %}
+          <a href="?page={{ reviews.next_page_number }}" class="btn-action btn-outline" style="padding: 2px 8px;">Next &raquo;</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

@@ -7,28 +7,17 @@
     {% include 'web/backoffice/icon.html' with name='panel' %}
     <span class="sidebar-label pin-label">Keep sidebar open</span>
   </button>
-  <div class="nav-caption sidebar-label">WORKSPACE</div>
+  <div class="nav-caption sidebar-label">COMMERCE &amp; ORDERS</div>
   <nav aria-label="Main navigation">
-{% if perms.cms.view_contactsettings %}<a href="/admin/system/cms/contactsettings/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Contact settings &amp; social links</span></a>{% endif %}
-{% if perms.cms.view_faqitem %}<a href="/admin/system/cms/faqitem/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Contact FAQs</span></a>{% endif %}
-{% if perms.cms.view_contacthub %}<a href="/admin/system/cms/contacthub/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Contact map locations</span></a>{% endif %}
-{% if perms.cms.view_contactinquiry %}<a href="/admin/system/cms/contactinquiry/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Support enquiries</span></a>{% endif %}
-
-    {% if perms.cms.view_banner and perms.cms.view_informationblock %}
-    <a href="{% url 'cms:dashboard' %}" class="nav-item {% if active_page == 'cms' %}active{% endif %}" title="Website content">
-      {% include 'web/backoffice/icon.html' with name='file' %}
-      <span class="sidebar-label">Website content</span>
-    </a>
-    {% endif %}
     <a href="{% url 'backoffice:dashboard' %}" class="nav-item {% if active_page == 'overview' %}active{% endif %}" {% if active_page == 'overview' %}aria-current="page"{% endif %} title="Overview">
       {% include 'web/backoffice/icon.html' with name='grid' %}
       <span class="sidebar-label">Overview</span>
     </a>
-    <a href="{% url 'backoffice:orders' %}" class="nav-item {% if active_page == 'orders' %}active{% endif %}" {% if active_page == 'orders' %}aria-current="page"{% endif %} title="Orders">
+    <a href="/admin/orders/" class="nav-item {% if active_page == 'orders' %}active{% endif %}" {% if active_page == 'orders' %}aria-current="page"{% endif %} title="Orders">
       {% include 'web/backoffice/icon.html' with name='bag' %}
       <span class="sidebar-label">Orders</span>
     </a>
-    <a href="{% url 'backoffice:bulk-orders' %}" class="nav-item {% if active_page == 'bulk_orders' %}active{% endif %}" {% if active_page == 'bulk_orders' %}aria-current="page"{% endif %} title="Bulk Order Inquiries">
+    <a href="/admin/bulk-orders/" class="nav-item {% if active_page == 'bulk-orders' or active_page == 'bulk_orders' %}active{% endif %}" {% if active_page == 'bulk-orders' or active_page == 'bulk_orders' %}aria-current="page"{% endif %} title="Bulk Order Inquiries">
       {% include 'web/backoffice/icon.html' with name='file' %}
       <span class="sidebar-label">Bulk Inquiries</span>
     </a>
@@ -36,29 +25,69 @@
       {% include 'web/backoffice/icon.html' with name='pos' %}
       <span class="sidebar-label">POS</span>
     </a>
+
+    <div class="nav-caption sidebar-label" style="margin-top: 10px;">CATALOG MANAGEMENT</div>
+    <a href="{% url 'products:index' %}" class="nav-item {% if active_page == 'products' %}active{% endif %}" {% if active_page == 'products' %}aria-current="page"{% endif %} title="Products">
+      {% include 'web/backoffice/icon.html' with name='box' %}
+      <span class="sidebar-label">Products</span>
+    </a>
+    <a href="{% url 'package-new' %}" class="nav-item {% if active_page == 'packages' %}active{% endif %}" title="Product packages">
+      {% include 'web/backoffice/icon.html' with name='box' %}
+      <span class="sidebar-label">Product Packages</span>
+    </a>
     {% if perms.catalog.view_category %}
     <a href="{% url 'catalog:index' %}" class="nav-item {% if active_page == 'categories' %}active{% endif %}" {% if active_page == 'categories' %}aria-current="page"{% endif %} title="Categories">
       {% include 'web/backoffice/icon.html' with name='grid' %}
       <span class="sidebar-label">Categories</span>
     </a>
     {% endif %}
-    <a href="{% url 'backoffice:products' %}" class="nav-item {% if active_page == 'products' %}active{% endif %}" {% if active_page == 'products' %}aria-current="page"{% endif %} title="Products">
-      {% include 'web/backoffice/icon.html' with name='box' %}
-      <span class="sidebar-label">Products</span>
-    </a>
-    <a href="/admin/packages/" class="nav-item"><span class="sidebar-label">Product packages</span></a>
     {% if perms.delivery.view_weightband %}
     <a href="{% url 'delivery:settings' %}" class="nav-item {% if active_page == 'delivery' %}active{% endif %}" title="UK delivery">
-      {% include 'web/backoffice/icon.html' with name='box' %}<span class="sidebar-label">UK delivery</span>
+      {% include 'web/backoffice/icon.html' with name='box' %}
+      <span class="sidebar-label">UK Delivery Rates</span>
     </a>
     {% endif %}
-    <a href="{% url 'backoffice:analytics' %}" class="nav-item {% if active_page == 'analytics' %}active{% endif %}" {% if active_page == 'analytics' %}aria-current="page"{% endif %} title="Web Analytics">
-      {% include 'web/backoffice/icon.html' with name='analytics' %}
-      <span class="sidebar-label">Web Analytics</span>
+
+    <div class="nav-caption sidebar-label" style="margin-top: 10px;">STORE CONTENT &amp; SUPPORT</div>
+    {% if perms.cms.view_banner and perms.cms.view_informationblock %}
+    <a href="{% url 'cms:dashboard' %}" class="nav-item {% if active_page == 'cms' %}active{% endif %}" title="Website content">
+      {% include 'web/backoffice/icon.html' with name='file' %}
+      <span class="sidebar-label">Hero &amp; Banners</span>
     </a>
+    {% endif %}
+    {% if perms.cms.view_contactsettings %}
+    <a href="{% url 'cms:contact-settings' %}" class="nav-item {% if active_page == 'contact-settings' %}active{% endif %}" title="Contact settings & social links">
+      {% include 'web/backoffice/icon.html' with name='settings' %}
+      <span class="sidebar-label">Contact &amp; Social Links</span>
+    </a>
+    {% endif %}
+    {% if perms.cms.view_faqitem %}
+    <a href="{% url 'cms:faqs-index' %}" class="nav-item {% if active_page == 'faqs' %}active{% endif %}" title="Contact FAQs">
+      {% include 'web/backoffice/icon.html' with name='file' %}
+      <span class="sidebar-label">Contact FAQs</span>
+    </a>
+    {% endif %}
+    {% if perms.cms.view_contacthub %}
+    <a href="{% url 'cms:hubs-index' %}" class="nav-item {% if active_page == 'hubs' %}active{% endif %}" title="Delivery map locations">
+      {% include 'web/backoffice/icon.html' with name='grid' %}
+      <span class="sidebar-label">Delivery Map Hubs</span>
+    </a>
+    {% endif %}
+    {% if perms.cms.view_contactinquiry %}
+    <a href="{% url 'cms:inquiries-index' %}" class="nav-item {% if active_page == 'inquiries' %}active{% endif %}" title="Customer support enquiries">
+      {% include 'web/backoffice/icon.html' with name='users' %}
+      <span class="sidebar-label">Customer Enquiries</span>
+    </a>
+    {% endif %}
+
+    <div class="nav-caption sidebar-label" style="margin-top: 10px;">ANALYTICS &amp; SETTINGS</div>
     <a href="{% url 'backoffice:customers' %}" class="nav-item {% if active_page == 'customers' %}active{% endif %}" {% if active_page == 'customers' %}aria-current="page"{% endif %} title="Customers">
       {% include 'web/backoffice/icon.html' with name='users' %}
       <span class="sidebar-label">Customers</span>
+    </a>
+    <a href="{% url 'backoffice:analytics' %}" class="nav-item {% if active_page == 'analytics' %}active{% endif %}" {% if active_page == 'analytics' %}aria-current="page"{% endif %} title="Web Analytics">
+      {% include 'web/backoffice/icon.html' with name='analytics' %}
+      <span class="sidebar-label">Web Analytics</span>
     </a>
     <a href="{% url 'backoffice:site-settings' %}" class="nav-item {% if active_page == 'settings' %}active{% endif %}" {% if active_page == 'settings' %}aria-current="page"{% endif %} title="Site Settings">
       {% include 'web/backoffice/icon.html' with name='settings' %}
@@ -85,4 +114,3 @@
     </div>
   </div>
 </aside>
-

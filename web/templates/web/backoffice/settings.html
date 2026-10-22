@@ -1,95 +1,107 @@
 {% extends 'web/backoffice/app_base.html' %}{% load static %}
 {% block title %}Site Settings{% endblock %}
 {% block breadcrumb %}Site Settings{% endblock %}
+
 {% block main_content %}
-{% if saved %}
-<div style="background: #eef7ee; border: 1px solid #008000; color: #004d00; padding: 6px 10px; margin-bottom: 8px; font-size: 11px; font-weight: 700;">
-  {% include 'web/backoffice/icon.html' with name='check' %} Settings updated successfully!
+<div class="categories-page">
+  <!-- Heading Toolbar -->
+  <div class="category-heading">
+    <div>
+      <h1>Site &amp; Store Configuration</h1>
+      <p>Configure store branding, customer support contact info, free shipping thresholds, and tax policies.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('site-settings-form').submit();">
+        <i class="fa fa-save"></i> Save Settings
+      </button>
+    </div>
+  </div>
+
+  {% if saved %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> Store settings saved successfully.
+    </div>
+  {% endif %}
+
+  <!-- Settings Form -->
+  <form method="post" id="site-settings-form" action="{% url 'backoffice:site-settings' %}">
+    {% csrf_token %}
+
+    <div class="product-form-box">
+      <!-- Section 1: Store Identity & Contact -->
+      <div class="form-section-divider" style="margin-top: 0; padding-top: 0;">
+        <i class="fa fa-building"></i> Store Identity &amp; Contact Details
+      </div>
+
+      <div class="grid-4-cols">
+        <div class="form-col col-2">
+          <label class="form-label" for="store_name">Store Brand Name <span class="req">*</span></label>
+          <input type="text" id="store_name" name="store_name" class="form-control" value="{{ settings.store_name }}" required>
+          <span class="field-hint">Displayed in page headers, transactional emails, and receipts.</span>
+        </div>
+
+        <div class="form-col col-2">
+          <label class="form-label" for="support_email">Customer Support Email <span class="req">*</span></label>
+          <input type="email" id="support_email" name="support_email" class="form-control" value="{{ settings.support_email }}" required>
+          <span class="field-hint">Receives customer enquiries and order update notifications.</span>
+        </div>
+
+        <div class="form-col col-2">
+          <label class="form-label" for="phone">Customer Helpline / WhatsApp</label>
+          <input type="text" id="phone" name="phone" class="form-control" value="{{ settings.phone }}">
+          <span class="field-hint">Primary telephone hotline for delivery updates.</span>
+        </div>
+
+        <div class="form-col col-2">
+          <label class="form-label" for="currency">Primary Currency</label>
+          <input type="text" id="currency" name="currency" class="form-control" value="{{ settings.currency }}" readonly style="background: #f8fafc;">
+          <span class="field-hint">UK catalog prices clear in GBP (£).</span>
+        </div>
+
+        <div class="form-col col-4">
+          <label class="form-label" for="address">Registered Depot &amp; Warehouse Address <span class="req">*</span></label>
+          <input type="text" id="address" name="address" class="form-control" value="{{ settings.address }}" required>
+          <span class="field-hint">Appears on invoices, packaging slips, and return documentation.</span>
+        </div>
+      </div>
+
+      <!-- Section 2: Fulfillment & Commercial Rules -->
+      <div class="form-section-divider">
+        <i class="fa fa-truck"></i> Fulfillment, Minimums &amp; Tax Policy
+      </div>
+
+      <div class="grid-4-cols">
+        <div class="form-col col-2">
+          <label class="form-label" for="free_delivery_threshold">Free Delivery Minimum (£)</label>
+          <input type="number" step="0.01" id="free_delivery_threshold" name="free_delivery_threshold" class="form-control" value="{{ settings.free_delivery_threshold }}">
+          <span class="field-hint">Orders exceeding this qualify for free standard UK shipping.</span>
+        </div>
+
+        <div class="form-col col-2">
+          <label class="form-label" for="standard_delivery_fee">Standard Delivery Fee (£)</label>
+          <input type="number" step="0.01" id="standard_delivery_fee" name="standard_delivery_fee" class="form-control" value="{{ settings.standard_delivery_fee }}">
+          <span class="field-hint">Default shipping fee when order is under the free threshold.</span>
+        </div>
+
+        <div class="form-col col-2">
+          <label class="form-label" for="wholesale_minimum_order">Wholesale Minimum Order Value (£)</label>
+          <input type="number" step="0.01" id="wholesale_minimum_order" name="wholesale_minimum_order" class="form-control" value="{{ settings.wholesale_minimum_order }}">
+          <span class="field-hint">Minimum checkout basket value for wholesale tier accounts.</span>
+        </div>
+
+        <div class="form-col col-2">
+          <label class="form-label" for="vat_rate">Grocery Tax Classification</label>
+          <input type="text" id="vat_rate" name="vat_rate" class="form-control" value="{{ settings.vat_rate }}" readonly style="background: #f8fafc;">
+          <span class="field-hint">Staple food items (rice, lentils, spices) are zero-rated under HMRC rules.</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="submit" class="btn-action btn-primary">
+          <i class="fa fa-save"></i> Save Settings
+        </button>
+      </div>
+    </div>
+  </form>
 </div>
-{% endif %}
-
-<!-- Summary values in simple key-value pairs without boxes -->
-<div class="summary-strip" style="border-bottom: 1px solid #bbbbbb; margin-bottom: 10px;">
-  <span class="summary-item">Store: <strong>{{ settings.store_name }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Currency: <strong>{{ settings.currency }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Timezone: <strong>{{ settings.timezone }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Free Delivery Threshold: <strong>£{{ settings.free_delivery_threshold }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Wholesale MOQ: <strong>£{{ settings.wholesale_minimum_order }}</strong></span>
-</div>
-
-<form method="post" action="{% url 'backoffice:site-settings' %}">
-  {% csrf_token %}
-  <div class="filter-strip" style="background: #f7f7f7; border-bottom: 1px solid #bbbbbb;">
-    <strong style="font-size: 10px; text-transform: uppercase; color: #000000;">Store Identity &amp; Contact Details</strong>
-  </div>
-  <div class="plain-form-grid" style="border-top: 0;">
-    <div class="plain-form-group">
-      <label for="store_name">Store Brand Name</label>
-      <input type="text" id="store_name" name="store_name" value="{{ settings.store_name }}" required>
-      <span class="form-help">Displayed in the header and checkout receipts.</span>
-    </div>
-
-    <div class="plain-form-group">
-      <label for="support_email">Customer Support Email</label>
-      <input type="email" id="support_email" name="support_email" value="{{ settings.support_email }}" required>
-      <span class="form-help">Receives order queries and customer feedback.</span>
-    </div>
-
-    <div class="plain-form-group">
-      <label for="phone">Customer Helpline Number</label>
-      <input type="text" id="phone" name="phone" value="{{ settings.phone }}">
-      <span class="form-help">Primary helpline / WhatsApp for customer queries.</span>
-    </div>
-
-    <div class="plain-form-group">
-      <label for="currency">Primary Currency</label>
-      <input type="text" id="currency" name="currency" value="{{ settings.currency }}" readonly>
-      <span class="form-help">All catalog prices settle in GBP.</span>
-    </div>
-
-    <div class="plain-form-group full">
-      <label for="address">Registered Business Address</label>
-      <input type="text" id="address" name="address" value="{{ settings.address }}" required>
-      <span class="form-help">Appears on invoices and returns documents.</span>
-    </div>
-  </div>
-
-  <div class="filter-strip" style="background: #f7f7f7; border-bottom: 1px solid #bbbbbb; border-top: 0;">
-    <strong style="font-size: 10px; text-transform: uppercase; color: #000000;">Fulfillment &amp; Shipping Rates</strong>
-  </div>
-  <div class="plain-form-grid" style="border-top: 0;">
-    <div class="plain-form-group">
-      <label for="free_delivery_threshold">Free Delivery Minimum (£)</label>
-      <input type="number" step="0.01" id="free_delivery_threshold" name="free_delivery_threshold" value="{{ settings.free_delivery_threshold }}">
-      <span class="form-help">Orders above this qualify for free UK delivery.</span>
-    </div>
-
-    <div class="plain-form-group">
-      <label for="standard_delivery_fee">Standard Delivery Fee (£)</label>
-      <input type="number" step="0.01" id="standard_delivery_fee" name="standard_delivery_fee" value="{{ settings.standard_delivery_fee }}">
-      <span class="form-help">Applied to retail orders below free delivery minimum.</span>
-    </div>
-
-    <div class="plain-form-group">
-      <label for="wholesale_minimum_order">Wholesale Minimum Order Value (£)</label>
-      <input type="number" step="0.01" id="wholesale_minimum_order" name="wholesale_minimum_order" value="{{ settings.wholesale_minimum_order }}">
-      <span class="form-help">Minimum basket total required for wholesale tier rates.</span>
-    </div>
-
-    <div class="plain-form-group">
-      <label for="vat_rate">Grocery VAT Classification</label>
-      <input type="text" id="vat_rate" name="vat_rate" value="{{ settings.vat_rate }}" readonly>
-      <span class="form-help">Staple food items (rice, lentils, spices) are zero-rated under HMRC rules.</span>
-    </div>
-  </div>
-
-  <div class="settings-footer">
-    <button class="btn btn-outline" type="reset">Reset</button>
-    <button class="btn btn-primary" type="submit">{% include 'web/backoffice/icon.html' with name='check' %} Save Changes</button>
-  </div>
-</form>
 {% endblock %}

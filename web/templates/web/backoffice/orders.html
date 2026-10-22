@@ -1,83 +1,161 @@
 {% extends 'web/backoffice/app_base.html' %}{% load static %}
 {% block title %}Orders{% endblock %}
 {% block breadcrumb %}Orders{% endblock %}
+
 {% block main_content %}
-<form class="filter-strip" method="get">
-<label><input type="checkbox" name="returns" value="1" {% if request.GET.returns %}checked{% endif %}> Return requests</label>
-<input name="q" class="filter-control filter-search" value="{{ request.GET.q }}" placeholder="Order number, customer or email">
-<select name="status" class="filter-control"><option value="">All statuses</option><option>pending_payment</option><option>placed</option><option>confirmed</option><option>preparing</option><option>ready_for_dispatch</option><option>dispatched</option><option>out_for_delivery</option><option>delivered</option><option>cancelled</option></select>
-<button class="btn btn-primary btn-sm">Filter</button><a class="btn btn-outline btn-sm" href="/admin/orders/">Reset</a><a class="btn btn-outline btn-sm" href="/admin/orders/reviews/">Reviews</a>
-</form>
-<!-- Summary statistics of the datatable in simple key-value pairs without boxes -->
-<div class="summary-strip">
-  <span class="summary-item">Total Orders: <strong>{{ summary.total_orders }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Processing: <strong>{{ summary.processing }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Dispatched: <strong>{{ summary.dispatched }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Total Gross Value: <strong>{{ summary.total_revenue }}</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Filtered Items: <strong>{{ orders_list|length }}</strong></span>
-</div>
+<div class="categories-page">
+  <!-- Heading Toolbar -->
+  <div class="category-heading">
+    <div>
+      <h1>Orders &amp; Fulfilment</h1>
+      <p>Manage customer orders, track dispatches, update delivery status and review returns.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a class="btn-action btn-outline" href="/admin/orders/reviews/">
+        <i class="fa fa-star"></i> Reviews Moderation
+      </a>
+    </div>
+  </div>
 
-<!-- Clean, dense datatable -->
-<div class="table-responsive">
-  <table class="admin-table">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Customer</th>
-        <th>Channel / Tier</th>
-        <th>Items Summary</th>
-        <th>Total</th>
-        <th>Payment</th>
-        <th>Fulfillment</th>
-        <th>Date</th>
-        <th style="text-align: right;">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for order in orders_list %}
-      <tr>
-        <td class="table-cell-bold">#{{ order.id }}</td>
-        <td>
-          <strong>{{ order.customer }}</strong>
-          <div class="table-cell-muted">{{ order.email }}</div>
-        </td>
-        <td><span class="badge badge-neutral">{{ order.type }}</span></td>
-        <td class="table-cell-muted" style="max-width: 280px;">{{ order.items_summary }}</td>
-        <td class="table-cell-bold">{{ order.total }}</td>
-        <td>
-          {% if order.payment_status == 'Paid' %}
-            <span class="badge badge-success"><span class="badge-dot"></span> Paid</span>
-          {% elif order.payment_status == 'Pending' %}
-            <span class="badge badge-warning"><span class="badge-dot"></span> Pending</span>
-          {% else %}
-            <span class="badge badge-danger"><span class="badge-dot"></span> {{ order.payment_status }}</span>
-          {% endif %}
-        </td>
-        <td>
-          {% if order.fulfillment_status == 'Delivered' %}
-            <span class="badge badge-success">{{ order.fulfillment_status }}</span>
-          {% elif order.fulfillment_status == 'Shipped' %}
-            <span class="badge badge-info">{{ order.fulfillment_status }}</span>
-          {% elif order.fulfillment_status == 'Processing' %}
-            <span class="badge badge-warning">{{ order.fulfillment_status }}</span>
-          {% else %}
-            <span class="badge badge-neutral">{{ order.fulfillment_status }}</span>
-          {% endif %}
-          {% if order.return_status %}<span class="badge badge-warning">Return: {{ order.return_status }}</span>{% endif %}
-        </td>
-        <td class="table-cell-muted">{{ order.date }}</td>
-        <td style="text-align: right;">
-          <a class="btn btn-outline btn-sm" href="/admin/orders/{{ order.public_id }}/">View</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
 
-<div class="pagination-bar"><span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span><div class="pagination-links">{% if page.has_previous %}<a class="page-link" href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&returns={{ request.GET.returns|urlencode }}">Previous</a>{% endif %}{% if page.has_next %}<a class="page-link" href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&returns={{ request.GET.returns|urlencode }}">Next</a>{% endif %}</div></div>
+  <!-- Filters Toolbar -->
+  <div class="category-toolbar">
+    <div class="category-stats-badge">
+      <strong>{{ summary.total_orders }}</strong> total <span class="stats-sep">·</span>
+      <span style="color: #d97706; font-weight: 700;">{{ summary.processing }} processing</span> <span class="stats-sep">·</span>
+      <span style="color: #2563eb; font-weight: 700;">{{ summary.dispatched }} in transit</span> <span class="stats-sep">·</span>
+      <span style="color: #16a34a; font-weight: 700;">{{ summary.total_revenue }} gross</span>
+    </div>
+    <form class="category-filters" method="get">
+      <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Order #, name or email..." aria-label="Search orders">
+      <select name="status" aria-label="Status filter">
+        <option value="">All Statuses</option>
+        <option value="pending_payment" {% if request.GET.status == 'pending_payment' %}selected{% endif %}>Pending Payment</option>
+        <option value="placed" {% if request.GET.status == 'placed' %}selected{% endif %}>Placed</option>
+        <option value="confirmed" {% if request.GET.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+        <option value="preparing" {% if request.GET.status == 'preparing' %}selected{% endif %}>Preparing</option>
+        <option value="ready_for_dispatch" {% if request.GET.status == 'ready_for_dispatch' %}selected{% endif %}>Ready for Dispatch</option>
+        <option value="dispatched" {% if request.GET.status == 'dispatched' %}selected{% endif %}>Dispatched</option>
+        <option value="out_for_delivery" {% if request.GET.status == 'out_for_delivery' %}selected{% endif %}>Out for Delivery</option>
+        <option value="delivered" {% if request.GET.status == 'delivered' %}selected{% endif %}>Delivered</option>
+        <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+      </select>
+      <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; margin: 0 4px; cursor: pointer;">
+        <input type="checkbox" name="returns" value="1" {% if request.GET.returns == '1' %}checked{% endif %}> Returns only
+      </label>
+      <button type="submit" class="btn-filter">Filter</button>
+      {% if request.GET.q or request.GET.status or request.GET.returns %}
+        <a href="/admin/orders/" class="btn-clear">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Sweet Datatable -->
+  <div class="product-form-box">
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Channel</th>
+            <th>Items Summary</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Fulfilment</th>
+            <th>Date</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders_list %}
+            <tr>
+              <td style="font-weight: 700;">
+                <a href="{% url 'order-admin-detail' order.public_id %}" style="color: #1547A8;">
+                  #{{ order.id }}
+                </a>
+              </td>
+              <td>
+                <strong>{{ order.customer }}</strong>
+                <div style="font-size: 11px; color: #64748b;">
+                  <a href="mailto:{{ order.email }}" style="color: inherit;">{{ order.email }}</a>
+                </div>
+              </td>
+              <td>
+                <span class="status-chip chip-archived">{{ order.type }}</span>
+              </td>
+              <td style="font-size: 12px; color: #475569; max-width: 260px; white-space: normal; line-height: 1.4;">
+                {{ order.items_summary }}
+              </td>
+              <td style="font-weight: 700; color: #0f172a;">
+                {{ order.total }}
+              </td>
+              <td>
+                {% if order.payment_status == 'Paid' %}
+                  <span class="status-chip chip-live">Paid</span>
+                {% elif order.payment_status == 'Pending' %}
+                  <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">Pending</span>
+                {% else %}
+                  <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">{{ order.payment_status }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if order.fulfillment_status == 'Delivered' %}
+                  <span class="status-chip chip-live">Delivered</span>
+                {% elif order.fulfillment_status == 'Dispatched' or order.fulfillment_status == 'Out For Delivery' %}
+                  <span class="status-chip" style="background:#dbeafe; color:#1d4ed8; border-color:#93c5fd;">{{ order.fulfillment_status }}</span>
+                {% elif order.fulfillment_status == 'Cancelled' %}
+                  <span class="status-chip chip-archived">Cancelled</span>
+                {% else %}
+                  <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">{{ order.fulfillment_status }}</span>
+                {% endif %}
+                {% if order.return_status %}
+                  <div style="margin-top: 3px;">
+                    <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5; font-size:10px;">Return: {{ order.return_status }}</span>
+                  </div>
+                {% endif %}
+              </td>
+              <td style="font-size: 11px; color: #64748b; white-space: nowrap;">
+                {{ order.date|date:"d M Y, H:i" }}
+              </td>
+              <td style="text-align: right;">
+                <a href="{% url 'order-admin-detail' order.public_id %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                  <i class="fa fa-pencil-square-o"></i> View &amp; Fulfil
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="9" style="text-align: center; padding: 28px; color: #94a3b8;">
+                No orders found matching the filter criteria.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  {% if page.paginator.num_pages > 1 %}
+    <div class="category-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+      <span style="font-size: 12px; color: #64748b;">
+        Page {{ page.number }} of {{ page.paginator.num_pages }} ({{ page.paginator.count }} items)
+      </span>
+      <div style="display: flex; gap: 6px;">
+        {% if page.has_previous %}
+          <a class="btn-action btn-outline" style="padding: 4px 10px; font-size: 12px;" href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&returns={{ request.GET.returns|urlencode }}">Previous</a>
+        {% endif %}
+        {% if page.has_next %}
+          <a class="btn-action btn-outline" style="padding: 4px 10px; font-size: 12px;" href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&returns={{ request.GET.returns|urlencode }}">Next</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

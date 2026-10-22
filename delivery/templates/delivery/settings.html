@@ -1,15 +1,181 @@
-{% extends 'catalog/base.html' %}
-{% block title %}UK delivery{% endblock %}{% block breadcrumb %}UK delivery{% endblock %}
-{% block category_content %}
-<h1>UK delivery</h1>
-<p>Coverage: the whole United Kingdom. Charges use the total shipping weight of all basket quantities.</p>
-<h2>Delivery estimate</h2>
-<form method="post" action="{% url 'delivery:settings' %}" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="policy">{{ policy_form.as_p }}<button class="category-primary">Save delivery estimate</button></form>
-<h2>Delivery charges by weight</h2>
-<p>Each price covers weights above the previous active band up to and including its upper limit. The highest active limit is the maximum supported basket weight. No delivery price is assumed if no band covers a basket.</p>
-<table class="category-table"><thead><tr><th>Up to weight</th><th>Charge (GBP)</th><th>Status</th><th>Action</th></tr></thead><tbody>
-{% for band in bands %}<tr><td>{{ band.max_weight_grams|floatformat:3 }} gm</td><td>£{{ band.charge }}</td><td>{{ band.is_active|yesno:'Active,Inactive' }}</td><td><a href="?edit={{ band.pk }}">Edit</a></td></tr>{% empty %}<tr><td colspan="4">Add delivery charges before accepting orders.</td></tr>{% endfor %}
-</tbody></table>
-<h2>{% if editing %}Edit weight band{% else %}Add weight band{% endif %}</h2>
-<form method="post" class="category-form">{% csrf_token %}<input type="hidden" name="action" value="band">{{ band_form.as_p }}<button class="category-primary">Save weight band</button>{% if editing %} <a href="{% url 'delivery:settings' %}">Add another band</a>{% endif %}</form>
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}UK Cold-Chain Delivery Settings{% endblock %}
+{% block breadcrumb %}UK Delivery{% endblock %}
+
+{% block main_content %}
+<div class="product-edit-page">
+  <!-- Top Header Toolbar -->
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        UK Delivery Policy &amp; Weight-Based Shipping Rates
+      </h1>
+      <p style="font-size: 11px; color: #64748b; margin-top: 2px;">
+        Configure cold-chain delivery transit time promises, order cutoff windows, and weight tier pricing for mainland UK.
+      </p>
+    </div>
+    <div class="product-header-actions">
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('delivery-policy-form').requestSubmit();">
+        <i class="fa fa-save"></i> Save Delivery Policy
+      </button>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <!-- Section 1: Delivery Policy Estimate Form -->
+  <div class="product-form-box" style="margin-bottom: 16px;">
+    <div class="form-section-divider">
+      <i class="fa fa-truck"></i> 1. Delivery Schedule &amp; Order Cutoff Window
+    </div>
+    <form method="post" id="delivery-policy-form" class="product-form" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="action" value="policy">
+      <div class="grid-4-cols">
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ policy_form.min_days.id_for_label }}">
+            <span>Min Transit Days <span class="req">*</span></span>
+          </label>
+          {{ policy_form.min_days }}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ policy_form.max_days.id_for_label }}">
+            <span>Max Transit Days <span class="req">*</span></span>
+          </label>
+          {{ policy_form.max_days }}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ policy_form.lead_time_days.id_for_label }}">
+            <span>Preparation Lead Days <span class="req">*</span></span>
+          </label>
+          {{ policy_form.lead_time_days }}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ policy_form.cutoff_hour.id_for_label }}">
+            <span>Daily Order Cutoff Hour (24h) <span class="req">*</span></span>
+          </label>
+          {{ policy_form.cutoff_hour }}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Section 2: Weight Bands Datatable -->
+  <div class="product-form-box" style="margin-bottom: 16px;">
+    <div class="form-section-divider">
+      <i class="fa fa-balance-scale"></i> 2. Delivery Rates by Total Basket Weight
+    </div>
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>Max Weight Limit (Grams / Kg)</th>
+            <th>Shipping Rate (GBP)</th>
+            <th>Status</th>
+            <th style="width: 120px; text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for band in bands %}
+            <tr {% if editing and editing.pk == band.pk %}style="background: #f0fdf4;"{% endif %}>
+              <td style="font-weight: 700;">
+                {{ band.max_weight_grams|floatformat:0 }} grams
+                <span style="color: #64748b; font-size: 11px; font-weight: normal;">(approx. {{ band.max_weight_grams|floatformat:0 }}g)</span>
+              </td>
+              <td style="font-weight: 700; color: #16a34a; font-size: 13px;">
+                £{{ band.charge }}
+              </td>
+              <td>
+                {% if band.is_active %}
+                  <span class="status-chip chip-live">Active</span>
+                {% else %}
+                  <span class="status-chip chip-draft">Inactive</span>
+                {% endif %}
+              </td>
+              <td style="text-align: right;">
+                <a href="?edit={{ band.pk }}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                  <i class="fa fa-pencil"></i> Edit Rate
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" style="text-align: center; color: #94a3b8; padding: 18px;">
+                No weight bands defined. Add shipping rates below to enable UK deliveries.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 3: Add / Edit Weight Band Form -->
+  <div class="product-form-box">
+    <div class="form-section-divider">
+      <i class="fa fa-plus-circle"></i> 3. {% if editing %}Edit Weight Band: {{ editing.max_weight_grams|floatformat:0 }}g{% else %}Add New Weight Shipping Band{% endif %}
+    </div>
+    <form method="post" class="product-form" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="action" value="band">
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if band_form.max_weight_grams.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ band_form.max_weight_grams.id_for_label }}">
+            <span>Max Weight in Grams (e.g. 5000 for 5 kg) <span class="req">*</span></span>
+          </label>
+          {{ band_form.max_weight_grams }}
+          {% if band_form.max_weight_grams.errors %}<div class="field-error">{{ band_form.max_weight_grams.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if band_form.charge.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ band_form.charge.id_for_label }}">
+            <span>Shipping Charge (£) <span class="req">*</span></span>
+          </label>
+          {{ band_form.charge }}
+          {% if band_form.charge.errors %}<div class="field-error">{{ band_form.charge.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="toggle-card {% if band_form.is_active.value %}is-checked{% endif %}" id="card_id_is_active">
+            <span class="toggle-card-label">
+              <span class="toggle-card-icon icon-green"><i class="fa fa-check"></i></span>
+              Active
+            </span>
+            {{ band_form.is_active }}
+          </label>
+        </div>
+
+        <div class="form-col col-span-4" style="margin-top: 6px;">
+          <button type="submit" class="btn-action btn-primary">
+            <i class="fa fa-check"></i> Save Weight Band
+          </button>
+          {% if editing %}
+            <a href="{% url 'delivery:settings' %}" class="btn-action btn-outline" style="margin-left: 8px;">
+              Cancel / Add New Band
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(() => {
+  const chk = document.getElementById('id_is_active');
+  const card = document.getElementById('card_id_is_active');
+  if (chk && card) {
+    const sync = () => chk.checked ? card.classList.add('is-checked') : card.classList.remove('is-checked');
+    chk.addEventListener('change', sync);
+    sync();
+  }
+})();
+</script>
 {% endblock %}

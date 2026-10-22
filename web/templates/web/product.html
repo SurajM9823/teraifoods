@@ -119,7 +119,9 @@
 	</script>
 	{% endif %}
 
-	<link rel="icon" href="{% static 'web/' %}images/terai_food_logo.png" type="image/png">
+	<link rel="icon" href="{% static 'web/images/favicon-32x32.png' %}" sizes="32x32" type="image/png">
+	<link rel="icon" href="{% static 'web/images/teraifood-icon.svg' %}" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="{% static 'web/images/apple-touch-icon.png' %}">
 
 	<!-- Preconnect Google Fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1852,7 +1854,10 @@
 									<!-- QR Box -->
 									<div class="pdp-qr-card">
 										<div class="pdp-qr-code">
-											<img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food">
+											<picture>
+												<source type="image/webp" srcset="{% static 'web/images/terai_food_logo.webp' %}">
+												<img src="{% static 'web/images/terai_food_logo.png' %}" alt="Terai Food" loading="lazy" decoding="async">
+											</picture>
 										</div>
 										<div class="pdp-qr-text">
 											<strong>Scan with mobile</strong>
@@ -2046,7 +2051,10 @@
 						<div class="col-lg-4 col-md-6">
 							<div class="site-brand mb-3">
 								<a href="{% url 'web:home' %}">
-									<img src="{% static 'web/' %}images/terai_food_logo.png" alt="Terai Food" width="180">
+									<picture>
+										<source type="image/webp" srcset="{% static 'web/images/terai_food_logo.webp' %}">
+										<img src="{% static 'web/images/terai_food_logo.png' %}" alt="Terai Food" width="180" height="77" loading="lazy" decoding="async">
+									</picture>
 								</a>
 							</div>
 							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>

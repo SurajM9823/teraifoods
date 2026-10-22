@@ -1,0 +1,82 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}UK Delivery Map Hubs{% endblock %}
+{% block breadcrumb %}Delivery Map Hubs{% endblock %}
+
+{% block main_content %}
+<div class="categories-page">
+  <div class="category-heading">
+    <div>
+      <h1>UK Delivery Map Hubs</h1>
+      <p>Configure depot map pins displayed on the interactive contact page delivery map.</p>
+    </div>
+    <a class="btn-action btn-primary" href="{% url 'cms:hub-add' %}">
+      <i class="fa fa-plus"></i> Add New Depot Pin
+    </a>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <div class="product-form-box">
+    <div class="category-table-wrap">
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th style="width: 60px;">Order</th>
+            <th>Hub Name</th>
+            <th>Region Tag</th>
+            <th>Legend &amp; SLA</th>
+            <th>Coordinates (Lat, Long)</th>
+            <th>Status</th>
+            <th style="width: 130px; text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for hub in hubs %}
+            <tr>
+              <td style="font-weight: 700;">#{{ hub.order }}</td>
+              <td><strong>{{ hub.name }}</strong></td>
+              <td><span class="status-chip chip-live">{{ hub.tag }}</span></td>
+              <td>
+                <span style="font-weight: 600;">{{ hub.legend }}</span>
+                <div style="font-size: 11px; color: #64748b;">{{ hub.description|truncatewords:8 }}</div>
+              </td>
+              <td><code>{{ hub.latitude|floatformat:4 }}, {{ hub.longitude|floatformat:4 }}</code></td>
+              <td>
+                {% if hub.is_active %}
+                  <span class="status-chip chip-live">Active</span>
+                {% else %}
+                  <span class="status-chip chip-draft">Inactive</span>
+                {% endif %}
+              </td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 6px;">
+                  <a href="{% url 'cms:hub-edit' hub.pk %}" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                    <i class="fa fa-pencil"></i> Edit
+                  </a>
+                  <form method="post" action="{% url 'cms:hub-delete' hub.pk %}" style="display: inline;" onsubmit="return confirm('Delete this depot pin?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px; color: #dc2626; border-color: #fca5a5;">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 18px;">
+                No map depot locations found.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

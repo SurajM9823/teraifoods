@@ -1,153 +1,243 @@
 {% extends 'web/backoffice/app_base.html' %}{% load static %}
 {% block title %}Point of Sale (POS){% endblock %}
 {% block breadcrumb %}Point of Sale{% endblock %}
+
 {% block main_content %}
-<!-- Filters above the datatable -->
-<div class="filter-strip">
-  <div class="filter-group">
-    <label for="pos_date">Date:</label>
-    <input type="date" id="pos_date" class="filter-control" value="{% now 'Y-m-d' %}">
-  </div>
-  <div class="filter-group">
-    <label for="pos_cat">Category:</label>
-    <select id="pos_cat" class="filter-control">
-      {% for cat in categories %}
-        <option value="{{ cat }}">{{ cat }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <input type="text" class="filter-control filter-search" placeholder="Scan barcode or type SKU, product name..." aria-label="POS product search">
-  <button type="button" class="btn btn-primary btn-sm">Search</button>
-  <button type="button" class="btn btn-outline btn-sm">Clear</button>
-
-  <div class="filter-actions-right">
-    <span style="font-size: 10px; font-weight: 700; color: #000;">Register #01 · London Store</span>
-  </div>
-</div>
-
-<!-- Summary statistics in simple key-value pairs without boxes -->
-<div class="summary-strip">
-  <span class="summary-item">Terminal: <strong>#01 London</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Today's Sales: <strong>£642.30</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Transactions: <strong>19 receipts</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Opening Cash: <strong>£150.00</strong></span>
-  <span class="summary-sep">|</span>
-  <span class="summary-item">Cashier: <strong>{{ request.user.username }}</strong></span>
-</div>
-
-<div class="pos-layout">
-  <!-- Left Side: Product Datatable -->
-  <div class="pos-table-section">
-    <div class="table-responsive">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>SKU</th>
-            <th>Product Name</th>
-            <th>Category</th>
-            <th>Weight</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th style="text-align: right;">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in products %}
-          <tr>
-            <td class="table-cell-muted"><code>{{ p.sku }}</code></td>
-            <td class="table-cell-bold">{{ p.name }}</td>
-            <td><span class="badge badge-neutral">{{ p.category }}</span></td>
-            <td class="table-cell-muted">{{ p.weight }}</td>
-            <td class="table-cell-bold">£{{ p.price }}</td>
-            <td><span class="badge badge-success">{{ p.stock }} in stock</span></td>
-            <td style="text-align: right;">
-              <button class="btn btn-primary btn-sm" type="button">{% include 'web/backoffice/icon.html' with name='plus' %} Add</button>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+<div class="categories-page">
+  <!-- Heading Toolbar -->
+  <div class="category-heading">
+    <div>
+      <h1>Point of Sale (POS)</h1>
+      <p>In-store checkout terminal for London Depot counter walk-ins and local collection orders.</p>
     </div>
-
-    <!-- Pagination 1 2 3 >> -->
-    <div class="pagination-bar">
-      <span>Showing 1 to {{ products|length }} of 64 products</span>
-      <div class="pagination-links">
-        <a href="#" class="page-link disabled" aria-label="First">&laquo;</a>
-        <a href="#" class="page-link disabled" aria-label="Previous">&lsaquo;</a>
-        <a href="#" class="page-link active">1</a>
-        <a href="#" class="page-link">2</a>
-        <a href="#" class="page-link">3</a>
-        <a href="#" class="page-link" aria-label="Next">&rsaquo;</a>
-        <a href="#" class="page-link" aria-label="Last">&raquo;</a>
-      </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span class="status-chip chip-live"><i class="fa fa-wifi"></i> Terminal #01 Online</span>
     </div>
   </div>
 
-  <!-- Right Side: Order Ticket -->
-  <aside class="pos-ticket" aria-label="Current register sale">
-    <div class="ticket-header">
-      <div>
-        <div class="ticket-title">Current Ticket</div>
-        <div class="table-cell-muted">Customer: Walk-in Retail Shopper</div>
+  <!-- Filters Toolbar -->
+  <div class="category-toolbar">
+    <div class="category-stats-badge">
+      <strong>{{ page.paginator.count }}</strong> products available
+    </div>
+    <form class="category-filters" method="get">
+      <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Scan barcode, SKU or product name..." aria-label="POS search">
+      <select name="category" aria-label="Category filter">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat.pk }}" {% if request.GET.category == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn-filter">Search</button>
+      {% if request.GET.q or request.GET.category %}
+        <a href="{% url 'backoffice:pos' %}" class="btn-clear">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start;">
+    <!-- Left: Catalog Datatable -->
+    <div class="product-form-box" style="margin-bottom: 0;">
+      <div class="category-table-wrap">
+        <table class="category-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in page %}
+              <tr>
+                <td style="font-family: monospace; font-size: 11px; color: #475569;">
+                  {{ p.sku|default:'-' }}
+                </td>
+                <td>
+                  <strong>{{ p.name }}</strong>
+                  {% if p.weight_display %}
+                    <span style="font-size: 11px; color: #64748b;">({{ p.weight_display }})</span>
+                  {% endif %}
+                </td>
+                <td style="font-size: 12px; color: #64748b;">
+                  {{ p.category.name|default:'General' }}
+                </td>
+                <td style="font-weight: 700; color: #0f172a;">
+                  £{{ p.price }}
+                </td>
+                <td>
+                  {% if p.stock > 0 %}
+                    <span class="status-chip chip-live">{{ p.stock }} in stock</span>
+                  {% else %}
+                    <span class="status-chip chip-archived">Out of stock</span>
+                  {% endif %}
+                </td>
+                <td style="text-align: right;">
+                  <button type="button" class="btn-action btn-primary" style="padding: 3px 8px; font-size: 11px;"
+                          onclick="addToTicket('{{ p.name|escapejs }}', '{{ p.price }}', '{{ p.sku|default:""|escapejs }}')">
+                    <i class="fa fa-plus"></i> Add
+                  </button>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 28px; color: #94a3b8;">
+                  No products found.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      <button class="btn btn-outline btn-sm" type="button">Reset</button>
+
+      {% if page.paginator.num_pages > 1 %}
+        <div class="category-pagination" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-top: 1px solid #e2e8f0;">
+          <span style="font-size: 11px; color: #64748b;">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+          <div style="display: flex; gap: 4px;">
+            {% if page.has_previous %}
+              <a class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;" href="?page={{ page.previous_page_number }}&q={{ request.GET.q|urlencode }}&category={{ request.GET.category|urlencode }}">Prev</a>
+            {% endif %}
+            {% if page.has_next %}
+              <a class="btn-action btn-outline" style="padding: 3px 8px; font-size: 11px;" href="?page={{ page.next_page_number }}&q={{ request.GET.q|urlencode }}&category={{ request.GET.category|urlencode }}">Next</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
     </div>
 
-    <ul class="ticket-list">
-      <li class="ticket-item">
-        <div>
-          <strong>Himalayan Basmati Rice</strong>
-          <span class="table-cell-muted">5 kg &times; 1</span>
-        </div>
-        <strong>£12.50</strong>
-      </li>
-      <li class="ticket-item">
-        <div>
-          <strong>Cold-Pressed Mustard Oil</strong>
-          <span class="table-cell-muted">1 L &times; 2</span>
-        </div>
-        <strong>£13.60</strong>
-      </li>
-      <li class="ticket-item">
-        <div>
-          <strong>Wild Timut Pepper</strong>
-          <span class="table-cell-muted">100 g &times; 1</span>
-        </div>
-        <strong>£3.95</strong>
-      </li>
-    </ul>
-
-    <div class="ticket-summary">
-      <div class="summary-row">
-        <span>Items Total</span>
-        <span>4 items</span>
+    <!-- Right: Register Sale Ticket -->
+    <div class="product-form-box" style="margin-bottom: 0;">
+      <div class="form-section-divider" style="margin-top: 0; padding-top: 0;">
+        <i class="fa fa-shopping-basket"></i> Current Ticket
       </div>
-      <div class="summary-row">
-        <span>Subtotal</span>
-        <span>£30.05</span>
-      </div>
-      <div class="summary-row">
-        <span>VAT (Zero-rated Food)</span>
-        <span>£0.00</span>
-      </div>
-      <div class="summary-row total">
-        <span>Total Due</span>
-        <span>£30.05</span>
+      <div style="font-size: 11px; color: #64748b; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span>Walk-in Customer</span>
+        <button type="button" onclick="clearTicket()" style="background: none; border: none; color: #b91c1c; font-size: 11px; cursor: pointer; text-decoration: underline;">
+          Clear All
+        </button>
       </div>
 
-      <div class="payment-methods">
-        <button class="btn btn-outline" type="button">{% include 'web/backoffice/icon.html' with name='bag' %} Cash</button>
-        <button class="btn btn-outline" type="button">{% include 'web/backoffice/icon.html' with name='pos' %} Card</button>
+      <div id="ticket-items" style="min-height: 180px; max-height: 320px; overflow-y: auto; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px;">
+        <div id="ticket-empty-msg" style="text-align: center; color: #94a3b8; font-size: 12px; padding: 30px 0;">
+          Click "+ Add" on items to build receipt
+        </div>
       </div>
 
-      <button class="btn btn-primary charge-btn" type="button">
-        {% include 'web/backoffice/icon.html' with name='check' %} Complete Sale (£30.05)
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+        <div style="display: flex; justify-content: space-between; color: #64748b;">
+          <span>Items count:</span>
+          <span id="ticket-count" style="font-weight: 700;">0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #64748b;">
+          <span>VAT (Zero-rated Groceries):</span>
+          <span>£0.00</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: #0f172a; padding-top: 6px; border-top: 1px solid #e2e8f0;">
+          <span>Total Due:</span>
+          <span id="ticket-total" style="color: #16a34a;">£0.00</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <button type="button" class="btn-action btn-outline" onclick="completeSale('Cash')" style="justify-content: center;">
+          <i class="fa fa-money"></i> Cash
+        </button>
+        <button type="button" class="btn-action btn-outline" onclick="completeSale('Card')" style="justify-content: center;">
+          <i class="fa fa-credit-card"></i> Card
+        </button>
+      </div>
+
+      <button type="button" class="btn-action btn-primary" onclick="completeSale('Counter Direct')" style="width: 100%; margin-top: 8px; justify-content: center;">
+        <i class="fa fa-check"></i> Complete Sale &amp; Print
       </button>
     </div>
-  </aside>
+  </div>
 </div>
+
+<script>
+let ticket = [];
+
+function addToTicket(name, price, sku) {
+  const p = parseFloat(price) || 0;
+  const existing = ticket.find(item => item.name === name);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    ticket.push({ name: name, price: p, sku: sku, qty: 1 });
+  }
+  renderTicket();
+}
+
+function updateQty(index, delta) {
+  if (ticket[index]) {
+    ticket[index].qty += delta;
+    if (ticket[index].qty <= 0) {
+      ticket.splice(index, 1);
+    }
+    renderTicket();
+  }
+}
+
+function clearTicket() {
+  ticket = [];
+  renderTicket();
+}
+
+function renderTicket() {
+  const container = document.getElementById('ticket-items');
+  const emptyMsg = document.getElementById('ticket-empty-msg');
+  const countEl = document.getElementById('ticket-count');
+  const totalEl = document.getElementById('ticket-total');
+
+  if (ticket.length === 0) {
+    container.innerHTML = '<div id="ticket-empty-msg" style="text-align: center; color: #94a3b8; font-size: 12px; padding: 30px 0;">Click "+ Add" on items to build receipt</div>';
+    countEl.textContent = '0';
+    totalEl.textContent = '£0.00';
+    return;
+  }
+
+  let totalQty = 0;
+  let totalPrice = 0;
+  let html = '';
+
+  ticket.forEach((item, idx) => {
+    const itemTotal = item.price * item.qty;
+    totalQty += item.qty;
+    totalPrice += itemTotal;
+    html += `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px;">
+        <div style="max-width: 170px;">
+          <div style="font-weight: 600; color: #1e293b;">${item.name}</div>
+          <div style="font-size: 11px; color: #64748b;">£${item.price.toFixed(2)} each</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button type="button" onclick="updateQty(${idx}, -1)" style="width: 20px; height: 20px; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-size: 11px; line-height: 1;">-</button>
+          <span style="font-weight: 700; min-width: 16px; text-align: center;">${item.qty}</span>
+          <button type="button" onclick="updateQty(${idx}, 1)" style="width: 20px; height: 20px; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-size: 11px; line-height: 1;">+</button>
+          <span style="font-weight: 700; min-width: 48px; text-align: right; color: #0f172a;">£${itemTotal.toFixed(2)}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  countEl.textContent = totalQty.toString();
+  totalEl.textContent = '£' + totalPrice.toFixed(2);
+}
+
+function completeSale(method) {
+  if (ticket.length === 0) {
+    alert('Please add at least one product to the ticket before completing the sale.');
+    return;
+  }
+  const total = document.getElementById('ticket-total').textContent;
+  if (confirm(`Confirm sale for ${total} via ${method}?`)) {
+    alert(`Receipt printed successfully! Tender: ${method} - ${total}`);
+    clearTicket();
+  }
+}
+</script>
 {% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Enquiry #{{ inquiry.pk }} from {{ inquiry.name }}{% endblock %}
+{% block breadcrumb %}<a href="{% url 'cms:inquiries-index' %}">Customer Enquiries</a> / Enquiry #{{ inquiry.pk }}{% endblock %}
+
+{% block main_content %}
+<div class="product-edit-page">
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        Enquiry #{{ inquiry.pk }}: {{ inquiry.name }}
+      </h1>
+      <div class="product-badge-strip" style="margin-top: 4px;">
+        <span class="product-id-pill">ID #{{ inquiry.pk }}</span>
+        <span class="status-chip chip-live">{{ inquiry.topic_display }}</span>
+        {% if inquiry.status == 'new' %}
+          <span class="status-chip" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">New</span>
+        {% elif inquiry.status == 'in_progress' %}
+          <span class="status-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">In Progress</span>
+        {% elif inquiry.status == 'resolved' %}
+          <span class="status-chip chip-live">Resolved</span>
+        {% else %}
+          <span class="status-chip chip-archived">Closed</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="product-header-actions">
+      <a href="{% url 'cms:inquiries-index' %}" class="btn-action btn-outline">
+        <i class="fa fa-arrow-left"></i> Back to Enquiries
+      </a>
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('inquiry-status-form').requestSubmit();">
+        <i class="fa fa-save"></i> Save Status &amp; Notes
+      </button>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  <!-- Single Box Container -->
+  <div class="product-form-box">
+    <div class="form-section-divider">
+      <i class="fa fa-user"></i> Customer Contact Information
+    </div>
+    <div class="grid-4-cols" style="margin-bottom: 14px;">
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Customer Name</span></label>
+        <div style="font-weight: 700; font-size: 13px;">{{ inquiry.name }}</div>
+      </div>
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Email Address</span></label>
+        <div><a href="mailto:{{ inquiry.email }}" style="color: #1547A8; font-weight: 600;">{{ inquiry.email }}</a></div>
+      </div>
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Phone Number</span></label>
+        <div>{{ inquiry.phone|default:'Not provided' }}</div>
+      </div>
+      <div class="form-col col-span-1">
+        <label class="form-label"><span>Submitted Date</span></label>
+        <div>{{ inquiry.created_at|date:"d M Y, H:i" }}</div>
+      </div>
+    </div>
+
+    <div class="form-section-divider">
+      <i class="fa fa-comment-o"></i> Submitted Message
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; color: #1e293b; white-space: pre-wrap;">{{ inquiry.message }}</div>
+
+    <div class="form-section-divider">
+      <i class="fa fa-tasks"></i> Staff Review &amp; Internal Notes
+    </div>
+    <form method="post" id="inquiry-status-form" class="product-form" novalidate>
+      {% csrf_token %}
+      <div class="grid-4-cols">
+        <div class="form-col col-span-1 {% if form.status.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.status.id_for_label }}">
+            <span>Status Workflow <span class="req">*</span></span>
+          </label>
+          {{ form.status }}
+        </div>
+        <div class="form-col col-span-3 {% if form.admin_notes.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.admin_notes.id_for_label }}">
+            <span>Internal Staff Notes &amp; Action Taken</span>
+          </label>
+          {{ form.admin_notes }}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

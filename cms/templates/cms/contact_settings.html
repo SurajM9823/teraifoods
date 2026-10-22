@@ -1,0 +1,192 @@
+{% extends 'web/backoffice/app_base.html' %}{% load static %}
+{% block title %}Contact Settings & Social Channels{% endblock %}
+{% block breadcrumb %}Contact Settings{% endblock %}
+
+{% block main_content %}
+<div class="product-edit-page">
+  <!-- Top Header Toolbar -->
+  <div class="product-header-toolbar">
+    <div>
+      <h1 class="product-page-title">
+        Contact Hotline, WhatsApp &amp; Social Channels
+      </h1>
+      <p style="font-size: 11px; color: #64748b; margin-top: 2px;">
+        Configure customer support hotlines, SLAs, department emails, physical address, and social links.
+      </p>
+    </div>
+    <div class="product-header-actions">
+      <button type="button" class="btn-action btn-primary" onclick="document.getElementById('contact-settings-form').requestSubmit();">
+        <i class="fa fa-save"></i> Save Settings
+      </button>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-success" style="padding: 8px 12px; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px;">
+      <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+  {% endfor %}
+
+  {% if form.non_field_errors %}
+    <div class="form-banner-errors">
+      <strong><i class="fa fa-exclamation-circle"></i> Please fix the following errors:</strong>
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <!-- Single Box Form -->
+  <form method="post" id="contact-settings-form" class="product-form" novalidate>
+    {% csrf_token %}
+    <div class="product-form-box">
+      <!-- Section 1: Customer Hotline & WhatsApp -->
+      <div class="form-section-divider">
+        <i class="fa fa-phone"></i> Direct Hotline &amp; WhatsApp Fast Support
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if form.phone.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.phone.id_for_label }}">
+            <span>Direct Office Helpline <span class="req">*</span></span>
+          </label>
+          {{ form.phone }}
+          {% if form.phone.errors %}<div class="field-error">{{ form.phone.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-2 {% if form.operating_hours.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.operating_hours.id_for_label }}">
+            <span>Operating Hours Badge <span class="req">*</span></span>
+          </label>
+          {{ form.operating_hours }}
+          {% if form.operating_hours.errors %}<div class="field-error">{{ form.operating_hours.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-2 {% if form.whatsapp_number.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.whatsapp_number.id_for_label }}">
+            <span>WhatsApp Helpline (with Country Code) <span class="req">*</span></span>
+          </label>
+          {{ form.whatsapp_number }}
+          {% if form.whatsapp_number.errors %}<div class="field-error">{{ form.whatsapp_number.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.whatsapp_title.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.whatsapp_title.id_for_label }}">
+            <span>WhatsApp Title</span>
+          </label>
+          {{ form.whatsapp_title }}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.whatsapp_subtitle.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.whatsapp_subtitle.id_for_label }}">
+            <span>WhatsApp Subtitle</span>
+          </label>
+          {{ form.whatsapp_subtitle }}
+        </div>
+      </div>
+
+      <!-- Section 2: Department Email Inboxes -->
+      <div class="form-section-divider">
+        <i class="fa fa-envelope"></i> Department Email Inboxes &amp; Service SLAs
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if form.support_email.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.support_email.id_for_label }}">
+            <span>Support Desk Email <span class="req">*</span></span>
+          </label>
+          {{ form.support_email }}
+          {% if form.support_email.errors %}<div class="field-error">{{ form.support_email.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.support_email_sla.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.support_email_sla.id_for_label }}">
+            <span>Response SLA Badge</span>
+          </label>
+          {{ form.support_email_sla }}
+        </div>
+
+        <div class="form-col col-span-1 {% if form.support_email_subtext.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.support_email_subtext.id_for_label }}">
+            <span>Support Email Note</span>
+          </label>
+          {{ form.support_email_subtext }}
+        </div>
+
+        <div class="form-col col-span-2 {% if form.wholesale_email.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.wholesale_email.id_for_label }}">
+            <span>Wholesale &amp; Bulk Desk Email <span class="req">*</span></span>
+          </label>
+          {{ form.wholesale_email }}
+          {% if form.wholesale_email.errors %}<div class="field-error">{{ form.wholesale_email.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-col col-span-2 {% if form.wholesale_email_subtext.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.wholesale_email_subtext.id_for_label }}">
+            <span>Wholesale Email Note</span>
+          </label>
+          {{ form.wholesale_email_subtext }}
+        </div>
+      </div>
+
+      <!-- Section 3: Head Office & Depot -->
+      <div class="form-section-divider">
+        <i class="fa fa-map-marker"></i> UK Head Office &amp; Central Depot
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-2 {% if form.office_title.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.office_title.id_for_label }}">
+            <span>Office / Depot Title <span class="req">*</span></span>
+          </label>
+          {{ form.office_title }}
+        </div>
+
+        <div class="form-col col-span-2 {% if form.office_address.errors %}has-error{% endif %}">
+          <label class="form-label" for="{{ form.office_address.id_for_label }}">
+            <span>Official Postal Address <span class="req">*</span></span>
+          </label>
+          {{ form.office_address }}
+        </div>
+      </div>
+
+      <!-- Section 4: Social Channels -->
+      <div class="form-section-divider">
+        <i class="fa fa-share-alt"></i> Verified Social Channels
+      </div>
+      <div class="grid-4-cols">
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ form.facebook_url.id_for_label }}">
+            <span><i class="fa fa-facebook-official" style="color:#1877f2;"></i> Facebook URL</span>
+          </label>
+          {{ form.facebook_url }}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ form.twitter_url.id_for_label }}">
+            <span><i class="fa fa-twitter" style="color:#1da1f2;"></i> Twitter / X URL</span>
+          </label>
+          {{ form.twitter_url }}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ form.instagram_url.id_for_label }}">
+            <span><i class="fa fa-instagram" style="color:#e4405f;"></i> Instagram URL</span>
+          </label>
+          {{ form.instagram_url }}
+        </div>
+
+        <div class="form-col col-span-1">
+          <label class="form-label" for="{{ form.linkedin_url.id_for_label }}">
+            <span><i class="fa fa-linkedin" style="color:#0a66c2;"></i> LinkedIn URL</span>
+          </label>
+          {{ form.linkedin_url }}
+        </div>
+
+        <div class="form-col col-span-4">
+          <label class="form-label" for="{{ form.social_text.id_for_label }}">
+            <span>Social Banner Explanatory Text</span>
+          </label>
+          {{ form.social_text }}
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
