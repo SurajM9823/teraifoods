@@ -46,6 +46,8 @@ class OrderBrowserTests(StaticLiveServerTestCase):
         from django.contrib.auth import get_user_model
         from django.test import Client
         from orders.models import BulkRequest
+        category=Category.objects.create(name='Bulk search',slug='bulk-search')
+        Product.objects.create(name='Mobile Rice',slug='mobile-rice',sku='MOBILE-RICE',category=category,regular_price=4,stock=100,stock_confirmed=True,is_published=True)
         admin=get_user_model().objects.create_user('bulk-browser-admin',is_staff=True,is_superuser=True)
         client=Client();client.force_login(admin)
         cookie=f'{settings.SESSION_COOKIE_NAME}={client.cookies[settings.SESSION_COOKIE_NAME].value}'

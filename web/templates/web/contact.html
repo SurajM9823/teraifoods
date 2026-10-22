@@ -43,7 +43,7 @@
 	      "mainEntity": {
 	        "@type": "Organization",
 	        "name": "Terai Food UK",
-	        "telephone": "+44 20 7946 0912",
+	        "telephone": "{{ contact_info.phone }}",
 	        "email": "contact@teraifoods.co.uk"
 	      }
 	    },
@@ -698,22 +698,22 @@
 							<ul class="contact-detail-list">
 								<li class="contact-detail-item">
 									<div class="contact-detail-label"><i class="klb-icon-phone text-primary"></i> Direct Office Line</div>
-									<div class="contact-detail-val"><a href="tel:+442079460912">+44 20 7946 0912</a></div>
+									<div class="contact-detail-val"><a href="tel:{{ contact_info.phone_clean }}">{{ contact_info.phone }}</a></div>
 								</li>
 								<li class="contact-detail-item">
 									<div class="contact-detail-label"><i class="klb-icon-clock text-primary"></i> Operating Hours</div>
-									<div class="contact-detail-val" style="font-size: 11.5px; font-weight: 700; color: #0f172a;">24/7 Support</div>
+									<div class="contact-detail-val" style="font-size: 11.5px; font-weight: 700; color: #0f172a;">{{ contact_info.operating_hours }}</div>
 								</li>
 							</ul>
 
 							<!-- WhatsApp Direct Help -->
-							<a href="https://wa.me/447700900077" target="_blank" rel="noopener" class="whatsapp-cta-card">
+							<a href="https://wa.me/{{ contact_info.whatsapp_clean }}" target="_blank" rel="noopener" class="whatsapp-cta-card">
 								<div class="whatsapp-icon-circle">
 									<i class="klb-social-icon-whatsapp"></i>
 								</div>
 								<div>
-									<div style="font-size: 11px; font-weight: 800; line-height: 1.2;">WhatsApp Fast Support</div>
-									<div style="font-size: 10px; opacity: 0.85;">Chat live with dispatch rep</div>
+									<div style="font-size: 11px; font-weight: 800; line-height: 1.2;">{{ contact_info.whatsapp_title }}</div>
+									<div style="font-size: 10px; opacity: 0.85;">{{ contact_info.whatsapp_subtitle }}</div>
 								</div>
 							</a>
 						</div>
@@ -722,18 +722,18 @@
 						<div class="contact-sidebar-widget">
 							<div class="sidebar-widget-header">
 								<h4 class="sidebar-widget-title"><i class="klb-icon-mail"></i> Email Inquiries</h4>
-								<span class="text-10 text-gray-500 fw-bold">&lt; 2 HR SLA</span>
+								<span class="text-10 text-gray-500 fw-bold">{{ contact_info.support_email_sla }}</span>
 							</div>
 							<ul class="contact-detail-list">
 								<li class="contact-detail-item">
 									<div class="contact-detail-label">Customer Support</div>
-									<div class="contact-detail-val"><a href="mailto:support@teraifood.co.uk">support@teraifood.co.uk</a></div>
-									<div class="contact-detail-sub">Orders, tracking, returns &amp; refunds</div>
+									<div class="contact-detail-val"><a href="mailto:{{ contact_info.support_email }}">{{ contact_info.support_email }}</a></div>
+									<div class="contact-detail-sub">{{ contact_info.support_email_subtext }}</div>
 								</li>
 								<li class="contact-detail-item">
 									<div class="contact-detail-label">Wholesale &amp; Catering</div>
-									<div class="contact-detail-val"><a href="mailto:wholesale@teraifood.co.uk">wholesale@teraifood.co.uk</a></div>
-									<div class="contact-detail-sub">Bulk purchase orders &amp; commercial B2B</div>
+									<div class="contact-detail-val"><a href="mailto:{{ contact_info.wholesale_email }}">{{ contact_info.wholesale_email }}</a></div>
+									<div class="contact-detail-sub">{{ contact_info.wholesale_email_subtext }}</div>
 								</li>
 							</ul>
 						</div>
@@ -745,8 +745,8 @@
 							</div>
 							<ul class="contact-detail-list">
 								<li class="contact-detail-item">
-									<div class="contact-detail-label">London HQ &amp; Central Depot</div>
-									<div class="contact-detail-val" style="font-size: 11.5px; line-height: 1.4;">Unit 4B Peninsula Park, London SE10 0ER, UK</div>
+									<div class="contact-detail-label">{{ contact_info.office_title }}</div>
+									<div class="contact-detail-val" style="font-size: 11.5px; line-height: 1.4;">{{ contact_info.office_address }}</div>
 								</li>
 							</ul>
 						</div>
@@ -754,23 +754,23 @@
 						<!-- Widget 4: Social Media Channels & Links -->
 						<div class="contact-sidebar-widget">
 							<div class="sidebar-widget-header">
-								<h4 class="sidebar-widget-title"><i class="klb-icon-share-2"></i> Social Channels</h4>
-								<span class="text-10 text-gray-500 fw-bold">CONNECT</span>
+								<h4 class="sidebar-widget-title"><i class="klb-icon-share-2"></i> {{ contact_info.social_heading }}</h4>
+								<span class="text-10 text-gray-500 fw-bold">{{ contact_info.social_badge }}</span>
 							</div>
-							<p class="text-11 text-gray-600 mb-2" style="line-height: 1.35;">Follow us for new harvest arrivals, seasonal promotions, and rapid customer messaging.</p>
+							<p class="text-11 text-gray-600 mb-2" style="line-height: 1.35;">{{ contact_info.social_text }}</p>
 							<div class="sidebar-social-grid">
-								<a href="https://www.facebook.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+								{% if contact_info.facebook_url %}<a href="{{ contact_info.facebook_url }}" target="_blank" rel="noopener" class="sidebar-social-btn">
 									<i class="klb-social-icon-facebook text-primary"></i> Facebook
-								</a>
-								<a href="https://www.twitter.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+								</a>{% endif %}
+								{% if contact_info.twitter_url %}<a href="{{ contact_info.twitter_url }}" target="_blank" rel="noopener" class="sidebar-social-btn">
 									<i class="klb-social-icon-twitter text-info"></i> Twitter / X
-								</a>
-								<a href="https://www.instagram.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+								</a>{% endif %}
+								{% if contact_info.instagram_url %}<a href="{{ contact_info.instagram_url }}" target="_blank" rel="noopener" class="sidebar-social-btn">
 									<i class="klb-social-icon-instagram text-danger"></i> Instagram
-								</a>
-								<a href="https://www.linkedin.com/" target="_blank" rel="noopener" class="sidebar-social-btn">
+								</a>{% endif %}
+								{% if contact_info.linkedin_url %}<a href="{{ contact_info.linkedin_url }}" target="_blank" rel="noopener" class="sidebar-social-btn">
 									<i class="klb-social-icon-linkedin text-primary"></i> LinkedIn
-								</a>
+								</a>{% endif %}
 							</div>
 						</div>
 					</aside>
@@ -795,19 +795,14 @@
 										<i class="klb-icon-map-pin"></i> UK Delivery Network Map
 									</h3>
 									<span class="text-10 text-success fw-bold">
-										<i class="klb-icon-check-circle"></i> 4 HUBS ACTIVE
+										<i class="klb-icon-check-circle"></i> {{ contact_info.map_badge }}
 									</span>
 								</div>
 								<div class="split-card-body">
 									<div id="contact-delivery-map"></div>
-									<div class="map-hub-legend">
-										<span class="map-hub-pill"><span class="hub-dot"></span> London Central HQ</span>
-										<span class="map-hub-pill"><span class="hub-dot"></span> Birmingham Midlands</span>
-										<span class="map-hub-pill"><span class="hub-dot"></span> Manchester North</span>
-										<span class="map-hub-pill"><span class="hub-dot"></span> Glasgow Scotland</span>
-									</div>
+									<div class="map-hub-legend">{% for hub in contact_hubs %}<span class="map-hub-pill"><span class="hub-dot"></span> {{ hub.legend }}</span>{% endfor %}</div>
 									<p class="text-10 text-gray-500 mt-2 mb-0" style="line-height: 1.35;">
-										<i class="klb-icon-truck text-primary me-1"></i> Temperature-controlled fleet operates out of all 4 key hubs to guarantee next-day delivery across mainland UK.
+										<i class="klb-icon-truck text-primary me-1"></i> {{ contact_info.map_subtitle }}
 									</p>
 								</div>
 							</div>
@@ -823,30 +818,30 @@
 								<div class="split-card-body">
 									<div id="contact-success-alert" class="alert alert-success d-none py-2 px-3 mb-2 d-flex align-items-center gap-2" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px;">
 										<i class="klb-icon-check-circle text-16"></i>
-										<div><strong>Inquiry received!</strong> A customer advisor will reply within 45 minutes.</div>
+										<div><strong>Inquiry received!</strong> Our support team will review your message.</div>
 									</div>
 
-									<form id="terai-contact-form" class="contact-form-dense" onsubmit="event.preventDefault(); document.getElementById('contact-success-alert').classList.remove('d-none'); this.reset();">
-										<div class="row g-2 mb-2">
+									<form id="terai-contact-form" class="contact-form-dense" method="post" action="/api/contact/inquiries/">
+										{% csrf_token %}<div class="row g-2 mb-2">
 											<div class="col-sm-6">
 												<label class="form-label" for="contact-name">Full Name *</label>
-												<input type="text" id="contact-name" class="form-control" placeholder="e.g. David Campbell" required>
+												<input type="text" id="contact-name" name="name" class="form-control" placeholder="e.g. David Campbell" required>
 											</div>
 											<div class="col-sm-6">
 												<label class="form-label" for="contact-email">Email Address *</label>
-												<input type="email" id="contact-email" class="form-control" placeholder="e.g. david@example.co.uk" required>
+												<input type="email" id="contact-email" name="email" class="form-control" placeholder="e.g. david@example.co.uk" required>
 											</div>
 										</div>
 
 										<div class="row g-2 mb-2">
 											<div class="col-sm-6">
 												<label class="form-label" for="contact-phone">Contact Phone (UK)</label>
-												<input type="tel" id="contact-phone" class="form-control" placeholder="e.g. 07946 091234 or +44 7946 091234">
+												<input type="tel" id="contact-phone" name="phone" class="form-control" placeholder="e.g. 07946 091234 or +44 7946 091234">
 												<div id="contact-phone-feedback" class="text-11 mt-1" style="font-size: 11px; font-weight: 600; display: none;"></div>
 											</div>
 											<div class="col-sm-6">
 												<label class="form-label" for="contact-subject">Inquiry Topic *</label>
-												<select id="contact-subject" class="form-select" required>
+												<select id="contact-subject" name="topic" class="form-select" required>
 													<option value="" disabled selected>Choose Topic</option>
 													<option value="order-status">Live Order Status &amp; Tracking</option>
 													<option value="produce-quality">Produce Freshness Guarantee</option>
@@ -860,7 +855,7 @@
 
 										<div class="mb-2">
 											<label class="form-label" for="contact-message">Your Message / Query *</label>
-											<textarea id="contact-message" class="form-control" placeholder="Please detail your request, include order number or delivery postcode..." required></textarea>
+											<textarea id="contact-message" name="message" class="form-control" placeholder="Please detail your request, include order number or delivery postcode..." required></textarea>
 										</div>
 
 										<div>
@@ -880,129 +875,15 @@
 								<h3 class="faq-main-title">
 									<i class="klb-icon-help-circle"></i> Frequently Asked Questions &amp; Support Knowledgebase
 								</h3>
-								<span class="text-10 text-gray-500 fw-bold">8 EXPANDABLE ANSWERS</span>
+								<span class="text-10 text-gray-500 fw-bold">{{ faqs|length }} EXPANDABLE ANSWERS</span>
 							</div>
 
 							<div class="faq-accordion-stack" id="faq-accordion">
-								<!-- FAQ 1 (Open by default) -->
-								<div class="faq-accordion-item is-open">
-									<button type="button" class="faq-accordion-header" aria-expanded="true">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> When will my grocery order be delivered?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											Orders placed before 1:00 PM (Monday through Friday) are packed same-day and delivered next day across mainland UK. Standard delivery timeline is 24 to 48 hours with real-time 1-hour carrier tracking windows via SMS.
-										</p>
-									</div>
-								</div>
-
-								<!-- FAQ 2 -->
-								<div class="faq-accordion-item">
-									<button type="button" class="faq-accordion-header" aria-expanded="false">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> How do you guarantee fresh produce cold-chain?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											All perishable goods are packed in 100% recyclable wool-cool thermal liners with dry food-grade frozen gel chill packs. Internal parcel temperatures are maintained strictly below 4&deg;C for up to 48 hours in transit.
-										</p>
-									</div>
-								</div>
-
-								<!-- FAQ 3 -->
-								<div class="faq-accordion-item">
-									<button type="button" class="faq-accordion-header" aria-expanded="false">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> What happens if an item is damaged or missing?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											We offer an unconditional 100% Freshness Guarantee. Take a quick photo and email support@teraifood.co.uk or message our WhatsApp line. We issue an immediate refund or dispatch a priority replacement within 2 hours.
-										</p>
-									</div>
-								</div>
-
-								<!-- FAQ 4 -->
-								<div class="faq-accordion-item">
-									<button type="button" class="faq-accordion-header" aria-expanded="false">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> Can businesses place wholesale or bulk trade orders?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											Yes! We supply restaurants, caterers, grocery retailers, and institutions with commercial discounts and pallet dispatch. Use our navbar Bulk Order button or choose "Wholesale &amp; Bulk Quote" in the inquiry form.
-										</p>
-									</div>
-								</div>
-
-								<!-- FAQ 5 -->
-								<div class="faq-accordion-item">
-									<button type="button" class="faq-accordion-header" aria-expanded="false">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> Which payment methods and currencies do you accept?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											We accept all major UK debit/credit cards (Visa, Mastercard, Amex), PayPal, Apple Pay, and Google Pay. All transactions are securely processed in GBP (£) with end-to-end 256-bit SSL encryption.
-										</p>
-									</div>
-								</div>
-
-								<!-- FAQ 6 -->
-								<div class="faq-accordion-item">
-									<button type="button" class="faq-accordion-header" aria-expanded="false">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> How can I track my live order dispatch status?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											Visit our <a href="{% url 'web:track-order' %}" class="text-primary fw-bold text-decoration-none">Track Order</a> page and enter your 5-digit Order ID and billing email. You will see courier assignments, dispatch timestamps, and live route status.
-										</p>
-									</div>
-								</div>
-
-								<!-- FAQ 7 -->
-								<div class="faq-accordion-item">
-									<button type="button" class="faq-accordion-header" aria-expanded="false">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> Do you ship to Scotland, Wales &amp; Northern Ireland?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											Yes. Ambient pantry goods and spices ship to all UK postcodes including Highlands and Islands. Chilled produce delivers next-day across central Scotland and all of Wales through our Glasgow and Midlands hubs.
-										</p>
-									</div>
-								</div>
-
-								<!-- FAQ 8 -->
-								<div class="faq-accordion-item">
-									<button type="button" class="faq-accordion-header" aria-expanded="false">
-										<span class="faq-q-text">
-											<i class="klb-icon-help-circle"></i> Are your Himalayan spices certified organic and natural?
-										</span>
-										<span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span>
-									</button>
-									<div class="faq-accordion-body">
-										<p class="faq-a-text">
-											Every spice blend, herb, and grain lot is ethically sourced directly from smallholder Himalayan farms and independently batch-tested in the UK for zero synthetic pesticides, heavy metals, and artificial preservatives.
-										</p>
-									</div>
-								</div>
+								{% for faq in faqs %}
+<div class="faq-accordion-item{% if forloop.first %} is-open{% endif %}">
+<button type="button" class="faq-accordion-header" aria-expanded="{{ forloop.first|yesno:'true,false' }}"><span class="faq-q-text"><i class="klb-icon-help-circle"></i> {{ faq.question }}</span><span class="faq-toggle-icon"><i class="klb-icon-arrow-down"></i></span></button>
+<div class="faq-accordion-body"><p class="faq-a-text">{{ faq.answer|linebreaksbr }}</p></div></div>
+{% endfor %}
 							</div>
 						</div>
 
@@ -1024,8 +905,8 @@
 							</div>
 							<p class="text-13 text-gray-600 lh-base mb-3">Terai Food is your dedicated UK source for organic, fresh Himalayan and British produce, natural spices, grains, and specialty groceries.</p>
 							<div class="text-13 text-gray-700">
-								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> +44 20 7946 0912</div>
-								<div><i class="klb-icon-mail me-2 text-primary"></i> support@teraifood.co.uk</div>
+								<div class="mb-1"><i class="klb-icon-phone me-2 text-primary"></i> {{ contact_info.phone }}</div>
+								<div><i class="klb-icon-mail me-2 text-primary"></i> {{ contact_info.support_email }}</div>
 							</div>
 						</div>
 
@@ -1067,10 +948,10 @@
 								</div>
 								<span class="d-block text-11 text-gray-500 mt-2 mb-1">Follow us on social media:</span>
 								<div class="site-social d-flex gap-2">
-									<a href="https://www.facebook.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>
-									<a href="https://www.twitter.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>
-									<a href="https://www.instagram.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>
-									<a href="https://www.linkedin.com/" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>
+									{% if contact_info.facebook_url %}<a href="{{ contact_info.facebook_url }}" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-facebook"></i></a>{% endif %}
+									{% if contact_info.twitter_url %}<a href="{{ contact_info.twitter_url }}" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-twitter"></i></a>{% endif %}
+									{% if contact_info.instagram_url %}<a href="{{ contact_info.instagram_url }}" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-instagram"></i></a>{% endif %}
+									{% if contact_info.linkedin_url %}<a href="{{ contact_info.linkedin_url }}" class="btn btn-sm btn-outline-secondary p-1" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;"><i class="klb-social-icon-linkedin"></i></a>{% endif %}
 								</div>
 							</div>
 						</div>
@@ -1099,140 +980,10 @@
 	<script src="{% static 'web/' %}js/bootstrap.bundle.min.js"></script>
 	<script src="{% static 'web/' %}js/leaflet.js"></script>
 
-	<!-- Interactive Leaflet Delivery Map Initialization -->
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			if (typeof L === 'undefined') return;
+{{ contact_hubs|json_script:"contact-hubs-data" }}
+<script src="{% static 'web/js/contact.js' %}?v=dynamic-contact-v1" defer></script>
 
-			// Initialize Leaflet Map centered on UK
-			const map = L.map('contact-delivery-map', {
-				center: [53.5, -2.0],
-				zoom: 6,
-				scrollWheelZoom: false,
-				attributionControl: false
-			});
-
-			// OpenStreetMap Tile Layer
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				maxZoom: 18,
-				attribution: '&copy; OpenStreetMap'
-			}).addTo(map);
-
-			// Define Custom Sharp Square Pin Icon
-			const createPinIcon = function(label) {
-				return L.divIcon({
-					className: 'terai-map-marker',
-					html: '<div style="background: #634c9f; color: #ffffff; padding: 3px 6px; font-size: 10px; font-weight: 800; border: 1px solid #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.35); text-transform: uppercase; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><i class="klb-icon-map-pin" style="font-size: 10px;"></i> ' + label + '</div>',
-					iconSize: [80, 24],
-					iconAnchor: [40, 12]
-				});
-			};
-
-			// Key UK Hub Locations
-			const hubs = [
-				{
-					name: 'London Central HQ & Depot',
-					lat: 51.501,
-					lng: -0.007,
-					tag: 'London HQ',
-					desc: 'Unit 4B Peninsula Park, London SE10 0ER.<br><strong>Dispatch SLA:</strong> Same-day packing for Greater London &amp; South East.'
-				},
-				{
-					name: 'Birmingham Midlands Hub',
-					lat: 52.486,
-					lng: -1.890,
-					tag: 'Midlands Hub',
-					desc: 'Duddeston Central B7.<br><strong>Dispatch SLA:</strong> Overnight cold-chain for Midlands, Wales &amp; West.'
-				},
-				{
-					name: 'Manchester Northern Depot',
-					lat: 53.480,
-					lng: -2.242,
-					tag: 'Manchester Hub',
-					desc: 'Trafford Logistics Park.<br><strong>Dispatch SLA:</strong> Northern England next-morning express.'
-				},
-				{
-					name: 'Glasgow Scotland Distribution',
-					lat: 55.864,
-					lng: -4.251,
-					tag: 'Glasgow Hub',
-					desc: 'Shieldhall Distribution G51.<br><strong>Dispatch SLA:</strong> Scottish Central Belt cold-chain reach.'
-				}
-			];
-
-			hubs.forEach(function(hub) {
-				const marker = L.marker([hub.lat, hub.lng], { icon: createPinIcon(hub.tag) }).addTo(map);
-				marker.bindPopup(
-					'<div style="font-family: Inter, sans-serif; font-size: 11.5px; padding: 2px;">' +
-					'<strong style="color: #0f172a; font-size: 12px; display: block; margin-bottom: 3px;">' + hub.name + '</strong>' +
-					'<span style="color: #475569; font-size: 11px; line-height: 1.4;">' + hub.desc + '</span>' +
-					'</div>'
-				);
-			});
-
-			// Fix map rendering within responsive layout
-			setTimeout(function() {
-				map.invalidateSize();
-			}, 300);
-
-			// FAQ Single-Column Collapsible / Expandable Accordion
-			const faqHeaders = document.querySelectorAll('.faq-accordion-header');
-			faqHeaders.forEach(function(header) {
-				header.addEventListener('click', function() {
-					const item = this.closest('.faq-accordion-item');
-					const isOpen = item.classList.contains('is-open');
-
-					// Toggle current item
-					if (isOpen) {
-						item.classList.remove('is-open');
-						this.setAttribute('aria-expanded', 'false');
-					} else {
-						item.classList.add('is-open');
-						this.setAttribute('aria-expanded', 'true');
-					}
-				});
-			// Live UK Phone Validation on Contact Form
-			const contactPhone = document.getElementById('contact-phone');
-			const contactPhoneFeedback = document.getElementById('contact-phone-feedback');
-			if (contactPhone) {
-				['input', 'keyup', 'blur', 'change'].forEach(function(evt) {
-					contactPhone.addEventListener(evt, function() {
-						const val = this.value.trim();
-						if (!val) {
-							this.style.borderColor = '';
-							this.style.backgroundColor = '';
-							if (contactPhoneFeedback) contactPhoneFeedback.style.display = 'none';
-							return;
-						}
-						let clean = val.replace(/[\s().-]/g, '');
-						if (clean.startsWith('+440')) clean = '+44' + clean.slice(4);
-						else if (clean.startsWith('00440')) clean = '0044' + clean.slice(5);
-
-						const valid = /^(?:\+44|0044|0)\d{9,10}$/.test(clean);
-						if (valid) {
-							this.style.borderColor = '#16a34a';
-							this.style.backgroundColor = '#f0fdf4';
-							if (contactPhoneFeedback) {
-								contactPhoneFeedback.style.display = 'block';
-								contactPhoneFeedback.style.color = '#16a34a';
-								contactPhoneFeedback.textContent = '✓ Valid UK contact number';
-							}
-						} else {
-							this.style.borderColor = '#dc2626';
-							this.style.backgroundColor = '#fef2f2';
-							if (contactPhoneFeedback) {
-								contactPhoneFeedback.style.display = 'block';
-								contactPhoneFeedback.style.color = '#dc2626';
-								contactPhoneFeedback.textContent = '⚠️ Enter a valid UK contact number (e.g. 07946 091234 or +44 7946 091234).';
-							}
-						}
-					});
-				});
-			}
-
-		});
-	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=vouchers-packages-v4"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=contact-guest-v5"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

@@ -36,6 +36,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Live UK postcode validation while entering
+  const postcodeInput = document.getElementById('checkout-postcode-input');
+  if (postcodeInput) {
+    postcodeInput.addEventListener('input', function () {
+      const val = this.value.toUpperCase();
+      this.value = val;
+      const clean = val.replace(/\s+/g, '');
+      const statusEl = document.getElementById('checkout-lookup-status');
+      if (clean.length >= 5) {
+        const isValid = /^(?:GIR0AA|[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2})$/.test(clean);
+        if (isValid && !clean.startsWith('JE') && !clean.startsWith('GY') && !clean.startsWith('IM')) {
+          this.style.borderColor = '#16a34a';
+          this.style.backgroundColor = '#f0fdf4';
+          if (statusEl) {
+            statusEl.textContent = '✓ Valid UK postcode format';
+            statusEl.className = 'lookup-status success';
+          }
+        } else {
+          this.style.borderColor = '#dc2626';
+          this.style.backgroundColor = '#fef2f2';
+          if (statusEl) {
+            statusEl.textContent = '⚠️ Invalid UK postcode format (e.g. SW1A 1AA)';
+            statusEl.className = 'lookup-status error';
+          }
+        }
+      } else {
+        this.style.borderColor = '#cbd5e1';
+        this.style.backgroundColor = '#ffffff';
+      }
+    });
+  }
+
   // 2. Shipping calculation & Order Summary
   let savedCart = [];
   try {
@@ -156,8 +188,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const houseNumber = document.getElementById('checkout-house-input').value.trim();
       const city = document.getElementById('checkout-city-input').value.trim() || 'London';
 
-      if (!postcode) {
-        alert('Please enter your UK postcode for delivery confirmation.');
+      const clean = postcode.replace(/\s+/g, '').toUpperCase();
+      const isValid = /^(?:GIR0AA|[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2})$/.test(clean) && !clean.startsWith('JE') && !clean.startsWith('GY') && !clean.startsWith('IM');
+      if (!postcode || !isValid) {
+        alert('Please enter a valid UK postcode for delivery confirmation (e.g. SW1A 1AA).');
         document.getElementById('checkout-postcode-input').focus();
         return;
       }

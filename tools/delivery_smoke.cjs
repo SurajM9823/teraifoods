@@ -38,10 +38,19 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
     };
     await page('Page.enable');
     if(process.env.BULK_BROWSER_FLOW==='1') {
+      await page('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
       await page('Page.navigate',{url:base+'/bulk-order/'});
       await until("!!document.querySelector('.po-row') && !!document.querySelector('#buyer-email')");
+      await evaluate("const input=document.querySelector('.row-desc');input.value='Mobile';input.dispatchEvent(new Event('input',{bubbles:true}))");
+      await until("!!document.querySelector('.item-suggest-dropdown.active button')");
+      assert.equal(await evaluate("getComputedStyle(document.querySelector('.po-row')).display"),'grid');
+      assert(await evaluate("document.querySelector('.item-suggest-dropdown').getBoundingClientRect().right<=innerWidth"),'Mobile search results must fit the viewport');
+      await evaluate("document.querySelector('.item-suggest-dropdown button').click()");
+      assert.equal(await evaluate("document.querySelector('.row-sku').value"),'MOBILE-RICE');
+      assert.match(await evaluate("document.querySelector('.row-unit').value"),/150/);
+
       await evaluate(`Object.entries({'buyer-company-name':'Browser Grocer','buyer-contact-name':'Test Buyer','buyer-email':'browser@example.invalid','buyer-phone-email':'07700900123','buyer-address':'1 Example Street','buyer-city-postcode':'London SW1A 1AA','buyer-notes':'Morning delivery'}).forEach(([id,value])=>document.getElementById(id).value=value);document.querySelector('.row-desc').value='Custom rice';document.querySelector('.row-unit').value='5kg bag';document.querySelector('.row-price').value='4.50';document.getElementById('bulk-po-form').requestSubmit();`);
-      await until("document.getElementById('bulk-request-list').textContent.includes('TF-BQ-')");
+      await until("document.getElementById('bulk-request-list')?.textContent.includes('TF-BQ-')");
       const requestId=await evaluate("new URLSearchParams(location.search).get('request')");
       assert(requestId);
       const adminUrl=base+'/admin/bulk-orders/'+requestId+'/';
@@ -54,10 +63,10 @@ const fs = require('fs'), os = require('os'), path = require('path'), assert = r
       const posted=await fetch(adminUrl,{method:'POST',redirect:'manual',headers:{Cookie:cookie,Referer:adminUrl,'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({csrfmiddlewaretoken:csrf,version:'1',status:'quoted',quoted_total:'55.00',delivery_terms:'Delivery within 4 days',payment_terms:'Invoice before dispatch',message:'Your requested rice is available.'})});
       assert.equal(posted.status,302,await posted.text());
       await evaluate("document.getElementById('bulk-refresh').click()");
-      await until("document.getElementById('bulk-request-list').textContent.includes('Your requested rice is available.')");
+      await until("document.getElementById('bulk-request-list')?.textContent.includes('Your requested rice is available.')");
       assert.match(await evaluate("document.getElementById('bulk-request-list').textContent"),/55.00/);
       await page('Page.navigate',{url:base+'/bulk-order/'});
-      await until("document.getElementById('bulk-request-list').textContent.includes('Your requested rice is available.')");
+      await until("document.getElementById('bulk-request-list')?.textContent.includes('Your requested rice is available.')");
       console.log('Bulk browser flow passed: submission, admin quote, same-page tracking and persistent history.');
       return;
     }

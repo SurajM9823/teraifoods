@@ -56,7 +56,7 @@ def public_products():
 
 
 def serialize(product):
-    return dict(id=product.pk, name=product.name, slug=product.slug, description=product.description,
+    return dict(id=product.pk, name=product.name, sku=product.sku, slug=product.slug, description=product.description,
         weight=str(product.weight), weight_unit=product.weight_unit, weight_grams=str(product.weight_grams),
         review_count=product.review_count,
         category=product.category.slug, category_key=product.category.legacy_key or product.category.slug,
@@ -225,7 +225,7 @@ def cached_payload(request, loader):
     # reappear after an invalidation failed while Redis was offline.
     from .models import CatalogRevision
     revision, _ = CatalogRevision.objects.get_or_create(pk=1)
-    key = 'catalog:public:' + str(revision.version) + ':' + hashlib.sha256(request.get_full_path().encode()).hexdigest()
+    key = 'catalog:public:v2:' + str(revision.version) + ':' + hashlib.sha256(request.get_full_path().encode()).hexdigest()
     try:
         payload = cache.get(key)
         if payload is not None:

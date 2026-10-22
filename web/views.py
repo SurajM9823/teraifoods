@@ -18,6 +18,10 @@ def page_view(request, page_key):
     context = {}
     from catalog.storefront import context as product_context
     context.update(product_context(request, page.key))
+    if page.key == "contact":
+        from cms.models import FAQItem, ContactHub
+        context["faqs"] = FAQItem.objects.filter(is_active=True)
+        context["contact_hubs"] = list(ContactHub.objects.filter(is_active=True).values())
     if page.key == "home":
         from cms.content import homepage_content
         context["cms_home"] = homepage_content()

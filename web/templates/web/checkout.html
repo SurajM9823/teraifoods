@@ -953,6 +953,15 @@
 						</select>
 					</div>
 					<div class="mb-2">
+						<label class="form-label text-11 fw-bold" for="modal-postcode-input">UK Postcode / Pin Code *</label>
+						<div class="position-relative">
+							<input type="text" id="modal-postcode-input" class="form-control" value="" placeholder="e.g. SW1A 1AA or SE10 8NB" required style="height: 34px; font-size: 12px; text-transform: uppercase; padding-right: 30px;">
+							<span id="modal-postcode-icon" style="position: absolute; right: 8px; top: 8px; font-size: 13px; display: none;"></span>
+						</div>
+						<div id="modal-postcode-feedback" class="text-11 mt-1" style="font-weight: 600;"></div>
+						<small class="text-muted text-10 d-block mt-0.5">UK postcode format: valid mainland UK code (e.g. SW1A 1AA, SE10 8NB).</small>
+					</div>
+					<div class="mb-2">
 						<label class="form-label text-11 fw-bold">Street Address *</label>
 						<textarea id="modal-address-input" class="form-control" rows="2" style="font-size: 12px;" required></textarea>
 					</div>
@@ -1072,6 +1081,23 @@
 				return { valid: true, clean: clean };
 			}
 
+			function checkUKPostcode(postcodeStr) {
+				if (!postcodeStr) return { valid: false, error: 'UK postcode is required for delivery.' };
+				const raw = String(postcodeStr).trim().toUpperCase();
+				const clean = raw.replace(/\s+/g, '');
+				if (clean.length < 5) return { valid: false, error: 'Postcode too short (e.g. SW1A 1AA).' };
+				if (clean.length > 7) return { valid: false, error: 'Postcode too long for a UK address.' };
+				if (clean.startsWith('JE') || clean.startsWith('GY') || clean.startsWith('IM')) {
+					return { valid: false, error: 'Delivery coverage is the UK mainland (Channel Islands & Isle of Man excluded).' };
+				}
+				const ukRegex = /^(?:GIR0AA|[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2})$/;
+				if (!ukRegex.test(clean)) {
+					return { valid: false, error: 'Enter a valid UK postcode (e.g. SW1A 1AA, W1A 0AX, SE10 8NB).' };
+				}
+				const formatted = clean.slice(0, clean.length - 3) + ' ' + clean.slice(clean.length - 3);
+				return { valid: true, clean: clean, formatted: formatted };
+			}
+
 			function escapeHTML(str) {
 				const p = document.createElement('p');
 				p.textContent = str || '';
@@ -1159,6 +1185,7 @@
 				const modalName = document.getElementById('modal-name-input');
 				const modalPhone = document.getElementById('modal-phone-input');
 				const modalTag = document.getElementById('modal-tag-input');
+				const modalPostcode = document.getElementById('modal-postcode-input');
 				const modalAddress = document.getElementById('modal-address-input');
 				const modalLandmark = document.getElementById('modal-landmark-input');
 
@@ -1168,6 +1195,10 @@
 					validatePhoneLive();
 				}
 				if (modalTag) modalTag.value = addr.tag || 'OFFICE';
+				if (modalPostcode) {
+					modalPostcode.value = addr.postcode || 'SE10 8NB';
+					if (typeof validatePostcodeLive === 'function') validatePostcodeLive();
+				}
 				if (modalAddress) modalAddress.value = addr.address || DEFAULT_ADDRESS.address;
 				if (modalLandmark) modalLandmark.value = addr.note || DEFAULT_ADDRESS.note;
 			}
@@ -1393,6 +1424,80 @@
 				});
 			}
 
+			const modalPostcodeInput = document.getElementById('modal-postcode-input');
+			const postcodeFeedback = document.getElementById('modal-postcode-feedback');
+			const postcodeIcon = document.getElementById('modal-postcode-icon');
+
+			function validatePostcodeLive(evt) {
+				if (!modalPostcodeInput) return false;
+				const original = modalPostcodeInput.value;
+				const upper = original.toUpperCase();
+				if (original !== upper) {
+					const start = modalPostcodeInput.selectionStart;
+					const end = modalPostcodeInput.selectionEnd;
+					modalPostcodeInput.value = upper;
+					if (start !== null) modalPostcodeInput.setSelectionRange(start, end);
+				}
+				const val = modalPostcodeInput.value.trim();
+				if (!val) {
+					modalPostcodeInput.style.borderColor = '#e2e8f0';
+					modalPostcodeInput.style.backgroundColor = '#ffffff';
+					if (postcodeFeedback) {
+						postcodeFeedback.textContent = 'Please enter your UK delivery postcode (e.g. SW1A 1AA or SE10 8NB)';
+						postcodeFeedback.className = 'text-11 mt-1 text-muted';
+					}
+					if (postcodeIcon) postcodeIcon.style.display = 'none';
+					return false;
+				}
+
+				const res = checkUKPostcode(val);
+				if (res.valid) {
+					modalPostcodeInput.style.borderColor = '#16a34a';
+					modalPostcodeInput.style.backgroundColor = '#f0fdf4';
+					if (postcodeFeedback) {
+						postcodeFeedback.textContent = '✓ Valid UK postcode (' + res.formatted + ')';
+						postcodeFeedback.className = 'text-11 mt-1 text-success';
+					}
+					if (postcodeIcon) {
+						postcodeIcon.style.display = 'block';
+						postcodeIcon.innerHTML = '<i class="klb-icon-check text-success" style="font-weight: 700;"></i>';
+					}
+					if (evt && evt.type === 'blur') {
+						modalPostcodeInput.value = res.formatted;
+					}
+					return true;
+				} else {
+					const cleanLen = val.replace(/\s+/g, '').length;
+					if ((evt && evt.type === 'blur') || cleanLen >= 5) {
+						modalPostcodeInput.style.borderColor = '#dc2626';
+						modalPostcodeInput.style.backgroundColor = '#fef2f2';
+						if (postcodeFeedback) {
+							postcodeFeedback.textContent = '⚠️ ' + res.error;
+							postcodeFeedback.className = 'text-11 mt-1 text-danger';
+						}
+						if (postcodeIcon) {
+							postcodeIcon.style.display = 'block';
+							postcodeIcon.innerHTML = '<i class="klb-icon-x text-danger" style="font-weight: 700;"></i>';
+						}
+					} else {
+						modalPostcodeInput.style.borderColor = '#94a3b8';
+						modalPostcodeInput.style.backgroundColor = '#ffffff';
+						if (postcodeFeedback) {
+							postcodeFeedback.textContent = 'Entering UK postcode... (e.g. SW1A 1AA)';
+							postcodeFeedback.className = 'text-11 mt-1 text-muted';
+						}
+						if (postcodeIcon) postcodeIcon.style.display = 'none';
+					}
+					return false;
+				}
+			}
+
+			if (modalPostcodeInput) {
+				['input', 'keyup', 'blur', 'change'].forEach(evt => {
+					modalPostcodeInput.addEventListener(evt, validatePostcodeLive);
+				});
+			}
+
 			if (editAddressBtn && addressModal) {
 				editAddressBtn.addEventListener('click', function(e) {
 					e.preventDefault();
@@ -1400,6 +1505,9 @@
 					if (modalPhoneInput) {
 						validatePhoneLive();
 						setTimeout(() => modalPhoneInput.focus(), 100);
+					}
+					if (modalPostcodeInput) {
+						validatePostcodeLive();
 					}
 				});
 
@@ -1414,11 +1522,12 @@
 						const name = document.getElementById('modal-name-input').value.trim();
 						const phone = document.getElementById('modal-phone-input').value.trim();
 						const tag = document.getElementById('modal-tag-input').value;
+						const postcode = modalPostcodeInput ? modalPostcodeInput.value.trim() : '';
 						const address = document.getElementById('modal-address-input').value.trim();
 						const landmark = document.getElementById('modal-landmark-input').value.trim();
 
-						if (!name || !phone || !address) {
-							alert('Please complete all required fields.');
+						if (!name || !phone || !address || !postcode) {
+							alert('Please complete all required fields including UK postcode.');
 							return;
 						}
 
@@ -1430,7 +1539,15 @@
 							return;
 						}
 
-						const newAddr = { name, phone: phoneRes.clean, tag, address, note: landmark };
+						const pcRes = checkUKPostcode(postcode);
+						if (!pcRes.valid) {
+							validatePostcodeLive({ type: 'blur' });
+							if (modalPostcodeInput) modalPostcodeInput.focus();
+							alert(pcRes.error || 'Please enter a valid UK postcode.');
+							return;
+						}
+
+						const newAddr = { name, phone: phoneRes.clean, tag, postcode: pcRes.formatted, address, note: landmark };
 						try {
 							localStorage.setItem(STORAGE_ADDRESS, JSON.stringify(newAddr));
 						} catch (e) {}
@@ -1478,6 +1595,21 @@
 						}
 						return;
 					}
+
+					const rawPostcode = addr.postcode || (addr.address ? addr.address.match(/[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}/i)?.[0] : '');
+					const pcRes = checkUKPostcode(rawPostcode);
+					if (!pcRes.valid) {
+						e.preventDefault();
+						alert('Please enter a valid UK postcode before proceeding to payment.');
+						if (addressModal) {
+							addressModal.style.display = 'flex';
+							if (modalPostcodeInput) {
+								modalPostcodeInput.focus();
+								validatePostcodeLive({ type: 'blur' });
+							}
+						}
+						return;
+					}
 					// Will navigate naturally to {% url 'web:payment' %}
 				});
 			}
@@ -1487,7 +1619,7 @@
 			renderCheckout();
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=vouchers-packages-v4"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=contact-guest-v5"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

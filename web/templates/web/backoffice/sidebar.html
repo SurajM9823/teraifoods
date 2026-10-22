@@ -9,6 +9,11 @@
   </button>
   <div class="nav-caption sidebar-label">WORKSPACE</div>
   <nav aria-label="Main navigation">
+{% if perms.cms.view_contactsettings %}<a href="/admin/system/cms/contactsettings/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Contact settings &amp; social links</span></a>{% endif %}
+{% if perms.cms.view_faqitem %}<a href="/admin/system/cms/faqitem/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Contact FAQs</span></a>{% endif %}
+{% if perms.cms.view_contacthub %}<a href="/admin/system/cms/contacthub/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Contact map locations</span></a>{% endif %}
+{% if perms.cms.view_contactinquiry %}<a href="/admin/system/cms/contactinquiry/" class="nav-item">{% include 'web/backoffice/icon.html' with name='file' %}<span class="sidebar-label">Support enquiries</span></a>{% endif %}
+
     {% if perms.cms.view_banner and perms.cms.view_informationblock %}
     <a href="{% url 'cms:dashboard' %}" class="nav-item {% if active_page == 'cms' %}active{% endif %}" title="Website content">
       {% include 'web/backoffice/icon.html' with name='file' %}

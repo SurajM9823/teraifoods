@@ -733,6 +733,7 @@
 	</style>
   <link rel="stylesheet" href="{% static 'web/css/branding.css' %}?v=clean-search-v1">
 <link rel="stylesheet" href="{% static 'web/css/font-awesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'web/css/bulk-mobile.css' %}?v=1">
 </head>
 <body class="page-template-default page terai-bulk-order-page">
 {% include 'catalog/storefront/assets.html' with include_drawer=True %}
@@ -1102,7 +1103,7 @@
 				<td><input type="number" class="cell-input cell-qty row-qty" value="10" min="1" oninput="calcRow(this)"></td>
 				<td><input type="text" class="cell-input cell-item-code row-sku" value="" placeholder="-" readonly></td>
 				<td>
-					<input type="text" class="cell-input row-desc" value="" placeholder="Type to search e.g. Ginger, Honey, Pulses..." onkeyup="handleProductSearch(this)">
+					<input type="text" class="cell-input row-desc" value="" placeholder="Type to search e.g. Ginger, Honey, Pulses..." oninput="handleProductSearch(this)" autocomplete="off" aria-label="Search products or enter a custom product">
 					<div class="item-suggest-dropdown"></div>
 				</td>
 				<td><input type="text" class="cell-input text-center row-unit" value="" placeholder="Unit"></td>
@@ -1110,6 +1111,7 @@
 				<td><input type="text" class="cell-input cell-total row-total" value="0.00" readonly></td>
 				<td class="text-center"><button type="button" class="btn-del-row" onclick="removeRow(this)" title="Delete line"><i class="klb-icon-x"></i></button></td>
 			`;
+			['Quantity', 'SKU', 'Search product / description', 'Pack / unit', 'Guide price (GBP)', 'Line total (GBP)', 'Remove'].forEach((label, index) => { tr.children[index].dataset.label = label; const field = tr.children[index].querySelector('input'); if (field) field.setAttribute('aria-label', label); });
 			tbody.appendChild(tr);
 			tr.querySelector('.row-desc').focus();
 		}
@@ -1174,12 +1176,12 @@
 			}
 		}
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=vouchers-packages-v4"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=contact-guest-v5"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 
 
 
-<script src="{% static 'web/js/bulk-orders.js' %}?v=1" defer></script>
+<script src="{% static 'web/js/bulk-orders.js' %}?v=mobile-v2" defer></script>
 </body>
 </html>

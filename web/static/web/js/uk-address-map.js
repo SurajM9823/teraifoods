@@ -213,20 +213,34 @@
       reverseLookup(e.latlng.lat, e.latlng.lng);
     });
 
-    // Postcode typing listener with debounce
+    // Postcode typing listener with live format validation & debounce
     let debounceTimer;
     if (postcodeInput) {
       postcodeInput.addEventListener('input', function (e) {
         clearTimeout(debounceTimer);
+        const upper = e.target.value.toUpperCase();
+        if (e.target.value !== upper) {
+          const s = e.target.selectionStart, end = e.target.selectionEnd;
+          e.target.value = upper;
+          if (s !== null) e.target.setSelectionRange(s, end);
+        }
         const val = e.target.value.trim();
-        if (isUkPostcode(val)) {
-          debounceTimer = setTimeout(() => {
-            lookupPostcode(val, false);
-          }, 350);
-        } else if (val.length >= 5) {
-          debounceTimer = setTimeout(() => {
-            lookupPostcode(val, false);
-          }, 600);
+        const clean = val.replace(/\s+/g, '');
+        if (clean.length >= 5) {
+          if (isUkPostcode(val) && !clean.startsWith('JE') && !clean.startsWith('GY') && !clean.startsWith('IM')) {
+            postcodeInput.style.borderColor = '#16a34a';
+            postcodeInput.style.backgroundColor = '#f0fdf4';
+            debounceTimer = setTimeout(() => {
+              lookupPostcode(val, false);
+            }, 300);
+          } else {
+            postcodeInput.style.borderColor = '#dc2626';
+            postcodeInput.style.backgroundColor = '#fef2f2';
+            setStatus('⚠️ Please enter a valid UK mainland postcode (e.g. SW1A 1AA)', 'error');
+          }
+        } else {
+          postcodeInput.style.borderColor = '';
+          postcodeInput.style.backgroundColor = '';
         }
       });
 
@@ -394,7 +408,7 @@
         if (!mapInstance) return;
         const details = mapInstance.getDetails();
 
-        if (!details.postcode) {
+        if (!details.postcode || !isUkPostcode(details.postcode)) {
           const statusEl = document.getElementById('modal-lookup-status');
           if (statusEl) {
             statusEl.textContent = 'Please enter a valid UK postcode or select All UK.';

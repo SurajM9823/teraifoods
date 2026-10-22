@@ -1,0 +1,16 @@
+/* Keep the desktop spreadsheet; make each line readable without sideways scrolling. */
+@media (max-width: 767px) {
+  .po-table-wrap { overflow: visible; }
+  .excel-po-table, .excel-po-table tbody { display: block; width: 100%; min-width: 0 !important; }
+  .excel-po-table thead { display: none; }
+  .excel-po-table .po-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid #cbd5e1; margin-bottom: 12px; padding: 8px; gap: 8px; }
+  .excel-po-table .po-row td { display: block; width: auto !important; min-width: 0; padding: 0; border: 0; position: relative; }
+  .excel-po-table .po-row td::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 3px; }
+  .excel-po-table .po-row td:nth-child(3) { grid-column: 1 / -1; grid-row: 1; }
+  .excel-po-table .cell-input { width: 100%; min-width: 0; height: 44px; font-size: 16px; border: 1px solid #cbd5e1; }
+  .excel-po-table .row-desc { border: 2px solid #0284c7; background: #f0f9ff; }
+  .excel-po-table .item-suggest-dropdown { position: static; width: 100%; min-width: 0; max-height: 260px; overflow-y: auto; }
+  .excel-po-table .suggest-item { width: 100%; min-height: 48px; white-space: normal; text-align: left; overflow-wrap: anywhere; }
+  .excel-po-table .btn-del-row { min-width: 44px; min-height: 44px; }
+  #bulk-request-list { overflow-wrap: anywhere; }
+}

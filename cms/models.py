@@ -183,3 +183,20 @@ class ContactInquiry(models.Model):
         topics_dict = dict(self.TOPIC_CHOICES)
         return topics_dict.get(self.topic, self.topic or 'General Question')
 
+
+
+class ContactHub(models.Model):
+    name = models.CharField(max_length=120)
+    tag = models.CharField(max_length=60)
+    legend = models.CharField(max_length=100)
+    description = models.TextField()
+    latitude = models.FloatField(validators=[MinValueValidator(-90), MaxValueValidator(90)])
+    longitude = models.FloatField(validators=[MinValueValidator(-180), MaxValueValidator(180)])
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('order', 'pk')
+
+    def __str__(self):
+        return self.name

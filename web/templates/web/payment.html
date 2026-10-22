@@ -1226,6 +1226,23 @@
 				return { valid: true, clean: clean };
 			}
 
+			function checkUKPostcode(postcodeStr) {
+				if (!postcodeStr) return { valid: false, error: 'UK postcode is required for delivery.' };
+				const raw = String(postcodeStr).trim().toUpperCase();
+				const clean = raw.replace(/\s+/g, '');
+				if (clean.length < 5) return { valid: false, error: 'Postcode too short (e.g. SW1A 1AA).' };
+				if (clean.length > 7) return { valid: false, error: 'Postcode too long for a UK address.' };
+				if (clean.startsWith('JE') || clean.startsWith('GY') || clean.startsWith('IM')) {
+					return { valid: false, error: 'Delivery coverage is the UK mainland (Channel Islands & Isle of Man excluded).' };
+				}
+				const ukRegex = /^(?:GIR0AA|[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2})$/;
+				if (!ukRegex.test(clean)) {
+					return { valid: false, error: 'Enter a valid UK postcode (e.g. SW1A 1AA, W1A 0AX, SE10 8NB).' };
+				}
+				const formatted = clean.slice(0, clean.length - 3) + ' ' + clean.slice(clean.length - 3);
+				return { valid: true, clean: clean, formatted: formatted };
+			}
+
 			function getCart() {
 				try {
 					const data = localStorage.getItem(STORAGE_CART);
@@ -1356,6 +1373,13 @@
 					window.location.href = "{% url 'web:checkout' %}";
 					return;
 				}
+				const rawPostcode = addr.postcode || (addr.address ? addr.address.match(/[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}/i)?.[0] : '');
+				const pcChk = checkUKPostcode(rawPostcode);
+				if (!pcChk.valid) {
+					alert('Please enter a valid UK postcode before completing payment. Returning to address step...');
+					window.location.href = "{% url 'web:checkout' %}";
+					return;
+				}
 
 				const orderId = '#TF-' + Math.floor(100000 + Math.random() * 900000);
 
@@ -1389,7 +1413,7 @@
 			renderDeliverySummary();
 		});
 	</script>
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=vouchers-packages-v4"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=contact-guest-v5"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

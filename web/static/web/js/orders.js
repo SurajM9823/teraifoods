@@ -41,6 +41,118 @@
     return { valid: true, clean: clean };
   }
 
+  function checkUKPostcode(postcodeStr) {
+    if (!postcodeStr) return { valid: false, error: 'UK postcode is required for delivery.' };
+    const raw = String(postcodeStr).trim().toUpperCase();
+    const clean = raw.replace(/\s+/g, '');
+    if (clean.length < 5) {
+      return { valid: false, error: 'Postcode too short (e.g. SW1A 1AA).' };
+    }
+    if (clean.length > 7) {
+      return { valid: false, error: 'Postcode too long for a UK address.' };
+    }
+    if (clean.startsWith('JE') || clean.startsWith('GY') || clean.startsWith('IM')) {
+      return { valid: false, error: 'Delivery coverage is the UK mainland (Channel Islands & Isle of Man excluded).' };
+    }
+    const ukRegex = /^(?:GIR0AA|[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2})$/;
+    if (!ukRegex.test(clean)) {
+      return { valid: false, error: 'Enter a valid UK postcode (e.g. SW1A 1AA, W1A 0AX, EC1A 1BB).' };
+    }
+    const formatted = clean.slice(0, clean.length - 3) + ' ' + clean.slice(clean.length - 3);
+    return { valid: true, clean: clean, formatted: formatted };
+  }
+
+  function setupPostcodeLiveValidation(root, prefix) {
+    if (!root) return;
+    const postcodeInput = root.querySelector('[name=postcode]');
+    const postcodeFeedback = root.querySelector(`#${prefix}-postcode-feedback`);
+    let lookupTimer = null;
+
+    function validatePostcodeLive(evt) {
+      if (!postcodeInput) return false;
+      const original = postcodeInput.value;
+      const upper = original.toUpperCase();
+      if (original !== upper) {
+        const start = postcodeInput.selectionStart;
+        const end = postcodeInput.selectionEnd;
+        postcodeInput.value = upper;
+        if (start !== null) postcodeInput.setSelectionRange(start, end);
+      }
+      const val = postcodeInput.value.trim();
+      clearTimeout(lookupTimer);
+
+      if (!val) {
+        postcodeInput.style.borderColor = '#cbd5e1';
+        postcodeInput.style.backgroundColor = '#ffffff';
+        if (postcodeFeedback) {
+          postcodeFeedback.style.display = 'block';
+          postcodeFeedback.style.color = '#64748b';
+          postcodeFeedback.textContent = 'Please enter your UK postcode (e.g. SW1A 1AA).';
+        }
+        return false;
+      }
+
+      const res = checkUKPostcode(val);
+      if (res.valid) {
+        postcodeInput.style.borderColor = '#16a34a';
+        postcodeInput.style.backgroundColor = '#f0fdf4';
+        if (postcodeFeedback) {
+          postcodeFeedback.style.display = 'block';
+          postcodeFeedback.style.color = '#16a34a';
+          postcodeFeedback.textContent = '✓ Valid UK postcode (' + res.formatted + ')';
+        }
+        if (evt && evt.type === 'blur') {
+          postcodeInput.value = res.formatted;
+        }
+        lookupTimer = setTimeout(async () => {
+          try {
+            const response = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(res.clean), { signal: AbortSignal.timeout(4000) });
+            const data = await response.json();
+            if (data.status === 200 && data.result) {
+              if (postcodeFeedback && postcodeInput.value.replace(/\s+/g, '').toUpperCase() === res.clean) {
+                postcodeFeedback.textContent = `✓ Valid UK postcode (${res.formatted} – ${data.result.admin_district || 'UK Mainland'})`;
+              }
+              const cityInput = root.querySelector('[name=city]');
+              if (cityInput && !cityInput.value.trim() && data.result.admin_district) {
+                cityInput.value = data.result.admin_district;
+              }
+            }
+          } catch (err) {}
+        }, evt && evt.type === 'blur' ? 50 : 350);
+        return true;
+      } else {
+        const cleanLen = val.replace(/\s+/g, '').length;
+        if ((evt && evt.type === 'blur') || cleanLen >= 5) {
+          postcodeInput.style.borderColor = '#dc2626';
+          postcodeInput.style.backgroundColor = '#fef2f2';
+          if (postcodeFeedback) {
+            postcodeFeedback.style.display = 'block';
+            postcodeFeedback.style.color = '#dc2626';
+            postcodeFeedback.textContent = '⚠️ ' + res.error;
+          }
+        } else {
+          postcodeInput.style.borderColor = '#94a3b8';
+          postcodeInput.style.backgroundColor = '#ffffff';
+          if (postcodeFeedback) {
+            postcodeFeedback.style.display = 'block';
+            postcodeFeedback.style.color = '#64748b';
+            postcodeFeedback.textContent = 'Entering UK postcode... (e.g. SW1A 1AA)';
+          }
+        }
+        return false;
+      }
+    }
+
+    if (postcodeInput) {
+      ['input', 'keyup', 'blur', 'change'].forEach(evt => {
+        postcodeInput.addEventListener(evt, validatePostcodeLive);
+      });
+      if (postcodeInput.value.trim()) {
+        validatePostcodeLive({ type: 'init' });
+      }
+    }
+  }
+
   function contactForm(prefix, values={}) {
     return fields.map(([key,label,type,required])=>{
       let extra = '';
@@ -48,6 +160,9 @@
       if (key === 'phone') {
         placeholder = ' placeholder="e.g. 07946 091234 or +44 7946 091234"';
         extra = `<div id="${prefix}-phone-feedback" class="text-11 mt-1" style="font-size:11px; font-weight:600; display:none;"></div><small class="text-muted d-block mt-0.5" style="font-size:10px;">UK format: starts with 0 (10–11 digits) or +44 / 0044.</small>`;
+      } else if (key === 'postcode') {
+        placeholder = ' placeholder="e.g. SW1A 1AA or EC1A 1BB"';
+        extra = `<div id="${prefix}-postcode-feedback" class="text-11 mt-1" style="font-size:11px; font-weight:600; display:none;"></div><small class="text-muted d-block mt-0.5" style="font-size:10px;">UK postcode format: valid mainland UK code (e.g. SW1A 1AA).</small>`;
       }
       return `<label class="d-block mb-2">${label}${required?' *':''}<input class="cart-drawer-form-input form-control" name="${key}" id="${prefix}-${key}" type="${type}" value="${esc(values[key])}" maxlength="${key==='instructions'?500:150}" ${required?'required':''}${placeholder}>${extra}</label>`;
     }).join('');
@@ -86,6 +201,30 @@
       return false;
     }
     contact.phone = phoneRes.clean;
+
+    const postcodeRes = checkUKPostcode(contact.postcode);
+    if(!postcodeRes.valid) {
+      const edit=document.getElementById('checkout-address-edit-view');
+      if(edit) edit.style.display='block';
+      const postcodeInput = root?.querySelector('[name=postcode]');
+      if(postcodeInput) {
+        postcodeInput.focus();
+        postcodeInput.style.borderColor = '#dc2626';
+        postcodeInput.style.backgroundColor = '#fef2f2';
+        const feedback = root.querySelector('#checkout-postcode-feedback');
+        if(feedback) {
+          feedback.style.display = 'block';
+          feedback.style.color = '#dc2626';
+          feedback.textContent = '⚠️ ' + postcodeRes.error;
+        }
+      }
+      notify(postcodeRes.error || 'Enter a valid UK postcode.');
+      return false;
+    }
+    contact.postcode = postcodeRes.formatted;
+    const postcodeInput = root?.querySelector('[name=postcode]');
+    if (postcodeInput) postcodeInput.value = postcodeRes.formatted;
+
     store('order-contact',contact);
     syncContact();
     return true;
@@ -124,7 +263,7 @@
       location.assign(result.payment_url);
     }catch(error){notify(error.message);}finally{pending=false;}
   }
-  window.TeraiOrders={checkout,addressValid,api,voucherPayload};
+  window.TeraiOrders={checkout,addressValid,api,voucherPayload,checkUKPostcode,checkUKPhone};
 
   function configureCheckout() {
     const edit=document.getElementById('checkout-address-edit-view');
@@ -175,17 +314,7 @@
         });
       }
 
-      edit.querySelector('[name=postcode]').addEventListener('blur',async e=>{
-        const postcode=e.target.value.trim();if(!postcode)return;
-        try {
-          const response=await fetch('https://api.postcodes.io/postcodes/'+encodeURIComponent(postcode),{signal:AbortSignal.timeout(5000)});
-          const data=await response.json();
-          if(data.result && e.target.value.trim()===postcode) {
-            e.target.value=data.result.postcode;
-            const city=edit.querySelector('[name=city]');if(!city.value)city.value=data.result.admin_district||'';
-          }
-        }catch{/* Manual entry remains available when postcode lookup is offline. */}
-      });
+      setupPostcodeLiveValidation(edit, 'checkout');
     }
     // Collection is hosted by Stripe; this site never reads a PAN or CVC.
     const cardBox=document.getElementById('drawer-card-box');
@@ -376,9 +505,18 @@
       body.innerHTML=`<div id="saved-addresses">${data.addresses.map(a=>`<p>${esc(a.name)} · ${esc(a.line1)} · ${esc(a.postcode)} ${a.is_default?'(Default)':''} <button class="btn-track-action" data-edit="${a.id}">Edit</button><button class="btn-track-action" data-delete="${a.id}">Delete</button></p>`).join('')||'<p>No saved addresses.</p>'}</div>
       <form id="saved-address-form">${contactForm('saved')}<label><input type="checkbox" name="is_default">Default address</label><button class="btn btn-primary" type="submit">Save address</button><button type="reset" class="btn">New address</button></form>`;
       const form=body.querySelector('form');form.querySelector('[name=email]').closest('label').remove();
+      setupPostcodeLiveValidation(form, 'saved');
       let id=null;
       form.onreset=()=>{id=null;};
-      form.onsubmit=async e=>{e.preventDefault();try{await api('/api/orders/addresses/'+(id?id+'/':''),{...readContact(form),is_default:form.elements.is_default.checked},id?'PATCH':'POST');data=await api('/api/orders/addresses/');render();}catch(error){notify(error.message);}};
+      form.onsubmit=async e=>{
+        e.preventDefault();
+        const contactData = readContact(form);
+        const pcRes = checkUKPostcode(contactData.postcode);
+        if(!pcRes.valid){notify(pcRes.error);return;}
+        const phRes = checkUKPhone(contactData.phone);
+        if(!phRes.valid){notify(phRes.error);return;}
+        try{await api('/api/orders/addresses/'+(id?id+'/':''),{...contactData,phone:phRes.clean,postcode:pcRes.formatted,is_default:form.elements.is_default.checked},id?'PATCH':'POST');data=await api('/api/orders/addresses/');render();}catch(error){notify(error.message);}
+      };
       body.onclick=async e=>{
         const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
         if(edit){const a=data.addresses.find(a=>String(a.id)===edit.dataset.edit);id=a.id;for(const [key]of fields)if(form.elements[key])form.elements[key].value=a[key]||'';form.elements.is_default.checked=a.is_default;}

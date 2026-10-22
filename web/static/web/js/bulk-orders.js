@@ -13,19 +13,25 @@
   let pages=1,busy=false;
   window.saveDeliveryDetails=()=>{say('Delivery details will be saved when you submit this request.');document.getElementById('bulk-tracking').scrollIntoView({block:'center'});};
   window.handleProductSearch=async input=>{
-    const query=input.value.trim(),drop=input.closest('tr').querySelector('.item-suggest-dropdown');
+    const row=input.closest('tr'), query=input.value.trim(),drop=row.querySelector('.item-suggest-dropdown');
+    clearTimeout(input.searchTimer);
+    row.querySelector('.row-sku').value='';
+    drop.classList.remove('active');
+    const version=input.searchVersion=(input.searchVersion||0)+1;
     if(!query){drop.classList.remove('active');return;}
+    input.searchTimer=setTimeout(async()=>{
     try {
       const result=await api('/api/products/?q='+encodeURIComponent(query));
-      if(input.value.trim()!==query)return;
+      if(input.searchVersion!==version || !input.isConnected)return;
       drop.replaceChildren();
       for(const product of result.products.slice(0,8)){
         const button=document.createElement('button');button.type='button';button.className='suggest-item';button.textContent=product.name+' — '+(product.sku||'')+' (retail guide £'+product.price+')';
-        button.onclick=()=>{const row=input.closest('tr');row.querySelector('.row-sku').value=product.sku||'';input.value=product.name;row.querySelector('.row-price').value=product.price;drop.classList.remove('active');window.calcRow(input);};drop.append(button);
+        button.onclick=()=>{const row=input.closest('tr');row.querySelector('.row-sku').value=product.sku||'';input.value=product.name;row.querySelector('.row-price').value=product.price;row.querySelector('.row-unit').value=product.weight+' '+product.weight_unit;drop.classList.remove('active');window.calcRow(input);};drop.append(button);
       }
       if(!drop.childNodes.length)drop.textContent='Custom material: describe the product and pack required.';
       drop.classList.add('active');
-    }catch{drop.textContent='Search unavailable; you can enter a product description manually.';drop.classList.add('active');}
+    }catch{if(input.searchVersion!==version)return;drop.textContent='Search unavailable; you can enter a product description manually.';drop.classList.add('active');}
+    },200);
   };
   function card(row){
     return `<article class="po-sheet my-3 p-3"><h3 class="text-15">${esc(row.number)} · ${esc(row.status.replaceAll('_',' '))}</h3><p>${esc(row.company)} · ${esc(row.contact_name)}<br>${esc(row.email)} ? ${esc(row.phone)}<br>${esc(row.address)}, ${esc(row.city_postcode)}<br>Requested delivery: ${esc(row.requested_date||'Not specified')}</p><ul>${row.items.map(i=>`<li>${esc(i.quantity)} × ${esc(i.description)} — ${esc(i.unit)} (${esc(i.sku)})</li>`).join('')}</ul><p>${esc(row.notes)}</p><p>${row.quoted_total!==null?'Quoted total: £'+esc(row.quoted_total):'Awaiting store quote'}</p><p>Delivery: ${esc(row.delivery_terms||'Awaiting confirmation')}<br>Payment: ${esc(row.payment_terms||'Awaiting confirmation')}</p><h4 class="text-15">Updates and replies</h4>${row.replies.map(r=>`<div class="border-top py-2"><strong>${esc(r.status.replaceAll('_',' '))} · ${new Date(r.created_at).toLocaleString('en-GB')}</strong><p style="white-space:pre-wrap">${esc(r.message)}</p>${r.quote.total!=null?`<p>Quote £${esc(r.quote.total)}<br>${esc(r.quote.delivery)}<br>${esc(r.quote.payment)}</p>`:''}</div>`).join('')}</article>`;

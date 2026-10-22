@@ -613,6 +613,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   cursor: pointer !important;
   transition: all 0.18s ease !important;
   box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25) !important;
+  margin-bottom: 14px !important;
 }
 .auth-guest-btn:hover {
   background: #15803d !important;
