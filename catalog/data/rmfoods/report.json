@@ -1,0 +1,16 @@
+{
+  "discovered": 2612,
+  "attempted": 2612,
+  "exported": 2612,
+  "images": 3274,
+  "categories": 254,
+  "review_reasons": {
+    "shipping_weight_unverified": 2612,
+    "local_stock_unconfirmed": 2612,
+    "missing_images": 10,
+    "options_require_review": 30
+  },
+  "products_with_more_than_five_images": 24,
+  "complete": true,
+  "failures": []
+}

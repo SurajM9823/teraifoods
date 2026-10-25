@@ -14,5 +14,11 @@ media/
 scratch/
 .pytest_cache/
 
+# Rebuildable catalogue download caches and binary assets (ship alongside seed.json).
+catalog/data/rmfoods/raw/
+catalog/data/rmfoods/records/
+catalog/data/rmfoods/images/
+catalog/data/rmfoods/*.zip
+
 backups/
 scratch/
