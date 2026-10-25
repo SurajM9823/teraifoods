@@ -4316,18 +4316,21 @@ body:not(.home) .header-nav .categories-menu .site-categories,
 
 /* On desktop home page at the top, preserve the original expanded banner categories with smooth scrolling */
 @media (min-width: 1200px) {
-  body.home header:not(.sticky-header) .categories-menu .site-categories {
+  body.home header:not(.sticky-header) .categories-menu .site-categories,
+  body.home .categories-menu .site-categories,
+  html body.home .header-nav .categories-menu .site-categories {
     position: absolute !important;
     top: 48px !important;
     left: 0 !important;
     width: 280px !important;
-    height: auto !important;
-    max-height: min(524px, calc(100vh - 130px)) !important;
+    max-height: min(490px, calc(100vh - 150px)) !important;
     display: flex !important;
     z-index: 1000 !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent;
   }
@@ -4374,6 +4377,7 @@ body:not(.home) .header-nav .categories-menu .site-categories,
   border-radius: 4px !important;
 }
 .site-categories::-webkit-scrollbar-thumb:hover,
+.site-categories:hover::-webkit-scrollbar-thumb,
 .shop-category-anchor-col::-webkit-scrollbar-thumb:hover {
   background: #94a3b8 !important;
 }

@@ -397,24 +397,24 @@
 		var isHomePage = $('body').hasClass('home') && $banner.length > 0;
 		var manuallyOpened = false;
 		var manuallyClosed = false;
-		var fullCatHeight = 524;
+		var defaultSidebarHeight = 490;
 
-		function getFullHeight() {
+		function getSidebarHeight() {
+			var vh = window.innerHeight || $(window).height();
+			var maxAllowed = Math.max(340, vh - 150);
+			var measured = defaultSidebarHeight;
 			if ($banner.length && $toggle.length) {
 				if ($(window).scrollTop() === 0) {
 					var bRect = $banner[0].getBoundingClientRect();
 					var tRect = $toggle[0].getBoundingClientRect();
-					var measured = Math.round(bRect.bottom - tRect.bottom);
-					if (measured > 300) {
-						fullCatHeight = measured;
+					var bHeight = Math.round(bRect.bottom - tRect.bottom);
+					if (bHeight > 300) {
+						defaultSidebarHeight = Math.min(500, bHeight);
+						measured = defaultSidebarHeight;
 					}
 				}
-				var menuEl = $cat.find('> ul')[0];
-				if (menuEl && menuEl.scrollHeight > 300) {
-					fullCatHeight = Math.max(fullCatHeight, menuEl.scrollHeight);
-				}
 			}
-			return fullCatHeight;
+			return Math.min(measured, maxAllowed);
 		}
 
 		var ticking = false;
@@ -453,7 +453,7 @@
 			var bRect = $banner[0].getBoundingClientRect();
 			var tRect = $toggle[0].getBoundingClientRect();
 			var remaining = Math.round(bRect.bottom - tRect.bottom);
-			var fullH = getFullHeight();
+			var baseH = getSidebarHeight();
 
 			// When returning back to top, clear manual closed state
 			if (scrollTop <= 10) {
@@ -471,7 +471,7 @@
 
 			var windowHeight = window.innerHeight || $(window).height();
 			// Calculate where the bottom of the full categories menu sits in the viewport
-			var catBottomViewport = Math.round(tRect.bottom + fullH);
+			var catBottomViewport = Math.round(tRect.bottom + baseH);
 			var overflowBelowViewport = Math.max(0, catBottomViewport - windowHeight);
 
 			// Total scroll distance at which banner ends and categories should be fully collapsed
@@ -492,18 +492,20 @@
 				$cat[0].style.setProperty('overflow', 'hidden', 'important');
 				$cat.removeClass('show').addClass('collapsed');
 			} else if (scrollTop <= waitScroll) {
-				// Wait phase: full categories are completely shown, no contraction yet
+				// Wait phase: full categories sidebar is completely shown and scrollable
 				$cat[0].style.setProperty('display', 'flex', 'important');
-				$cat[0].style.setProperty('height', fullH + 'px', 'important');
-				$cat[0].style.setProperty('max-height', fullH + 'px', 'important');
-				$cat[0].style.setProperty('overflow', 'visible', 'important');
+				$cat[0].style.setProperty('height', baseH + 'px', 'important');
+				$cat[0].style.setProperty('max-height', baseH + 'px', 'important');
+				$cat[0].style.setProperty('overflow-y', 'auto', 'important');
+				$cat[0].style.setProperty('overflow-x', 'hidden', 'important');
+				$cat[0].style.setProperty('overscroll-behavior-y', 'contain', 'important');
 				$cat.addClass('show').removeClass('collapsed');
 			} else {
 				// Slide-up phase: smoothly contract categories as user continues scrolling past the wait zone
 				var slideRange = slideEndScroll - waitScroll;
 				var slideProgress = slideRange > 0 ? (scrollTop - waitScroll) / slideRange : 1;
 				slideProgress = Math.max(0, Math.min(1, slideProgress));
-				var currentH = Math.round(fullH * (1 - slideProgress));
+				var currentH = Math.round(baseH * (1 - slideProgress));
 
 				if (currentH <= 0) {
 					$cat[0].style.setProperty('display', 'none', 'important');
@@ -544,7 +546,7 @@
 			var bRect = $banner[0].getBoundingClientRect();
 			var tRect = $toggle[0].getBoundingClientRect();
 			var remaining = Math.round(bRect.bottom - tRect.bottom);
-			var fullH = getFullHeight();
+			var baseH = getSidebarHeight();
 
 			// If scrolled past banner or currently collapsed: toggle as standard dropdown
 			if (remaining <= 0 || $cat.hasClass('collapsed') || $cat.is(':hidden')) {
@@ -552,15 +554,18 @@
 				if (manuallyOpened) {
 					manuallyClosed = false;
 					$cat[0].style.setProperty('display', 'flex', 'important');
-					$cat[0].style.setProperty('height', fullH + 'px', 'important');
-					$cat[0].style.setProperty('max-height', fullH + 'px', 'important');
-					$cat[0].style.setProperty('overflow', 'visible', 'important');
+					$cat[0].style.setProperty('height', baseH + 'px', 'important');
+					$cat[0].style.setProperty('max-height', baseH + 'px', 'important');
+					$cat[0].style.setProperty('overflow-y', 'auto', 'important');
+					$cat[0].style.setProperty('overflow-x', 'hidden', 'important');
+					$cat[0].style.setProperty('overscroll-behavior-y', 'contain', 'important');
 					$cat[0].style.setProperty('box-shadow', '0 15px 35px rgba(0,0,0,0.15)', 'important');
 					$cat.addClass('show').removeClass('collapsed');
 				} else {
 					$cat[0].style.setProperty('display', 'none', 'important');
 					$cat[0].style.setProperty('height', '0px', 'important');
 					$cat[0].style.setProperty('max-height', '0px', 'important');
+					$cat[0].style.setProperty('overflow', 'hidden', 'important');
 					$cat.removeClass('show').addClass('collapsed');
 				}
 			} else {
@@ -570,13 +575,16 @@
 					$cat[0].style.setProperty('display', 'none', 'important');
 					$cat[0].style.setProperty('height', '0px', 'important');
 					$cat[0].style.setProperty('max-height', '0px', 'important');
+					$cat[0].style.setProperty('overflow', 'hidden', 'important');
 					$cat.removeClass('show').addClass('collapsed');
 				} else {
 					manuallyClosed = false;
 					$cat[0].style.setProperty('display', 'flex', 'important');
-					$cat[0].style.setProperty('height', fullH + 'px', 'important');
-					$cat[0].style.setProperty('max-height', fullH + 'px', 'important');
-					$cat[0].style.setProperty('overflow', 'visible', 'important');
+					$cat[0].style.setProperty('height', baseH + 'px', 'important');
+					$cat[0].style.setProperty('max-height', baseH + 'px', 'important');
+					$cat[0].style.setProperty('overflow-y', 'auto', 'important');
+					$cat[0].style.setProperty('overflow-x', 'hidden', 'important');
+					$cat[0].style.setProperty('overscroll-behavior-y', 'contain', 'important');
 					$cat.addClass('show').removeClass('collapsed');
 				}
 			}

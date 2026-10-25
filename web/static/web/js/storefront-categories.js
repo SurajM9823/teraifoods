@@ -224,7 +224,7 @@
           }
         });
       }
-    }, { passive: true });
+    }, { capture: true, passive: true });
   }
 
   function initUnifiedStorefrontCategories() {
