@@ -148,10 +148,6 @@ def paginate(params):
                 combined_q |= qp
             queryset = queryset.filter(combined_q)
     section = params.get('section', '')
-    if section == 'for_you':
-        # Bundles derive availability from their components, not their own stock.
-        package_ids = [p.pk for p in public_products().filter(is_package=True) if p.available]
-        queryset = queryset.filter(Q(is_package=False, stock_confirmed=True, stock__gt=0) | Q(pk__in=package_ids))
     if section in ('new_arrival', 'featured', 'best_seller'):
         queryset = queryset.filter(**{section:True})
     elif section not in ('', 'for_you'):

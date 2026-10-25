@@ -181,7 +181,7 @@ class RMFoodsTaxonomyTests(SimpleTestCase):
 
     def test_complete_seed_has_no_unresolved_products(self):
         from catalog.rmfoods_taxonomy import GROUPS
-        data = json.loads((Path(__file__).parent / 'data/rmfoods/seed.json').read_text())
+        data = json.loads((Path(__file__).parent / 'data/rmfoods/seed.json').read_text(encoding='utf-8'))
         allowed = {name: {child for child, aliases in children} for name, aliases, children in GROUPS}
         for row in data['products']:
             assignment = assign(row)

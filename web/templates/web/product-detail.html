@@ -2239,7 +2239,7 @@
 										<div class="pdp-main-price">&pound;{{ product.price }}</div>
 										<div class="pdp-strike-price">
 											<del>&pound;{{ product.base_price }}</del> 
-											<span class="pdp-discount-pill pdp-discount-pill-green">SAVE {{ product.discount_percent }}% (&pound;{{ product.bundle_savings }} OFF)</span>
+											{% if product.discount_percent > 0 %}<span class="pdp-discount-pill pdp-discount-pill-green">SAVE {{ product.discount_percent }}% (&pound;{{ product.bundle_savings }} OFF)</span>{% endif %}
 										</div>
 										<div class="pdp-package-price-note">
 											<i class="klb-icon-check-circle"></i> Price includes all {{ product.bundle_items_count }} grocery items listed below
@@ -2251,7 +2251,7 @@
 										<div class="pdp-highlight-chip"><i class="klb-icon-box"></i> {{ product.bundle_products_count }} Distinct Products</div>
 										<div class="pdp-highlight-chip"><i class="klb-icon-shopping-bag"></i> {{ product.bundle_items_count }} Total Items</div>
 										<div class="pdp-highlight-chip"><i class="klb-icon-truck"></i> 1 Delivery Fee</div>
-										<div class="pdp-highlight-chip"><i class="klb-icon-percent"></i> {{ product.discount_percent }}% Bundle Savings</div>
+										{% if product.discount_percent > 0 %}<div class="pdp-highlight-chip"><i class="klb-icon-percent"></i> {{ product.discount_percent }}% Bundle Savings</div>{% endif %}
 									</div>
 									{% else %}
 									<div class="pdp-brand-row"><a href="/shop/?category={{ product.category.slug }}">{{ product.category.name }}</a></div>
@@ -2259,7 +2259,7 @@
 									<!-- Price Box -->
 									<div class="pdp-price-box">
 										<div class="pdp-main-price">&pound;{{ product.price }}</div>
-										<div class="pdp-strike-price">{% if product.sale_price %}<del>&pound;{{ product.regular_price }}</del> <span class="pdp-discount-pill">-{{ product.discount_percent }}%</span>{% endif %}</div>
+										<div class="pdp-strike-price">{% if product.sale_price and product.discount_percent > 0 %}<del>&pound;{{ product.regular_price }}</del> <span class="pdp-discount-pill">-{{ product.discount_percent }}%</span>{% endif %}</div>
 									</div>
 
 									<!-- Promotions -->
@@ -2488,12 +2488,12 @@
 							<div class="package-bottom-bar">
 								<div class="package-bottom-info">
 									<div class="bottom-title">All-in-One Package Deal</div>
-									<div class="bottom-desc">Save {{ product.discount_percent }}% compared to purchasing these items individually.</div>
+									<div class="bottom-desc">{% if product.discount_percent > 0 %}Save {{ product.discount_percent }}% compared to purchasing these items individually.{% else %}Curated package deal combining essential grocery products.{% endif %}</div>
 								</div>
 								<div class="package-bottom-pricing">
 									<div class="bottom-reg-price">Individual Total: <del>&pound;{{ product.base_price }}</del></div>
 									<div class="bottom-deal-price">&pound;{{ product.price }}</div>
-									<div class="bottom-save-tag">SAVE &pound;{{ product.bundle_savings }} ({{ product.discount_percent }}% OFF)</div>
+									{% if product.discount_percent > 0 %}<div class="bottom-save-tag">SAVE &pound;{{ product.bundle_savings }} ({{ product.discount_percent }}% OFF)</div>{% endif %}
 								</div>
 								<div class="package-bottom-action">
 									<button class="pdp-btn-addcart bottom-add-btn" onclick="document.getElementById('pdp-btn-cart').click();">
