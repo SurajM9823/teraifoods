@@ -85,6 +85,12 @@ def paginate(params):
         queryset = queryset.filter(category__slug=category)
     if subcategory:
         queryset = queryset.filter(subcategory__slug=subcategory)
+    collection = params.get('collection', '')
+    if collection:
+        flag = {'best-offers': 'best_offers', 'most-popular': 'most_popular'}.get(collection)
+        if flag is None:
+            raise ValidationError('Invalid product collection.')
+        queryset = queryset.filter(**{'metadata__rmfoods_collections__' + flag: True})
     query = params.get('q', params.get('s', '')).strip()[:200]
     has_search = False
     all_tokens_q = Q()
@@ -187,7 +193,7 @@ def paginate(params):
     else:
         default_field = 'display_order'
     field = {'price-asc':'selling_price', 'price-desc':'-selling_price', 'name':'name', 'newest':'-id', 'rating':'-sort_rating', 'relevance':'-relevance' if has_search else 'display_order'}.get(sort, default_field)
-    fingerprint = hashlib.sha256(json.dumps({k:params.get(k, '') for k in ('category','subcategory','q','s','section','min_price','max_price','sort','limit','ids')}, sort_keys=True).encode()).hexdigest()
+    fingerprint = hashlib.sha256(json.dumps({k:params.get(k, '') for k in ('category','subcategory','collection','q','s','section','min_price','max_price','sort','limit','ids')}, sort_keys=True).encode()).hexdigest()
     count = queryset.count()
     if params.get('cursor'):
         try:

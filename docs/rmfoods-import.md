@@ -47,8 +47,11 @@ file; its importer handles category matching and your image processing pipeline.
 `--seed PATH` selects another seed. `--limit 10` permits a small trial. Dry-run
 checks model field values and all image file checksums without database writes.
 Import is transactional per product; completed products are skipped on rerun.
-Existing products are identified by `legacy_key = rmfoods:<source UUID>` and are
-never overwritten. Matching category names are reused case-insensitively.
+Existing products are matched by `legacy_key = rmfoods:<source UUID>`, normalized
+exact name, or nonempty SKU and are never overwritten. Name comparison ignores
+case and repeated whitespace, but preserves pack sizes and punctuation; there is
+no fuzzy matching. Repeated source entries are skipped too. Matching category
+names are reused case-insensitively.
 
 Products are created as **drafts**, with stock zero and stock unconfirmed. Review
 and set your own stock, prices and shipping weights before publishing.
@@ -64,10 +67,20 @@ and set your own stock, prices and shipping weights before publishing.
   collection memberships, options, variants, availability, source URL and fetch
   time remain in `metadata`. These metadata fields are not automatically displayed
   on the storefront.
-- The source has overlapping collections, not a clean two-level taxonomy.
-  Collection names are preserved as categories. The smallest non-promotional
-  source collection is selected as the product category, with review flagged.
-  Subcategory remains unset. No hierarchy is invented or existing taxonomy removed.
+- Source collections include merchandise types, brands and promotions. The importer
+  now uses the explicit mapping in `catalog/rmfoods_taxonomy.py`, checked against
+  the source navigation on 25 October 2026. It assigns both category and subcategory:
+  e.g. Energy Drinks / Monster Energy, Coffee / Coffee Sachets / Blends, and
+  Snacks & Chocolates / Chocolate Bars. Energy Drinks remains its own main group
+  because the local model supports two levels and the source gives it a dedicated menu.
+  Other merchandise is grouped into Sauces, Cereals, Biscuits, Toiletries, Pet Foods,
+  Spices, Lentils, Tea, Cleaning Products, Containers and Food Cupboard.
+- Existing category/subcategory records are reused, preserving inactive status.
+  Brands and promotional collections are not created as main categories. Best Offers
+  and Most Popular retain their source membership as metadata and storefront filters.
+  Name-based recovery for missing or demonstrably incorrect source types is flagged
+  `category_inferred_from_name`; it should be reviewed before publication. Original
+  source memberships remain intact in metadata.
 - Shipping weight is unverified: the model's required 150 g default is only a
   placeholder, explicitly marked in `metadata.review_required`. Pack volume is
   not treated as shipping mass. Replace this before publishing.
@@ -89,4 +102,62 @@ exports successfully. Export prices reflect each page's fetch time.
 
 Tests cover source-product matching, rich text tables, discounted prices,
 dry-run, draft defaults, repeat imports, preservation of staff edits, and image
-checksum failure before database writes.
+checksum failure before database writes. They also cover two-level mappings,
+brand/type conflicts, missing source memberships, preservation of inactive categories,
+repair idempotency, promotional filtering and cursor isolation.
+
+## Repair an earlier flat import
+
+Run these commands in the intended database environment. The default command only
+plans changes; back up that database before applying. The usual native wrapper uses
+the live database unless its settings are explicitly overridden.
+
+```bash
+python manage.py repair_rmfoods_categories --report category-plan.json
+python manage.py repair_rmfoods_categories --apply --report category-result.json
+```
+
+The repair only changes imported products' category, subcategory and mapping metadata.
+It keeps prices, publication, inventory, images and owner edits to other fields. It
+deactivates unused imported flat categories, retaining their records; manual categories
+and categories still in use are preserved. It does not import missing products or
+redownload images. The report identifies inferred assignments for review. Restart any
+preview process using an in-memory cache after repair; normal deployments invalidate
+the configured category/revision caches.
+
+## Promote the reviewed preview
+
+The reviewed exporter includes only RM Foods catalogue fields, categories,
+subcategories and prepared-image references. It excludes users, orders, sessions
+and settings. Export using the server environment, then plan the import against
+the live database. Back up the live database and media before applying.
+
+```bash
+.venv/bin/python deploy/native/manage.py export_rmfoods_reviewed \
+  --source-database teraifoods_rmfoods_trial_20261025t171331z \
+  --output scratch/reviewed.json
+.venv/bin/python deploy/native/manage.py import_rmfoods_reviewed \
+  --catalog scratch/reviewed.json --media-root scratch/preview/media \
+  --report scratch/promotion-plan.json
+# After reviewing the plan and taking backups, run as the application user:
+sudo -u teraifoods .venv/bin/python deploy/native/manage.py import_rmfoods_reviewed \
+  --catalog scratch/reviewed.json --media-root scratch/preview/media \
+  --apply --report scratch/promotion-result.json
+```
+
+Give the application user read access to the export/source media and write access
+to the report location. The command validates paths and existing image contents,
+copies prepared variants without re-encoding, and never overwrites existing media.
+It imports new products in one database transaction and rechecks duplicate matches
+after preparing images. Existing products retain their prices, inventory, images,
+publication and metadata. Existing category/subcategory active status is preserved.
+New products retain their reviewed publication status and unconfirmed stock. A
+repeat run creates no additional products. Backups and reports stay outside Git.
+
+For a local checkout, pull the pushed code first. If the reviewed catalogue and
+prepared images are needed locally, copy `scratch/live-promotion/reviewed.json`
+and the retained server `scratch/preview/media/` contents into local
+`scratch/reviewed.json` and `scratch/reviewed-media/`, then use
+`manage.py import_rmfoods_reviewed` with those
+paths and the local database environment. The Git push synchronizes code; it does
+not replace a local database or transfer uploaded media.

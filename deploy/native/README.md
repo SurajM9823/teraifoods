@@ -81,3 +81,26 @@ The existing speedassignment.com HTTPS service still returns HTTP 200.
 Renewal check: `sudo certbot renew --dry-run --no-random-sleep-on-renew`.
 If enabling Cloudflare proxy later, use SSL/TLS Full (strict) to preserve origin
 HTTPS and avoid redirect loops from Flexible mode.
+
+## Reviewed catalogue promotion (2026-10-25 UTC)
+
+The reviewed RM Foods catalogue was imported into the existing `teraifoods`
+database, preserving all 133 original products, their category/subcategory records,
+prices, inventory and images. Of 2,612 reviewed source entries, 2,504 were added;
+98 matched existing live products and 10 repeated source entries were skipped.
+The catalogue now has 2,637 products, of which 2,584 are visible, across 18 active
+main categories. New products retain reviewed publication and unconfirmed stock.
+208 source mappings were inferred during preview repair and are flagged in metadata
+for review; existing live products were not overwritten by those mappings.
+
+Prepared images were copied without re-encoding or overwriting existing files.
+A repeat promotion plan creates zero products. Seventeen importer, duplicate,
+promotion and storefront regression tests pass on SQLite and PostgreSQL. HTTPS
+health, category filtering, a new product and its image were checked. Web and worker
+services were restarted. Temporary private preview routing was removed and its
+service disabled; the test database and files remain available for reference.
+
+The fresh pre-import database/media backup, checksums, catalogue export, duplicate
+report and verification are in:
+`/opt/teraifoods/backups/rmfoods-live-20261025T181852Z/`.
+See `docs/rmfoods-import.md` for reviewed export/promotion and local-copy instructions.

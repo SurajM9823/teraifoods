@@ -51,3 +51,15 @@ def category_tree():
     except CACHE_ERRORS:
         logger.warning('Category cache unavailable; reading database')
         return _load()
+
+
+def collection_links():
+    """Promotional collections are navigation filters, never product categories."""
+    from .models import Product
+    from django.db.models import Q
+    products = Product.objects.filter(is_active=True, is_published=True, is_archived=False,
+                                      category__is_active=True).filter(
+        Q(subcategory__isnull=True) | Q(subcategory__is_active=True))
+    return [dict(name=name, key=key) for name, key, flag in (
+        ('Best Offers', 'best-offers', 'best_offers'), ('Most Popular', 'most-popular', 'most_popular'))
+        if products.filter(**{'metadata__rmfoods_collections__' + flag: True}).exists()]

@@ -1,5 +1,4 @@
 """Import the portable RM Foods seed, preserving existing products."""
-from collections import Counter
 from decimal import Decimal
 import hashlib
 import json
@@ -10,7 +9,9 @@ from django.db import transaction
 from django.utils.text import slugify
 
 from catalog.media import add_image
-from catalog.models import Category, Product
+from catalog.models import Product
+from catalog.rmfoods_taxonomy import assign, mapped_metadata, resolve
+from catalog.rmfoods_duplicates import DuplicateIndex
 
 
 class Command(BaseCommand):
@@ -29,7 +30,6 @@ class Command(BaseCommand):
         rows = data['products']
         if options['limit']:
             rows = rows[:options['limit']]
-        counts = Counter(c['id'] for row in data['products'] for c in row['categories'])
         skipped = created = 0
         keys = set()
         # Preflight everything before writing: no partial import from corrupt assets.
@@ -50,36 +50,23 @@ class Command(BaseCommand):
         if options['dry_run']:
             self.stdout.write(self.style.SUCCESS(f'Validated {len(rows)} products and their image checksums. No database changes.'))
             return
+        duplicates = DuplicateIndex(Product.objects.order_by('pk').values('id', 'name', 'sku', 'legacy_key'))
         for row in rows:
-            if Product.objects.filter(legacy_key=row['key']).exists():
+            if duplicates.find(row)[1] is not None:
                 skipped += 1
                 continue
             with transaction.atomic():
-                candidates = [c for c in row['categories'] if c['name'].casefold() not in
-                              {'all products', 'brands', 'best offers', 'most popular', 'new arrivals'}]
-                # The source uses overlapping collections; retain every membership in metadata.
-                # Pick the most specific collection by catalogue size for the single FK.
-                selected = min(candidates, key=lambda c: (counts[c['id']], c['name'])) if candidates else None
-                category = None
-                for source in row['categories']:
-                    source_key = 'rm:' + source['id']
-                    existing = (Category.objects.filter(legacy_key=source_key).first() or
-                                Category.objects.filter(name__iexact=source['name']).first())
-                    if existing is None:
-                        existing = Category(name=source['name'],
-                                            slug=slugify(source['name'])[:75] + '-rm-' + source['id'][:8],
-                                            legacy_key=source_key)
-                        existing.full_clean()
-                        existing.save()
-                    if selected and source['id'] == selected['id']:
-                        category = existing
+                assignment = assign(row)
+                category, subcategory = resolve(assignment)
                 product = self.product(row)
                 product.category = category
+                product.subcategory = subcategory
                 product.full_clean()
                 product.save()
                 for image in row['images'][:5]:
                     with (path.parent / image['path']).open('rb') as upload:
                         add_image(product.pk, upload, alt=image['alt'][:300])
+                duplicates.add(dict(id=product.pk, name=product.name, sku=product.sku, legacy_key=product.legacy_key))
                 created += 1
             if created % 25 == 0:
                 self.stdout.write(f'Created {created} drafts; skipped {skipped}')
@@ -87,9 +74,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def product(row):
-        metadata = {**row['metadata'], 'source_images': row['images'],
-                    'category_assignment': 'smallest source collection; review before publication'}
-        metadata['review_required'] = list(dict.fromkeys(metadata.get('review_required', []) + ['category_assignment_review']))
+        metadata = mapped_metadata(row, assign(row))
+        metadata['source_images'] = row['images']
         return Product(
             legacy_key=row['key'], name=row['name'],
             slug=slugify(row['slug'])[:270] + '-rm-' + row['key'].split(':')[-1],

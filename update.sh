@@ -44,8 +44,9 @@ systemctl reload nginx
 systemctl --no-pager --full status teraifoods-web teraifoods-worker
 
 echo 'Checking application health...'
-curl --fail --silent --show-error --max-time 10 \
+curl --fail --silent --show-error --location --max-time 30 \
     --retry 10 --retry-delay 2 --retry-connrefused \
-    http://178.105.139.193/health/
+    https://teraifoods.co.uk/health/ |
+    "$python" -c 'import json, sys; data = json.load(sys.stdin); sys.exit(0 if data.get("status") == "ok" else "Application health check failed: unexpected status")'
 echo
 echo 'Update completed successfully.'
