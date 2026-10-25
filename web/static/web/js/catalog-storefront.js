@@ -5,10 +5,12 @@
   const read = id => { try { return JSON.parse(document.getElementById(id)?.textContent || 'null'); } catch { return null; } };
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   ready(() => {
-    const grid = document.getElementById('shop-products-container');
-    const initial = read('catalog-page');
+    const homeGrid = document.querySelector('.for-you-grid-container .products');
+    const grid = document.getElementById('shop-products-container') || homeGrid;
+    const initial = read(homeGrid ? 'catalog-for-you-page' : 'catalog-page');
     let info = initial, busy = false, generation = 0, controller, retry = false;
     let filters = new URLSearchParams(location.search);
+    if (homeGrid) filters = new URLSearchParams({section:'for_you', limit:'24'});
     if (filters.has('s') && !filters.has('q')) filters.set('q', filters.get('s'));
     let detail = read('catalog-detail');
     let currentRevision = Number(read('catalog-revision') || 1);
@@ -102,10 +104,12 @@
       more.type = 'button'; more.className = 'btn btn-white';
       more.textContent = 'Load more'; more.setAttribute('aria-label', 'Load more products');
       const status = document.createElement('span'); status.setAttribute('role','status');
+      status.className = 'catalog-loading-status';
       grid.after(more, status);
       const update = () => {
         more.hidden = !info?.has_more && !retry;
         more.disabled = busy;
+        grid.setAttribute('aria-busy', String(busy));
         more.textContent = retry ? 'Retry loading products' : busy ? 'Loading…' : 'Load more';
         status.textContent = !grid.children.length && !busy ? (retry ? 'Products could not be loaded.' : 'No products found.') : '';
       };
@@ -156,14 +160,20 @@
         } catch (error) {
           if (error.name !== 'AbortError' && run === generation) retry = true;
         } finally {
-          if (run === generation) { busy = false; update(); }
+          if (run === generation) {
+            busy = false; update();
+            // A tall viewport may still be near the end after appending a batch.
+            if (!retry && info?.has_more && more.getBoundingClientRect().top < innerHeight + 1200) {
+              requestAnimationFrame(() => load());
+            }
+          }
         }
       }
       more.addEventListener('click', () => load());
       if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => {
           if (entries.some(e => e.isIntersecting) && !retry) load();
-        }, {rootMargin:'0px 0px 150px 0px'});
+        }, {rootMargin:'0px 0px 1200px 0px'});
         observer.observe(more);
       }
       const sort = document.getElementById('shop-sort-select');

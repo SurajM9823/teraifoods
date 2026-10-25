@@ -37,7 +37,10 @@ def context(request, page_key):
     for group, layout in LAYOUTS.items():
         if not group.startswith(prefix + '_'):
             continue
-        if layout['listing']:
+        if layout['section'] == 'for_you':
+            rows, info = paginate({'section': 'for_you', 'limit': 24})
+            result['catalog_for_you_page'] = info
+        elif layout['listing']:
             try:
                 rows, info = paginate(request.GET)
             except ValidationError:

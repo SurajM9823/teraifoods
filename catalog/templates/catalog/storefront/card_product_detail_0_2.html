@@ -1,7 +1,7 @@
 {% load static %}
 <div class="shop-product-card" data-catalog-product="{{ product.pk }}" data-available="{{ product.available|yesno:'true,false' }}" data-product-url="/product-detail/?product={{ product.slug }}">
 									<div class="card-top-row">
-										<span class="badge-discount">{{ product.discount_percent }}%</span>
+										{% if product.discount_percent > 0 %}<span class="badge-discount">{{ product.discount_percent }}%</span>{% endif %}
 										<div class="card-top-icons">
 											<button class="btn-card-icon" title="Wishlist"><i class="klb-icon-heart"></i></button>
 											<button class="btn-card-icon" title="Quick view"><i class="klb-icon-eye"></i></button>

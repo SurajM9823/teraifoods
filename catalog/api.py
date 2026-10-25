@@ -148,6 +148,10 @@ def paginate(params):
                 combined_q |= qp
             queryset = queryset.filter(combined_q)
     section = params.get('section', '')
+    if section == 'for_you':
+        # Bundles derive availability from their components, not their own stock.
+        package_ids = [p.pk for p in public_products().filter(is_package=True) if p.available]
+        queryset = queryset.filter(Q(is_package=False, stock_confirmed=True, stock__gt=0) | Q(pk__in=package_ids))
     if section in ('new_arrival', 'featured', 'best_seller'):
         queryset = queryset.filter(**{section:True})
     elif section not in ('', 'for_you'):
@@ -191,7 +195,7 @@ def paginate(params):
         queryset = queryset.annotate(relevance=relevance_case)
         default_field = '-relevance'
     else:
-        default_field = 'display_order'
+        default_field = '-id' if section == 'for_you' else 'display_order'
     field = {'price-asc':'selling_price', 'price-desc':'-selling_price', 'name':'name', 'newest':'-id', 'rating':'-sort_rating', 'relevance':'-relevance' if has_search else 'display_order'}.get(sort, default_field)
     fingerprint = hashlib.sha256(json.dumps({k:params.get(k, '') for k in ('category','subcategory','collection','q','s','section','min_price','max_price','sort','limit','ids')}, sort_keys=True).encode()).hexdigest()
     count = queryset.count()
@@ -251,10 +255,12 @@ def cached_payload(request, loader):
 def listing(request):
     def load():
         rows, info = paginate(request.GET)
+        group = 'index_3' if request.GET.get('section') == 'for_you' else 'shop_0'
+        default_template = f'catalog/storefront/card_{group}_0.html'
         for product in rows:
-            product.card_template = product.metadata.get('cards', {}).get('shop_0', 'catalog/storefront/card_shop_0_0.html')
+            product.card_template = product.metadata.get('cards', {}).get(group, default_template)
             if not product.card_template.startswith('catalog/storefront/card_') or '..' in product.card_template:
-                product.card_template = 'catalog/storefront/card_shop_0_0.html'
+                product.card_template = default_template
         from django.template.loader import render_to_string
         return dict(products=[serialize(p) for p in rows], html=render_to_string('catalog/storefront/shop_cards.html', {'products':rows}), **info)
     try:
