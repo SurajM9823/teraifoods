@@ -396,15 +396,22 @@
 		var $banner = $('.site-slider, .site-banner');
 		var isHomePage = $('body').hasClass('home') && $banner.length > 0;
 		var manuallyOpened = false;
+		var manuallyClosed = false;
 		var fullCatHeight = 524;
 
 		function getFullHeight() {
-			if ($(window).scrollTop() === 0 && $banner.length && $toggle.length) {
-				var bRect = $banner[0].getBoundingClientRect();
-				var tRect = $toggle[0].getBoundingClientRect();
-				var measured = Math.round(bRect.bottom - tRect.bottom);
-				if (measured > 300) {
-					fullCatHeight = measured;
+			if ($banner.length && $toggle.length) {
+				if ($(window).scrollTop() === 0) {
+					var bRect = $banner[0].getBoundingClientRect();
+					var tRect = $toggle[0].getBoundingClientRect();
+					var measured = Math.round(bRect.bottom - tRect.bottom);
+					if (measured > 300) {
+						fullCatHeight = measured;
+					}
+				}
+				var menuEl = $cat.find('> ul')[0];
+				if (menuEl && menuEl.scrollHeight > 300) {
+					fullCatHeight = Math.max(fullCatHeight, menuEl.scrollHeight);
 				}
 			}
 			return fullCatHeight;
@@ -438,42 +445,79 @@
 				return;
 			}
 
-			// 2. Home Page: Contract categories in lockstep with the hero banner on scroll
+			// 2. Home Page: Categories visibility and slide-up behavior
+			if (!$banner.length || !$toggle.length || !$cat.length) {
+				return;
+			}
+
 			var bRect = $banner[0].getBoundingClientRect();
 			var tRect = $toggle[0].getBoundingClientRect();
 			var remaining = Math.round(bRect.bottom - tRect.bottom);
 			var fullH = getFullHeight();
 
-			// When scrolling back up into banner zone, re-attach to banner tracking
+			// When returning back to top, clear manual closed state
+			if (scrollTop <= 10) {
+				manuallyClosed = false;
+			}
+
+			// When scrolling back up into banner zone, re-attach to automatic tracking
 			if (remaining > 0 && manuallyOpened) {
 				manuallyOpened = false;
 			}
 
-			if (manuallyOpened) {
-				return; // preserve manually opened state while scrolled past banner
+			if (manuallyOpened || manuallyClosed) {
+				return;
 			}
 
-			if (remaining >= fullH - 2) {
-				// At top: fully expanded, bottom aligned with banner bottom, overflow visible for flyout submenus
-				$cat[0].style.setProperty('display', 'flex', 'important');
-				$cat[0].style.setProperty('height', fullH + 'px', 'important');
-				$cat[0].style.setProperty('max-height', fullH + 'px', 'important');
-				$cat[0].style.setProperty('overflow', 'visible', 'important');
-				$cat.addClass('show').removeClass('collapsed');
-			} else if (remaining > 0) {
-				// Scrolling down/up through banner: smoothly contracts/expands so bottom follows banner bottom
-				$cat[0].style.setProperty('display', 'flex', 'important');
-				$cat[0].style.setProperty('height', remaining + 'px', 'important');
-				$cat[0].style.setProperty('max-height', remaining + 'px', 'important');
-				$cat[0].style.setProperty('overflow', 'hidden', 'important');
-				$cat.addClass('show').removeClass('collapsed');
-			} else {
+			var windowHeight = window.innerHeight || $(window).height();
+			// Calculate where the bottom of the full categories menu sits in the viewport
+			var catBottomViewport = Math.round(tRect.bottom + fullH);
+			var overflowBelowViewport = Math.max(0, catBottomViewport - windowHeight);
+
+			// Total scroll distance at which banner ends and categories should be fully collapsed
+			var slideEndScroll = Math.max(350, Math.round(scrollTop + remaining));
+
+			// Wait distance: Keep full categories completely visible so user can see every category.
+			// If categories extended below the viewport fold at top, wait for user to scroll them fully into view.
+			// On all screens, provide a solid wait zone (at least ~180px) before contracting.
+			var waitScroll = Math.max(180, overflowBelowViewport + 100);
+			var maxWait = Math.max(120, Math.round(slideEndScroll * 0.45));
+			waitScroll = Math.min(waitScroll, maxWait);
+
+			if (remaining <= 0 || scrollTop >= slideEndScroll) {
 				// Scrolled past hero banner: fully collapsed
 				$cat[0].style.setProperty('display', 'none', 'important');
 				$cat[0].style.setProperty('height', '0px', 'important');
 				$cat[0].style.setProperty('max-height', '0px', 'important');
 				$cat[0].style.setProperty('overflow', 'hidden', 'important');
 				$cat.removeClass('show').addClass('collapsed');
+			} else if (scrollTop <= waitScroll) {
+				// Wait phase: full categories are completely shown, no contraction yet
+				$cat[0].style.setProperty('display', 'flex', 'important');
+				$cat[0].style.setProperty('height', fullH + 'px', 'important');
+				$cat[0].style.setProperty('max-height', fullH + 'px', 'important');
+				$cat[0].style.setProperty('overflow', 'visible', 'important');
+				$cat.addClass('show').removeClass('collapsed');
+			} else {
+				// Slide-up phase: smoothly contract categories as user continues scrolling past the wait zone
+				var slideRange = slideEndScroll - waitScroll;
+				var slideProgress = slideRange > 0 ? (scrollTop - waitScroll) / slideRange : 1;
+				slideProgress = Math.max(0, Math.min(1, slideProgress));
+				var currentH = Math.round(fullH * (1 - slideProgress));
+
+				if (currentH <= 0) {
+					$cat[0].style.setProperty('display', 'none', 'important');
+					$cat[0].style.setProperty('height', '0px', 'important');
+					$cat[0].style.setProperty('max-height', '0px', 'important');
+					$cat[0].style.setProperty('overflow', 'hidden', 'important');
+					$cat.removeClass('show').addClass('collapsed');
+				} else {
+					$cat[0].style.setProperty('display', 'flex', 'important');
+					$cat[0].style.setProperty('height', currentH + 'px', 'important');
+					$cat[0].style.setProperty('max-height', currentH + 'px', 'important');
+					$cat[0].style.setProperty('overflow', 'hidden', 'important');
+					$cat.addClass('show').removeClass('collapsed');
+				}
 			}
 		}
 
@@ -506,6 +550,7 @@
 			if (remaining <= 0 || $cat.hasClass('collapsed') || $cat.is(':hidden')) {
 				manuallyOpened = !manuallyOpened;
 				if (manuallyOpened) {
+					manuallyClosed = false;
 					$cat[0].style.setProperty('display', 'flex', 'important');
 					$cat[0].style.setProperty('height', fullH + 'px', 'important');
 					$cat[0].style.setProperty('max-height', fullH + 'px', 'important');
@@ -521,11 +566,13 @@
 			} else {
 				// At top: allow manual collapse/expand
 				if ($cat.is(':visible')) {
+					manuallyClosed = true;
 					$cat[0].style.setProperty('display', 'none', 'important');
 					$cat[0].style.setProperty('height', '0px', 'important');
 					$cat[0].style.setProperty('max-height', '0px', 'important');
 					$cat.removeClass('show').addClass('collapsed');
 				} else {
+					manuallyClosed = false;
 					$cat[0].style.setProperty('display', 'flex', 'important');
 					$cat[0].style.setProperty('height', fullH + 'px', 'important');
 					$cat[0].style.setProperty('max-height', fullH + 'px', 'important');
