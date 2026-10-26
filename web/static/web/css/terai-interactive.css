@@ -4466,29 +4466,40 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
   color: #1547A8 !important;
 }
 
-/* Flyout Submenu to the right */
+/* Flyout Submenu to the right (fixed so it escapes scrollable category container) */
+html body.home #page header#masthead.site-header .header-nav .site-categories > ul#category-menu > li .sub-menu,
+html body.home .categories-menu .site-categories > ul#category-menu > li .sub-menu,
 .categories-menu .site-categories > ul#category-menu > li .sub-menu,
 .categories-menu .site-categories > ul.menu > li .sub-menu {
-  position: absolute !important;
-  left: 280px !important;
-  top: 0 !important;
-  width: 270px !important;
-  min-height: 484px !important;
+  width: 280px !important;
+  min-height: 380px !important;
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-left: 1px solid #f1f5f9 !important;
-  border-radius: 0 4px 4px 0 !important;
-  box-shadow: 12px 10px 25px rgba(0, 0, 0, 0.1) !important;
-  padding: 16px 20px !important;
-  z-index: 10000000 !important;
+  border-radius: 0 6px 6px 0 !important;
+  box-shadow: 14px 10px 30px rgba(0, 0, 0, 0.12) !important;
+  padding: 18px 22px !important;
+  z-index: 99999999 !important;
   display: none !important;
   list-style: none !important;
   margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
+html body.home #page header#masthead.site-header .header-nav .site-categories > ul#category-menu > li:hover > .sub-menu,
+html body.home .categories-menu .site-categories > ul#category-menu > li:hover > .sub-menu,
 .categories-menu .site-categories > ul#category-menu > li:hover > .sub-menu,
-.categories-menu .site-categories > ul.menu > li:hover > .sub-menu {
+.categories-menu .site-categories > ul.menu > li:hover > .sub-menu,
+.categories-menu .site-categories > ul#category-menu > li .sub-menu.flyout-active,
+.categories-menu .site-categories > ul.menu > li .sub-menu.flyout-active,
+.categories-menu .site-categories > ul#category-menu > li.flyout-active > .sub-menu,
+.categories-menu .site-categories > ul.menu > li.flyout-active > .sub-menu,
+.site-categories .sub-menu.flyout-active {
+  position: fixed !important;
   display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .categories-menu .site-categories > ul#category-menu > li .sub-menu li,

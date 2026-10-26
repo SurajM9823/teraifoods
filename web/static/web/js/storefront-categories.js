@@ -157,44 +157,89 @@
   function initDesktopCategoryFlyouts() {
     const isDesktop = () => window.innerWidth >= 1200;
     const items = document.querySelectorAll('.site-categories li.menu-item-has-children');
+
     items.forEach(li => {
+      if (li.__flyoutInitialized) return;
+      li.__flyoutInitialized = true;
+
       const sub = li.querySelector('.sub-menu');
       if (!sub) return;
       let timer = null;
 
       const clearFixed = () => {
-        sub.style.display = '';
-        sub.style.opacity = '';
-        sub.style.visibility = '';
-        sub.style.pointerEvents = '';
-        sub.style.position = '';
-        sub.style.left = '';
-        sub.style.top = '';
-        sub.style.maxHeight = '';
-        sub.style.overflowY = '';
-        sub.style.zIndex = '';
+        sub.classList.remove('flyout-active');
+        li.classList.remove('flyout-active');
+        sub.style.removeProperty('position');
+        sub.style.removeProperty('left');
+        sub.style.removeProperty('top');
+        sub.style.removeProperty('width');
+        sub.style.removeProperty('height');
+        sub.style.removeProperty('min-height');
+        sub.style.removeProperty('max-height');
+        sub.style.removeProperty('overflow-y');
+        sub.style.removeProperty('display');
+        sub.style.removeProperty('opacity');
+        sub.style.removeProperty('visibility');
+        sub.style.removeProperty('pointer-events');
+        sub.style.removeProperty('z-index');
+      };
+
+      const updatePos = () => {
+        const cat = li.closest('.site-categories');
+        const catRect = cat ? cat.getBoundingClientRect() : li.getBoundingClientRect();
+        const leftPos = Math.round(catRect.right) - 1;
+        const topPos = Math.max(35, Math.round(catRect.top));
+        const availableHeight = Math.max(250, window.innerHeight - topPos - 15);
+        const panelHeight = Math.min(availableHeight, Math.max(380, Math.round(catRect.height)));
+
+        sub.classList.add('flyout-active');
+        li.classList.add('flyout-active');
+
+        sub.style.setProperty('position', 'fixed', 'important');
+        sub.style.setProperty('left', leftPos + 'px', 'important');
+        sub.style.setProperty('top', topPos + 'px', 'important');
+        sub.style.setProperty('width', '280px', 'important');
+        sub.style.setProperty('min-height', panelHeight + 'px', 'important');
+        sub.style.setProperty('max-height', availableHeight + 'px', 'important');
+        sub.style.setProperty('overflow-y', 'auto', 'important');
+        sub.style.setProperty('display', 'block', 'important');
+        sub.style.setProperty('opacity', '1', 'important');
+        sub.style.setProperty('visibility', 'visible', 'important');
+        sub.style.setProperty('pointer-events', 'auto', 'important');
+        sub.style.setProperty('z-index', '99999999', 'important');
       };
 
       const open = () => {
         clearTimeout(timer);
         if (!isDesktop() || li.closest('.site-drawer')) return;
-        const rect = li.getBoundingClientRect();
-        sub.style.position = 'fixed';
-        sub.style.left = `${Math.round(rect.right)}px`;
-        sub.style.top = `${Math.round(rect.top)}px`;
-        const availableHeight = window.innerHeight - rect.top - 20;
-        sub.style.maxHeight = `${Math.max(250, availableHeight)}px`;
-        sub.style.overflowY = 'auto';
-        sub.style.display = 'block';
-        sub.style.opacity = '1';
-        sub.style.visibility = 'visible';
-        sub.style.pointerEvents = 'auto';
-        sub.style.zIndex = '99999999';
+
+        // Close any other open sub-menus first
+        document.querySelectorAll('.site-categories .sub-menu.flyout-active').forEach(other => {
+          if (other !== sub) {
+            other.classList.remove('flyout-active');
+            if (other.parentElement) other.parentElement.classList.remove('flyout-active');
+            other.style.removeProperty('position');
+            other.style.removeProperty('left');
+            other.style.removeProperty('top');
+            other.style.removeProperty('width');
+            other.style.removeProperty('height');
+            other.style.removeProperty('min-height');
+            other.style.removeProperty('max-height');
+            other.style.removeProperty('overflow-y');
+            other.style.removeProperty('display');
+            other.style.removeProperty('opacity');
+            other.style.removeProperty('visibility');
+            other.style.removeProperty('pointer-events');
+            other.style.removeProperty('z-index');
+          }
+        });
+
+        updatePos();
       };
 
       const close = () => {
         if (!isDesktop() || li.closest('.site-drawer')) return;
-        timer = setTimeout(clearFixed, 100);
+        timer = setTimeout(clearFixed, 150);
       };
 
       li.addEventListener('mouseenter', open);
@@ -205,22 +250,33 @@
 
     window.addEventListener('scroll', () => {
       if (isDesktop()) {
-        document.querySelectorAll('.site-categories:not(.site-drawer) .sub-menu[style*="fixed"]').forEach(sub => {
+        document.querySelectorAll('.site-categories:not(.site-drawer) .sub-menu.flyout-active').forEach(sub => {
           const li = sub.closest('li.menu-item-has-children');
           if (!li || (!li.matches(':hover') && !sub.matches(':hover'))) {
-            sub.style.display = '';
-            sub.style.position = '';
-            sub.style.left = '';
-            sub.style.top = '';
-            sub.style.maxHeight = '';
-            sub.style.overflowY = '';
-            sub.style.zIndex = '';
+            sub.classList.remove('flyout-active');
+            if (li) li.classList.remove('flyout-active');
+            sub.style.removeProperty('position');
+            sub.style.removeProperty('left');
+            sub.style.removeProperty('top');
+            sub.style.removeProperty('width');
+            sub.style.removeProperty('height');
+            sub.style.removeProperty('min-height');
+            sub.style.removeProperty('max-height');
+            sub.style.removeProperty('overflow-y');
+            sub.style.removeProperty('display');
+            sub.style.removeProperty('opacity');
+            sub.style.removeProperty('visibility');
+            sub.style.removeProperty('pointer-events');
+            sub.style.removeProperty('z-index');
           } else {
-            const rect = li.getBoundingClientRect();
-            sub.style.left = `${Math.round(rect.right)}px`;
-            sub.style.top = `${Math.round(rect.top)}px`;
-            const availableHeight = window.innerHeight - rect.top - 20;
-            sub.style.maxHeight = `${Math.max(250, availableHeight)}px`;
+            const cat = li.closest('.site-categories');
+            const catRect = cat ? cat.getBoundingClientRect() : li.getBoundingClientRect();
+            const leftPos = Math.round(catRect.right) - 1;
+            const topPos = Math.max(35, Math.round(catRect.top));
+            const availableHeight = Math.max(250, window.innerHeight - topPos - 15);
+            sub.style.setProperty('left', leftPos + 'px', 'important');
+            sub.style.setProperty('top', topPos + 'px', 'important');
+            sub.style.setProperty('max-height', availableHeight + 'px', 'important');
           }
         });
       }
