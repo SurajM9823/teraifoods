@@ -4336,18 +4336,45 @@ body:not(.home) .header-nav .categories-menu .site-categories,
   }
 
   /* On desktop shop page, the categories are permanently expanded in the left column with smooth scrolling */
+  html body.terai-shop-page .header-nav .categories-menu .site-categories,
   .terai-shop-page .header-nav .categories-menu .site-categories {
     display: none !important;
   }
+
+  html body.terai-shop-page #page #main .shop-category-anchor-col,
+  html body.terai-shop-page .shop-main-row .shop-category-anchor-col,
+  html body.terai-shop-page .shop-category-anchor-col,
   .terai-shop-page .shop-category-anchor-col {
+    position: sticky !important;
+    top: 125px !important;
+    height: calc(100vh - 125px) !important;
     max-height: calc(100vh - 125px) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #cbd5e1 transparent !important;
   }
+
+  html body.terai-shop-page .site-header.sticky-header ~ #main .shop-category-anchor-col,
+  html body.terai-shop-page header.sticky-header ~ #main .shop-category-anchor-col {
+    top: 86px !important;
+    height: calc(100vh - 86px) !important;
+    max-height: calc(100vh - 86px) !important;
+  }
+
+  html body.terai-shop-page .shop-sidebar-categories,
   .terai-shop-page .shop-sidebar-categories {
     display: flex !important;
+    flex-direction: column !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+  }
+
+  html body.terai-shop-page .shop-sidebar-footer-fill,
+  .terai-shop-page .shop-sidebar-footer-fill {
+    flex-shrink: 0 !important;
   }
 }
 
@@ -4378,7 +4405,8 @@ body:not(.home) .header-nav .categories-menu .site-categories,
 }
 .site-categories::-webkit-scrollbar-thumb:hover,
 .site-categories:hover::-webkit-scrollbar-thumb,
-.shop-category-anchor-col::-webkit-scrollbar-thumb:hover {
+.shop-category-anchor-col::-webkit-scrollbar-thumb:hover,
+.shop-category-anchor-col:hover::-webkit-scrollbar-thumb {
   background: #94a3b8 !important;
 }
 
@@ -4467,6 +4495,10 @@ body:not(.home) .header-nav .categories-menu .site-categories.show,
 }
 
 /* Flyout Submenu to the right (fixed so it escapes scrollable category container) */
+html body.terai-shop-page .shop-category-anchor-col .site-categories > ul#category-menu > li .sub-menu,
+html body.terai-shop-page .shop-category-anchor-col .site-categories > ul.menu > li .sub-menu,
+html body.terai-shop-page .shop-sidebar-categories > ul#category-menu > li .sub-menu,
+html body.terai-shop-page .shop-sidebar-categories > ul.menu > li .sub-menu,
 html body.home #page header#masthead.site-header .header-nav .site-categories > ul#category-menu > li .sub-menu,
 html body.home .categories-menu .site-categories > ul#category-menu > li .sub-menu,
 .categories-menu .site-categories > ul#category-menu > li .sub-menu,
@@ -4486,6 +4518,10 @@ html body.home .categories-menu .site-categories > ul#category-menu > li .sub-me
   box-sizing: border-box !important;
 }
 
+html body.terai-shop-page .shop-category-anchor-col .site-categories > ul#category-menu > li:hover > .sub-menu,
+html body.terai-shop-page .shop-category-anchor-col .site-categories > ul.menu > li:hover > .sub-menu,
+html body.terai-shop-page .shop-sidebar-categories > ul#category-menu > li:hover > .sub-menu,
+html body.terai-shop-page .shop-sidebar-categories > ul.menu > li:hover > .sub-menu,
 html body.home #page header#masthead.site-header .header-nav .site-categories > ul#category-menu > li:hover > .sub-menu,
 html body.home .categories-menu .site-categories > ul#category-menu > li:hover > .sub-menu,
 .categories-menu .site-categories > ul#category-menu > li:hover > .sub-menu,
@@ -4502,12 +4538,20 @@ html body.home .categories-menu .site-categories > ul#category-menu > li:hover >
   pointer-events: auto !important;
 }
 
+.shop-sidebar-categories > ul#category-menu > li .sub-menu li,
+.shop-sidebar-categories > ul.menu > li .sub-menu li,
+.shop-category-anchor-col .site-categories > ul#category-menu > li .sub-menu li,
+.shop-category-anchor-col .site-categories > ul.menu > li .sub-menu li,
 .categories-menu .site-categories > ul#category-menu > li .sub-menu li,
 .categories-menu .site-categories > ul.menu > li .sub-menu li {
   margin-bottom: 6px !important;
   list-style: none !important;
 }
 
+.shop-sidebar-categories > ul#category-menu > li .sub-menu li a,
+.shop-sidebar-categories > ul.menu > li .sub-menu li a,
+.shop-category-anchor-col .site-categories > ul#category-menu > li .sub-menu li a,
+.shop-category-anchor-col .site-categories > ul.menu > li .sub-menu li a,
 .categories-menu .site-categories > ul#category-menu > li .sub-menu li a,
 .categories-menu .site-categories > ul.menu > li .sub-menu li a {
   font-size: 13px !important;
@@ -4519,6 +4563,10 @@ html body.home .categories-menu .site-categories > ul#category-menu > li:hover >
   transition: color 0.15s ease !important;
 }
 
+.shop-sidebar-categories > ul#category-menu > li .sub-menu li a:hover,
+.shop-sidebar-categories > ul.menu > li .sub-menu li a:hover,
+.shop-category-anchor-col .site-categories > ul#category-menu > li .sub-menu li a:hover,
+.shop-category-anchor-col .site-categories > ul.menu > li .sub-menu li a:hover,
 .categories-menu .site-categories > ul#category-menu > li .sub-menu li a:hover,
 .categories-menu .site-categories > ul.menu > li .sub-menu li a:hover {
   color: #1547A8 !important;

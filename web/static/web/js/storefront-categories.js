@@ -185,7 +185,8 @@
       };
 
       const updatePos = () => {
-        const cat = li.closest('.site-categories');
+        const col = li.closest('.shop-category-anchor-col');
+        const cat = col || li.closest('.site-categories');
         const catRect = cat ? cat.getBoundingClientRect() : li.getBoundingClientRect();
         const leftPos = Math.round(catRect.right) - 1;
         const topPos = Math.max(35, Math.round(catRect.top));
@@ -269,7 +270,8 @@
             sub.style.removeProperty('pointer-events');
             sub.style.removeProperty('z-index');
           } else {
-            const cat = li.closest('.site-categories');
+            const col = li.closest('.shop-category-anchor-col');
+            const cat = col || li.closest('.site-categories');
             const catRect = cat ? cat.getBoundingClientRect() : li.getBoundingClientRect();
             const leftPos = Math.round(catRect.right) - 1;
             const topPos = Math.max(35, Math.round(catRect.top));
