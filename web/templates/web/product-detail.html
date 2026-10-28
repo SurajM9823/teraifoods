@@ -1347,37 +1347,15 @@
 			min-width: 0;
 			padding: 0 12px;
 		}
-		.pdp-flash-strip {
-			background: linear-gradient(90deg, #fef2f2 0%, #fff7ed 100%);
-			border: 1px solid #fecaca;
-			border-radius: 4px;
-			padding: 8px 14px;
-			margin-bottom: 12px;
+		.pdp-product-facts {
+			margin-bottom: 10px;
 			display: flex;
-			align-items: center;
-			justify-content: space-between;
 			flex-wrap: wrap;
-			gap: 8px;
-		}
-		.pdp-flash-title {
-			color: #dc2626;
-			font-weight: 800;
-			font-size: 13px;
-			display: inline-flex;
-			align-items: center;
-			gap: 5px;
-			text-transform: uppercase;
-		}
-		.pdp-flash-timer {
+			gap: 4px 10px;
 			font-size: 12px;
-			color: #475569;
-			display: inline-flex;
-			align-items: center;
-			gap: 6px;
-		}
-		.pdp-flash-timer strong {
-			color: #0f172a;
-			font-weight: 700;
+			font-weight: 400;
+			line-height: 1.5;
+			color: #64748b;
 		}
 		.pdp-product-title {
 			font-size: 19px;
@@ -1480,32 +1458,6 @@
 			font-size: 11.5px;
 			padding: 1px 6px;
 			border-radius: 3px;
-		}
-
-		/* Promotions */
-		.pdp-promo-row {
-			display: flex;
-			align-items: center;
-			gap: 12px;
-			margin-bottom: 16px;
-			font-size: 12.5px;
-		}
-		.pdp-promo-label {
-			color: #64748b;
-			width: 80px;
-		}
-		.pdp-promo-badge {
-			background: #fff7ed;
-			border: 1px solid #fed7aa;
-			color: #ea580c;
-			font-weight: 600;
-			font-size: 12px;
-			padding: 3px 10px;
-			border-radius: 3px;
-			display: inline-flex;
-			align-items: center;
-			gap: 4px;
-			cursor: pointer;
 		}
 
 		/* Quantity */
@@ -1656,8 +1608,13 @@
 		}
 		.pdp-delivery-details .sub {
 			color: #64748b;
-			font-size: 11.5px;
-			margin-top: 2px;
+			font-size: 13px;
+			font-weight: 600;
+			margin-top: 5px;
+			padding: 5px 8px;
+			border-radius: 4px;
+			background: #f0fdfa;
+			color: #0f766e;
 		}
 		.pdp-delivery-details .price {
 			color: #0f172a;
@@ -2174,7 +2131,7 @@
 								<!-- Column 1: Gallery -->
 								<div class="pdp-gallery-col">
 									<div class="pdp-main-img-box">
-										{% if product.is_package %}<span class="pdp-badge-package"><i class="klb-icon-gift"></i> {{ product.package_config.subtitle|default:"SPECIAL BUNDLE" }}</span>{% else %}<span class="pdp-badge-flash"><i class="klb-icon-zap"></i> PRODUCT DETAILS</span>{% endif %}
+										{% if product.is_package %}<span class="pdp-badge-package"><i class="klb-icon-gift"></i> {{ product.package_config.subtitle|default:"SPECIAL BUNDLE" }}</span>{% endif %}
 										<img src="{{ product.image_url }}" alt="{{ product.name }}" id="pdp-active-image">
 									</div>
 
@@ -2203,13 +2160,10 @@
 									<p class="pdp-package-tagline">{{ product.package_config.tagline }}</p>
 									{% endif %}
 									{% else %}
-									<div class="pdp-flash-strip">
-										<span class="pdp-flash-title"><i class="klb-icon-zap"></i> PRODUCT DETAILS</span>
-										<div class="pdp-flash-timer">
-											<span>Shipping weight:</span>
-											<strong>{{ product.weight }} {{ product.get_weight_unit_display }}</strong>
-											<span class="text-muted ms-2">| {{ product.stock }} available</span>
-										</div>
+									<div class="pdp-product-facts">
+										<span>Product details</span>
+										<span>Shipping weight: {{ product.weight|floatformat:"-3" }} {{ product.get_weight_unit_display }}</span>
+										<span>{{ product.stock }} available</span>
 									</div>
 									<h1 class="pdp-product-title">{{ product.name }}</h1>
 									{% endif %}
@@ -2260,13 +2214,6 @@
 									<div class="pdp-price-box">
 										<div class="pdp-main-price">&pound;{{ product.price }}</div>
 										<div class="pdp-strike-price">{% if product.sale_price and product.discount_percent > 0 %}<del>&pound;{{ product.regular_price }}</del> <span class="pdp-discount-pill">-{{ product.discount_percent }}%</span>{% endif %}</div>
-									</div>
-
-									<!-- Promotions -->
-									<div class="pdp-promo-row">
-										<span class="pdp-promo-label">Promotions</span>
-										<span class="pdp-promo-badge">{% if product.sale_price %}Sale price applied{% else %}Current price shown{% endif %}</span>
-										<span class="pdp-promo-badge">Prices checked at checkout</span>
 									</div>
 									{% endif %}
 
@@ -2507,11 +2454,6 @@
 						<!-- 3. Section: Product Description Box -->
 						<div class="pdp-section-card" id="description-section">
 							<h2 class="pdp-section-title">{% if product.is_package %}About This Curated Package{% else %}Description{% endif %}</h2>
-
-							<!-- Disclaimer Notice -->
-							<div class="pdp-notice-banner">
-								<span>&#9432;</span>
-								<div>The information provided here is for reference only. Actual product packaging and materials may contain more and different information than shown on our website. We recommend that you do not rely solely on the information presented here and that you always read labels, warnings, and directions before using or consuming a product.</div>
 							</div>
 
 							<!-- Specifications List -->
@@ -2520,76 +2462,6 @@
 							<!-- Narrative Paragraphs -->
 							<div class="pdp-narrative">
 								{{ product.description|linebreaks }}
-
-								<!-- High Quality Culinary Banner -->
-								<div class="pdp-feature-banner">
-									<img src="{% static 'web/' %}images/banner-07.jpg" alt="Rich Chili Sauce Culinary Preparation">
-								</div>
-							</div>
-
-							<button class="pdp-viewmore-btn" id="pdp-btn-viewmore">View More &#9662;</button>
-						</div>
-
-						<!-- 4. Section: Ratings & Reviews Box -->
-						<div class="pdp-section-card" id="reviews-section">
-							<h2 class="pdp-section-title">Ratings &amp; Reviews of {{ product.name }}</h2>
-
-							<div class="pdp-ratings-overview">
-								<div class="pdp-score-block">
-									<div class="pdp-big-score">{{ product.rating }}<span class="pdp-score-scale">/5</span></div>
-									<div class="pdp-gold-stars my-1" style="font-size: 18px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-									<div class="text-muted" style="font-size: 12px;">{{ product.review_count }} Ratings</div>
-								</div>
-
-								<div class="pdp-bars-block">
-									<div class="pdp-bar-row">
-										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
-										<span class="pdp-bar-count">0</span>
-									</div>
-									<div class="pdp-bar-row">
-										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
-										<span class="pdp-bar-count">0</span>
-									</div>
-									<div class="pdp-bar-row">
-										<span class="pdp-bar-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
-										<span class="pdp-bar-count">0</span>
-									</div>
-									<div class="pdp-bar-row">
-										<span class="pdp-bar-stars">&#9733;&#9733;&#9734;&#9734;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
-										<span class="pdp-bar-count">0</span>
-									</div>
-									<div class="pdp-bar-row">
-										<span class="pdp-bar-stars">&#9733;&#9734;&#9734;&#9734;&#9734;</span>
-										<div class="pdp-bar-track"><div class="pdp-bar-fill" style="width: 0%;"></div></div>
-										<span class="pdp-bar-count">0</span>
-									</div>
-								</div>
-							</div>
-
-							<!-- Controls -->
-							<div class="pdp-reviews-controls">
-								<span class="fw-bold text-dark">Product Reviews</span>
-								<div class="d-flex gap-3">
-									<span class="text-muted" style="cursor: pointer;"><i class="klb-icon-sliders me-1"></i> Sort: Default &#9662;</span>
-									<span class="text-muted" style="cursor: pointer;"><i class="klb-icon-filter me-1"></i> Filter: All star &#9662;</span>
-								</div>
-							</div>
-
-                            <div class="pdp-reviews-list" id="real-product-reviews"><p>No reviews yet.</p></div>
-
-						</div>
-
-						<!-- 5. Section: Questions about this product (Q&A) -->
-						<div class="pdp-section-card" id="qa-section">
-							<h2 class="pdp-section-title">Questions about this product</h2>
-							<div class="pdp-qa-box">
-								<div class="pdp-qa-icon"><i class="klb-icon-message-square"></i></div>
-								<div class="mb-2">There are no questions yet.</div>
-								<div><a href="/contact/" class="text-primary fw-bold text-decoration-none">Contact us</a> with your product question.</div>
 							</div>
 						</div>
 
