@@ -174,7 +174,9 @@ def create_order(user, scope, payload, key):
             key=f'order:{order.pk}:{product_id}',kind='order',reference=order.number)
     if voucher_code:
         vouchers.reserve(order,vouchers.validate(voucher_code,email,lock=True))
-    Payment.objects.create(order=order,amount=order.total)
+    from .stripe_config import mode
+    Payment.objects.create(order=order,amount=order.total,
+                           stripe_mode=mode() if order.payment_method == 'stripe' and order.total else 'test')
     attempt.order = order
     attempt.save(update_fields=['order'])
     emit(order,'placed','Order created; payment is pending.',user if user.is_authenticated else None)
@@ -217,8 +219,11 @@ def finalize_cancel(order_id, actor=None, reason='Cancellation requested'):
     elif vouchers.applied(order):
         vouchers.issue(order,vouchers.applied(order))
     if order.payment_status == 'paid':
-        Refund.objects.get_or_create(order=order,defaults={'amount':order.total,'reason':reason,'status':'pending' if order.total else 'succeeded'})
-        order.refund_status = 'pending' if order.total else 'refunded'
+        refund, created = Refund.objects.get_or_create(order=order,defaults={'amount':order.total,'reason':reason,'status':'pending' if order.total else 'succeeded'})
+        if created:
+            order.refund_status = 'pending' if order.total else 'refunded'
+        # A previous partial/failed refund must not be presented as a new full
+        # refund. The one-refund workflow requires staff reconciliation here.
     emit(order,'cancelled',reason,actor)
     return order
 
@@ -302,6 +307,8 @@ def decide_return(order_id, target, reason, actor, restock=False, manual_refund=
     request.status,request.admin_reason = target,reason
     request.save()
     if target == 'received':
+        if Refund.objects.filter(order=order).exists():
+            raise ValidationError('This order already has a refund. Reconcile the remaining balance before settling its return.')
         if restock:
             restore_stock(order,actor,kind='return')
         status = 'pending' if request.refund_preference == 'original' and not manual_refund else 'awaiting_manual'

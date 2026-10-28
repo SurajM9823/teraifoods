@@ -2,6 +2,7 @@ import hashlib
 import hmac
 import json
 import time
+import stripe
 from datetime import timedelta
 from decimal import Decimal
 from types import SimpleNamespace
@@ -137,7 +138,8 @@ class OrderTests(TestCase):
         self.assertEqual(Product.objects.get(pk=self.product.pk).stock,20)
         self.assertEqual(Refund.objects.count(),1)
         with patch('orders.payments.client') as client:
-            client.return_value.v1.refunds.create.return_value=SimpleNamespace(id='re_test',status='succeeded')
+            client.return_value.v1.refunds.create.return_value=stripe.Refund.construct_from(
+                dict(id='re_test',status='succeeded',amount=1199,currency='gbp',payment_intent='pi_test_1'), 'sk_test_fake')
             payments.process_refund(Refund.objects.get().pk)
             payments.process_refund(Refund.objects.get().pk)
             self.assertEqual(client.return_value.v1.refunds.create.call_count,1)
@@ -150,7 +152,8 @@ class OrderTests(TestCase):
     def test_expired_reservation_reconciles_provider_before_releasing_stock(self):
         order=self.create();payment=order.payment;payment.session_id='cs_test_1';payment.save()
         with patch('orders.payments.client') as client:
-            client.return_value.v1.checkout.sessions.retrieve.return_value=SimpleNamespace(status='open',payment_status='unpaid')
+            client.return_value.v1.checkout.sessions.retrieve.return_value=SimpleNamespace(status='open',payment_status='unpaid',
+                livemode=False,metadata={'order_id':str(order.public_id)})
             payments.cancel_with_provider(order.pk,'Expired')
             client.return_value.v1.checkout.sessions.expire.assert_called_once()
         self.assertEqual(Product.objects.get(pk=self.product.pk).stock,20)

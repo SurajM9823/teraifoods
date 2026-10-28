@@ -65,12 +65,14 @@ def dispatch_pending():
     for pk in Notification.objects.filter(Q(status='pending')|Q(status='sending',claimed_at__lt=timezone.now()-timedelta(minutes=5))).values_list('pk',flat=True)[:200]:
         send_notification.delay(pk)
     from .payments import cancel_with_provider,process_refund
-    for order in Order.objects.filter(cancellation_status='requested')[:100]:
+    active_mode = Q(payment__stripe_mode=settings.STRIPE_MODE) | ~Q(payment_method='stripe')
+    for order in Order.objects.filter(active_mode, cancellation_status='requested')[:100]:
         try:
             cancel_with_provider(order.pk)
         except Exception:
             logger.warning('Cancellation reconciliation pending for order %s',order.pk)
-    for refund in Refund.objects.filter(status='pending')[:100]:
+    for refund in Refund.objects.filter(Q(order__payment__stripe_mode=settings.STRIPE_MODE) | ~Q(order__payment_method='stripe'),
+                                       status__in=('pending', 'requires_action'))[:100]:
         try:
             process_refund(refund.pk)
         except Exception:
@@ -80,7 +82,8 @@ def dispatch_pending():
 @shared_task
 def expire_reservations():
     from .payments import cancel_with_provider
-    orders = Order.objects.filter(fulfilment_status='pending_payment',reservation_expires_at__lt=timezone.now()).exclude(payment_status='paid')
+    orders = Order.objects.filter(Q(payment__stripe_mode=settings.STRIPE_MODE) | ~Q(payment_method='stripe'),
+        fulfilment_status='pending_payment',reservation_expires_at__lt=timezone.now()).exclude(payment_status='paid')
     for order in orders[:100]:
         try:
             cancel_with_provider(order.pk,'Payment reservation expired.')

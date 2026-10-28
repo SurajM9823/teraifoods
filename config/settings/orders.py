@@ -1,10 +1,12 @@
 import os
 ORDER_PAYMENT_MODE = os.getenv('ORDER_PAYMENT_MODE', 'stripe')
 
-# Test mode is mandatory until a separate, explicit production payment rollout.
-STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_TEST_PUBLISHABLE_KEY', '')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY', '')
-STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_TEST_WEBHOOK_SECRET', '')
+# No implicit mode: deployment must explicitly choose test or live.
+STRIPE_MODE = os.getenv('STRIPE_MODE', '').strip().lower()
+_stripe_prefix = 'STRIPE_' + STRIPE_MODE.upper() if STRIPE_MODE in ('test', 'live') else 'STRIPE_DISABLED'
+STRIPE_PUBLISHABLE_KEY = os.getenv(_stripe_prefix + '_PUBLISHABLE_KEY', '').strip()
+STRIPE_SECRET_KEY = os.getenv(_stripe_prefix + '_SECRET_KEY', '').strip()
+STRIPE_WEBHOOK_SECRET = os.getenv(_stripe_prefix + '_WEBHOOK_SECRET', '').strip()
 ORDER_PUBLIC_ORIGIN = os.getenv('ORDER_PUBLIC_ORIGIN', 'http://127.0.0.1:8000').rstrip('/')
 ORDER_RESERVATION_MINUTES = 30
 ORDER_GUEST_ACCESS_DAYS = 30

@@ -1,5 +1,9 @@
 # Embedded Stripe checkout
 
+> The rollout configuration and validation below describe the original test-only
+> release. For the current explicit test/live configuration, migration, production
+> findings and activation gate, use [Stripe live rollout](stripe-live-rollout.md).
+
 ## Inspection and implementation
 
 The existing flow is `terai-interactive.js` (cart/address/payment panes),

@@ -90,7 +90,7 @@
     express.on('confirm', event => confirm(event));
     express.mount(root.querySelector('[data-stripe-express]'));
     payment.mount(root.querySelector('[data-stripe-payment]'));
-    message.textContent = 'Test payment. Payment details are securely collected by Stripe.';
+    message.textContent = (data.test_mode ? 'Test payment. ' : '') + 'Payment details are securely collected by Stripe.';
   }
   window.TeraiEmbeddedPayment = {mount, reset, confirm, get ready() { return !!mounted?.actions; }};
   window.addEventListener('pagehide', reset);

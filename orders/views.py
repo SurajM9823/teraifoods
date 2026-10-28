@@ -174,7 +174,7 @@ def action(request, public_id):
             raise ValidationError('Check your existing order before starting another payment.')
         payments.cancel_with_provider(order.pk, reason='Checkout details changed.', unpaid_only=True)
     elif data.get('action')=='payment':
-        return JsonResponse({'payment_url':f'/payment/?order={order.public_id}', 'test_mode':True})
+        return JsonResponse({'payment_url':f'/payment/?order={order.public_id}', 'test_mode':order.payment.stripe_mode == 'test'})
     elif data.get('action')=='support':
         services.support_message(order.pk,data.get('reason',''),actor)
     elif data.get('action')=='demo_payment':

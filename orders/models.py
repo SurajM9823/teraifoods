@@ -67,6 +67,8 @@ class CheckoutAttempt(models.Model):
 
 class Payment(models.Model):
     order = models.OneToOneField(Order, on_delete=models.PROTECT, related_name='payment')
+    # Historical rows belong to the previous test-only integration.
+    stripe_mode = models.CharField(max_length=4, choices=[('test', 'Test'), ('live', 'Live')], default='test')
     session_id = models.CharField(max_length=255, blank=True, db_index=True)
     session_url = models.URLField(max_length=2000, blank=True)
     intent_id = models.CharField(max_length=255, blank=True)

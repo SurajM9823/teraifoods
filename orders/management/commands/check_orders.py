@@ -10,11 +10,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         values = {
-            'Effective payment mode':'local demo' if settings.DEBUG and settings.ORDER_PAYMENT_MODE == 'demo' else 'Stripe test',
+            'Effective payment mode':'local demo' if settings.DEBUG and settings.ORDER_PAYMENT_MODE == 'demo' else 'Stripe ' + (settings.STRIPE_MODE or 'UNCONFIGURED'),
             'Products':Product.objects.count(),
             'Products with confirmed stock':Product.objects.filter(stock_confirmed=True).count(),
             'Active delivery bands':WeightBand.objects.filter(is_active=True).count(),
-            'Stripe test key configured':settings.STRIPE_SECRET_KEY.startswith(('sk_test_','rk_test_')),
+            'Stripe selected key configured':settings.STRIPE_SECRET_KEY.startswith((f'sk_{settings.STRIPE_MODE}_',f'rk_{settings.STRIPE_MODE}_')),
             'Stripe webhook configured':bool(settings.STRIPE_WEBHOOK_SECRET),
             'Orders':Order.objects.count(),
             'Pending notifications':Notification.objects.exclude(status='sent').count(),

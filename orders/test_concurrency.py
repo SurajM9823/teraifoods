@@ -78,3 +78,33 @@ class GuestCheckoutConcurrencyTests(TransactionTestCase):
             result=list(pool.map(buy_package,['package','regular']))
         self.assertEqual(len([r for r in result if r]),1)
         self.product.refresh_from_db();self.assertEqual(self.product.stock,0)
+
+    @patch('orders.tasks.dispatch_pending.apply_async')
+    def test_duplicate_payment_and_refund_webhooks_serialize(self, queue):
+        from .models import ProviderEvent, Refund
+        from .payments import apply_event
+        order = create_order(AnonymousUser(), 'webhook-race', self.body, 'webhook-race')
+        event = {'id': 'evt_race_paid', 'type': 'checkout.session.completed', 'livemode': False,
+                 'data': {'object': {'id': 'cs_test_race', 'metadata': {'order_id': str(order.public_id)},
+                     'payment_status': 'paid', 'amount_total': int(order.total * 100),
+                     'currency': 'gbp', 'payment_intent': 'pi_race'}}}
+
+        def deliver(payload):
+            close_old_connections()
+            try:
+                apply_event(payload)
+            finally:
+                close_old_connections()
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            list(pool.map(deliver, [event, event]))
+        self.assertEqual(order.events.filter(event_type='payment_confirmed').count(), 1)
+        Refund.objects.create(order=order, amount=order.total, reason='Concurrent refund')
+        event = {'id': 'evt_race_refund', 'type': 'refund.updated', 'livemode': False,
+                 'data': {'object': {'id': 're_race', 'metadata': {'order_id': str(order.public_id)},
+                     'status': 'succeeded', 'amount': int(order.total * 100),
+                     'currency': 'gbp', 'payment_intent': 'pi_race'}}}
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            list(pool.map(deliver, [event, event]))
+        self.assertEqual(order.events.filter(event_type='refund_succeeded').count(), 1)
+        self.assertEqual(ProviderEvent.objects.count(), 2)

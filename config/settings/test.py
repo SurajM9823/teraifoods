@@ -14,3 +14,4 @@ CELERY_TASK_EAGER_PROPAGATES = True
 ALLAUTH_TRUSTED_PROXY_COUNT = 0
 CHANNEL_LAYERS = {'default': {'BACKEND':'channels.layers.InMemoryChannelLayer'}}
 ORDER_PAYMENT_MODE = 'stripe'
+STRIPE_MODE = 'test'
