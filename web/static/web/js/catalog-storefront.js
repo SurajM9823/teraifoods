@@ -5,6 +5,22 @@
   const read = id => { try { return JSON.parse(document.getElementById(id)?.textContent || 'null'); } catch { return null; } };
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   ready(() => {
+    // Header search is available on every page, including pages without a grid.
+    const headerSearch = document.getElementById('header-search-input')
+      || document.querySelector('header .header-search input[type="search"]');
+    if (headerSearch && !/^\/shop\/?$/.test(location.pathname)) {
+      const openShopSearch = () => {
+        const params = new URLSearchParams({focus_search: '1'});
+        const query = headerSearch.value.trim();
+        if (query) params.set('q', query);
+        location.assign('/shop/?' + params.toString());
+      };
+      headerSearch.addEventListener('focus', openShopSearch);
+      headerSearch.closest('form')?.addEventListener('submit', event => {
+        event.preventDefault();
+        openShopSearch();
+      });
+    }
     const homeGrid = document.querySelector('.for-you-grid-container .products');
     const grid = document.getElementById('shop-products-container') || homeGrid;
     const initial = read(homeGrid ? 'catalog-for-you-page' : 'catalog-page');
@@ -385,11 +401,12 @@
         const urlParams = new URLSearchParams(location.search);
         if (urlParams.get('focus_search') === 'true' || urlParams.get('focus_search') === '1') {
           setTimeout(() => {
-            if (window.innerWidth < 1200 && search) {
-              search.focus({ preventScroll: true });
-            }
+            const focusTarget = window.innerWidth >= 1200
+              ? document.getElementById('header-search-input') || search : search;
+            focusTarget?.focus({ preventScroll: true });
           }, 60);
           urlParams.delete('focus_search');
+          filters.delete('focus_search');
           const cleanSearch = urlParams.toString() ? '?' + urlParams : '';
           history.replaceState(null, '', location.pathname + cleanSearch);
         }

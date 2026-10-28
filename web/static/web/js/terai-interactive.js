@@ -991,8 +991,7 @@
       </div>
     `;
 
-    // Global and element close bindings
-    sideCartOverlay.addEventListener('click', closeSideCart);
+    // Cart, checkout and payment stay open until the header close button is used.
     sideCartDrawer.querySelector('#drawer-close-btn')?.addEventListener('click', closeSideCart);
 
     // Step 1: Select All Checkbox
@@ -3097,21 +3096,15 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        closeSideCart();
         closeWishlistDrawer();
         closeCompareModal();
         closeLoginModal();
       }
     });
 
-        // 2. Cart Side Close & Overlay (Direct & Delegated)
+    // 2. Only the cart header close button dismisses the commerce drawer.
     document.addEventListener('click', (e) => {
-      if (e.target.closest('#drawer-close-btn, .cart-side-close, .cart-side-close-btn, [data-drawer-close]')) {
-        e.preventDefault();
-        e.stopPropagation();
-        closeSideCart();
-      }
-      if (e.target.matches('.cart-side-overlay, #cart-side-overlay')) {
+      if (e.target.closest('#cart-widget-side #drawer-close-btn')) {
         e.preventDefault();
         e.stopPropagation();
         closeSideCart();
@@ -3128,14 +3121,8 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
       }
     });
 
-    // Original Direct Listeners
-// 2. Cart Side Close & Overlay
+    // Header close button (also supports the original cart markup).
     document.querySelector('.cart-widget-side .cart-side-close')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      closeSideCart();
-    });
-
-    document.querySelector('.cart-side-overlay')?.addEventListener('click', (e) => {
       e.preventDefault();
       closeSideCart();
     });
@@ -3216,9 +3203,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     // 9. ESC key handler
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        closeSideCart();
         closeWishlistDrawer();
-        closeSideCart();
         closeQuickview();
         closeOrderTracking();
         closeBulkQuote();

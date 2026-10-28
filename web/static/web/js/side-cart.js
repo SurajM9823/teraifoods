@@ -34,7 +34,7 @@
 					  self.addEventListener('click', (e) => {
 						e.preventDefault();
 						this.body.classList.add('cart-widget-side-active');
-						tl.reversed() ? tl.play() : tl.reverse();
+						tl.play();
 					  }, false);
 			  
 				}
@@ -44,12 +44,6 @@
 				$(".quick-button.mini-cart-button").trigger("click");
 
 			});
-
-			overlay.addEventListener('click', (e) => {
-			  e.preventDefault();
-			  this.body.classList.remove('cart-widget-side-active');
-			  tl.reverse();
-			})
 
 			close.addEventListener('click', (e) => {
 			  e.preventDefault();

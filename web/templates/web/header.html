@@ -62,7 +62,7 @@
 					<!-- Search Form: always targets Shop page with live autocomplete & instant filtering -->
 					<div class="header-search search-overlay flex-fill ms-3">
 						<form action="{% url 'web:shop' %}" class="search-form search-type-1" role="search" method="get" id="searchform">
-							<input class="form-control search-input filled" type="search" name="s" id="header-search-input" placeholder="Search for products, categories or brands..." autocomplete="off">
+							<input class="form-control search-input filled" type="search" name="q" id="header-search-input" placeholder="Search for products, categories or brands..." autocomplete="off">
 							<button type="submit" class="unset" aria-label="Search"><i class="klb-icon-search"></i></button>
 							<input type="hidden" name="post_type" value="product">
 						</form>
