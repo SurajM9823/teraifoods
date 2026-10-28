@@ -602,21 +602,21 @@
 
 		$(window).on('scroll', onScroll);
 		$(window).on('resize', function() {
-			getFullHeight();
+			getSidebarHeight();
 			handleStickyAndCategories();
 		});
 
 		// Initial precision alignment
 		setTimeout(function() {
-			getFullHeight();
+			getSidebarHeight();
 			handleStickyAndCategories();
 		}, 100);
 		setTimeout(function() {
-			getFullHeight();
+			getSidebarHeight();
 			handleStickyAndCategories();
 		}, 500);
 		setTimeout(function() {
-			getFullHeight();
+			getSidebarHeight();
 			handleStickyAndCategories();
 		}, 1200);
 	});

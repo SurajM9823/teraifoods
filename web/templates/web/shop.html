@@ -72,7 +72,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=overlay-lifecycle-v7" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=shop-navbar-v8" media="all">
 
 	<style>
 		body {
@@ -111,56 +111,183 @@
 		}
 
 		/* ========================================================
-		   SHOP PAGE SPECIFIC: Sticky Categories, No Left Space,
-		   Zero Border Radius, Extended from Sub-Navbar (ONLY FOR SHOP PAGE)
+		   NAVBAR & CATEGORIES: Identical to Home Page (index.html)
 		   ======================================================== */
-		.terai-shop-page .header-nav {
+		header.site-header {
 			position: sticky !important;
 			top: 0 !important;
-			z-index: 1000 !important;
-			background: #ffffff !important;
-			border-bottom: 1px solid #e2e8f0 !important;
+			left: 0 !important;
+			right: 0 !important;
+			width: 100% !important;
+			z-index: 1020 !important;
+			background-color: #ffffff !important;
+			transition: box-shadow 0.25s ease !important;
 		}
-		.terai-shop-page .categories-menu {
-			position: relative;
+
+		header.site-header.sticky-header {
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+		}
+
+		header.site-header.sticky-header .categories-menu .site-categories {
+			top: 38px !important;
+		}
+
+		.site-header.header-type1 .header-main {
+			background-color: #fff !important;
+			color: #030712 !important;
+		}
+
+		.site-header.header-type1 .quick-button .action-link .action-icon {
+			color: #030712;
+		}
+
+		.site-header.header-type1 .header-nav {
+			background-color: #fff !important;
+			border-color: #e5e7eb !important;
+		}
+
+		.site-header.header-type1 .header-nav .primary-menu > ul > li > a {
+			color: #030712 !important;
+		}
+
+		.site-header.header-type1 .header-row .site-menu .menu > .menu-item.current-menu-item > a {
+			color: #634c9f !important;
+		}
+
+		.site-header.header-type1 .header-row .site-menu .menu > .menu-item.current-menu-item > a::before {
+			background-color: #634c9f !important;
+		}
+
+		.site-header.header-type1 .header-nav .site-menu.horizontal ul .sub-menu a {
+			color: #111827 !important;	
+		}
+
+		.site-header.header-type1 .header-nav .site-header .primary-menu > ul .sub-menu a:hover {
+			text-decoration-color: #111827 !important;	
+		}
+
+		/* All Categories Section (Single Source of Truth: index.html) */
+		.header-nav .categories-menu {
+			position: relative !important;
 			width: 280px !important;
 			flex: 0 0 280px !important;
 			margin: 0 !important;
 			padding: 0 !important;
 		}
-		.terai-shop-page .categories-menu .categories-toggle {
+		.header-nav .categories-menu .categories-toggle {
 			width: 280px !important;
-			height: 48px;
-			justify-content: flex-start;
-			padding: 0 20px;
-			background: #ffffff;
+			height: 48px !important;
+			display: flex !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			padding: 0 20px !important;
+			background: #ffffff !important;
 			border: none !important;
 			border-right: 1px solid #e2e8f0 !important;
 			border-bottom: 1px solid #e2e8f0 !important;
 			border-left: none !important;
 			border-top: none !important;
-			border-radius: 0 !important; /* NO curved radius at button */
-			font-size: 14px;
-			font-weight: 700;
-			color: #0f172a;
-			text-decoration: none;
-			display: flex;
-			align-items: center;
-			box-sizing: border-box;
+			border-radius: 0 !important;
+			cursor: pointer !important;
 		}
-		.terai-shop-page .categories-menu .categories-toggle i {
-			font-size: 16px;
-			color: #634c9f;
+		.header-nav .categories-menu .categories-toggle::after {
+			display: inline-block !important;
+			content: "\e8e7" !important;
+			font-family: "klbtheme" !important;
+			font-size: 78% !important;
+			font-weight: 700 !important;
+			margin-left: auto !important;
+			text-shadow: 0 0 currentColor !important;
 		}
-		.terai-shop-page .categories-menu .categories-toggle::after {
-			display: none !important;
-			content: none !important;
+		.header-nav .site-categories {
+			position: absolute !important;
+			top: 48px !important;
+			left: 0 !important;
+			width: 280px !important;
+			height: 524px;
+			max-height: 524px;
+			background: #ffffff !important;
+			border: 1px solid #e2e8f0 !important;
+			border-left: none !important;
+			border-top: none !important;
+			border-radius: 0 0 6px 0 !important;
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+			z-index: 1000 !important;
+			display: flex !important;
+			flex-direction: column !important;
+			overflow: visible;
+		}
+		.header-nav .site-categories > ul#category-menu {
+			height: 100% !important;
+			display: flex !important;
+			flex-direction: column !important;
+			justify-content: flex-start !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			list-style: none !important;
+		}
+		.header-nav .site-categories > ul#category-menu > li {
+			flex: 0 0 47.63px !important;
+			height: 47.63px !important;
+			min-height: 47.63px !important;
+			display: flex !important;
+			align-items: center !important;
+			position: static !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			border-bottom: 1px solid #f1f5f9 !important;
+			box-sizing: border-box !important;
+		}
+		.header-nav .site-categories > ul#category-menu > li:last-child {
+			border-bottom: none !important;
 		}
 
-		/* Desktop Layout (>= 1200px): Flush left (0 space), sticky on scroll, 0 radius */
+		/* Eliminate transition lag on categories elements during scroll */
+		.header-nav .categories-menu,
+		.header-nav .categories-menu .categories-toggle,
+		.header-nav .site-categories,
+		.header-nav .site-categories > ul#category-menu,
+		.header-nav .site-categories > ul#category-menu > li {
+			transition: none !important;
+		}
+
+		/* Categories items styling */
+		.header-nav .site-categories > ul#category-menu > li > a {
+			width: 100% !important;
+			height: 100% !important;
+			display: flex !important;
+			align-items: center !important;
+			padding: 0 18px !important;
+			font-size: 13px !important;
+			font-weight: 500 !important;
+			color: #1e293b !important;
+			transition: background 0.15s ease, color 0.15s ease !important;
+		}
+		.header-nav .site-categories > ul#category-menu > li > a:hover,
+		.header-nav .site-categories > ul#category-menu > li.menu-item-has-children:hover > a {
+			background: #f8fafc !important;
+			color: #634c9f !important;
+		}
+		.header-nav .site-categories > ul#category-menu > li .sub-menu {
+			position: absolute !important;
+			left: 280px !important;
+			top: 0 !important;
+			width: 280px !important;
+			height: 100% !important;
+			min-height: 476px !important;
+			background: #ffffff !important;
+			border: 1px solid #e2e8f0 !important;
+			border-left: 1px solid #f1f5f9 !important;
+			border-radius: 0 6px 6px 0 !important;
+			box-shadow: 10px 0 25px rgba(0, 0, 0, 0.08) !important;
+			padding: 18px 22px !important;
+			z-index: 9999 !important;
+		}
+
+		/* Desktop Layout (>= 1200px): Clean offset next to categories dropdown */
 		@media (min-width: 1200px) {
 			.terai-shop-page .shop-main-layout {
-				padding: 0 0 0 0 !important;
+				padding: 0 !important;
 				margin: 0 !important;
 			}
 			.terai-shop-page .shop-main-container {
@@ -171,42 +298,17 @@
 			.terai-shop-page .shop-main-row {
 				margin: 0 !important;
 				display: flex !important;
-				align-items: flex-start !important; /* Required for sticky child */
+				align-items: flex-start !important;
 			}
 			.terai-shop-page .shop-category-anchor-col {
 				width: 280px !important;
 				flex: 0 0 280px !important;
-				position: sticky !important;
-				top: 125px !important; /* Perfectly flush right beneath sticky masthead / sub-nav */
-				height: auto !important;
-				min-height: calc(100vh - 125px) !important;
-				background: #ffffff !important;
-				border-right: 1px solid #e2e8f0 !important;
-				border-left: none !important; /* NO space or border on left edge */
-				border-top: none !important;
-				border-bottom: none !important;
-				border-radius: 0 !important; /* NO curved radius */
-				padding: 0 !important;
+				min-width: 280px !important;
+				height: 490px !important;
+				pointer-events: none !important;
 				margin: 0 !important;
-				z-index: 1000 !important;
-				align-self: flex-start !important;
-				display: flex !important;
-				flex-direction: column !important;
-				justify-content: space-between !important;
-				overflow: visible !important;
-			}
-			.terai-shop-page .shop-sidebar-categories {
-				display: block !important;
-				position: relative !important;
-				width: 100% !important;
-				background: transparent !important;
-				box-shadow: none !important;
+				padding: 0 !important;
 				border: none !important;
-				border-radius: 0 !important; /* NO curved radius */
-				z-index: 100 !important;
-				visibility: visible !important;
-				opacity: 1 !important;
-				overflow: visible !important;
 			}
 			.terai-shop-page .shop-products-col {
 				flex: 1 !important;
@@ -218,121 +320,9 @@
 			}
 		}
 
-		/* Mobile & Tablet (< 1200px) toggleable */
-		@media (max-width: 1199px) {
-			.terai-shop-page .categories-menu {
-				width: auto;
-			}
-			.terai-shop-page .site-categories {
-				position: absolute;
-				top: 100%;
-				left: 0;
-				width: 270px;
-				background: #ffffff;
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-				border: 1px solid #e2e8f0;
-				border-radius: 0 !important;
-				z-index: 1000;
-				display: none;
-			}
-			.terai-shop-page .site-categories.show {
-				display: block;
-			}
-		}
 
-		/* ========================================================
-		   SUB-MENU FLYOUT STYLING (Identical to Home Page Tiny Beautiful List)
-		   ======================================================== */
-		.site-categories > ul {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-			position: static !important;
-		}
-		.site-categories > ul > li {
-			position: static !important; /* Anchors sub-menu to .site-categories top, exact same as home page! */
-		}
-		.site-categories > ul > li + li {
-			border-top: 1px solid #f1f5f9;
-		}
-		.site-categories > ul > li > a {
-			display: flex;
-			align-items: center;
-			padding: 10px 18px;
-			font-size: 13px;
-			font-weight: 500;
-			color: #334155;
-			text-decoration: none;
-			transition: all 0.15s ease;
-			border-radius: 0 !important;
-		}
-		.site-categories > ul > li > a:hover,
-		.site-categories > ul > li.active > a {
-			background: #f8fafc;
-			color: #634c9f;
-			font-weight: 600;
-		}
-		.site-categories > ul > li > a img {
-			width: 16px;
-			height: 16px;
-			object-fit: contain;
-			margin-right: 10px;
-		}
-		.site-categories > ul > li.menu-item-has-children > a::after {
-			content: "\e8ef";
-			font-family: "klbtheme";
-			font-size: 10px;
-			margin-left: auto;
-			color: #94a3b8;
-		}
-		.site-categories > ul > li .sub-menu {
-			position: absolute !important;
-			left: 100% !important;
-			top: 0 !important;
-			width: 250px !important;
-			min-height: 100% !important;
-			height: auto !important;
-			background: #ffffff !important;
-			border: 1px solid #e2e8f0 !important;
-			border-left: 1px solid #f1f5f9 !important;
-			box-shadow: 10px 15px 30px rgba(0, 0, 0, 0.08) !important;
-			padding: 18px 0 !important;
-			margin: 0 !important;
-			list-style: none !important;
-			display: none;
-			opacity: 0;
-			visibility: hidden;
-			pointer-events: none;
-			transition: opacity 0.12s ease, visibility 0.12s ease;
-			z-index: 99999 !important;
-		}
-		.site-categories > ul > li.menu-item-has-children:hover > .sub-menu {
-			display: block !important;
-			opacity: 1 !important;
-			visibility: visible !important;
-			pointer-events: auto !important;
-		}
-		.site-categories > ul > li .sub-menu li {
-			padding: 0 22px !important;
-			margin: 0 0 4px 0 !important;
-			border: none !important;
-		}
-		.site-categories > ul > li .sub-menu li a {
-			display: block !important;
-			padding: 4px 0 !important;
-			font-size: 13.5px !important;
-			font-weight: 400 !important;
-			color: #1e293b !important;
-			text-decoration: none !important;
-			background: transparent !important;
-			transition: color 0.15s ease !important;
-			border-radius: 0 !important;
-		}
-		.site-categories > ul > li .sub-menu li a:hover {
-			color: #634c9f !important;
-			text-decoration: underline !important;
-			background: transparent !important;
-		}
+
+
 
 		/* Footer Overflow Protection */
 		.site-footer {
@@ -697,24 +687,8 @@
 			<div class="container-fluid ps-0 pe-4 pe-xl-5 shop-main-container">
 				<div class="shop-main-row">
 
-					<!-- Left Column: Sticky, Flush Left (0 Space), No Radius, Touching Footer -->
-					<div class="d-none d-xl-flex shop-category-anchor-col">
-						<nav class="site-categories show shop-sidebar-categories" id="shop-site-categories-menu">
-							{% include 'catalog/storefront/menu.html' with menu_id='category-menu' menu_class='menu' shop_menu=True %}
-						</nav>
-
-						<!-- Fill Section Touching Footer (No curved radius) -->
-						<div class="shop-sidebar-footer-fill mt-auto pt-3 pb-3 px-3 border-top" style="background:#ffffff; border-radius:0 !important;">
-							<div class="d-flex align-items-center gap-2 mb-3">
-								<i class="klb-icon-phone text-primary fs-5"></i>
-								<div>
-									<div class="fw-bold text-dark text-12">Support Helpline</div>
-									<div class="text-gray-500 text-11">+44 20 7946 0912</div>
-								</div>
-							</div>
-							<a href="{% url 'web:bulk-order' %}" class="btn btn-outline-primary btn-sm w-100 py-1" style="font-size: 11.5px; font-weight: 700; border-radius: 0 !important;">Wholesale Bulk PO &raquo;</a>
-						</div>
-					</div>
+					<!-- Left Column: 280px Spacer next to navbar categories dropdown on desktop -->
+					<div class="d-none d-xl-block shop-category-anchor-col" style="width: 280px; flex: 0 0 280px; min-width: 280px; height: 490px; pointer-events: none;"></div>
 
 					<!-- Right Main Storefront: 4-Column Flash Sale Product Cards -->
 					<div class="shop-products-col">
@@ -741,6 +715,24 @@
 						</div>
 
 
+						{% if request.GET.section %}
+						<div class="shop-section-filter-header d-flex align-items-center justify-content-between mb-3 px-2 py-2 bg-light rounded border">
+							<div class="d-flex align-items-center gap-2">
+								<span class="badge bg-primary text-white" style="font-size: 11px; padding: 4px 8px;">Collection</span>
+								<h2 class="text-15 fw-bold mb-0 text-dark">
+									{% if request.GET.section == 'new_arrival' %}New Arrivals
+									{% elif request.GET.section == 'featured' %}Featured Products
+									{% elif request.GET.section == 'best_seller' %}Best Sellers
+									{% elif request.GET.section == 'for_you' %}For You Collection
+									{% else %}{{ request.GET.section|title }}{% endif %}
+								</h2>
+							</div>
+							<a href="{% url 'web:shop' %}" class="btn btn-outline-secondary btn-sm" style="font-size: 11px; padding: 3px 10px;">
+								<i class="klb-icon-x"></i> Clear Filter
+							</a>
+						</div>
+						{% endif %}
+
 						<!-- 4-Column Border-Touching Products Grid (Shared 1px Borders) -->
 						<div class="shop-products-grid-container" id="shop-products-container">
 
@@ -750,7 +742,7 @@
 						</div><!-- End Products Container -->
 
 						<div class="shop-end-divider">
-							<span>&bull; You&rsquo;ve reached the end of the harvest deals collection &bull;</span>
+							<span>&bull; You&rsquo;ve reached the end of {% if request.GET.section == 'new_arrival' %}the new arrivals{% elif request.GET.section == 'featured' %}the featured products{% elif request.GET.section == 'best_seller' %}the best sellers{% elif request.GET.section == 'for_you' %}the collection{% else %}the collection{% endif %} &bull;</span>
 						</div>
 
 						<!-- SEO Page Bottom Content Banner -->
@@ -780,23 +772,7 @@
 	<!-- Interactive Client-side Script for Live Categories Filtering, Sorting, and Cart Steppers -->
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			// Categories Menu Toggle (for tablet/mobile < 1200px)
-			const catToggleBtn = document.getElementById('shop-categories-toggle-btn');
-			const siteCatMenu = document.getElementById('shop-site-categories-menu');
-			if (catToggleBtn && siteCatMenu) {
-				catToggleBtn.addEventListener('click', function (e) {
-					if (window.innerWidth < 1200) {
-						e.preventDefault();
-						siteCatMenu.classList.toggle('show');
-					}
-				});
-				// Close dropdown on click outside for mobile/tablet
-				document.addEventListener('click', function (e) {
-					if (window.innerWidth < 1200 && !catToggleBtn.contains(e.target) && !siteCatMenu.contains(e.target)) {
-						siteCatMenu.classList.remove('show');
-					}
-				});
-			}
+			// Categories toggle and menu interactions are managed by terai-interactive.js (identical to home page).
 
 			// Filtering and pagination are provided by catalog-storefront.js.
 
@@ -804,7 +780,7 @@
 	</script>
 
 	<!-- Main Theme and Interactive Engine -->
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=elements-v1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=shop-navbar-v8"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

@@ -38,7 +38,7 @@ def context(request, page_key):
         if not group.startswith(prefix + '_'):
             continue
         if layout['section'] == 'for_you':
-            rows, info = paginate({'section': 'for_you', 'limit': 24})
+            rows, info = paginate({'section': 'for_you', 'limit': '24', 'group': 'index_3'})
             result['catalog_for_you_page'] = info
         elif layout['listing']:
             try:

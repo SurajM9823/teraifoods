@@ -10,7 +10,7 @@
     const initial = read(homeGrid ? 'catalog-for-you-page' : 'catalog-page');
     let info = initial, busy = false, generation = 0, controller, retry = false;
     let filters = new URLSearchParams(location.search);
-    if (homeGrid) filters = new URLSearchParams({section:'for_you', limit:'24'});
+    if (homeGrid) filters = new URLSearchParams({section:'for_you', limit:'24', group:'index_3'});
     if (filters.has('s') && !filters.has('q')) filters.set('q', filters.get('s'));
     let detail = read('catalog-detail');
     let currentRevision = Number(read('catalog-revision') || 1);
@@ -99,47 +99,158 @@
     }, true);
 
     if (grid && initial) {
-      // One small accessible control outside the unchanged product grid.
-      const more = document.createElement('button');
-      more.type = 'button'; more.className = 'btn btn-white';
-      more.textContent = 'Load more'; more.setAttribute('aria-label', 'Load more products');
-      const status = document.createElement('span'); status.setAttribute('role','status');
-      status.className = 'catalog-loading-status';
-      grid.after(more, status);
-      const update = () => {
-        more.hidden = !info?.has_more && !retry;
-        more.disabled = busy;
-        grid.setAttribute('aria-busy', String(busy));
-        more.textContent = retry ? 'Retry loading products' : busy ? 'Loading…' : 'Load more';
-        status.textContent = !grid.children.length && !busy ? (retry ? 'Products could not be loaded.' : 'No products found.') : '';
+      if (!document.getElementById('terai-spin-keyframes')) {
+        const keyframeStyle = document.createElement('style');
+        keyframeStyle.id = 'terai-spin-keyframes';
+        keyframeStyle.textContent = '@keyframes teraiSpin { to { transform: rotate(360deg); } }';
+        document.head.appendChild(keyframeStyle);
+      }
+
+      // Dedicated container for pagination controls, loading indicators, and sentinel
+      const paginationWrap = document.createElement('div');
+      paginationWrap.className = 'catalog-pagination-wrap';
+      paginationWrap.style.cssText = 'width: 100%; text-align: center; margin: 24px auto 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; clear: both;';
+
+      // Invisible sentinel element for scroll observation
+      const sentinel = document.createElement('div');
+      sentinel.className = 'catalog-scroll-sentinel';
+      sentinel.style.cssText = 'width: 100%; height: 4px; pointer-events: none; opacity: 0;';
+
+      // Subtle loading spinner indicator
+      const loader = document.createElement('div');
+      loader.className = 'catalog-loading-indicator';
+      loader.setAttribute('role', 'status');
+      loader.setAttribute('aria-live', 'polite');
+      loader.style.cssText = 'display: none; align-items: center; justify-content: center; gap: 10px; color: #634c9f; font-size: 13.5px; font-weight: 500; padding: 12px 0;';
+      loader.innerHTML = '<span class="catalog-spinner-ring" style="display:inline-block; width:18px; height:18px; border:2.5px solid rgba(99,76,159,0.2); border-top-color:#634c9f; border-radius:50%; animation:teraiSpin 0.7s linear infinite;"></span><span>Loading more products…</span>';
+
+      // Manual retry button on error
+      const retryBtn = document.createElement('button');
+      retryBtn.type = 'button';
+      retryBtn.className = 'btn btn-outline-primary btn-sm rounded';
+      retryBtn.style.cssText = 'display: none; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;';
+      retryBtn.innerHTML = '<i class="klb-icon-rotate-cw" style="margin-right: 6px;"></i> Products could not be loaded. Click to retry';
+
+      // End of collection message
+      const endNotice = document.createElement('div');
+      endNotice.className = 'catalog-end-notice';
+      endNotice.style.cssText = 'display: none; color: #94a3b8; font-size: 12.5px; font-weight: 500; padding: 12px 0; text-align: center;';
+      endNotice.innerHTML = '<span>&bull; All available products loaded &bull;</span>';
+
+      paginationWrap.append(sentinel, loader, retryBtn, endNotice);
+      grid.after(paginationWrap);
+
+      let observer = null;
+      const setupObserver = () => {
+        if (!('IntersectionObserver' in window)) return;
+        if (observer) observer.disconnect();
+        observer = new IntersectionObserver(entries => {
+          for (const entry of entries) {
+            if (entry.isIntersecting && !busy && !retry && info?.has_more) {
+              load();
+              break;
+            }
+          }
+        }, {
+          root: null,
+          rootMargin: '0px 0px 800px 0px',
+          threshold: 0
+        });
+        if (info?.has_more && !retry) {
+          observer.observe(sentinel);
+        }
       };
+
+      const updateUI = () => {
+        grid.setAttribute('aria-busy', String(busy));
+        loader.style.display = busy ? 'inline-flex' : 'none';
+        retryBtn.style.display = retry && !busy ? 'inline-flex' : 'none';
+        sentinel.style.display = info?.has_more && !retry ? 'block' : 'none';
+
+        const hasMore = Boolean(info?.has_more);
+        const hasProducts = grid.querySelectorAll('[data-catalog-product]').length > 0;
+
+        if (!hasMore && hasProducts && !retry && !busy) {
+          endNotice.style.display = 'block';
+          const shopDivider = document.querySelector('.shop-end-divider');
+          if (shopDivider) shopDivider.style.display = 'none';
+        } else {
+          endNotice.style.display = 'none';
+        }
+
+        if (observer) {
+          if (hasMore && !retry) {
+            observer.observe(sentinel);
+          } else {
+            observer.unobserve(sentinel);
+          }
+        }
+      };
+
+      retryBtn.addEventListener('click', () => {
+        retry = false;
+        load();
+      });
+
       async function load(reset = false) {
         if (!reset && (busy || (!info?.has_more && !retry))) return;
         if (reset) {
-          controller?.abort(); generation++;
-          grid.replaceChildren(); info = null;
+          controller?.abort();
+          generation++;
+          grid.replaceChildren();
+          info = null;
+          endNotice.style.display = 'none';
+          retryBtn.style.display = 'none';
         }
         const run = generation;
-        controller = new AbortController(); busy = true; retry = false; update();
+        controller = new AbortController();
+        busy = true;
+        retry = false;
+        updateUI();
+
         const params = new URLSearchParams(filters);
         params.delete('cursor');
-        if (!reset && info?.next_cursor) params.set('cursor', info.next_cursor);
+        if (!reset && info?.next_cursor) {
+          params.set('cursor', info.next_cursor);
+        }
+
         try {
-          const response = await fetch('/api/products/?' + params, {signal:controller.signal, headers:{Accept:'application/json'}});
+          const response = await fetch('/api/products/?' + params.toString(), {
+            signal: controller.signal,
+            headers: { Accept: 'application/json' }
+          });
+
           if (response.status === 409) {
             const changed = await response.json();
-            if (changed.restart && run === generation) { load(true); return; }
+            if (changed.restart && run === generation) {
+              load(true);
+              return;
+            }
           }
-          if (!response.ok) throw new Error('Products could not be loaded.');
+
+          if (!response.ok) {
+            throw new Error(`Server returned HTTP ${response.status}`);
+          }
+
           const payload = await response.json();
           if (run !== generation) return;
-          const fragment = document.createElement('template'); fragment.innerHTML = payload.html;
-          const seen = new Set([...grid.querySelectorAll('[data-catalog-product]')].map(n => n.dataset.catalogProduct));
+
+          const fragment = document.createElement('template');
+          fragment.innerHTML = payload.html || '';
+
+          // Deduplicate cards across pages using catalog product IDs
+          const seen = new Set([...grid.querySelectorAll('[data-catalog-product]')].map(n => String(n.dataset.catalogProduct)));
           for (const child of [...fragment.content.children]) {
-            const id = child.dataset.catalogProduct;
-            if (id && !seen.has(id)) { grid.append(child); seen.add(id); }
+            if (child.nodeType !== 1) continue;
+            const id = String(child.dataset.catalogProduct || child.getAttribute('data-catalog-product') || '');
+            if (!id || !seen.has(id)) {
+              grid.append(child);
+              if (id) seen.add(id);
+            }
           }
+
           info = payload;
+
           if (!grid.children.length && (filters.get('q') || filters.get('s'))) {
             const qVal = filters.get('q') || filters.get('s');
             const emptyNotice = document.createElement('div');
@@ -156,26 +267,33 @@
             });
             grid.append(emptyNotice);
           }
+
           document.dispatchEvent(new Event('catalog:updated'));
         } catch (error) {
-          if (error.name !== 'AbortError' && run === generation) retry = true;
+          if (error.name !== 'AbortError' && run === generation) {
+            retry = true;
+            console.error('Terai Foods storefront product loading failed:', error);
+          }
         } finally {
           if (run === generation) {
-            busy = false; update();
-            // A tall viewport may still be near the end after appending a batch.
-            if (!retry && info?.has_more && more.getBoundingClientRect().top < innerHeight + 1200) {
-              requestAnimationFrame(() => load());
+            busy = false;
+            updateUI();
+
+            // A tall viewport may still be near the end after appending a batch
+            if (!retry && info?.has_more) {
+              const rect = sentinel.getBoundingClientRect();
+              if (rect.top <= window.innerHeight + 400) {
+                requestAnimationFrame(() => load());
+              }
+            } else if (!info?.has_more) {
+              observer?.disconnect();
             }
           }
         }
       }
-      more.addEventListener('click', () => load());
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(entries => {
-          if (entries.some(e => e.isIntersecting) && !retry) load();
-        }, {rootMargin:'0px 0px 1200px 0px'});
-        observer.observe(more);
-      }
+
+      setupObserver();
+      updateUI();
       const sort = document.getElementById('shop-sort-select');
       if (sort) {
         sort.value = filters.get('sort') || sort.value;

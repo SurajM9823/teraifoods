@@ -125,7 +125,7 @@
 						<a href="#" class="categories-toggle" id="categories-toggle-btn">
 							<i class="klb-icon-layout-grid me-2"></i>All Categories
 						</a>
-						<nav class="site-categories collapse {% if active_page == 'home' %}show{% endif %}">
+						<nav class="site-categories collapse {% if active_page == 'home' or active_page == 'shop' %}show{% endif %}">
 							{% include 'catalog/storefront/menu.html' with menu_id='category-menu' %}
 						</nav>
 					</div>

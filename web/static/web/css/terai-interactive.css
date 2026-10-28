@@ -4272,20 +4272,13 @@ a.klb-btn-facebook {
   user-select: none !important;
 }
 
-/* Remove dropdown arrow from categories on shop and product pages where categories are already expanded */
-.terai-shop-page .categories-menu .categories-toggle::after {
-  display: none !important;
-  content: none !important;
-}
+/* Dropdown arrow on categories toggle */
 
-.terai-shop-page .categories-menu .categories-toggle {
-  cursor: default !important;
-}
-
-/* Floating categories dropdown for all pages (and home sticky nav) */
-body:not(.home) .categories-menu .site-categories,
+/* Floating categories dropdown for all pages (and home/shop sticky nav) */
+body:not(.home):not(.terai-shop-page) .categories-menu .site-categories,
 body.home .site-header.sticky-header .categories-menu .site-categories,
-body:not(.home) .header-nav .categories-menu .site-categories,
+body.terai-shop-page .site-header.sticky-header .categories-menu .site-categories,
+body:not(.home):not(.terai-shop-page) .header-nav .categories-menu .site-categories,
 .terai-track-order-page .header-nav .categories-menu .site-categories,
 .terai-blogs-page .header-nav .categories-menu .site-categories,
 .terai-bulk-order-page .header-nav .categories-menu .site-categories,
@@ -4314,11 +4307,12 @@ body:not(.home) .header-nav .categories-menu .site-categories,
   pointer-events: auto !important;
 }
 
-/* On desktop home page at the top, preserve the original expanded banner categories with smooth scrolling */
+/* On desktop home and shop page at the top, preserve the original expanded categories with smooth scrolling */
 @media (min-width: 1200px) {
   body.home header:not(.sticky-header) .categories-menu .site-categories,
-  body.home .categories-menu .site-categories,
-  html body.home .header-nav .categories-menu .site-categories {
+  body.home header:not(.sticky-header) .header-nav .categories-menu .site-categories,
+  body.terai-shop-page header:not(.sticky-header) .categories-menu .site-categories,
+  body.terai-shop-page header:not(.sticky-header) .header-nav .categories-menu .site-categories {
     position: absolute !important;
     top: 48px !important;
     left: 0 !important;
@@ -4335,46 +4329,22 @@ body:not(.home) .header-nav .categories-menu .site-categories,
     scrollbar-color: #cbd5e1 transparent;
   }
 
-  /* On desktop shop page, the categories are permanently expanded in the left column with smooth scrolling */
-  html body.terai-shop-page .header-nav .categories-menu .site-categories,
-  .terai-shop-page .header-nav .categories-menu .site-categories {
-    display: none !important;
-  }
-
   html body.terai-shop-page #page #main .shop-category-anchor-col,
   html body.terai-shop-page .shop-main-row .shop-category-anchor-col,
   html body.terai-shop-page .shop-category-anchor-col,
   .terai-shop-page .shop-category-anchor-col {
-    position: sticky !important;
-    top: 125px !important;
-    height: calc(100vh - 125px) !important;
-    max-height: calc(100vh - 125px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    overscroll-behavior-y: contain !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: thin !important;
-    scrollbar-color: #cbd5e1 transparent !important;
-  }
-
-  html body.terai-shop-page .site-header.sticky-header ~ #main .shop-category-anchor-col,
-  html body.terai-shop-page header.sticky-header ~ #main .shop-category-anchor-col {
-    top: 86px !important;
-    height: calc(100vh - 86px) !important;
-    max-height: calc(100vh - 86px) !important;
-  }
-
-  html body.terai-shop-page .shop-sidebar-categories,
-  .terai-shop-page .shop-sidebar-categories {
-    display: flex !important;
-    flex-direction: column !important;
-    flex-shrink: 0 !important;
-    overflow: visible !important;
-  }
-
-  html body.terai-shop-page .shop-sidebar-footer-fill,
-  .terai-shop-page .shop-sidebar-footer-fill {
-    flex-shrink: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    width: 280px !important;
+    flex: 0 0 280px !important;
+    min-width: 280px !important;
+    height: 490px !important;
+    max-height: 490px !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
   }
 }
 
@@ -4411,12 +4381,14 @@ body:not(.home) .header-nav .categories-menu .site-categories,
 }
 
 /* When active/toggled open */
-body:not(.home) .categories-menu.open .site-categories,
-body:not(.home) .categories-menu .site-categories.show,
+body:not(.home):not(.terai-shop-page) .categories-menu.open .site-categories,
+body:not(.home):not(.terai-shop-page) .categories-menu .site-categories.show,
 body.home .site-header.sticky-header .categories-menu.open .site-categories,
 body.home .site-header.sticky-header .categories-menu .site-categories.show,
-body:not(.home) .header-nav .categories-menu.open .site-categories,
-body:not(.home) .header-nav .categories-menu .site-categories.show,
+body.terai-shop-page .site-header.sticky-header .categories-menu.open .site-categories,
+body.terai-shop-page .site-header.sticky-header .categories-menu .site-categories.show,
+body:not(.home):not(.terai-shop-page) .header-nav .categories-menu.open .site-categories,
+body:not(.home):not(.terai-shop-page) .header-nav .categories-menu .site-categories.show,
 .terai-account-page .header-nav .categories-menu.open .site-categories,
 .terai-account-page .header-nav .categories-menu .site-categories.show {
   display: flex !important;
@@ -5763,6 +5735,38 @@ a.button.is-loading::after,
 .pdp-icon-btn.is-loading::after {
   border-color: rgba(21, 71, 168, 0.25) !important;
   border-top-color: #1547A8 !important;
+}
+
+/* Slider/carousel navigation buttons must never take loading styles or relative positioning */
+.site-slider .slick-nav,
+.site-slider .slick-arrow,
+.site-slider .slick-button,
+button.slick-nav,
+button.slick-arrow,
+button.slick-button {
+  position: absolute !important;
+}
+
+.site-slider .slick-nav.is-loading,
+.site-slider .slick-arrow.is-loading,
+.site-slider .slick-button.is-loading,
+button.slick-nav.is-loading,
+button.slick-arrow.is-loading,
+button.slick-button.is-loading {
+  position: absolute !important;
+  color: inherit !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.site-slider .slick-nav.is-loading::after,
+.site-slider .slick-arrow.is-loading::after,
+.site-slider .slick-button.is-loading::after,
+button.slick-nav.is-loading::after,
+button.slick-arrow.is-loading::after,
+button.slick-button.is-loading::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* 3. Product Card Click Loading Overlay */
@@ -7187,3 +7191,126 @@ a.klbwl-btn::after,
 .site-drawer[inert] * {
   pointer-events: none !important;
 }
+
+/* ==========================================================================
+   Hero Carousel Transition & Height Stabilization
+   Prevents layout jumping, image shifting, and blank slide collapses
+   ========================================================================== */
+
+/* 1. Slider outer wrapper stays visible for arrows and dots */
+.elementor-widget-grogin-home-slider .site-slider.slider-style {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* 2. Fixed list height prevents vertical shifts while maintaining 100% width */
+.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-list {
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 360px !important;
+  min-height: 360px !important;
+  max-height: 360px !important;
+}
+
+@media screen and (min-width: 768px) {
+  .elementor-widget-grogin-home-slider .site-slider.slider-style .slick-list {
+    height: 420px !important;
+    min-height: 420px !important;
+    max-height: 420px !important;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .elementor-widget-grogin-home-slider .site-slider.slider-style .slick-list {
+    height: 490px !important;
+    min-height: 490px !important;
+    max-height: 490px !important;
+  }
+}
+
+/* 3. Slick track matches list height */
+.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-track {
+  height: 100% !important;
+  min-height: 100% !important;
+  display: block !important;
+}
+
+/* 4. Slides and inner containers take full width and height */
+.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-slide {
+  height: 100% !important;
+  min-height: 100% !important;
+  float: left !important;
+  display: block !important;
+}
+
+.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-slide > div,
+.elementor-widget-grogin-home-slider .site-slider.slider-style .slider-item,
+.elementor-widget-grogin-home-slider .site-slider.slider-style .site-banner {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 5. Entry media covers the exact banner dimensions across all slides */
+.elementor-widget-grogin-home-slider .site-banner .entry-media {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  z-index: 1 !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.elementor-widget-grogin-home-slider .site-banner .entry-media img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+/* 6. Content overlay floats cleanly on top with identical bounding box */
+.elementor-widget-grogin-home-slider .site-banner .entry-wrapper {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2 !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
+}
+
+

@@ -193,7 +193,11 @@ def paginate(params):
     else:
         default_field = '-id' if section == 'for_you' else 'display_order'
     field = {'price-asc':'selling_price', 'price-desc':'-selling_price', 'name':'name', 'newest':'-id', 'rating':'-sort_rating', 'relevance':'-relevance' if has_search else 'display_order'}.get(sort, default_field)
-    fingerprint = hashlib.sha256(json.dumps({k:params.get(k, '') for k in ('category','subcategory','collection','q','s','section','min_price','max_price','sort','limit','ids')}, sort_keys=True).encode()).hexdigest()
+    fp_keys = ('category', 'subcategory', 'collection', 'q', 's', 'section', 'group', 'min_price', 'max_price', 'sort', 'limit', 'ids')
+    fingerprint = hashlib.sha256(json.dumps({
+        k: str(params.get(k, '')) if k != 'limit' else str(limit)
+        for k in fp_keys
+    }, sort_keys=True).encode()).hexdigest()
     count = queryset.count()
     if params.get('cursor'):
         try:
@@ -251,7 +255,9 @@ def cached_payload(request, loader):
 def listing(request):
     def load():
         rows, info = paginate(request.GET)
-        group = 'index_3' if request.GET.get('section') == 'for_you' else 'shop_0'
+        group = request.GET.get('group') or ('index_3' if request.GET.get('section') == 'for_you' and not request.GET.get('shop') else 'shop_0')
+        if group not in ('index_3', 'shop_0'):
+            group = 'shop_0'
         default_template = f'catalog/storefront/card_{group}_0.html'
         for product in rows:
             product.card_template = product.metadata.get('cards', {}).get(group, default_template)
