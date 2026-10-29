@@ -1873,6 +1873,10 @@
           resultsDropdown.classList.remove('active');
           const isShopOrSearchPage = window.location.pathname.includes('/shop') || window.location.pathname.includes('/search');
           if (isShopOrSearchPage) {
+            if (document.querySelector('[data-catalog-product]')) {
+              // Storefront catalog pagination and live backend search manage this via catalog-storefront.js
+              return;
+            }
             e.preventDefault();
             filterProductsByQuery(query.toLowerCase());
             const url = new URL(window.location.href);

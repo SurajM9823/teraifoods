@@ -7193,124 +7193,271 @@ a.klbwl-btn::after,
 }
 
 /* ==========================================================================
-   Hero Carousel Transition & Height Stabilization
-   Prevents layout jumping, image shifting, and blank slide collapses
+   Terai Foods Dedicated Hero Carousel Component
+   Clean, independent, zero-conflict carousel
    ========================================================================== */
 
-/* 1. Slider outer wrapper stays visible for arrows and dots */
-.elementor-widget-grogin-home-slider .site-slider.slider-style {
+.terai-hero-carousel {
   position: relative !important;
-  overflow: visible !important;
-}
-
-/* 2. Fixed list height prevents vertical shifts while maintaining 100% width */
-.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-list {
-  position: relative !important;
-  overflow: hidden !important;
   width: 100% !important;
   height: 360px !important;
-  min-height: 360px !important;
-  max-height: 360px !important;
+  overflow: hidden !important;
+  border-radius: var(--theme-site-border-radius, 8px) !important;
+  background-color: #f3f4f6 !important;
 }
 
 @media screen and (min-width: 768px) {
-  .elementor-widget-grogin-home-slider .site-slider.slider-style .slick-list {
+  .terai-hero-carousel {
     height: 420px !important;
-    min-height: 420px !important;
-    max-height: 420px !important;
   }
 }
 
 @media screen and (min-width: 1024px) {
-  .elementor-widget-grogin-home-slider .site-slider.slider-style .slick-list {
+  .terai-hero-carousel {
     height: 490px !important;
-    min-height: 490px !important;
-    max-height: 490px !important;
   }
 }
 
-/* 3. Slick track matches list height */
-.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-track {
-  height: 100% !important;
-  min-height: 100% !important;
-  display: block !important;
-}
-
-/* 4. Slides and inner containers take full width and height */
-.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-slide {
-  height: 100% !important;
-  min-height: 100% !important;
-  float: left !important;
-  display: block !important;
-}
-
-.elementor-widget-grogin-home-slider .site-slider.slider-style .slick-slide > div,
-.elementor-widget-grogin-home-slider .site-slider.slider-style .slider-item,
-.elementor-widget-grogin-home-slider .site-slider.slider-style .site-banner {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
+.terai-hero-slides {
   position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  opacity: 1 !important;
-  visibility: visible !important;
 }
 
-/* 5. Entry media covers the exact banner dimensions across all slides */
-.elementor-widget-grogin-home-slider .site-banner .entry-media {
+.terai-hero-slide {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out !important;
   z-index: 1 !important;
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
 }
 
-.elementor-widget-grogin-home-slider .site-banner .entry-media img {
+.terai-hero-slide.is-active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 2 !important;
+}
+
+.terai-hero-media {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
+  z-index: 1 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.terai-hero-media img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   object-fit: cover !important;
   object-position: center !important;
   display: block !important;
   opacity: 1 !important;
   visibility: visible !important;
-  transform: none !important;
 }
 
-/* 6. Content overlay floats cleanly on top with identical bounding box */
-.elementor-widget-grogin-home-slider .site-banner .entry-wrapper {
+.terai-hero-backdrop-link {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2 !important;
+  display: block !important;
+}
+
+.terai-hero-content {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 2 !important;
+  padding: 1.25rem 1.5rem !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+  display: flex !important;
+  align-items: center !important;
   box-sizing: border-box !important;
+}
+
+@media screen and (min-width: 576px) {
+  .terai-hero-content {
+    padding: 2.5rem !important;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .terai-hero-content {
+    padding: 3.5rem !important;
+  }
+}
+
+.terai-hero-inner {
+  max-width: 85% !important;
   pointer-events: auto !important;
+  position: relative !important;
+  z-index: 4 !important;
+}
+
+@media screen and (min-width: 576px) {
+  .terai-hero-inner {
+    max-width: 65% !important;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .terai-hero-inner {
+    max-width: 55% !important;
+  }
+}
+
+.terai-hero-badge {
+  display: inline-block !important;
+}
+
+.terai-hero-badge .banner-badge {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 9999px !important;
+  background-color: #e6f4ea !important;
+  color: #137333 !important;
+  display: inline-block !important;
+}
+
+.terai-hero-title {
+  font-size: 1.625rem !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+  color: #1d1d1b !important;
+  margin: 0 0 0.5rem 0 !important;
+  letter-spacing: -0.02em !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+}
+
+@media screen and (min-width: 576px) {
+  .terai-hero-title {
+    font-size: 2.25rem !important;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .terai-hero-title {
+    font-size: 2.625rem !important;
+  }
+}
+
+.terai-hero-desc {
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+  color: #374151 !important;
+  margin: 0 0 1rem 0 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8) !important;
+}
+
+@media screen and (min-width: 576px) {
+  .terai-hero-desc {
+    font-size: 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+.terai-hero-footer a.btn {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+/* Navigation arrows */
+.terai-hero-nav {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #1d1d1b !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  padding: 0 !important;
+  transition: all 0.2s ease !important;
+  opacity: 0.85 !important;
+}
+
+.terai-hero-nav:hover {
+  background: #ffffff !important;
+  opacity: 1 !important;
+  transform: translateY(-50%) scale(1.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16) !important;
+}
+
+.terai-hero-nav svg {
+  width: 20px !important;
+  height: 20px !important;
+  display: block !important;
+}
+
+.terai-hero-prev {
+  left: 12px !important;
+}
+
+.terai-hero-next {
+  right: 12px !important;
+}
+
+/* Dots */
+.terai-hero-dots {
+  position: absolute !important;
+  bottom: 14px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  z-index: 10 !important;
+  padding: 4px 10px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  border-radius: 20px !important;
+}
+
+.terai-hero-dot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #9ca3af !important;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.terai-hero-dot.is-active {
+  background: var(--theme-primary-color, #634c9f) !important;
+  width: 22px !important;
+  border-radius: 10px !important;
 }
 
 

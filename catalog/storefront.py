@@ -42,7 +42,10 @@ def context(request, page_key):
             result['catalog_for_you_page'] = info
         elif layout['listing']:
             try:
-                rows, info = paginate(request.GET)
+                params = request.GET.copy()
+                if 'limit' not in params and layout.get('limit'):
+                    params['limit'] = str(layout['limit'])
+                rows, info = paginate(params)
             except ValidationError:
                 rows, info = [], dict(next_cursor=None, has_more=False, total=0)
             result['catalog_page'] = info

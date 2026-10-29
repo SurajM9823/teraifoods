@@ -1,17 +1,129 @@
 {% if cms_home.banners %}
-<div class="klb-slider site-slider slider-style slider-loading-height loader-default arrows-default arrows-offset" data-speed="600" data-items="1" data-itemstablet="1" data-itemsmobile="1" data-itemscroll="1" data-arrows="true" data-dots="true" data-autoplay="" data-auto_speed="" data-infinite="true" data-draggable="true">
-{% for banner in cms_home.banners %}
-<div class="slider-item"><div class="site-banner overflow-hidden rounded-base" style="--banner-desktop-height: 490px; --banner-tablet-height: 420px; --banner-mobile-height: 360px;" data-color="dark">
-  <div class="entry-wrapper d-flex align-items-start strech p-20 sm-p-40 lg-p-60"><div class="entry-inner max-w-80 sm-max-w-60 md-max-w-50">
-    {% if banner.badge %}<div class="entry-header mb-10"><span class="banner-badge green">{{ banner.badge }}</span></div>{% endif %}
-    <div class="entry-body mb-10 sm-mb-24 md-mb-40">{% if forloop.first %}<h1 class="entry-title text-26 sm-text-36 md-text-42 fw-bold text-primary-active">{{ banner.title }}</h1>{% else %}<h2 class="entry-title text-26 sm-text-36 md-text-42 fw-bold text-primary-active">{{ banner.title }}</h2>{% endif %}
-      {% if banner.description %}<div class="entry-content pr-0 md-pr-30"><p class="text-13 sm-text-14 md-text-16 lh-base">{{ banner.description }}</p></div>{% endif %}
+<div class="terai-hero-carousel site-banner overflow-hidden rounded-base" id="teraiHeroCarousel" aria-label="Hero Carousel" role="region">
+  <div class="terai-hero-slides">
+    {% for banner in cms_home.banners %}
+    <div class="terai-hero-slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}">
+      <div class="terai-hero-media">
+        <img decoding="async" {% if forloop.first %}fetchpriority="high"{% endif %} src="{{ banner.image_url }}" alt="{{ banner.image_alt|default:banner.title }}" width="1672" height="941">
+      </div>
+      <div class="terai-hero-overlay"></div>
+      <div class="terai-hero-content d-flex align-items-center">
+        <div class="terai-hero-inner">
+          {% if banner.badge %}<div class="terai-hero-badge mb-10"><span class="banner-badge green">{{ banner.badge }}</span></div>{% endif %}
+          <div class="terai-hero-body mb-10 sm-mb-24">
+            {% if forloop.first %}
+            <h1 class="terai-hero-title">{{ banner.title }}</h1>
+            {% else %}
+            <h2 class="terai-hero-title">{{ banner.title }}</h2>
+            {% endif %}
+            {% if banner.description %}<p class="terai-hero-desc">{{ banner.description }}</p>{% endif %}
+          </div>
+          <div class="terai-hero-footer">
+            <a href="{{ banner.destination }}" class="btn btn-primary mobile-small icon-right">{{ banner.button_label }} <i class="klb-icon-move-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </div>
+      <a href="{{ banner.destination }}" class="terai-hero-backdrop-link" tabindex="-1" aria-hidden="true"></a>
     </div>
-    <div class="entry-footer d-flex flex-wrap align-items-center gap-3"><a href="{{ banner.destination }}" class="btn btn-primary mobile-small icon-right">{{ banner.button_label }} <i class="klb-icon-move-right" aria-hidden="true"></i></a></div>
-  </div></div>
-  <div class="entry-media"><img decoding="async" fetchpriority="high" src="{{ banner.image_url }}" alt="{{ banner.image_alt }}" width="1170" height="548" style="object-fit:cover"></div>
-  <a href="{{ banner.destination }}" class="overlay-link" tabindex="-1" aria-hidden="true"></a>
-</div></div>
-{% endfor %}
+    {% endfor %}
+  </div>
+
+  {% if cms_home.banners|length > 1 %}
+  <button type="button" class="terai-hero-nav terai-hero-prev" aria-label="Previous Slide">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>
+  <button type="button" class="terai-hero-nav terai-hero-next" aria-label="Next Slide">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>
+
+  <div class="terai-hero-dots" role="tablist" aria-label="Slide indicators">
+    {% for banner in cms_home.banners %}
+    <button type="button" role="tab" class="terai-hero-dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Go to slide {{ forloop.counter }}"></button>
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
+
+<script>
+(function() {
+  function initHero() {
+    var carousel = document.getElementById('teraiHeroCarousel');
+    if (!carousel || carousel.dataset.initialized === 'true') return;
+    carousel.dataset.initialized = 'true';
+
+    var slides = carousel.querySelectorAll('.terai-hero-slide');
+    var dots = carousel.querySelectorAll('.terai-hero-dot');
+    var prevBtn = carousel.querySelector('.terai-hero-prev');
+    var nextBtn = carousel.querySelector('.terai-hero-next');
+    var total = slides.length;
+    if (total <= 1) return;
+
+    var currentIndex = 0;
+    var timer = null;
+    var autoplayInterval = 5000;
+
+    function goTo(index) {
+      var newIndex = (index + total) % total;
+      if (newIndex === currentIndex) return;
+      slides[currentIndex].classList.remove('is-active');
+      if (dots[currentIndex]) dots[currentIndex].classList.remove('is-active');
+      currentIndex = newIndex;
+      slides[currentIndex].classList.add('is-active');
+      if (dots[currentIndex]) dots[currentIndex].classList.add('is-active');
+    }
+
+    function next() { goTo(currentIndex + 1); }
+    function prev() { goTo(currentIndex - 1); }
+
+    function startAutoplay() {
+      stopAutoplay();
+      timer = setInterval(next, autoplayInterval);
+    }
+
+    function stopAutoplay() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    if (nextBtn) nextBtn.addEventListener('click', function(e) { e.preventDefault(); next(); startAutoplay(); });
+    if (prevBtn) prevBtn.addEventListener('click', function(e) { e.preventDefault(); prev(); startAutoplay(); });
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function(e) {
+        e.preventDefault();
+        var idx = parseInt(this.getAttribute('data-index'), 10);
+        goTo(idx);
+        startAutoplay();
+      });
+    });
+
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+
+    var startX = 0;
+    carousel.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        stopAutoplay();
+      }
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', function(e) {
+      if (e.changedTouches.length === 1) {
+        var diffX = e.changedTouches[0].clientX - startX;
+        if (diffX > 40) { prev(); }
+        else if (diffX < -40) { next(); }
+        startAutoplay();
+      }
+    }, { passive: true });
+
+    startAutoplay();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHero);
+  } else {
+    initHero();
+  }
+})();
+</script>
 {% endif %}

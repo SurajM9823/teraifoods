@@ -130,7 +130,7 @@
       // Invisible sentinel element for scroll observation
       const sentinel = document.createElement('div');
       sentinel.className = 'catalog-scroll-sentinel';
-      sentinel.style.cssText = 'width: 100%; height: 4px; pointer-events: none; opacity: 0;';
+      sentinel.style.cssText = 'width: 100%; height: 24px; pointer-events: none; opacity: 0; clear: both;';
 
       // Subtle loading spinner indicator
       const loader = document.createElement('div');
@@ -147,51 +147,86 @@
       retryBtn.style.cssText = 'display: none; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;';
       retryBtn.innerHTML = '<i class="klb-icon-rotate-cw" style="margin-right: 6px;"></i> Products could not be loaded. Click to retry';
 
+      // Manual "Load More Products" button as accessible and reliable fallback
+      const loadMoreBtn = document.createElement('button');
+      loadMoreBtn.type = 'button';
+      loadMoreBtn.className = 'btn btn-outline-primary btn-sm rounded catalog-load-more-btn';
+      loadMoreBtn.style.cssText = 'display: none; padding: 8px 24px; font-size: 13px; font-weight: 600; cursor: pointer; margin: 6px auto;';
+      loadMoreBtn.innerHTML = 'Load More Products';
+      loadMoreBtn.addEventListener('click', () => load());
+
       // End of collection message
       const endNotice = document.createElement('div');
       endNotice.className = 'catalog-end-notice';
       endNotice.style.cssText = 'display: none; color: #94a3b8; font-size: 12.5px; font-weight: 500; padding: 12px 0; text-align: center;';
       endNotice.innerHTML = '<span>&bull; All available products loaded &bull;</span>';
 
-      paginationWrap.append(sentinel, loader, retryBtn, endNotice);
+      paginationWrap.append(sentinel, loader, loadMoreBtn, retryBtn, endNotice);
       grid.after(paginationWrap);
+
+      const updateCounts = () => {
+        const visibleCount = grid.querySelectorAll('[data-catalog-product]').length;
+        const totalCount = typeof info?.total === 'number' ? info.total : visibleCount;
+        const visibleEl = document.getElementById('shop-count-visible');
+        const totalEl = document.getElementById('shop-count-total');
+        if (visibleEl) visibleEl.textContent = String(visibleCount);
+        if (totalEl) totalEl.textContent = String(totalCount);
+      };
 
       let observer = null;
       const setupObserver = () => {
-        if (!('IntersectionObserver' in window)) return;
-        if (observer) observer.disconnect();
-        observer = new IntersectionObserver(entries => {
-          for (const entry of entries) {
-            if (entry.isIntersecting && !busy && !retry && info?.has_more) {
-              load();
-              break;
+        if ('IntersectionObserver' in window) {
+          if (observer) observer.disconnect();
+          observer = new IntersectionObserver(entries => {
+            for (const entry of entries) {
+              if (entry.isIntersecting && !busy && !retry && info?.has_more) {
+                load();
+                break;
+              }
             }
+          }, {
+            root: null,
+            rootMargin: '0px 0px 1000px 0px',
+            threshold: 0
+          });
+          if (info?.has_more && !retry) {
+            observer.observe(sentinel);
           }
-        }, {
-          root: null,
-          rootMargin: '0px 0px 800px 0px',
-          threshold: 0
-        });
-        if (info?.has_more && !retry) {
-          observer.observe(sentinel);
         }
+
+        let scrollThrottle = null;
+        const checkNearBottom = () => {
+          if (scrollThrottle || busy || retry || !info?.has_more) return;
+          scrollThrottle = setTimeout(() => {
+            scrollThrottle = null;
+            if (busy || retry || !info?.has_more) return;
+            const rect = sentinel.getBoundingClientRect();
+            if (rect.top <= window.innerHeight + 800) {
+              load();
+            }
+          }, 100);
+        };
+        window.addEventListener('scroll', checkNearBottom, { passive: true });
+        window.addEventListener('resize', checkNearBottom, { passive: true });
       };
 
       const updateUI = () => {
         grid.setAttribute('aria-busy', String(busy));
         loader.style.display = busy ? 'inline-flex' : 'none';
         retryBtn.style.display = retry && !busy ? 'inline-flex' : 'none';
-        sentinel.style.display = info?.has_more && !retry ? 'block' : 'none';
-
         const hasMore = Boolean(info?.has_more);
+        sentinel.style.display = hasMore && !retry ? 'block' : 'none';
+        loadMoreBtn.style.display = (hasMore && !busy && !retry) ? 'inline-flex' : 'none';
+
         const hasProducts = grid.querySelectorAll('[data-catalog-product]').length > 0;
+        const shopDivider = document.querySelector('.shop-end-divider');
 
         if (!hasMore && hasProducts && !retry && !busy) {
           endNotice.style.display = 'block';
-          const shopDivider = document.querySelector('.shop-end-divider');
           if (shopDivider) shopDivider.style.display = 'none';
         } else {
           endNotice.style.display = 'none';
+          if (shopDivider) shopDivider.style.display = 'none';
         }
 
         if (observer) {
@@ -201,6 +236,7 @@
             observer.unobserve(sentinel);
           }
         }
+        updateCounts();
       };
 
       retryBtn.addEventListener('click', () => {
@@ -298,7 +334,7 @@
             // A tall viewport may still be near the end after appending a batch
             if (!retry && info?.has_more) {
               const rect = sentinel.getBoundingClientRect();
-              if (rect.top <= window.innerHeight + 400) {
+              if (rect.top <= window.innerHeight + 800) {
                 requestAnimationFrame(() => load());
               }
             } else if (!info?.has_more) {

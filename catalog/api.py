@@ -50,16 +50,21 @@ def get_catalog_vocabulary():
 
 
 def public_products():
-    return Product.objects.filter(is_active=True, is_published=True, is_archived=False,
-        category__is_active=True).filter(Q(subcategory__isnull=True) | Q(subcategory__is_active=True)).select_related(
-        'category', 'subcategory').prefetch_related('images').annotate(selling_price=Coalesce('sale_price', 'regular_price'))
+    return Product.objects.filter(is_active=True, is_published=True, is_archived=False).filter(
+        Q(category__isnull=True) | Q(category__is_active=True)
+    ).filter(
+        Q(subcategory__isnull=True) | Q(subcategory__is_active=True)
+    ).select_related(
+        'category', 'subcategory'
+    ).prefetch_related('images').annotate(selling_price=Coalesce('sale_price', 'regular_price'))
 
 
 def serialize(product):
     return dict(id=product.pk, name=product.name, sku=product.sku, slug=product.slug, description=product.description,
         weight=str(product.weight), weight_unit=product.weight_unit, weight_grams=str(product.weight_grams),
         review_count=product.review_count,
-        category=product.category.slug, category_key=product.category.legacy_key or product.category.slug,
+        category=product.category.slug if product.category else None,
+        category_key=(product.category.legacy_key or product.category.slug) if product.category else None,
         subcategory=product.subcategory.slug if product.subcategory_id else None,
         regular_price=str(product.base_price), sale_price=str(product.sale_price) if product.sale_price is not None else None,
         price=str(product.price), discount=product.discount_percent, available=product.available,
@@ -81,10 +86,12 @@ def paginate(params):
         if target_ids:
             queryset = queryset.filter(id__in=target_ids)
     category, subcategory = params.get('category'), params.get('subcategory')
-    if category:
-        queryset = queryset.filter(category__slug=category)
-    if subcategory:
-        queryset = queryset.filter(subcategory__slug=subcategory)
+    if category and str(category).strip().lower() not in ('all', 'all-categories', ''):
+        cat_term = str(category).strip()
+        queryset = queryset.filter(Q(category__slug__iexact=cat_term) | Q(category__legacy_key__iexact=cat_term))
+    if subcategory and str(subcategory).strip().lower() not in ('all', 'all-subcategories', ''):
+        subcat_term = str(subcategory).strip()
+        queryset = queryset.filter(subcategory__slug__iexact=subcat_term)
     collection = params.get('collection', '')
     if collection:
         flag = {'best-offers': 'best_offers', 'most-popular': 'most_popular'}.get(collection)
@@ -147,10 +154,10 @@ def paginate(params):
             for qp in q_parts:
                 combined_q |= qp
             queryset = queryset.filter(combined_q)
-    section = params.get('section', '')
+    section = str(params.get('section', '')).strip()
     if section in ('new_arrival', 'featured', 'best_seller'):
         queryset = queryset.filter(**{section:True})
-    elif section not in ('', 'for_you'):
+    elif section not in ('', 'for_you', 'all', 'all-sections'):
         raise ValidationError('Invalid product section.')
     try:
         max_limit = 100 if target_ids else 48
@@ -193,11 +200,19 @@ def paginate(params):
     else:
         default_field = '-id' if section == 'for_you' else 'display_order'
     field = {'price-asc':'selling_price', 'price-desc':'-selling_price', 'name':'name', 'newest':'-id', 'rating':'-sort_rating', 'relevance':'-relevance' if has_search else 'display_order'}.get(sort, default_field)
-    fp_keys = ('category', 'subcategory', 'collection', 'q', 's', 'section', 'group', 'min_price', 'max_price', 'sort', 'limit', 'ids')
-    fingerprint = hashlib.sha256(json.dumps({
-        k: str(params.get(k, '')) if k != 'limit' else str(limit)
-        for k in fp_keys
-    }, sort_keys=True).encode()).hexdigest()
+    
+    cat_fp = '' if not category or str(category).strip().lower() in ('all', 'all-categories') else str(category).strip().lower()
+    subcat_fp = '' if not subcategory or str(subcategory).strip().lower() in ('all', 'all-subcategories') else str(subcategory).strip().lower()
+    sec_fp = '' if section in ('all', 'all-sections') else section
+    q_fp = query
+
+    fp_dict = {
+        'category': cat_fp, 'subcategory': subcat_fp, 'collection': str(params.get('collection', '')),
+        'q': q_fp, 's': q_fp, 'section': sec_fp, 'group': str(params.get('group', '')),
+        'min_price': str(params.get('min_price', '')), 'max_price': str(params.get('max_price', '')),
+        'sort': str(params.get('sort', '')), 'ids': str(params.get('ids', ''))
+    }
+    fingerprint = hashlib.sha256(json.dumps(fp_dict, sort_keys=True).encode()).hexdigest()
     count = queryset.count()
     if params.get('cursor'):
         try:
@@ -215,6 +230,18 @@ def paginate(params):
             elif name == 'relevance':
                 r_val = int(value)
                 queryset = queryset.filter(Q(**{f'{name}__{op}':r_val}) | (Q(**{name:r_val}) & Q(id__gt=last_id)))
+            elif name == 'display_order':
+                try:
+                    o_val = int(value)
+                    queryset = queryset.filter(Q(**{f'{name}__{op}':o_val}) | (Q(**{name:o_val}) & Q(id__gt=last_id)))
+                except (ValueError, TypeError):
+                    queryset = queryset.filter(Q(**{f'{name}__{op}':value}) | (Q(**{name:value}) & Q(id__gt=last_id)))
+            elif name in ('selling_price', 'sort_rating'):
+                try:
+                    d_val = Decimal(value)
+                    queryset = queryset.filter(Q(**{f'{name}__{op}':d_val}) | (Q(**{name:d_val}) & Q(id__gt=last_id)))
+                except (ValueError, TypeError, InvalidOperation):
+                    queryset = queryset.filter(Q(**{f'{name}__{op}':value}) | (Q(**{name:value}) & Q(id__gt=last_id)))
             else:
                 queryset = queryset.filter(Q(**{f'{name}__{op}':value}) | (Q(**{name:value}) & Q(id__gt=last_id)))
         except (signing.BadSignature, KeyError, ValueError, TypeError):
@@ -227,7 +254,7 @@ def paginate(params):
         last = rows[-1]
         next_cursor = signing.dumps(dict(filter=fingerprint, revision=revision.version, id=last.pk, value=str(getattr(last, field.lstrip('-')))), salt='catalog-page')
     from .packages import present
-    return [present(row) for row in rows], dict(next_cursor=next_cursor, has_more=more, total=count)
+    return [present(row) for row in rows], dict(next_cursor=next_cursor, has_more=more, total=count, limit=limit)
 
 
 def cached_payload(request, loader):

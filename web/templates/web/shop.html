@@ -715,23 +715,47 @@
 						</div>
 
 
-						{% if request.GET.section %}
-						<div class="shop-section-filter-header d-flex align-items-center justify-content-between mb-3 px-2 py-2 bg-light rounded border">
-							<div class="d-flex align-items-center gap-2">
-								<span class="badge bg-primary text-white" style="font-size: 11px; padding: 4px 8px;">Collection</span>
-								<h2 class="text-15 fw-bold mb-0 text-dark">
-									{% if request.GET.section == 'new_arrival' %}New Arrivals
-									{% elif request.GET.section == 'featured' %}Featured Products
-									{% elif request.GET.section == 'best_seller' %}Best Sellers
-									{% elif request.GET.section == 'for_you' %}For You Collection
-									{% else %}{{ request.GET.section|title }}{% endif %}
-								</h2>
+						<!-- Shop Toolbar / Filter & Results Counter Header -->
+						<div class="shop-filter-bar d-flex flex-wrap align-items-center justify-content-between mb-3 px-3 py-2 bg-white rounded border" id="shop-filter-bar" style="border-color: #e2e8f0 !important;">
+							<div class="d-flex flex-wrap align-items-center gap-2">
+								{% if request.GET.category and request.GET.category != 'all' %}
+									<span class="badge bg-primary text-white" style="font-size: 11px; padding: 4px 8px;">Category</span>
+									<h2 class="text-15 fw-bold mb-0 text-dark" id="shop-active-filter-title">{{ request.GET.category|title }}</h2>
+								{% elif request.GET.subcategory and request.GET.subcategory != 'all' %}
+									<span class="badge bg-primary text-white" style="font-size: 11px; padding: 4px 8px;">Subcategory</span>
+									<h2 class="text-15 fw-bold mb-0 text-dark" id="shop-active-filter-title">{{ request.GET.subcategory|title }}</h2>
+								{% elif request.GET.section %}
+									<span class="badge bg-primary text-white" style="font-size: 11px; padding: 4px 8px;">Collection</span>
+									<h2 class="text-15 fw-bold mb-0 text-dark" id="shop-active-filter-title">
+										{% if request.GET.section == 'new_arrival' %}New Arrivals
+										{% elif request.GET.section == 'featured' %}Featured Products
+										{% elif request.GET.section == 'best_seller' %}Best Sellers
+										{% elif request.GET.section == 'for_you' %}For You Collection
+										{% else %}{{ request.GET.section|title }}{% endif %}
+									</h2>
+								{% elif request.GET.collection %}
+									<span class="badge bg-primary text-white" style="font-size: 11px; padding: 4px 8px;">Collection</span>
+									<h2 class="text-15 fw-bold mb-0 text-dark" id="shop-active-filter-title">{{ request.GET.collection|title }}</h2>
+								{% elif search_query %}
+									<span class="badge bg-primary text-white" style="font-size: 11px; padding: 4px 8px;">Search</span>
+									<h2 class="text-15 fw-bold mb-0 text-dark" id="shop-active-filter-title">&ldquo;{{ search_query }}&rdquo;</h2>
+								{% else %}
+									<h2 class="text-15 fw-bold mb-0 text-dark" id="shop-active-filter-title">All Products</h2>
+								{% endif %}
+
+								<span class="text-12 text-muted ms-2" id="shop-results-counter">
+									(Showing <strong id="shop-count-visible">{{ catalog_groups.shop_0|length }}</strong> of <strong id="shop-count-total">{{ catalog_page.total }}</strong> products)
+								</span>
 							</div>
-							<a href="{% url 'web:shop' %}" class="btn btn-outline-secondary btn-sm" style="font-size: 11px; padding: 3px 10px;">
-								<i class="klb-icon-x"></i> Clear Filter
-							</a>
+
+							<div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
+								{% if request.GET.category or request.GET.subcategory or request.GET.section or request.GET.collection or search_query %}
+								<a href="{% url 'web:shop' %}" class="btn btn-outline-secondary btn-sm" id="shop-clear-filter-btn" style="font-size: 11px; padding: 3px 10px;">
+									<i class="klb-icon-x"></i> Clear Filter
+								</a>
+								{% endif %}
+							</div>
 						</div>
-						{% endif %}
 
 						<!-- 4-Column Border-Touching Products Grid (Shared 1px Borders) -->
 						<div class="shop-products-grid-container" id="shop-products-container">
@@ -741,7 +765,7 @@
 
 						</div><!-- End Products Container -->
 
-						<div class="shop-end-divider">
+						<div class="shop-end-divider" style="{% if catalog_page.has_more %}display: none;{% endif %}">
 							<span>&bull; You&rsquo;ve reached the end of {% if request.GET.section == 'new_arrival' %}the new arrivals{% elif request.GET.section == 'featured' %}the featured products{% elif request.GET.section == 'best_seller' %}the best sellers{% elif request.GET.section == 'for_you' %}the collection{% else %}the collection{% endif %} &bull;</span>
 						</div>
 
