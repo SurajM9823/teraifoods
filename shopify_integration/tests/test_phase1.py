@@ -289,6 +289,27 @@ class DryRunTests(TestCase):
         self.assertFalse(Order.objects.exists())
         self.assertFalse(IntegrationLog.objects.exists())
 
+    @override_settings(DATA_UPLOAD_MAX_NUMBER_FIELDS=100)
+    def test_catalogue_batch_fits_request_field_limit(self):
+        for i in range(100):
+            Product.objects.create(name=f'Batch {i}', slug=f'batch-{i}',
+                                   category=self.category, regular_price='10.00')
+        self.client.force_login(self.staff)
+        url = '/admin/system/shopify_integration/shopifycatalogueproduct/'
+        # The previous 100-row selection exceeded the site's limit before actions ran.
+        old_selection = [str(pk) for pk in Product.objects.values_list('pk', flat=True)[:100]]
+        self.assertEqual(self.client.post(url, {'action': 'preview', '_selected_action': old_selection,
+                                              'select_across': '0', 'index': '0'}).status_code, 400)
+        page = self.client.get(url + '?all=')
+        self.assertEqual(page.status_code, 200)
+        selected = [str(p.pk) for p in page.context['cl'].result_list]
+        self.assertEqual(len(selected), 20)
+        with read_only_preview():
+            response = self.client.post(url, {'action': 'preview', '_selected_action': selected,
+                                             'select_across': '0', 'index': '0'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['reports']), 20)
+
     def test_shopify_admin_screens_use_custom_layout(self):
         self.client.force_login(self.staff)
         for model in ('shopifycatalogueproduct', 'shopifyconnection', 'shopifysyncjob',

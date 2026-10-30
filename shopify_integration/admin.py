@@ -15,6 +15,9 @@ from .client import ShopifyError
 
 class CustomShopifyAdmin(admin.ModelAdmin):
     """Keep Django's validated admin controls inside the store's staff layout."""
+    # Stay below the site's 100-field POST limit, including action/CSRF fields.
+    list_per_page = 20
+    list_max_show_all = 20
     change_list_template = 'admin/shopify_integration/change_list.html'
     change_form_template = 'admin/shopify_integration/change_form.html'
     object_history_template = 'admin/shopify_integration/object_history.html'
