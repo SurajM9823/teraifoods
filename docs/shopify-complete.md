@@ -6,6 +6,17 @@ Stripe configuration, account system and stock workflow remain the website chann
 
 ## Catalogue
 
+The custom Shopify Products page includes **Sync all products in background**.
+One POST creates a durable catalogue batch; repeated clicks reuse a pending batch.
+The dedicated worker prepares 20 published, non-archived Django products per minute
+and saves its cursor and counters transactionally. Valid changed products receive
+ordinary draft-sync jobs; unchanged mapped products enable automatic updates.
+Invalid products are skipped with per-product errors in Integration Logs. The
+batch's `prepared` status means jobs have been queued, not that Shopify has finished;
+inspect Sync Jobs for API outcomes. New products remain drafts, and no batch action
+publishes or unpublishes products. The request requires the sync permission, and
+workers recheck the initiating account's permission before preparing each page.
+
 Use `/admin/system/shopify_integration/shopifycatalogueproduct/` to preview and
 synchronize selected products. New products start as drafts. The synchronization
 action never changes publication state. Reviewed variant definitions are required

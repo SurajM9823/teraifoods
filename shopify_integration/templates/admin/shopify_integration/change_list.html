@@ -40,6 +40,15 @@
 {% block coltype %}{% endblock %}
 
 {% block content %}
+  {% if can_sync_all %}
+  <section class="module" style="padding:16px;margin-bottom:20px;background:#f0f4fc;border-radius:10px">
+    <h2>Sync your entire catalogue</h2>
+    <p>Sync all published, non-archived Django products in background batches. New Shopify products remain drafts. Successfully synced products receive automatic updates. Products with validation errors are skipped for review.</p>
+    <form method="post" action="{% url 'admin:shopify_catalogue_sync_all' %}">{% csrf_token %}<button type="submit">Sync all products in background</button></form>
+    {% for batch in catalogue_batches %}<p>Batch #{{ batch.pk }} · {{ batch.status }} · {{ batch.queued }} queued · {{ batch.unchanged }} unchanged · {{ batch.skipped }} skipped. Queued does not mean completed; check Sync Jobs for results.</p>{% endfor %}
+    <p><a href="{% url 'admin:shopify_integration_integrationlog_changelist' %}?operation=bulk_sync">View skipped-product errors</a></p>
+  </section>
+  {% endif %}
   <div id="content-main">
     {% block object-tools %}
         <ul class="object-tools">

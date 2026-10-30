@@ -32,6 +32,18 @@ class ShopifyConnection(models.Model):
         return self.shop_domain
 
 
+class ShopifyCatalogueBatch(models.Model):
+    connection = models.ForeignKey(ShopifyConnection, on_delete=models.PROTECT)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    status = models.CharField(max_length=20, default='pending')
+    last_product_id = models.PositiveBigIntegerField(default=0)
+    queued = models.PositiveIntegerField(default=0)
+    skipped = models.PositiveIntegerField(default=0)
+    unchanged = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class ChannelVariantDefinition(models.Model):
     product = models.ForeignKey('catalog.Product', on_delete=models.PROTECT, related_name='channel_variants')
     key = models.CharField(max_length=100)

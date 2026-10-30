@@ -5,6 +5,9 @@ from django.db import transaction
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.html import format_html
+from django.urls import path, reverse
+from django.shortcuts import redirect
+from django.core.exceptions import PermissionDenied
 from catalog.models import Product
 
 from . import models
@@ -31,6 +34,36 @@ class CatalogueAdmin(CustomShopifyAdmin):
     search_fields = ('name', 'sku')
     list_filter = ('is_published', 'is_archived', 'category')
     actions = ('preview', 'queue_drafts', 'publish_products', 'unpublish_products')
+
+    def get_urls(self):
+        return [path('sync-all/', self.admin_site.admin_view(self.sync_all),
+                     name='shopify_catalogue_sync_all')] + super().get_urls()
+
+    def changelist_view(self, request, extra_context=None):
+        context = dict(extra_context or {})
+        context['catalogue_batches'] = models.ShopifyCatalogueBatch.objects.order_by('-pk')[:5]
+        context['can_sync_all'] = self.has_sync_permission(request)
+        return super().changelist_view(request, context)
+
+    def sync_all(self, request):
+        if not self.has_sync_permission(request):
+            raise PermissionDenied
+        if request.method != 'POST':
+            from django.http import HttpResponseNotAllowed
+            return HttpResponseNotAllowed(['POST'])
+        from .draft_sync import check_enabled
+        try:
+            check_enabled()
+            with transaction.atomic():
+                connection = models.ShopifyConnection.objects.select_for_update().get(
+                    shop_domain=settings.SHOPIFY_SHOP_DOMAIN, enabled=True)
+                batch, created = models.ShopifyCatalogueBatch.objects.get_or_create(
+                    connection=connection, status='pending', defaults={'actor': request.user})
+        except (ShopifyError, models.ShopifyConnection.DoesNotExist):
+            self.message_user(request, 'Enable the Shopify connection and draft synchronization first.', messages.ERROR)
+        else:
+            self.message_user(request, f'Catalogue batch #{batch.pk} queued. Products will sync in the background; new products remain drafts.')
+        return redirect(reverse('admin:shopify_integration_shopifycatalogueproduct_changelist'))
 
     def has_add_permission(self, request):
         return False
@@ -232,6 +265,6 @@ class ImportedOrderAdmin(ReadOnlyAdmin):
         self.message_user(request,'Selected orders queued for current-state reconciliation.')
 
 
-for model in (models.VariantReview, models.ShopifyVariantMapping,
+for model in (models.ShopifyCatalogueBatch, models.VariantReview, models.ShopifyVariantMapping,
               models.ShopifyMediaMapping, models.ShopifyOrderLineMapping):
     admin.site.register(model, ReadOnlyAdmin)

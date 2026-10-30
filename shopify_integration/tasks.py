@@ -18,10 +18,61 @@ def run_draft_job(job_id):
 
 @shared_task
 def dispatch_draft_jobs():
+    from .models import ShopifyCatalogueBatch
+    for pk in ShopifyCatalogueBatch.objects.filter(status='pending').values_list('pk', flat=True)[:2]:
+        prepare_catalogue_batch.apply_async(args=[pk], queue='shopify')
     pending = ShopifySyncJob.objects.filter(operation__in=['draft_sync','publish','unpublish']).filter(
         Q(status='pending') | Q(status='retry', next_retry_at__lte=timezone.now()))
     for pk in pending.order_by('pk').values_list('pk', flat=True)[:20]:
         run_draft_job.apply_async(args=[pk], queue='shopify')
+
+
+@shared_task
+def prepare_catalogue_batch(batch_id):
+    """Prepare a durable, resumable page locally; existing workers perform API writes."""
+    from django.db import transaction
+    from django.core.exceptions import ValidationError
+    from catalog.models import Product
+    from .models import ShopifyCatalogueBatch, ShopifyProductMapping, IntegrationLog
+    from .services import dry_run
+    from .draft_sync import prepare_draft, check_enabled
+    from .client import ShopifyError
+    check_enabled()
+    with transaction.atomic():
+        batch = ShopifyCatalogueBatch.objects.select_for_update(of=('self',)).select_related('connection', 'actor').get(pk=batch_id)
+        if batch.status != 'pending':
+            return
+        if not batch.connection.enabled or not batch.actor or not batch.actor.is_active or not batch.actor.is_staff or not batch.actor.has_perm('shopify_integration.sync_shopify_draft'):
+            batch.status = 'stopped'
+            batch.save(update_fields=['status', 'updated_at'])
+            return
+        products = list(Product.objects.filter(pk__gt=batch.last_product_id, is_published=True,
+                        is_archived=False).order_by('pk')[:20])
+        for product in products:
+            report = dry_run(product, batch.connection)
+            if report['errors']:
+                batch.skipped += 1
+                IntegrationLog.objects.create(connection=batch.connection, product=product,
+                    operation='bulk_sync', status='skipped', codes=report['errors'])
+            else:
+                mapping = ShopifyProductMapping.objects.filter(connection=batch.connection, product=product).first()
+                if mapping and mapping.remote_product_gid and mapping.payload_hash == report['payload_hash'] and mapping.status in ('draft_synced', 'published', 'active_synced', 'unpublished'):
+                    mapping.auto_sync = True
+                    mapping.save(update_fields=['auto_sync'])
+                    batch.unchanged += 1
+                else:
+                    try:
+                        with transaction.atomic():
+                            prepare_draft(batch.connection, product.pk, actor=batch.actor)
+                        batch.queued += 1
+                    except (ValidationError, ShopifyError):
+                        batch.skipped += 1
+                        IntegrationLog.objects.create(connection=batch.connection, product=product,
+                            operation='bulk_sync', status='skipped', codes=['preparation_failed'])
+            batch.last_product_id = product.pk
+        if len(products) < 20:
+            batch.status = 'prepared'
+        batch.save()
 
 
 @shared_task
