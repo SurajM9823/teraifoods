@@ -48,6 +48,34 @@
     </a>
     {% endif %}
 
+    {% if perms.shopify_integration.view_shopifycatalogueproduct or perms.shopify_integration.view_shopifyconnection or perms.shopify_integration.view_shopifysyncjob or perms.catalog.view_order %}
+    <div class="nav-caption sidebar-label" style="margin-top: 10px;">SHOPIFY SALES CHANNEL</div>
+    {% if perms.shopify_integration.view_shopifycatalogueproduct %}
+    <a href="{% url 'admin:shopify_integration_shopifycatalogueproduct_changelist' %}" class="nav-item" title="Shopify products: preview, sync drafts and explicitly publish">
+      {% include 'web/backoffice/icon.html' with name='box' %}
+      <span class="sidebar-label">Shopify Products</span>
+    </a>
+    {% endif %}
+    {% if perms.catalog.view_order %}
+    <a href="/admin/orders/?channel=shopify" class="nav-item" title="Imported Shopify orders">
+      {% include 'web/backoffice/icon.html' with name='bag' %}
+      <span class="sidebar-label">Shopify Orders</span>
+    </a>
+    {% endif %}
+    {% if perms.shopify_integration.view_shopifyconnection %}
+    <a href="{% url 'admin:shopify_integration_shopifyconnection_changelist' %}" class="nav-item" title="Shopify connection and import settings">
+      {% include 'web/backoffice/icon.html' with name='settings' %}
+      <span class="sidebar-label">Shopify Settings</span>
+    </a>
+    {% endif %}
+    {% if perms.shopify_integration.view_shopifysyncjob %}
+    <a href="{% url 'admin:shopify_integration_shopifysyncjob_changelist' %}" class="nav-item" title="Shopify synchronization status and errors">
+      {% include 'web/backoffice/icon.html' with name='file' %}
+      <span class="sidebar-label">Shopify Sync Jobs</span>
+    </a>
+    {% endif %}
+    {% endif %}
+
     <div class="nav-caption sidebar-label" style="margin-top: 10px;">STORE CONTENT &amp; SUPPORT</div>
     {% if perms.cms.view_banner and perms.cms.view_informationblock %}
     <a href="{% url 'cms:dashboard' %}" class="nav-item {% if active_page == 'cms' %}active{% endif %}" title="Website content">
