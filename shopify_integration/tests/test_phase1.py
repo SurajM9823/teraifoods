@@ -283,9 +283,28 @@ class DryRunTests(TestCase):
         with read_only_preview():
             response = self.client.post(url, {'action': 'preview', '_selected_action': [selected]})
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.json()[0]['dry_run'])
+        self.assertTrue(response.context['reports'][0]['dry_run'])
+        self.assertTemplateUsed(response, 'admin/shopify_integration/base.html')
+        self.assertContains(response, 'admin-sidebar')
         self.assertFalse(Order.objects.exists())
         self.assertFalse(IntegrationLog.objects.exists())
+
+    def test_shopify_admin_screens_use_custom_layout(self):
+        self.client.force_login(self.staff)
+        for model in ('shopifycatalogueproduct', 'shopifyconnection', 'shopifysyncjob',
+                      'shopifyordermapping', 'shopifywebhookreceipt', 'channelvariantdefinition'):
+            with self.subTest(model=model):
+                response = self.client.get('/admin/system/shopify_integration/' + model + '/')
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, 'admin/shopify_integration/base.html')
+                self.assertContains(response, 'admin-sidebar')
+                self.assertContains(response, 'shopify-workspace')
+        response = self.client.get('/admin/system/shopify_integration/shopifyconnection/add/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin/shopify_integration/base.html')
+        self.assertContains(response, 'csrfmiddlewaretoken')
+        self.client.logout()
+        self.assertEqual(self.client.get('/admin/system/shopify_integration/shopifyconnection/').status_code, 302)
 
     def test_staging_has_channel_and_no_operational_side_effects(self):
         connection = ShopifyConnection.objects.create(shop_domain='test.myshopify.com')

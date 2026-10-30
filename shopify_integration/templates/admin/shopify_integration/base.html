@@ -1,0 +1,45 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>{% block title %}{{ title }} · Shopify · Terai Food{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
+  {% block extrastyle %}{% endblock %}
+  {% block extrahead %}{% endblock %}
+  {% block responsive %}<link rel="stylesheet" href="{% static 'admin/css/responsive.css' %}">{% endblock %}
+  <link rel="stylesheet" href="{% static 'web/css/backoffice.css' %}">
+  <link rel="stylesheet" href="{% static 'shopify_integration/admin.css' %}?v=1">
+  <script src="{% static 'web/js/backoffice.js' %}" defer></script>
+</head>
+<body class="dashboard-page shopify-workspace {% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now 'Z' %}">
+{% include 'admin/shopify_integration/icons.html' %}
+<a class="skip-link" href="#content">Skip to content</a>
+{% if not is_popup %}{% include 'web/backoffice/sidebar.html' %}{% endif %}
+<button class="sidebar-backdrop" aria-label="Close navigation" tabindex="-1" hidden></button>
+<div class="workspace">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="mobile-menu icon-button" aria-label="Open navigation" aria-controls="admin-sidebar" aria-expanded="false">{% include 'web/backoffice/icon.html' with name='menu' %}</button>
+      <span class="breadcrumb">Workspace <span>/</span> <strong>Shopify</strong></span>
+    </div>
+    <div class="topbar-right"><a href="{% url 'web:home-root' %}" class="store-link">View store {% include 'web/backoffice/icon.html' with name='external' %}</a><span class="avatar small">{{ request.user.get_username|slice:':1'|upper }}</span></div>
+  </header>
+  <main class="dashboard-content" id="content-start">
+    <div class="shopify-heading"><span class="shopify-eyebrow">SALES CHANNEL</span><h1>{{ title }}</h1><p>Manage your Shopify catalogue, connection and synchronization.</p></div>
+    {% block breadcrumbs %}{% endblock %}
+    {% block messages %}{% if messages %}<ul class="messagelist">{% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}</ul>{% endif %}{% endblock %}
+    <section id="content" class="shopify-panel {% block coltype %}colM{% endblock %}">
+      {% block pretitle %}{% endblock %}
+      {% block content_title %}{% endblock %}
+      {% block content_subtitle %}{% if subtitle %}<h2>{{ subtitle }}</h2>{% endif %}{% endblock %}
+      {% block content %}{{ content }}{% endblock %}
+      {% block sidebar %}{% endblock %}
+    </section>
+    {% block footer %}{% endblock %}
+  </main>
+</div>
+{% block extrabody %}{% endblock %}
+</body>
+</html>

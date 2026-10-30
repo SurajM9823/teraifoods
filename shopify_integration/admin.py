@@ -1,6 +1,5 @@
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
 from django.conf import settings
 from django.db import transaction
 from django.template.response import TemplateResponse
@@ -14,8 +13,17 @@ from .draft_sync import prepare_draft
 from .client import ShopifyError
 
 
+class CustomShopifyAdmin(admin.ModelAdmin):
+    """Keep Django's validated admin controls inside the store's staff layout."""
+    change_list_template = 'admin/shopify_integration/change_list.html'
+    change_form_template = 'admin/shopify_integration/change_form.html'
+    object_history_template = 'admin/shopify_integration/object_history.html'
+    delete_confirmation_template = 'admin/shopify_integration/delete_confirmation.html'
+    delete_selected_confirmation_template = 'admin/shopify_integration/delete_selected_confirmation.html'
+
+
 @admin.register(models.ShopifyCatalogueProduct)
-class CatalogueAdmin(admin.ModelAdmin):
+class CatalogueAdmin(CustomShopifyAdmin):
     list_display = ('id', 'name', 'sku', 'regular_price', 'sale_price')
     search_fields = ('name', 'sku')
     list_filter = ('is_published', 'is_archived', 'category')
@@ -45,7 +53,8 @@ class CatalogueAdmin(admin.ModelAdmin):
             return
         if request.POST.get('confirm_channel_action')!='yes' or request.POST.get('reviewed')!='yes':
             return TemplateResponse(request,'admin/shopify_integration/confirm_publication.html',{
-                **self.admin_site.each_context(request),'opts':self.model._meta,'operation':operation,
+                **self.admin_site.each_context(request),
+                'opts':self.model._meta,'operation':operation,
                 'action_name':operation+'_products','products':list(queryset),
                 'reports':[dry_run(p,connection) for p in queryset],'connection':connection,
                 'title':'Confirm explicit Shopify '+operation})
@@ -74,12 +83,14 @@ class CatalogueAdmin(admin.ModelAdmin):
 
     @admin.action(description='Dry-run selected products (no writes or network)')
     def preview(self, request, queryset):
-        import json
         if queryset.count() > 20:
             self.message_user(request, 'Select at most 20 products.', messages.ERROR)
             return
         connection = models.ShopifyConnection.objects.filter(shop_domain=settings.SHOPIFY_SHOP_DOMAIN).first()
-        return HttpResponse(json.dumps([dry_run(p, connection) for p in queryset], indent=2), content_type='application/json')
+        return TemplateResponse(request, 'admin/shopify_integration/preview.html', {
+            **self.admin_site.each_context(request), 'title': 'Shopify product preview',
+            'reports': [dry_run(p, connection) for p in queryset],
+        })
 
     @admin.action(description='Sync selected products (new products stay DRAFTS)', permissions=['sync'])
     def queue_drafts(self, request, queryset):
@@ -105,7 +116,7 @@ class CatalogueAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ShopifyConnection)
-class ConnectionAdmin(admin.ModelAdmin):
+class ConnectionAdmin(CustomShopifyAdmin):
     list_display = ('shop_domain', 'enabled', 'api_version','import_orders_enabled')
     readonly_fields = ('order_sync_cursor','order_sync_after','order_sync_window_end','import_started_at')
 
@@ -120,7 +131,7 @@ class ConnectionAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ChannelVariantDefinition)
-class DefinitionAdmin(admin.ModelAdmin):
+class DefinitionAdmin(CustomShopifyAdmin):
     list_display = ('product', 'key', 'source_variant_id', 'price_policy', 'price')
     list_select_related = ('product',)
     search_fields = ('product__name', 'key')
@@ -128,10 +139,11 @@ class DefinitionAdmin(admin.ModelAdmin):
 
     @admin.action(description='Preview selected products (local JSON, no Shopify requests)')
     def preview(self, request, queryset):
-        import json
         reports = [dry_run(product) for product in
                    Product.objects.filter(pk__in=queryset.values('product_id'))]
-        return HttpResponse(json.dumps(reports, indent=2), content_type='application/json')
+        return TemplateResponse(request, 'admin/shopify_integration/preview.html', {
+            **self.admin_site.each_context(request), 'title': 'Shopify variant preview', 'reports': reports,
+        })
 
     @admin.action(description='Approve complete normalized definitions for selected products', permissions=['change'])
     def approve_review(self, request, queryset):
@@ -144,7 +156,7 @@ class DefinitionAdmin(admin.ModelAdmin):
                 self.message_user(request, f'Product {pk}: variant review approved. No Shopify action performed.')
 
 
-class ReadOnlyAdmin(admin.ModelAdmin):
+class ReadOnlyAdmin(CustomShopifyAdmin):
     def has_add_permission(self, request):
         return False
 

@@ -1,0 +1,14 @@
+{% extends 'admin/shopify_integration/base.html' %}
+{% block content %}
+<p>This preview does not change the database or contact Shopify.</p>
+{% for report in reports %}
+<section class="module"><h2>#{{ report.product_id }} {{ report.name }} · £{{ report.price }}</h2>
+{% for error in report.errors %}<p class="errornote">{{ error }}</p>{% empty %}<p>Validation passed.</p>{% endfor %}
+{% for image in report.payload.images %}{% if image.url %}<img src="{{ image.url }}" alt="{{ image.alt }}" width="100" loading="lazy">{% endif %}{% endfor %}
+<h3>Options and variants</h3>
+<ul>{% for variant in report.payload.variants %}<li>{{ variant.key }} · £{{ variant.price }} · {{ variant.weightGrams }} g · {{ variant.optionValues }}</li>{% endfor %}</ul>
+<h3>Expected changes</h3><pre style="white-space:pre-wrap;overflow-wrap:anywhere">{{ report }}</pre>
+</section>
+{% endfor %}
+<a href="{% url 'admin:shopify_integration_shopifycatalogueproduct_changelist' %}" class="button">Back to Shopify products</a>
+{% endblock %}

@@ -1,0 +1,14 @@
+.shopify-workspace{--primary:#1547a8;--secondary:#1547a8;--accent:#fff;--link-fg:#1547a8;--header-color:#fff;--body-bg:#f7f8fa;--body-fg:#282334;--darkened-bg:#f5f7fb;color-scheme:light}
+.shopify-workspace .workspace{min-width:0}
+.shopify-workspace .dashboard-content{display:block}
+.shopify-heading{margin-bottom:22px}.shopify-heading h1{font-size:28px;font-weight:700;color:#282334;margin:8px 0}.shopify-heading p{color:#817b8d;font-size:14px}.shopify-eyebrow{font-size:11px;letter-spacing:1.5px;color:#1547a8;font-weight:700}
+.shopify-workspace #content.shopify-panel{box-sizing:border-box;width:100%;padding:24px;background:#fff;border:1px solid #ece9f0;border-radius:14px;box-shadow:0 3px 15px #28233405;overflow:auto}
+.shopify-workspace div.breadcrumbs{background:transparent;color:#817b8d;padding:0 0 18px;font-size:12px}.shopify-workspace div.breadcrumbs a{color:#1547a8}
+.shopify-workspace .module h2,.shopify-workspace .inline-group h2{background:#f0f4fc;color:#1547a8;border-radius:7px;padding:12px;font-weight:600}
+.shopify-workspace #changelist{background:#fff}.shopify-workspace #changelist-filter{background:#f7f8fa;border-radius:10px}.shopify-workspace #changelist-filter h2{background:#1547a8;color:#fff}
+.shopify-workspace #changelist table thead th{background:#f7f8fa;padding:13px 10px;color:#817b8d}.shopify-workspace #changelist table tbody td,.shopify-workspace #changelist table tbody th{padding:14px 10px}.shopify-workspace .row1,.shopify-workspace .row2{background:#fff}
+.shopify-workspace input[type=submit],.shopify-workspace .button,.shopify-workspace .submit-row input,.shopify-workspace button[type=submit]{border-radius:7px;background:#1547a8;color:#fff;padding:10px 16px;border:0;cursor:pointer}.shopify-workspace .submit-row{border-radius:10px;background:#f7f8fa}
+.shopify-workspace input:not([type=checkbox]):not([type=radio]):not([type=submit]),.shopify-workspace select,.shopify-workspace textarea{border-radius:6px;border:1px solid #dce1eb;padding:8px;max-width:100%;background:#fff;color:#282334}
+.shopify-workspace .object-tools{margin-top:0}.shopify-workspace .object-tools a{background:#1547a8}.shopify-workspace .help{color:#6f7482}.shopify-workspace .messagelist{margin-bottom:18px}
+.shopify-workspace.popup .workspace{margin-left:0}.shopify-workspace.popup .topbar{display:none}
+@media(max-width:767px){.shopify-workspace #content.shopify-panel{padding:14px}.shopify-heading h1{font-size:24px}}

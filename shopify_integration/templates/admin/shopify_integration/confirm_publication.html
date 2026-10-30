@@ -1,4 +1,4 @@
-{% extends 'admin/base_site.html' %}
+{% extends 'admin/shopify_integration/base.html' %}
 {% block content %}
 <h1>{{ title }}</h1>
 <p>Store: {{ connection.shop_domain }} · Explicit publication targets: {{ connection.publication_ids|join:', ' }}</p>
