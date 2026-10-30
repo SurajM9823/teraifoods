@@ -1217,17 +1217,6 @@
 			margin: 14px 0;
 		}
 
-		/* QR Box */
-		.pdp-qr-card {
-			background: #f8fafc;
-			border: 1px dashed #cbd5e1;
-			border-radius: 4px;
-			padding: 10px;
-			display: flex;
-			align-items: center;
-			gap: 10px;
-			margin-bottom: 16px;
-		}
 		.pdp-qr-code {
 			width: 48px;
 			height: 48px;
@@ -1626,21 +1615,6 @@
 				min-width: 260px;
 				padding: 0 12px;
 			}
-			.pdp-delivery-col {
-				width: 100% !important;
-				flex: 0 0 100% !important;
-				border-left: none !important;
-				border-top: 1px solid #f1f5f9 !important;
-				padding-left: 0 !important;
-				padding-top: 18px !important;
-				margin-top: 14px !important;
-				display: grid !important;
-				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-				gap: 16px !important;
-			}
-			.pdp-delivery-col .pdp-divider {
-				display: none !important;
-			}
 			.pdp-specs-grid {
 				grid-template-columns: 1fr;
 			}
@@ -1674,13 +1648,6 @@
 			.pdp-info-col {
 				width: 100% !important;
 				padding: 0 !important;
-			}
-			.pdp-delivery-col {
-				grid-template-columns: 1fr !important;
-				gap: 12px !important;
-			}
-			.pdp-delivery-col .pdp-divider {
-				display: block !important;
 			}
 		}
 
@@ -1854,108 +1821,37 @@
 								</div>
 
 								<!-- Column 3: Delivery Options & Seller Profile -->
-								<div class="pdp-delivery-col">
-
-									<div class="pdp-box-header">
-										<span>Delivery Options</span>
-										<i class="klb-icon-info-circle text-muted"></i>
-									</div>
-
-									<!-- Location -->
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-map-pin"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">
-												<span>London, Greater London (SW1A)</span>
-												<a href="#" class="change-link">CHANGE</a>
-											</div>
-										</div>
-									</div>
-
-									<!-- Standard Delivery -->
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-truck"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">
-												<span>Standard Delivery</span>
-												<span class="price">&pound;2.49</span>
-											</div>
-											<div class="sub">Guaranteed within 24&ndash;48 hrs &bull; Free over &pound;40</div>
-										</div>
-									</div>
-
-									<!-- Cash / Card -->
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-credit-card"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">Cash on Delivery &amp; Cards</div>
-											<div class="sub">UK Debit/Credit &amp; Apple Pay Available</div>
-										</div>
-									</div>
-
-									<div class="pdp-divider"></div>
-
-									<!-- Return & Warranty -->
-									<div class="pdp-box-header">
-										<span>Return &amp; Warranty</span>
-									</div>
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-refresh-cw"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">14 Days Free Returns</div>
-											<div class="sub">Change of mind is applicable for sealed grocery</div>
-										</div>
-									</div>
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-shield-check"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">100% Authentic Quality</div>
-											<div class="sub">Certified Soil Association &amp; Himalayan Origin</div>
-										</div>
-									</div>
-
-									<div class="pdp-divider"></div>
-
-									<!-- QR Box -->
-									<div class="pdp-qr-card">
-										<div class="pdp-qr-code">
-											<picture>
-												<source type="image/webp" srcset="{% static 'web/images/terai_food_logo.webp' %}">
-												<img src="{% static 'web/images/terai_food_logo.png' %}" alt="Terai Food" loading="lazy" decoding="async">
-											</picture>
-										</div>
-										<div class="pdp-qr-text">
-											<strong>Scan with mobile</strong>
-											Order via Terafood iOS &amp; Android App for extra 5% discount
-										</div>
-									</div>
-
-									<!-- Seller Card -->
-									<div class="pdp-seller-card">
-										<div class="pdp-seller-title">Sold by</div>
-										<div class="pdp-seller-name">Cang Choice 3 &bull; Terafood Direct UK</div>
-										<div class="pdp-seller-stats">
-											<div class="pdp-seller-stat-col">
-												<div class="pdp-stat-label">Positive Seller Ratings</div>
-												<div class="pdp-stat-value">89%</div>
-											</div>
-											<div class="pdp-seller-stat-col">
-												<div class="pdp-stat-label">Ship on Time</div>
-												<div class="pdp-stat-value">100%</div>
-											</div>
-											<div class="pdp-seller-stat-col">
-												<div class="pdp-stat-label">Chat Response Rate</div>
-												<div class="pdp-stat-value">96%</div>
-											</div>
-										</div>
-										<button class="pdp-btn-visit-store" onclick="window.location.href='/shop/'">Visit Store</button>
-									</div>
-
-								</div>
 
 							</div>
 						</div>
 
+						<!-- Delivery & Trust Strip -->
+						<div class="pdp-info-strip">
+							<div class="pdp-strip-item">
+								<i class="klb-icon-map-pin"></i>
+								<span>Whole United Kingdom</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-truck"></i>
+								<span>Standard Delivery &mdash; 2&ndash;4 days</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-credit-card"></i>
+								<span>Secure Stripe card payment</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-refresh-cw"></i>
+								<span>Return requests available</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-shield-check"></i>
+								<span>100% Authentic Quality</span>
+							</div>
+						</div>
 						<!-- 3. Section: Product Description Box -->
 						<div class="pdp-section-card" id="description-section">
 							<h2 class="pdp-section-title">Description</h2>

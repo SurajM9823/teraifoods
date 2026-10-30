@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "catalog.apps.CatalogConfig",
     "delivery.apps.DeliveryConfig",
     "orders.apps.OrdersConfig",
+    "shopify_integration.apps.ShopifyIntegrationConfig",
     "channels",
     "customers.apps.CustomersConfig",
     "allauth", "allauth.account", "allauth.socialaccount",
@@ -80,3 +81,4 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 from .content import *  # noqa: F403,E402
 from .orders import *  # noqa: F403,E402
+from .shopify import *  # noqa: F403,E402

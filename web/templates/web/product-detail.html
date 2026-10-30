@@ -1573,167 +1573,41 @@
 		}
 
 		/* Column 3: Delivery & Seller Info (300px) */
-		.pdp-delivery-col {
-			width: 300px;
-			flex: 0 0 300px;
-			border-left: 1px solid #f1f5f9;
-			padding-left: 18px;
-		}
-		.pdp-box-header {
-			font-size: 12px;
-			font-weight: 700;
-			text-transform: uppercase;
-			color: #94a3b8;
-			letter-spacing: 0.5px;
-			margin-bottom: 10px;
+		/* Delivery & Trust Info Strip */
+		.pdp-info-strip {
 			display: flex;
 			align-items: center;
-			justify-content: space-between;
-		}
-		.pdp-delivery-item {
-			display: flex;
-			gap: 10px;
-			margin-bottom: 12px;
-			font-size: 12.5px;
-		}
-		.pdp-delivery-item i {
-			color: #64748b;
-			font-size: 15px;
-			margin-top: 2px;
-		}
-		.pdp-delivery-details {
-			flex: 1;
-		}
-		.pdp-delivery-details .title {
-			color: #0f172a;
-			font-weight: 600;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-		}
-		.pdp-delivery-details .change-link {
-			color: #3b82f6;
-			font-size: 11.5px;
-			font-weight: 600;
-			text-decoration: none;
-		}
-		.pdp-delivery-details .sub {
-			color: #64748b;
-			font-size: 13px;
-			font-weight: 600;
-			margin-top: 5px;
-			padding: 5px 8px;
-			border-radius: 4px;
-			background: #f0fdfa;
-			color: #0f766e;
-		}
-		.pdp-delivery-details .price {
-			color: #0f172a;
-			font-weight: 700;
-		}
-		.pdp-divider {
-			height: 1px;
-			background: #f1f5f9;
-			margin: 14px 0;
-		}
-
-		/* QR Box */
-		.pdp-qr-card {
-			background: #f8fafc;
-			border: 1px dashed #cbd5e1;
-			border-radius: 4px;
-			padding: 10px;
-			display: flex;
-			align-items: center;
-			gap: 10px;
-			margin-bottom: 16px;
-		}
-		.pdp-qr-code {
-			width: 48px;
-			height: 48px;
+			flex-wrap: wrap;
+			gap: 0;
 			background: #ffffff;
 			border: 1px solid #e2e8f0;
-			padding: 2px;
-			border-radius: 3px;
+			border-radius: 6px;
+			padding: 12px 20px;
+			margin-bottom: 16px;
+			font-size: 13px;
+			color: #334155;
 		}
-		.pdp-qr-code img {
-			width: 100%;
-			height: 100%;
+		.pdp-strip-item {
+			display: inline-flex;
+			align-items: center;
+			gap: 7px;
+			padding: 4px 0;
+			font-weight: 500;
 		}
-		.pdp-qr-text {
-			font-size: 11px;
-			color: #64748b;
-			line-height: 1.35;
-		}
-		.pdp-qr-text strong {
-			color: #0f172a;
-			display: block;
-			font-size: 11.5px;
-		}
-
-		/* Seller Box */
-		.pdp-seller-card {
-			background: #fafafa;
-			border: 1px solid #f1f5f9;
-			border-radius: 4px;
-			padding: 12px;
-		}
-		.pdp-seller-title {
-			font-size: 11.5px;
-			color: #94a3b8;
-			text-transform: uppercase;
-			font-weight: 600;
-			margin-bottom: 4px;
-		}
-		.pdp-seller-name {
-			font-size: 14px;
-			font-weight: 700;
-			color: #0f172a;
-			margin-bottom: 10px;
-		}
-		.pdp-seller-stats {
-			display: flex;
-			text-align: center;
-			border-top: 1px solid #e2e8f0;
-			border-bottom: 1px solid #e2e8f0;
-			padding: 8px 0;
-			margin-bottom: 10px;
-		}
-		.pdp-seller-stat-col {
-			flex: 1;
-			border-right: 1px solid #f1f5f9;
-		}
-		.pdp-seller-stat-col:last-child {
-			border-right: none;
-		}
-		.pdp-stat-label {
-			font-size: 10px;
-			color: #64748b;
-			text-transform: uppercase;
-			line-height: 1.2;
-		}
-		.pdp-stat-value {
+		.pdp-strip-item i {
+			color: #634c9f;
 			font-size: 15px;
-			font-weight: 700;
-			color: #0f172a;
-			margin-top: 2px;
 		}
-		.pdp-btn-visit-store {
-			width: 100%;
-			height: 32px;
-			border: 1px solid #3b82f6;
-			background: #ffffff;
-			color: #3b82f6;
-			font-size: 12px;
-			font-weight: 700;
-			border-radius: 3px;
-			cursor: pointer;
-			text-transform: uppercase;
-			transition: all 0.15s ease;
+		.pdp-strip-divider {
+			width: 1px;
+			height: 18px;
+			background: #e2e8f0;
+			margin: 0 18px;
 		}
-		.pdp-btn-visit-store:hover {
-			background: #3b82f6;
-			color: #ffffff;
+		@media (max-width: 767px) {
+			.pdp-info-strip { gap: 6px 0; padding: 10px 14px; }
+			.pdp-strip-divider { display: none; }
+			.pdp-strip-item { width: 50%; }
 		}
 
 		/* Description, Reviews, Q&A Sections */
@@ -2046,21 +1920,6 @@
 				min-width: 260px;
 				padding: 0 12px;
 			}
-			.pdp-delivery-col {
-				width: 100% !important;
-				flex: 0 0 100% !important;
-				border-left: none !important;
-				border-top: 1px solid #f1f5f9 !important;
-				padding-left: 0 !important;
-				padding-top: 18px !important;
-				margin-top: 14px !important;
-				display: grid !important;
-				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-				gap: 16px !important;
-			}
-			.pdp-delivery-col .pdp-divider {
-				display: none !important;
-			}
 			.pdp-specs-grid {
 				grid-template-columns: 1fr;
 			}
@@ -2094,13 +1953,6 @@
 			.pdp-info-col {
 				width: 100% !important;
 				padding: 0 !important;
-			}
-			.pdp-delivery-col {
-				grid-template-columns: 1fr !important;
-				gap: 12px !important;
-			}
-			.pdp-delivery-col .pdp-divider {
-				display: block !important;
 			}
 		}
 
@@ -2313,135 +2165,37 @@
 								</div>
 
 								<!-- Column 3: Delivery Options & Seller Profile -->
-								<div class="pdp-delivery-col">
-
-									{% if product.is_package %}
-									<!-- Package Savings Card -->
-									<div class="pdp-bundle-summary-card">
-										<div class="pdp-box-header mb-2" style="border-bottom:1px solid #bbf7d0; padding-bottom:6px;">
-											<span class="fw-bold text-dark"><i class="klb-icon-gift text-success me-1"></i> Bundle Value Summary</span>
-										</div>
-										<div class="pdp-bundle-math">
-											<div class="pdp-bundle-math-row">
-												<span>Combined Retail Value:</span>
-												<span><del>&pound;{{ product.base_price }}</del></span>
-											</div>
-											<div class="pdp-bundle-math-row text-success fw-semibold">
-												<span>Package Discount ({{ product.discount_percent }}%):</span>
-												<span>-&pound;{{ product.bundle_savings }}</span>
-											</div>
-											<div class="pdp-bundle-math-total">
-												<span>Special Bundle Price:</span>
-												<span class="deal-price">&pound;{{ product.price }}</span>
-											</div>
-											<div class="pdp-bundle-savings-alert">
-												<i class="klb-icon-check-circle"></i> You save <strong>&pound;{{ product.bundle_savings }}</strong> with this package!
-											</div>
-										</div>
-									</div>
-									<div class="pdp-divider"></div>
-									{% endif %}
-
-									<div class="pdp-box-header">
-										<span>Delivery Options</span>
-										<i class="klb-icon-info-circle text-muted"></i>
-									</div>
-
-									<!-- Location -->
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-map-pin"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">
-												<span>Whole United Kingdom</span>
-												<a href="#" class="change-link">CHANGE</a>
-											</div>
-										</div>
-									</div>
-
-									<!-- Standard Delivery -->
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-truck"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">
-												<span>Standard Delivery</span>
-												<span class="price">Calculated by basket weight</span>
-											</div>
-											<div class="sub">Estimated {{ delivery_policy.minimum_days|default:2 }}–{{ delivery_policy.maximum_days|default:4 }} days</div>
-										</div>
-									</div>
-
-									<!-- Cash / Card -->
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-credit-card"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">Secure card payment</div>
-											<div class="sub">Continue to Stripe at checkout</div>
-										</div>
-									</div>
-
-									<div class="pdp-divider"></div>
-
-									<!-- Return & Warranty -->
-									<div class="pdp-box-header">
-										<span>Return &amp; Warranty</span>
-									</div>
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-refresh-cw"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">Return requests</div>
-											<div class="sub">Request a return from your delivered order for review</div>
-										</div>
-									</div>
-									<div class="pdp-delivery-item">
-										<i class="klb-icon-shield-check"></i>
-										<div class="pdp-delivery-details">
-											<div class="title">100% Authentic Quality</div>
-											<div class="sub">Please check the product label for origin and certification</div>
-										</div>
-									</div>
-
-									<div class="pdp-divider"></div>
-
-									<!-- QR Box -->
-									<div class="pdp-qr-card">
-										<div class="pdp-qr-code">
-											<picture>
-												<source type="image/webp" srcset="{% static 'web/images/terai_food_logo.webp' %}">
-												<img src="{% static 'web/images/terai_food_logo.png' %}" alt="Terai Food" loading="lazy" decoding="async">
-											</picture>
-										</div>
-										<div class="pdp-qr-text">
-											<strong>Terai Foods</strong>
-											Shop securely on our website
-										</div>
-									</div>
-
-									<!-- Seller Card -->
-									<div class="pdp-seller-card">
-										<div class="pdp-seller-title">Sold by</div>
-										<div class="pdp-seller-name">Terai Foods</div>
-										<div class="pdp-seller-stats">
-											<div class="pdp-seller-stat-col">
-												<div class="pdp-stat-label">Positive Seller Ratings</div>
-												<div class="pdp-stat-value">—</div>
-											</div>
-											<div class="pdp-seller-stat-col">
-												<div class="pdp-stat-label">Ship on Time</div>
-												<div class="pdp-stat-value">—</div>
-											</div>
-											<div class="pdp-seller-stat-col">
-												<div class="pdp-stat-label">Chat Response Rate</div>
-												<div class="pdp-stat-value">—</div>
-											</div>
-										</div>
-										<button class="pdp-btn-visit-store" onclick="window.location.href='/shop/'">Visit Store</button>
-									</div>
-
-								</div>
 
 							</div>
 						</div>
 
+						<!-- Delivery & Trust Strip -->
+						<div class="pdp-info-strip">
+							<div class="pdp-strip-item">
+								<i class="klb-icon-map-pin"></i>
+								<span>Whole United Kingdom</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-truck"></i>
+								<span>Standard Delivery &mdash; 2&ndash;4 days</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-credit-card"></i>
+								<span>Secure Stripe card payment</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-refresh-cw"></i>
+								<span>Return requests available</span>
+							</div>
+							<div class="pdp-strip-divider"></div>
+							<div class="pdp-strip-item">
+								<i class="klb-icon-shield-check"></i>
+								<span>100% Authentic Quality</span>
+							</div>
+						</div>
 						{% if product.is_package %}
 						<!-- 2.5 Package Included Items Section -->
 						<div class="pdp-section-card pdp-package-items-section" id="package-items-section">
