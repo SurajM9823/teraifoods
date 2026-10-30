@@ -95,6 +95,8 @@ def normalize_product(product, *, require_review=True):
     is_variant = has_source_options or bool(definitions) or review is not None
     if not product.name.strip():
         errors.append('missing_name')
+    if len(product.name) > 255:
+        errors.append('shopify_title_too_long')
     if not product.is_active or not product.is_published or product.is_archived:
         errors.append('product_not_public')
     if not product.category_id or not product.category.is_active:
@@ -108,6 +110,12 @@ def normalize_product(product, *, require_review=True):
     images = []
     for image in product.images.all():
         url = public_image_url(image.url)
+        # The website may serve AVIF. Use its retained Django JPEG rendition for Shopify ingestion.
+        renditions = image.variants.get('jpeg', {}) if isinstance(image.variants, dict) else {}
+        widths = [key for key in renditions if str(key).isdigit()] if isinstance(renditions, dict) else []
+        if widths:
+            from catalog.media import media_url
+            url = public_image_url(media_url(renditions[max(widths, key=int)]))
         images.append({'django_image_id': image.pk, 'url': url, 'alt': image.alt,
                        'digest': image.digest, 'main': image.is_main})
         if not url:
@@ -180,7 +188,7 @@ def normalize_product(product, *, require_review=True):
                          'sku': product.sku, 'weightGrams': str(product.weight_grams), 'inventoryTracked': False})
     options = [{'name': name, 'values': list(dict.fromkeys(
         s['value'] for v in variants for s in v['optionValues'] if s['name'] == name))} for name in option_names]
-    payload = {'title': product.name, 'handle': product.slug,
+    payload = {'title': product.name, 'handle': f'teraifoods-{product.pk}',
                'descriptionHtml': '<p>' + escape(product.description).replace('\n', '<br>') + '</p>',
                'options': options, 'variants': variants, 'images': images}
     return {'product_id': product.pk, 'name': product.name, 'currency': 'GBP',

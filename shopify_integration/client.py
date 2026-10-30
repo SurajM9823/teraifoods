@@ -1,4 +1,4 @@
-"""Read-only GraphQL foundation. Phase 1 deliberately has no mutation transport."""
+"""Allowlisted GraphQL client. Draft catalogue writes require a separate enable flag."""
 import json
 import logging
 import random
@@ -10,11 +10,12 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from .graphql import SCOPES_QUERY, FILES_QUERY, FILE_QUERY, PRODUCT_SNAPSHOT, FILE_CREATE, PRODUCT_SET
 
 logger = logging.getLogger(__name__)
 SHOP_QUERY = 'query IntegrationShop { shop { id name currencyCode } }'
 PRODUCT_QUERY = 'query IntegrationProduct($id: ID!) { product(id: $id) { id title status } }'
-READ_QUERIES = frozenset((SHOP_QUERY, PRODUCT_QUERY))
+READ_QUERIES = frozenset((SHOP_QUERY, PRODUCT_QUERY, SCOPES_QUERY, FILES_QUERY, FILE_QUERY, PRODUCT_SNAPSHOT))
 
 
 class ShopifyError(Exception):
@@ -46,10 +47,11 @@ class ShopifyClient:
         self._expires_at = 0
         self._opener = build_opener(NoRedirect())
 
-    def _post(self, path, body, headers):
+    def _post(self, path, body, headers, *, retry=True):
         request = Request(f'https://{self.domain}{path}', data=body,
                           headers={**headers, 'Accept': 'application/json'}, method='POST')
-        for attempt in range(settings.SHOPIFY_MAX_RETRIES + 1):
+        max_retries = settings.SHOPIFY_MAX_RETRIES if retry else 0
+        for attempt in range(max_retries + 1):
             retry_after = None
             try:
                 with self._opener.open(request, timeout=settings.SHOPIFY_HTTP_TIMEOUT) as response:
@@ -69,7 +71,7 @@ class ShopifyClient:
                 retryable, code = True, 'transport_error'
             except (ValueError, UnicodeError):
                 raise ShopifyError('invalid_response') from None
-            if not retryable or attempt == settings.SHOPIFY_MAX_RETRIES:
+            if not retryable or attempt == max_retries:
                 logger.warning('Shopify request failed: %s', code)
                 raise ShopifyError(code) from None
             time.sleep(max(retry_after or 0, 2 ** attempt + random.random()))
@@ -113,5 +115,29 @@ class ShopifyClient:
                 raise ShopifyError('invalid_response')
             return result['data']
 
-    def mutate(self, *args, **kwargs):
-        raise ShopifyError('mutations_disabled_in_phase_1')
+    def mutate(self, document, variables=None):
+        if not settings.SHOPIFY_DRAFT_SYNC_ENABLED:
+            raise ShopifyError('draft_sync_disabled')
+        if document not in (FILE_CREATE, PRODUCT_SET):
+            raise ShopifyError('mutation_not_allowed')
+        if document == PRODUCT_SET:
+            data = (variables or {}).get('input', {})
+            # Active/archived transitions and publication are never accepted here.
+            if 'status' in data and data['status'] != 'DRAFT':
+                raise ShopifyError('publication_not_allowed')
+        result = self._post(f'/admin/api/{self.version}/graphql.json',
+            json.dumps({'query': document, 'variables': variables or {}}).encode(),
+            {'Content-Type': 'application/json', 'X-Shopify-Access-Token': self.access_token()}, retry=False)
+        # An uncertain mutation is not replayed here. The job reconciles stable identities first.
+        if result.get('errors'):
+            raise ShopifyError('graphql_mutation_error')
+        data = result.get('data')
+        key = 'fileCreate' if document == FILE_CREATE else 'productSet'
+        if not isinstance(data, dict) or not isinstance(data.get(key), dict):
+            raise ShopifyError('invalid_mutation_response')
+        errors = data[key].get('userErrors')
+        if errors:
+            codes = {e.get('code') for e in errors if isinstance(e, dict)}
+            safe = sorted(c for c in codes if isinstance(c, str) and re.fullmatch(r'[A-Z_]{1,50}', c))
+            raise ShopifyError('user_error:' + ','.join(safe or ['UNKNOWN']))
+        return data[key]

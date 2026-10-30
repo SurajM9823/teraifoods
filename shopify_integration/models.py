@@ -3,6 +3,14 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from decimal import Decimal
+from catalog.models import Product
+
+
+class ShopifyCatalogueProduct(Product):
+    class Meta:
+        proxy = True
+        verbose_name = 'Shopify catalogue product'
+        permissions = [('sync_shopify_draft', 'Can synchronize Shopify drafts')]
 
 
 class ShopifyConnection(models.Model):
