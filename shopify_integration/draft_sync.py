@@ -78,11 +78,11 @@ def snapshot(client, identifier):
     raise ShopifyError('remote_variant_pagination_incomplete')
 
 
-def owned_draft(remote, product_id):
+def owned_draft(remote, product_id, *, allow_active=False):
     if remote:
         if not remote.get('metafield') or remote['metafield']['value'] != str(product_id):
             raise ShopifyError('remote_product_not_django_managed')
-        if remote['status'] != 'DRAFT':
+        if remote['status'] != 'DRAFT' and not (allow_active and remote['status']=='ACTIVE'):
             raise ShopifyError('remote_product_not_draft')
 
 
@@ -167,8 +167,8 @@ def build_input(report, remote, media_ids):
     return result
 
 
-def verify_result(report, remote, media_ids):
-    owned_draft(remote, report['product_id'])
+def verify_result(report, remote, media_ids, *, allow_active=False):
+    owned_draft(remote, report['product_id'], allow_active=allow_active)
     if not remote:
         raise ShopifyError('remote_product_missing_after_write')
     expected = report['payload']
@@ -224,7 +224,7 @@ def _execute(job_id):
         remote = snapshot(client, identifier)
         if mapping.remote_product_gid and remote is None:
             raise ShopifyError('mapped_remote_product_missing')
-        owned_draft(remote, report['product_id'])
+        owned_draft(remote, report['product_id'], allow_active=mapping.publication_approved)
         # Validate the variant diff before any media uploads.
         build_input(report, remote, {})
         images = sorted(report['payload']['images'], key=lambda image: not image['main'])
@@ -234,10 +234,10 @@ def _execute(job_id):
             identifier = {'id': remote['id']}
         result = client.mutate(PRODUCT_SET, {'input': data, 'identifier': identifier})
         returned = result.get('product')
-        if not returned or returned['status'] != 'DRAFT':
+        if not returned or (returned['status'] != 'DRAFT' and not (mapping.publication_approved and returned['status']=='ACTIVE')):
             raise ShopifyError('invalid_draft_response')
         remote = snapshot(client, {'id': returned['id']})
-        actual = verify_result(report, remote, media_ids)
+        actual = verify_result(report, remote, media_ids, allow_active=mapping.publication_approved)
         # Verify that the source/review did not change while the network calls were in flight.
         latest = dry_run(Product.objects.get(pk=mapping.product_id), connection)
         if latest['errors'] or latest['payload_hash'] != report['payload_hash']:
@@ -250,7 +250,9 @@ def _execute(job_id):
                 'inventory_item_gid': item['inventoryItem']['id']})
         mapping.remote_product_gid = remote['id']
         mapping.applied_payload, mapping.payload_hash = report['payload'], report['payload_hash']
-        mapping.applied_revision, mapping.status, mapping.error_code = job.desired_revision, 'draft_synced', ''
+        mapping.applied_revision, mapping.error_code = job.desired_revision, ''
+        mapping.status = ('published' if mapping.status=='published' else 'active_synced') if remote['status']=='ACTIVE' else 'draft_synced'
+        mapping.auto_sync = True
         mapping.save()
         job.status, job.error_code, job.next_retry_at = 'succeeded', '', None
         job.save()

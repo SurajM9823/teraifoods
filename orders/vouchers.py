@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from .models import Voucher, VoucherUse
+from .channels import require_website_order
 
 
 def validate(code, email, *, lock=False):
@@ -16,10 +17,12 @@ def validate(code, email, *, lock=False):
 
 
 def issue(order, amount):
+    require_website_order(order)
     return Voucher.objects.get_or_create(source_order=order,defaults={'code':'TF-'+secrets.token_hex(12).upper(),'amount':amount,'email':order.email})[0]
 
 
 def reserve(order, voucher):
+    require_website_order(order)
     value=min(voucher.amount,order.total)
     VoucherUse.objects.create(order=order,voucher=voucher,amount=value)
     voucher.reserved_order=order;voucher.save(update_fields=['reserved_order'])
@@ -27,10 +30,12 @@ def reserve(order, voucher):
 
 
 def consume(order):
+    require_website_order(order)
     Voucher.objects.filter(reserved_order=order,redeemed_at__isnull=True).update(redeemed_at=timezone.now())
 
 
 def release(order):
+    require_website_order(order)
     Voucher.objects.filter(reserved_order=order,redeemed_at__isnull=True).update(reserved_order=None)
 
 

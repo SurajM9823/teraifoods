@@ -20,7 +20,7 @@ def dry_run(product, connection=None):
         'new_product_status': 'DRAFT', 'publishing': 'requires_separate_explicit_action',
         'unpublishing': 'requires_separate_explicit_action', 'inventory_quantity_sync': False,
         'warnings': ['Local preview only; remote drift has not been checked.',
-                     'Draft execution requires a separate explicit action. Publication and order import are unavailable.'],
+                     'Catalogue execution, publication and order import use separate configured controls.'],
     })
     return report
 

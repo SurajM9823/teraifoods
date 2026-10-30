@@ -11,11 +11,14 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from .graphql import SCOPES_QUERY, FILES_QUERY, FILE_QUERY, PRODUCT_SNAPSHOT, FILE_CREATE, PRODUCT_SET
+from .graphql import (PUBLICATIONS_QUERY, PUBLICATION_STATE, PRODUCT_ACTIVATE, PUBLISH_PRODUCT,
+    UNPUBLISH_PRODUCT, WEBHOOKS_QUERY, WEBHOOK_CREATE, ORDER_QUERY, ORDERS_QUERY)
 
 logger = logging.getLogger(__name__)
 SHOP_QUERY = 'query IntegrationShop { shop { id name currencyCode } }'
 PRODUCT_QUERY = 'query IntegrationProduct($id: ID!) { product(id: $id) { id title status } }'
-READ_QUERIES = frozenset((SHOP_QUERY, PRODUCT_QUERY, SCOPES_QUERY, FILES_QUERY, FILE_QUERY, PRODUCT_SNAPSHOT))
+READ_QUERIES = frozenset((SHOP_QUERY, PRODUCT_QUERY, SCOPES_QUERY, FILES_QUERY, FILE_QUERY, PRODUCT_SNAPSHOT,
+    PUBLICATIONS_QUERY, PUBLICATION_STATE, WEBHOOKS_QUERY, ORDER_QUERY, ORDERS_QUERY))
 
 
 class ShopifyError(Exception):
@@ -116,10 +119,16 @@ class ShopifyClient:
             return result['data']
 
     def mutate(self, document, variables=None):
-        if not settings.SHOPIFY_DRAFT_SYNC_ENABLED:
+        publication = document in (PRODUCT_ACTIVATE, PUBLISH_PRODUCT, UNPUBLISH_PRODUCT)
+        webhook = document == WEBHOOK_CREATE
+        if publication and not settings.SHOPIFY_PUBLICATION_ENABLED:
+            raise ShopifyError('publication_disabled')
+        if not publication and not webhook and not settings.SHOPIFY_DRAFT_SYNC_ENABLED:
             raise ShopifyError('draft_sync_disabled')
-        if document not in (FILE_CREATE, PRODUCT_SET):
+        if document not in (FILE_CREATE, PRODUCT_SET, PRODUCT_ACTIVATE, PUBLISH_PRODUCT, UNPUBLISH_PRODUCT, WEBHOOK_CREATE):
             raise ShopifyError('mutation_not_allowed')
+        if document == PRODUCT_ACTIVATE and (variables or {}).get('product', {}).get('status') != 'ACTIVE':
+            raise ShopifyError('invalid_activation')
         if document == PRODUCT_SET:
             data = (variables or {}).get('input', {})
             # Active/archived transitions and publication are never accepted here.
@@ -132,7 +141,9 @@ class ShopifyClient:
         if result.get('errors'):
             raise ShopifyError('graphql_mutation_error')
         data = result.get('data')
-        key = 'fileCreate' if document == FILE_CREATE else 'productSet'
+        key = {FILE_CREATE: 'fileCreate', PRODUCT_SET: 'productSet', PRODUCT_ACTIVATE: 'productUpdate',
+            PUBLISH_PRODUCT: 'publishablePublish', UNPUBLISH_PRODUCT: 'publishableUnpublish',
+            WEBHOOK_CREATE: 'webhookSubscriptionCreate'}[document]
         if not isinstance(data, dict) or not isinstance(data.get(key), dict):
             raise ShopifyError('invalid_mutation_response')
         errors = data[key].get('userErrors')

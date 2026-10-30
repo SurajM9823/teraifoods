@@ -1,0 +1,18 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p>Store: {{ connection.shop_domain }} · Explicit publication targets: {{ connection.publication_ids|join:', ' }}</p>
+{% if operation == 'publish' %}<p>Review prices, variants, images, shipping weights and Shopify tax/shipping rules before publishing. Synchronization does not publish automatically.</p>
+{% else %}<p>This removes the selected products from the configured publications. It does not archive or delete them.</p>{% endif %}
+{% for report in reports %}<section><h2>#{{ report.product_id }} {{ report.name }} — £{{ report.price }}</h2>
+{% for error in report.errors %}<p><strong>{{ error }}</strong></p>{% endfor %}
+{% for image in report.payload.images %}{% if image.url %}<img src="{{ image.url }}" alt="{{ image.alt }}" width="100">{% endif %}{% endfor %}
+<ul>{% for variant in report.payload.variants %}<li>{{ variant.key }}: £{{ variant.price }}, {{ variant.weightGrams }} g · {{ variant.optionValues }}</li>{% endfor %}</ul></section>{% endfor %}
+<form method="post">{% csrf_token %}
+<input type="hidden" name="action" value="{{ action_name }}">
+<input type="hidden" name="confirm_channel_action" value="yes">
+{% for product in products %}<input type="hidden" name="_selected_action" value="{{ product.pk }}">{% endfor %}
+<p><label><input type="checkbox" name="reviewed" value="yes" required> I reviewed these products and explicitly approve this {{ operation }} action.</label></p>
+<button type="submit">Confirm {{ operation }}</button><a href="../">Cancel</a>
+</form>
+{% endblock %}

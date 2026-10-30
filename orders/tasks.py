@@ -19,6 +19,10 @@ logger = logging.getLogger(__name__)
 def send_notification(self, pk):
     with transaction.atomic():
         notification = Notification.objects.select_for_update().select_related('event__order').get(pk=pk)
+        if notification.event.order.sales_channel == 'shopify':
+            notification.status = 'suppressed'
+            notification.save(update_fields=['status'])
+            return
         if notification.status == 'sent':
             return
         if notification.status == 'sending' and notification.claimed_at and notification.claimed_at > timezone.now()-timedelta(minutes=5):
@@ -62,17 +66,17 @@ def dispatch_pending():
             break
         else:
             OrderEvent.objects.filter(pk=event.pk).update(broadcast_at=timezone.now())
-    for pk in Notification.objects.filter(Q(status='pending')|Q(status='sending',claimed_at__lt=timezone.now()-timedelta(minutes=5))).values_list('pk',flat=True)[:200]:
+    for pk in Notification.objects.filter(event__order__sales_channel='website').filter(Q(status='pending')|Q(status='sending',claimed_at__lt=timezone.now()-timedelta(minutes=5))).values_list('pk',flat=True)[:200]:
         send_notification.delay(pk)
     from .payments import cancel_with_provider,process_refund
     active_mode = Q(payment__stripe_mode=settings.STRIPE_MODE) | ~Q(payment_method='stripe')
-    for order in Order.objects.filter(active_mode, cancellation_status='requested')[:100]:
+    for order in Order.objects.filter(active_mode, sales_channel='website', cancellation_status='requested')[:100]:
         try:
             cancel_with_provider(order.pk)
         except Exception:
             logger.warning('Cancellation reconciliation pending for order %s',order.pk)
     for refund in Refund.objects.filter(Q(order__payment__stripe_mode=settings.STRIPE_MODE) | ~Q(order__payment_method='stripe'),
-                                       status__in=('pending', 'requires_action'))[:100]:
+                                       order__sales_channel='website', status__in=('pending', 'requires_action'))[:100]:
         try:
             process_refund(refund.pk)
         except Exception:
@@ -83,7 +87,7 @@ def dispatch_pending():
 def expire_reservations():
     from .payments import cancel_with_provider
     orders = Order.objects.filter(Q(payment__stripe_mode=settings.STRIPE_MODE) | ~Q(payment_method='stripe'),
-        fulfilment_status='pending_payment',reservation_expires_at__lt=timezone.now()).exclude(payment_status='paid')
+        sales_channel='website',fulfilment_status='pending_payment',reservation_expires_at__lt=timezone.now()).exclude(payment_status='paid')
     for order in orders[:100]:
         try:
             cancel_with_provider(order.pk,'Payment reservation expired.')

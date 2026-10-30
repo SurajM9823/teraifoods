@@ -10,7 +10,8 @@ class ShopifyCatalogueProduct(Product):
     class Meta:
         proxy = True
         verbose_name = 'Shopify catalogue product'
-        permissions = [('sync_shopify_draft', 'Can synchronize Shopify drafts')]
+        permissions = [('sync_shopify_draft', 'Can synchronize Shopify catalogue'),
+                       ('publish_shopify_products', 'Can explicitly publish and unpublish Shopify products')]
 
 
 class ShopifyConnection(models.Model):
@@ -19,7 +20,13 @@ class ShopifyConnection(models.Model):
     enabled = models.BooleanField(default=False)
     api_version = models.CharField(max_length=7, default='2026-10', validators=[RegexValidator(r'\A\d{4}-(01|04|07|10)\Z')])
     publication_ids = models.JSONField(default=list, blank=True)
+    import_orders_enabled = models.BooleanField(default=False,
+        help_text='Explicitly enable importing Shopify orders. Existing website payments and stock remain isolated.')
+    import_started_at = models.DateTimeField(null=True,blank=True,editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    order_sync_cursor = models.DateTimeField(null=True, blank=True, editable=False)
+    order_sync_after = models.CharField(max_length=1000, blank=True, editable=False)
+    order_sync_window_end = models.DateTimeField(null=True, blank=True, editable=False)
 
     def __str__(self):
         return self.shop_domain
@@ -51,6 +58,8 @@ class VariantReview(models.Model):
 
 
 class ShopifyProductMapping(models.Model):
+    auto_sync = models.BooleanField(default=False)
+    publication_approved = models.BooleanField(default=False, editable=False)
     connection = models.ForeignKey(ShopifyConnection, on_delete=models.PROTECT)
     product = models.ForeignKey('catalog.Product', on_delete=models.PROTECT)
     remote_product_gid = models.CharField(max_length=255, null=True, blank=True)
@@ -92,6 +101,8 @@ class ShopifyMediaMapping(models.Model):
 
 
 class ShopifySyncJob(models.Model):
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT)
+    parameters = models.JSONField(default=dict, blank=True)
     mapping = models.ForeignKey(ShopifyProductMapping, on_delete=models.PROTECT)
     operation = models.CharField(max_length=20, choices=[('draft_sync', 'Sync draft'), ('publish', 'Explicit publish'), ('unpublish', 'Explicit unpublish')])
     idempotency_key = models.CharField(max_length=100, unique=True)
@@ -105,6 +116,8 @@ class ShopifySyncJob(models.Model):
 
 
 class ShopifyWebhookReceipt(models.Model):
+    body_sha256 = models.CharField(max_length=64, blank=True)
+    next_retry_at = models.DateTimeField(null=True, blank=True)
     connection = models.ForeignKey(ShopifyConnection, on_delete=models.PROTECT)
     delivery_id = models.CharField(max_length=255)
     event_id = models.CharField(max_length=255, blank=True)
@@ -121,6 +134,10 @@ class ShopifyWebhookReceipt(models.Model):
 
 
 class ShopifyOrderMapping(models.Model):
+    error_code = models.CharField(max_length=60, blank=True)
+    payload_encrypted = models.TextField(blank=True, editable=False)
+    imported_at = models.DateTimeField(null=True, blank=True)
+    snapshot_saved_at = models.DateTimeField(null=True, blank=True)
     connection = models.ForeignKey(ShopifyConnection, on_delete=models.PROTECT)
     sales_channel = models.CharField(max_length=20, default='shopify', editable=False)
     remote_order_gid = models.CharField(max_length=255)

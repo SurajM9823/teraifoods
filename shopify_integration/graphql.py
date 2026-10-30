@@ -34,3 +34,53 @@ PRODUCT_SET = '''mutation IntegrationDraftSet($input: ProductSetInput!, $identif
     userErrors { field code }
   }
 }'''
+
+PUBLICATIONS_QUERY = '''query IntegrationPublications {
+ publications(first: 50) { nodes { id name } pageInfo { hasNextPage } }
+}'''
+PUBLICATION_STATE = '''query IntegrationPublicationState($id: ID!, $publication: ID!) {
+ product(id: $id) { id status publishedOnPublication(publicationId: $publication) }
+}'''
+PRODUCT_ACTIVATE = '''mutation IntegrationActivate($product: ProductUpdateInput!) {
+ productUpdate(product: $product) { product { id status } userErrors { field code } }
+}'''
+PUBLISH_PRODUCT = '''mutation IntegrationPublish($id: ID!, $input: [PublicationInput!]!) {
+ publishablePublish(id: $id, input: $input) { userErrors { field } }
+}'''
+UNPUBLISH_PRODUCT = '''mutation IntegrationUnpublish($id: ID!, $input: [PublicationInput!]!) {
+ publishableUnpublish(id: $id, input: $input) { userErrors { field } }
+}'''
+WEBHOOKS_QUERY = '''query IntegrationWebhooks($after: String) {
+ webhookSubscriptions(first: 100, after: $after) { nodes { id topic uri } pageInfo { hasNextPage endCursor } }
+}'''
+WEBHOOK_CREATE = '''mutation IntegrationWebhookCreate($topic: WebhookSubscriptionTopic!, $input: WebhookSubscriptionInput!) {
+ webhookSubscriptionCreate(topic: $topic, webhookSubscription: $input) {
+  webhookSubscription { id topic uri } userErrors { field }
+ }
+}'''
+
+_MONEY = '{ shopMoney { amount currencyCode } presentmentMoney { amount currencyCode } }'
+_ADDRESS = '{ name phone address1 address2 city province zip countryCodeV2 }'
+ORDER_QUERY = '''query IntegrationOrder($id: ID!, $after: String) {
+ order(id: $id) {
+  id name createdAt updatedAt email phone currencyCode cancelledAt taxesIncluded
+  displayFinancialStatus displayFulfillmentStatus
+  shippingAddress ADDRESS billingAddress ADDRESS
+  currentTotalPriceSet MONEY currentSubtotalPriceSet MONEY currentTotalDiscountsSet MONEY
+  currentTotalTaxSet MONEY currentShippingPriceSet MONEY totalRefundedSet MONEY
+  totalTipReceivedSet MONEY
+  currentTotalDutiesSet MONEY currentTotalAdditionalFeesSet MONEY
+  fulfillments(first: 20) { id status trackingInfo { number url } }
+  lineItems(first: 50, after: $after) {
+   nodes { id name sku quantity currentQuantity variantTitle originalUnitPriceSet MONEY
+    variant { id inventoryItem { measurement { weight { value unit } } } }
+   }
+   pageInfo { hasNextPage endCursor }
+  }
+ }
+}'''.replace('ADDRESS', _ADDRESS).replace('MONEY', _MONEY)
+ORDERS_QUERY = '''query IntegrationOrders($query: String!, $after: String) {
+ orders(first: 50, query: $query, after: $after, sortKey: UPDATED_AT) {
+  nodes { id updatedAt } pageInfo { hasNextPage endCursor }
+ }
+}'''

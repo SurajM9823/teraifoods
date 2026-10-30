@@ -125,6 +125,8 @@ def reserve_order(customer, items, key):
 @transaction.atomic
 def cancel_order(order_id, actor):
     order = Order.objects.select_for_update().get(pk=order_id)
+    from orders.channels import require_website_order
+    require_website_order(order)
     if order.status == 'cancelled':
         return order
     for line in order.lines.order_by('product_id'):

@@ -248,6 +248,8 @@ class StockAudit(models.Model):
 
 
 class Order(models.Model):
+    sales_channel = models.CharField(max_length=12, default='website', db_default='website', db_index=True,
+        choices=[('website', 'Website'), ('shopify', 'Shopify')])
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True)
     public_id = models.UUIDField(unique=True, null=True, editable=False)
     email = models.EmailField(blank=True)
@@ -288,6 +290,14 @@ class Order(models.Model):
     @property
     def number(self):
         return f'TF-{self.pk:08d}'
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(sales_channel__in=['website', 'shopify']), name='order_sales_channel_valid'),
+            models.CheckConstraint(condition=models.Q(sales_channel='website') | models.Q(
+                sales_channel='shopify', payment_method='shopify', customer__isnull=True,
+                reservation_expires_at__isnull=True), name='shopify_order_isolated'),
+        ]
 
     def save(self, *args, **kwargs):
         if self.public_id is None:

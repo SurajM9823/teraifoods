@@ -70,7 +70,7 @@ def staff(request, permission='catalog.change_order'):
 def order_data(order):
     stage = order.fulfilment_status
     group = 'completed' if stage=='delivered' else 'cancelled' if stage=='cancelled' else 'in-transit' if stage in ('dispatched','out_for_delivery','delivery_failed') else 'processing'
-    return dict(id=str(order.public_id),number=order.number,version=order.version,
+    return dict(id=str(order.public_id),number=order.number,version=order.version,sales_channel=order.sales_channel,
         created_at=order.created_at.isoformat(),payment_status=order.payment_status,payment_method=order.payment_method,fulfilment_status=stage,
         cancellation_status=order.cancellation_status,refund_status=order.refund_status,group=group,
         voucher_applied=str(services.vouchers.applied(order)),
@@ -83,8 +83,8 @@ def order_data(order):
         currency=order.currency,address=order.address,
         delivery_estimate=f'{order.delivery_min_days}–{order.delivery_max_days} days' if order.delivery_min_days else None,
         tracking_reference=order.tracking_reference,tracking_url=order.tracking_url,
-        can_cancel=stage in services.CANCELLABLE and order.cancellation_status=='none',
-        can_return=stage=='delivered' and not hasattr(order,'return_request') and (
+        can_cancel=order.sales_channel=='website' and stage in services.CANCELLABLE and order.cancellation_status=='none',
+        can_return=order.sales_channel=='website' and stage=='delivered' and not hasattr(order,'return_request') and (
             not settings.ORDER_RETURN_DAYS or (order.delivered_at and timezone.now() <= order.delivered_at + timedelta(days=settings.ORDER_RETURN_DAYS))),
         items=[dict(id=line.pk,product_id=line.product_id,name=line.product_name or line.product.name,
             image=line.product_image,quantity=line.quantity,unit_price=str(line.unit_price),
@@ -162,6 +162,9 @@ def action(request, public_id):
     order = owned_order(request,public_id)
     data = payload(request)
     actor = request.user if request.user.is_authenticated else None
+    if order.sales_channel == 'shopify' and data.get('action') != 'support':
+        from .channels import require_website_order
+        require_website_order(order)
     if data.get('action')=='cancel':
         services.request_cancel(order.pk,data.get('reason',''),actor)
     elif data.get('action')=='return':

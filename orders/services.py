@@ -17,6 +17,7 @@ from delivery.services import quote_delivery
 from .models import CheckoutAttempt, Payment, OrderEvent, Notification, Refund, ReturnRequest, DeliveryAttempt
 
 from . import vouchers
+from .channels import require_website_order
 
 TRANSITIONS = {
     'placed':{'confirmed','cancelled'},
@@ -66,10 +67,15 @@ def normalize_address(data):
 
 
 def guest_token(order):
+    require_website_order(order)
     return signing.dumps({'order':str(order.public_id),'version':order.guest_access_version}, salt='guest-order-access', compress=True)
 
 
 def authorize(order, user, session):
+    if order.sales_channel == 'shopify':
+        if user.is_authenticated and user.is_active and user.is_staff and user.has_perm('catalog.view_order'):
+            return
+        raise PermissionDenied('Shopify orders are available to authorized staff only.')
     if user.is_authenticated and (order.customer_id == user.pk or (user.is_staff and user.has_perm('catalog.view_order'))):
         return
     if str(order.public_id) in session.get('order_grants', {}):
@@ -80,6 +86,7 @@ def authorize(order, user, session):
 
 
 def grant_access(session, order):
+    require_website_order(order)
     grants = session.get('order_grants', {})
     grants[str(order.public_id)] = {'version':order.guest_access_version,
         'expires':(timezone.now()+timedelta(days=settings.ORDER_GUEST_ACCESS_DAYS)).timestamp()}
@@ -102,7 +109,7 @@ def emit(order, event_type, message, actor=None, secret=''):
     order.version += 1
     order.save()
     event = OrderEvent.objects.create(order=order,version=order.version,event_type=event_type,message=message,actor=actor)
-    if order.email:
+    if order.email and order.sales_channel == 'website':
         Notification.objects.create(event=event,recipient=order.email,secret_payload=secret)
     def schedule():
         from .tasks import dispatch_pending
@@ -189,6 +196,7 @@ def create_order(user, scope, payload, key):
 
 
 def restore_stock(order, actor, kind='cancellation'):
+    require_website_order(order)
     from collections import defaultdict
     quantities=defaultdict(int)
     for line in order.lines.all():
@@ -206,6 +214,7 @@ def restore_stock(order, actor, kind='cancellation'):
 @transaction.atomic
 def finalize_cancel(order_id, actor=None, reason='Cancellation requested'):
     order = Order.objects.select_for_update().get(pk=order_id)
+    require_website_order(order)
     if order.fulfilment_status == 'cancelled':
         return order
     if order.fulfilment_status not in CANCELLABLE:
@@ -233,6 +242,7 @@ def request_cancel(order_id, reason, actor=None):
     if not isinstance(reason,str) or not reason.strip() or len(reason)>500:
         raise ValidationError('Enter a cancellation reason.')
     order = Order.objects.select_for_update().get(pk=order_id)
+    require_website_order(order)
     if order.cancellation_status != 'none':
         return order
     if order.fulfilment_status not in CANCELLABLE:
@@ -267,6 +277,7 @@ def transition(order_id, target, actor, reason=''):
 @transaction.atomic
 def request_return(order_id, reason, actor=None, *, refund_preference='original', bank_details=None):
     order = Order.objects.select_for_update().get(pk=order_id)
+    require_website_order(order)
     if hasattr(order,'return_request'):
         return order.return_request
     if not isinstance(reason,str) or not reason.strip() or len(reason)>1000:
@@ -296,6 +307,7 @@ def request_return(order_id, reason, actor=None, *, refund_preference='original'
 @transaction.atomic
 def decide_return(order_id, target, reason, actor, restock=False, manual_refund=False):
     order = Order.objects.select_for_update().get(pk=order_id)
+    require_website_order(order)
     request = ReturnRequest.objects.select_for_update().filter(order=order).first()
     if request is None:
         raise ValidationError('No return has been requested for this order.')
@@ -330,6 +342,7 @@ def settle_return(order_id, method, reference, actor):
     if not actor or not actor.is_staff or not actor.has_perm('catalog.change_order'):
         raise PermissionDenied
     order = Order.objects.select_for_update().get(pk=order_id)
+    require_website_order(order)
     request = ReturnRequest.objects.select_for_update().filter(order=order).first()
     reference = reference.strip() if isinstance(reference,str) else ''
     if method not in ('bank','voucher','cash','other') or not 1 <= len(reference) <= 150:
@@ -367,6 +380,7 @@ def support_message(order_id, message, actor=None, reply=False):
 @transaction.atomic
 def issue_delivery_pin(order_id, actor):
     order = Order.objects.select_for_update().get(pk=order_id)
+    require_website_order(order)
     if order.fulfilment_status not in ('dispatched','out_for_delivery','delivery_failed'):
         raise ValidationError('Delivery verification is available during an active delivery.')
     pin = f'{secrets.randbelow(1000000):06d}'
@@ -383,6 +397,7 @@ def complete_delivery(order_id, actor, *, pin='', alternative_reason=''):
     error = None
     with transaction.atomic():
         order = Order.objects.select_for_update().get(pk=order_id)
+        require_website_order(order)
         if order.assigned_driver_id != actor.pk and not actor.has_perm('catalog.change_order'):
             raise PermissionDenied
         if order.fulfilment_status == 'delivered':

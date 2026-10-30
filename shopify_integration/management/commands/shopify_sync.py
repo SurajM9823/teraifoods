@@ -8,11 +8,11 @@ from shopify_integration.client import ShopifyError
 
 
 class Command(BaseCommand):
-    help = 'Explicitly sync selected products as Shopify drafts. Never publishes.'
+    help = 'Synchronize catalogue data; new products remain drafts. Publication state never changes.'
 
     def add_arguments(self, parser):
         parser.add_argument('product_ids', nargs='+', type=int)
-        parser.add_argument('--apply', action='store_true', required=True, help='Confirm draft writes; use shopify_dry_run first.')
+        parser.add_argument('--apply', action='store_true', required=True, help='Confirm catalogue writes; use shopify_dry_run first.')
 
     def handle(self, *args, **options):
         connection = ShopifyConnection.objects.filter(shop_domain=settings.SHOPIFY_SHOP_DOMAIN, enabled=True).first()

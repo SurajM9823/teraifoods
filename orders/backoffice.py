@@ -27,6 +27,8 @@ def index(request):
         rows = rows.filter(condition)
     if request.GET.get('status'):
         rows = rows.filter(fulfilment_status=request.GET['status'])
+    if request.GET.get('channel') in ('website', 'shopify'):
+        rows = rows.filter(sales_channel=request.GET['channel'])
     if request.GET.get('returns') == '1':
         rows = rows.filter(return_request__isnull=False)
     summary = dict(
@@ -41,7 +43,7 @@ def index(request):
         public_id=o.public_id,
         customer=o.recipient_name or 'Legacy order',
         email=o.email,
-        type='Registered' if o.customer_id else 'Guest',
+        type='Shopify' if o.sales_channel == 'shopify' else ('Registered' if o.customer_id else 'Guest'),
         items_count=sum(line.quantity for line in o.lines.all()),
         unique_items=len(o.lines.all()),
         total='£'+str(o.total),
@@ -68,6 +70,8 @@ def detail(request,public_id):
             if action == 'status':
                 services.transition(order.pk,request.POST.get('status'),request.user,request.POST.get('reason',''))
             elif action == 'payment_status':
+                from .channels import require_website_order
+                require_website_order(order)
                 new_status = request.POST.get('payment_status')
                 if new_status not in ('pending', 'paid', 'refunded', 'failed'):
                     raise ValidationError('Invalid payment status.')
@@ -133,9 +137,15 @@ def detail(request,public_id):
     ]
     available_statuses = [(code, label) for code, label in ALL_FULFILMENT_STAGES if code != order.fulfilment_status]
 
-    return render(request,'orders/admin_detail.html',dict(
+    external_mapping = None
+    if order.sales_channel=='shopify':
+        from shopify_integration.models import ShopifyOrderMapping
+        external_mapping = ShopifyOrderMapping.objects.filter(order=order).first()
+        available_statuses = [(code,code.replace('_',' ').title()) for code,_ in available_statuses]
+    return render(request,'orders/shopify_admin_detail.html' if order.sales_channel=='shopify' else 'orders/admin_detail.html',dict(
         active_page='orders',
         order=order,
+        external_mapping=external_mapping,
         return_bank=order.return_request.bank_details if request.user.has_perm('catalog.change_order') and hasattr(order,'return_request') else {},
         statuses=available_statuses,
         drivers=get_user_model().objects.filter(is_staff=True,is_active=True)

@@ -8,6 +8,7 @@ from catalog.models import Order
 from .models import Payment, ProviderEvent, Refund
 from .services import emit, finalize_cancel
 from .stripe_config import mode, validate, validate_payment
+from .channels import require_website_order
 
 
 def demo_enabled():
@@ -19,6 +20,7 @@ def confirm_demo(order_id):
     if not demo_enabled():
         raise ValidationError('Local demo payments are disabled.')
     order = Order.objects.select_for_update().get(pk=order_id)
+    require_website_order(order)
     if order.payment_method != 'demo':
         raise ValidationError('This is not a demo order.')
     if order.payment_status == 'paid':
@@ -43,6 +45,7 @@ def client():
 
 
 def create_session(order, embedded=False):
+    require_website_order(order)
     if order.payment_method == 'voucher' and order.payment_status == 'paid':
         return f'/track-order/?order={order.public_id}'
     # Stripe idempotency serializes concurrent requests without holding a DB
@@ -112,6 +115,7 @@ def validate_elements_config():
 
 
 def payment_data(order):
+    require_website_order(order)
     if order.payment_status in ('paid', 'refunded'):
         return {'payment_url': f'/track-order/?order={order.public_id}', 'test_mode': order.payment.stripe_mode == 'test'}
     result = create_session(order, embedded=order.payment_method == 'stripe')
@@ -119,6 +123,7 @@ def payment_data(order):
 
 
 def reconcile(order):
+    require_website_order(order)
     payment = Payment.objects.get(order=order)
     if order.payment_method == 'stripe' and payment.session_id and order.payment_status not in ('paid', 'refunded'):
         validate_payment(payment)
@@ -155,6 +160,7 @@ def apply_event(event):
             order = Order.objects.select_for_update().get(public_id=order_id)
         except (Order.DoesNotExist,ValueError):
             raise ValidationError('Unknown order reference.')
+        require_website_order(order)
         payment = Payment.objects.select_for_update().get(order=order)
         validate_payment(payment)
         if order.payment_method != 'stripe':
@@ -218,6 +224,7 @@ def apply_event(event):
 
 def cancel_with_provider(order_id, reason='Cancellation requested', unpaid_only=False):
     order = Order.objects.get(pk=order_id)
+    require_website_order(order)
     payment = Payment.objects.get(order=order)
     if order.payment_method == 'stripe':
         validate_payment(payment)
@@ -248,6 +255,7 @@ def cancel_with_provider(order_id, reason='Cancellation requested', unpaid_only=
 
 def process_refund(refund_id):
     refund = Refund.objects.select_related('order__payment').get(pk=refund_id)
+    require_website_order(refund.order)
     if refund.status in ('succeeded','awaiting_manual','failed','canceled'):
         return
     if refund.order.payment_method == 'demo':
@@ -280,6 +288,7 @@ def process_refund(refund_id):
 def apply_refund(refund_id, data, failed=False):
     reference = Refund.objects.get(pk=refund_id)
     order = Order.objects.select_for_update().get(pk=reference.order_id)
+    require_website_order(order)
     payment = Payment.objects.select_for_update().get(order=order)
     refund = Refund.objects.select_for_update().get(pk=refund_id)
     validate_payment(payment)

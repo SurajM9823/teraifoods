@@ -12,6 +12,7 @@ from catalog import package_admin
 from cms.contact import submit as contact_submit
 
 urlpatterns = [
+    path('api/shopify/', include('shopify_integration.urls')),
     path("api/contact/inquiries/", contact_submit),
     path('admin/packages/',package_admin.manage,name='package-new'),
     path('admin/packages/<int:pk>/',package_admin.manage,name='package-edit'),

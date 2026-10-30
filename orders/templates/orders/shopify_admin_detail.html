@@ -1,0 +1,38 @@
+{% extends 'web/backoffice/app_base.html' %}
+{% block title %}Shopify order {{ external_mapping.remote_order_name }}{% endblock %}
+{% block main_content %}
+<h1>Shopify {{ external_mapping.remote_order_name }} · {{ order.number }}</h1>
+<p><a href="/admin/orders/?channel=shopify">Shopify orders</a> ·
+  <a href="https://{{ external_mapping.connection.shop_domain }}/admin/orders/{{ external_mapping.remote_order_gid|cut:'gid://shopify/Order/' }}" target="_blank" rel="noopener">Manage payments, refunds and cancellations in Shopify</a>
+</p>
+<p>Payment: {{ order.payment_status|title }} · Refund: {{ order.refund_status|title }} · Import: {{ external_mapping.status }} {{ external_mapping.error_code }}</p>
+<h2>Delivery</h2>
+<p>{{ order.recipient_name }} · {{ order.phone }} · {{ order.email }}</p>
+<p>{{ order.address.line1 }} {{ order.address.line2 }}<br>{{ order.address.city }} {{ order.address.postcode }} {{ order.address.country }}</p>
+<table class="table"><thead><tr><th>Item / variant</th><th>Current quantity</th><th>Original unit price</th></tr></thead>
+<tbody>{% for line in order.lines.all %}<tr><td>{{ line.product_name }}</td><td>{{ line.quantity }}</td><td>£{{ line.unit_price }}</td></tr>{% endfor %}</tbody></table>
+<h2>Shopify totals (GBP)</h2>
+<p>Current item subtotal, after discounts: £{{ order.subtotal }}<br>
+Discounts recorded by Shopify (already included): £{{ order.discount }}<br>
+Current shipping, after discounts/refunds: £{{ order.delivery_charge }}<br>
+Current tax{% if external_mapping.financial_snapshot.taxesIncluded %} (included in prices){% endif %}: £{{ order.tax }}<br>
+{% if external_mapping.financial_snapshot.currentTotalDutiesSet %}Current duties: £{{ external_mapping.financial_snapshot.currentTotalDutiesSet.shopMoney.amount }}<br>{% endif %}
+{% if external_mapping.financial_snapshot.currentTotalAdditionalFeesSet %}Current additional fees: £{{ external_mapping.financial_snapshot.currentTotalAdditionalFeesSet.shopMoney.amount }}<br>{% endif %}
+{% if external_mapping.financial_snapshot.totalTipReceivedSet %}Recorded tips: £{{ external_mapping.financial_snapshot.totalTipReceivedSet.shopMoney.amount }}<br>{% endif %}
+<strong>Authoritative current order total: £{{ order.total }}</strong></p>
+<p>Shopify calculates shipping, tax, discounts and refunds. These amounts are imported without recalculation.</p>
+{% if perms.catalog.change_order %}
+<h2>Internal fulfilment</h2>
+<p>{{ order.fulfilment_status|title }}. Local progress does not send Shopify fulfilment notifications. Record customer-facing shipments in Shopify.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="status">
+<select name="status">{% for code,label in statuses %}<option value="{{ code }}">{{ label }}</option>{% endfor %}</select>
+<input name="reason" maxlength="500" placeholder="Internal note"><button type="submit">Update internal fulfilment</button></form>
+<h2>Internal tracking</h2>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="tracking">
+<input name="tracking_reference" value="{{ order.tracking_reference }}" maxlength="150" placeholder="Reference">
+<input type="url" name="tracking_url" value="{{ order.tracking_url }}" placeholder="HTTPS tracking URL">
+<select name="driver"><option value="">Unassigned</option>{% for driver in drivers %}<option value="{{ driver.pk }}" {% if driver.pk == order.assigned_driver_id %}selected{% endif %}>{{ driver }}</option>{% endfor %}</select>
+<button type="submit">Save internal tracking</button></form>
+{% endif %}
+<h2>History</h2><ul>{% for event in order.events.all %}<li>{{ event.created_at }} · {{ event.message }}</li>{% endfor %}</ul>
+{% endblock %}
