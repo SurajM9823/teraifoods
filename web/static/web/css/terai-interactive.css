@@ -4274,10 +4274,9 @@ a.klb-btn-facebook {
 
 /* Dropdown arrow on categories toggle */
 
-/* Floating categories dropdown for all pages (and home/shop sticky nav) */
+/* Floating categories dropdown for all pages (and home sticky nav) */
 body:not(.home):not(.terai-shop-page) .categories-menu .site-categories,
 body.home .site-header.sticky-header .categories-menu .site-categories,
-body.terai-shop-page .site-header.sticky-header .categories-menu .site-categories,
 body:not(.home):not(.terai-shop-page) .header-nav .categories-menu .site-categories,
 .terai-track-order-page .header-nav .categories-menu .site-categories,
 .terai-blogs-page .header-nav .categories-menu .site-categories,
@@ -4307,12 +4306,10 @@ body:not(.home):not(.terai-shop-page) .header-nav .categories-menu .site-categor
   pointer-events: auto !important;
 }
 
-/* On desktop home and shop page at the top, preserve the original expanded categories with smooth scrolling */
+/* On desktop home page at the top, preserve the original expanded categories with smooth scrolling */
 @media (min-width: 1200px) {
   body.home header:not(.sticky-header) .categories-menu .site-categories,
-  body.home header:not(.sticky-header) .header-nav .categories-menu .site-categories,
-  body.terai-shop-page header:not(.sticky-header) .categories-menu .site-categories,
-  body.terai-shop-page header:not(.sticky-header) .header-nav .categories-menu .site-categories {
+  body.home header:not(.sticky-header) .header-nav .categories-menu .site-categories {
     position: absolute !important;
     top: 48px !important;
     left: 0 !important;
@@ -4329,6 +4326,42 @@ body:not(.home):not(.terai-shop-page) .header-nav .categories-menu .site-categor
     scrollbar-color: #cbd5e1 transparent;
   }
 
+  /* Shop page: Fixed/sticky category sidebar with independent vertical scrollbar */
+  body.terai-shop-page .categories-menu .site-categories,
+  body.terai-shop-page .header-nav .categories-menu .site-categories,
+  body.terai-shop-page .site-header.sticky-header .categories-menu .site-categories,
+  body.terai-shop-page .site-header.sticky-header .header-nav .categories-menu .site-categories {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    width: 280px !important;
+    height: calc(100vh - 130px) !important;
+    max-height: calc(100vh - 130px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: 1000 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-radius: 0 0 6px 0 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+    pointer-events: auto !important;
+  }
+
+  body.terai-shop-page .site-header.sticky-header .categories-menu .site-categories,
+  body.terai-shop-page .site-header.sticky-header .header-nav .categories-menu .site-categories {
+    height: calc(100vh - 85px) !important;
+    max-height: calc(100vh - 85px) !important;
+  }
+
   html body.terai-shop-page #page #main .shop-category-anchor-col,
   html body.terai-shop-page .shop-main-row .shop-category-anchor-col,
   html body.terai-shop-page .shop-category-anchor-col,
@@ -4338,8 +4371,9 @@ body:not(.home):not(.terai-shop-page) .header-nav .categories-menu .site-categor
     width: 280px !important;
     flex: 0 0 280px !important;
     min-width: 280px !important;
-    height: 490px !important;
-    max-height: 490px !important;
+    align-self: stretch !important;
+    height: auto !important;
+    min-height: 100% !important;
     overflow: hidden !important;
     pointer-events: none !important;
     margin: 0 !important;

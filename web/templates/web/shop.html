@@ -72,7 +72,7 @@
 	<link rel="stylesheet" id="colors-min-css" href="{% static 'web/' %}css/colors-min.css" media="all">
 	<link rel="stylesheet" id="grogin-base-css" href="{% static 'web/' %}css/base.css" media="all">
 	<link rel="stylesheet" id="grogin-style-css" href="{% static 'web/' %}css/style.css" media="all">
-	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=shop-navbar-v8" media="all">
+	<link rel="stylesheet" id="terai-interactive-css" href="{% static 'web/' %}css/terai-interactive.css?v=shop-scroll-v1" media="all">
 
 	<style>
 		body {
@@ -129,7 +129,9 @@
 		}
 
 		header.site-header.sticky-header .categories-menu .site-categories {
-			top: 38px !important;
+			top: 100% !important;
+			height: calc(100vh - 85px) !important;
+			max-height: calc(100vh - 85px) !important;
 		}
 
 		.site-header.header-type1 .header-main {
@@ -201,11 +203,11 @@
 		}
 		.header-nav .site-categories {
 			position: absolute !important;
-			top: 48px !important;
+			top: 100% !important;
 			left: 0 !important;
 			width: 280px !important;
-			height: 524px;
-			max-height: 524px;
+			height: calc(100vh - 130px) !important;
+			max-height: calc(100vh - 130px) !important;
 			background: #ffffff !important;
 			border: 1px solid #e2e8f0 !important;
 			border-left: none !important;
@@ -215,7 +217,12 @@
 			z-index: 1000 !important;
 			display: flex !important;
 			flex-direction: column !important;
-			overflow: visible;
+			overflow-y: auto !important;
+			overflow-x: hidden !important;
+			overscroll-behavior: contain !important;
+			overscroll-behavior-y: contain !important;
+			scrollbar-width: thin;
+			scrollbar-color: #cbd5e1 transparent;
 		}
 		.header-nav .site-categories > ul#category-menu {
 			height: 100% !important;
@@ -304,7 +311,9 @@
 				width: 280px !important;
 				flex: 0 0 280px !important;
 				min-width: 280px !important;
-				height: 490px !important;
+				align-self: stretch !important;
+				height: auto !important;
+				min-height: 100% !important;
 				pointer-events: none !important;
 				margin: 0 !important;
 				padding: 0 !important;
@@ -688,7 +697,7 @@
 				<div class="shop-main-row">
 
 					<!-- Left Column: 280px Spacer next to navbar categories dropdown on desktop -->
-					<div class="d-none d-xl-block shop-category-anchor-col" style="width: 280px; flex: 0 0 280px; min-width: 280px; height: 490px; pointer-events: none;"></div>
+					<div class="d-none d-xl-block shop-category-anchor-col"></div>
 
 					<!-- Right Main Storefront: 4-Column Flash Sale Product Cards -->
 					<div class="shop-products-col">
@@ -804,7 +813,7 @@
 	</script>
 
 	<!-- Main Theme and Interactive Engine -->
-	<script src="{% static 'web/' %}js/terai-interactive.js?v=drawer-close-only-v1"></script>
+	<script src="{% static 'web/' %}js/terai-interactive.js?v=shop-scroll-v1"></script>
 
 	{% include 'web/includes/mobile-navbar.html' %}
 

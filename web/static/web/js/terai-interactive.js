@@ -3415,7 +3415,7 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
     const isShopPage = document.body.classList.contains('terai-shop-page') || window.location.pathname.includes('/shop/');
 
     // -------------------------------------------------------------
-    // SHOP PAGE: Identical Sticky Header & Categories Behavior to Home Page
+    // SHOP PAGE: Fixed/Sticky Category Sidebar with Independent Scroll
     // -------------------------------------------------------------
     if (isShopPage) {
       const header = document.querySelector('header.site-header');
@@ -3428,35 +3428,53 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
       }
 
       if (header && catMenu && toggle && siteCat) {
-        let manuallyOpened = false;
-        let manuallyClosed = false;
-        let defaultSidebarHeight = 490;
         let ticking = false;
 
-        function getSidebarHeight() {
-          const vh = window.innerHeight || document.documentElement.clientHeight;
-          const maxAllowed = Math.max(340, vh - 150);
-          let measured = defaultSidebarHeight;
-          const anchor = document.querySelector('.shop-category-anchor-col');
-          if (anchor && toggle) {
-            if ((window.scrollY || window.pageYOffset) === 0) {
-              const aRect = anchor.getBoundingClientRect();
-              const tRect = toggle.getBoundingClientRect();
-              const aHeight = Math.round(aRect.bottom - tRect.bottom);
-              if (aHeight > 300) {
-                defaultSidebarHeight = Math.min(500, aHeight);
-                measured = defaultSidebarHeight;
-              }
+        function updateShopSidebarHeight() {
+          const isDesktop = window.innerWidth >= 1200;
+          if (!isDesktop) {
+            siteCat.style.removeProperty('height');
+            siteCat.style.removeProperty('max-height');
+            siteCat.style.removeProperty('overflow-y');
+            siteCat.style.removeProperty('overflow-x');
+            siteCat.style.removeProperty('overscroll-behavior-y');
+            return;
+          }
+
+          if (siteCat.classList.contains('collapsed')) {
+            siteCat.style.setProperty('display', 'none', 'important');
+            return;
+          }
+
+          // Keep sidebar visible and scrollable independently
+          siteCat.style.setProperty('display', 'flex', 'important');
+          siteCat.style.setProperty('overflow-y', 'auto', 'important');
+          siteCat.style.setProperty('overflow-x', 'hidden', 'important');
+          siteCat.style.setProperty('overscroll-behavior-y', 'contain', 'important');
+          siteCat.style.setProperty('overscroll-behavior', 'contain', 'important');
+
+          const tRect = toggle.getBoundingClientRect();
+          const topOffset = Math.round(tRect.bottom);
+          const viewportH = window.innerHeight || document.documentElement.clientHeight;
+          let availableH = viewportH - topOffset;
+
+          // Prevent overlapping footer if footer is in view
+          const footer = document.querySelector('footer.site-footer');
+          if (footer) {
+            const footerRect = footer.getBoundingClientRect();
+            if (footerRect.top < viewportH) {
+              availableH = Math.max(160, Math.round(footerRect.top - topOffset));
             }
           }
-          return Math.min(measured, maxAllowed);
+
+          siteCat.style.setProperty('height', availableH + 'px', 'important');
+          siteCat.style.setProperty('max-height', availableH + 'px', 'important');
         }
 
-        function handleStickyAndCategories() {
+        function handleStickyHeader() {
           const scrollTop = window.scrollY || window.pageYOffset || 0;
-          const isDesktop = window.innerWidth >= 1200;
 
-          // 1. Sticky header hysteresis gap (matching Home page bundle.js)
+          // 1. Sticky header hysteresis
           if (scrollTop > 80) {
             if (!header.classList.contains('sticky-header')) {
               header.classList.add('sticky-header');
@@ -3467,117 +3485,34 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
             }
           }
 
-          if (!isDesktop) {
-            // Clean up desktop inline style overrides on mobile/tablet
-            siteCat.style.removeProperty('display');
-            siteCat.style.removeProperty('height');
-            siteCat.style.removeProperty('max-height');
-            siteCat.style.removeProperty('overflow-y');
-            siteCat.style.removeProperty('overflow-x');
-            siteCat.style.removeProperty('overscroll-behavior-y');
-            siteCat.style.removeProperty('box-shadow');
-            return;
-          }
-
-          // 2. Desktop Categories visibility and slide-up behavior
-          const anchor = document.querySelector('.shop-category-anchor-col');
-          const aRect = anchor ? anchor.getBoundingClientRect() : null;
-          const tRect = toggle.getBoundingClientRect();
-          const baseH = getSidebarHeight();
-          const remaining = aRect ? Math.round(aRect.bottom - tRect.bottom) : Math.max(0, baseH - scrollTop);
-
-          // When returning back to top, clear manual closed state
-          if (scrollTop <= 10) {
-            manuallyClosed = false;
-          }
-
-          // When scrolling back up into anchor zone, re-attach to automatic tracking
-          if (remaining > 0 && manuallyOpened) {
-            manuallyOpened = false;
-            siteCat.style.removeProperty('box-shadow');
-          }
-
-          if (manuallyOpened || manuallyClosed) {
-            return;
-          }
-
-          const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-          const catBottomViewport = Math.round(tRect.bottom + baseH);
-          const overflowBelowViewport = Math.max(0, catBottomViewport - windowHeight);
-          const slideEndScroll = Math.max(350, Math.round(scrollTop + remaining));
-
-          let waitScroll = Math.max(180, overflowBelowViewport + 100);
-          const maxWait = Math.max(120, Math.round(slideEndScroll * 0.45));
-          waitScroll = Math.min(waitScroll, maxWait);
-
-          if (remaining <= 0 || scrollTop >= slideEndScroll) {
-            // Scrolled past anchor: fully collapsed
-            siteCat.style.setProperty('display', 'none', 'important');
-            siteCat.style.setProperty('height', '0px', 'important');
-            siteCat.style.setProperty('max-height', '0px', 'important');
-            siteCat.style.setProperty('overflow', 'hidden', 'important');
-            siteCat.classList.remove('show');
-            siteCat.classList.add('collapsed');
-            catMenu.classList.remove('open');
-          } else if (scrollTop <= waitScroll) {
-            // Wait phase: full categories sidebar completely shown and scrollable
-            siteCat.style.setProperty('display', 'flex', 'important');
-            siteCat.style.setProperty('height', baseH + 'px', 'important');
-            siteCat.style.setProperty('max-height', baseH + 'px', 'important');
-            siteCat.style.setProperty('overflow-y', 'auto', 'important');
-            siteCat.style.setProperty('overflow-x', 'hidden', 'important');
-            siteCat.style.setProperty('overscroll-behavior-y', 'contain', 'important');
-            siteCat.style.removeProperty('box-shadow');
-            siteCat.classList.add('show');
-            siteCat.classList.remove('collapsed');
-          } else {
-            // Slide-up phase: smoothly contract categories as user continues scrolling past wait zone
-            const slideRange = slideEndScroll - waitScroll;
-            let slideProgress = slideRange > 0 ? (scrollTop - waitScroll) / slideRange : 1;
-            slideProgress = Math.max(0, Math.min(1, slideProgress));
-            const currentH = Math.round(baseH * (1 - slideProgress));
-
-            if (currentH <= 0) {
-              siteCat.style.setProperty('display', 'none', 'important');
-              siteCat.style.setProperty('height', '0px', 'important');
-              siteCat.style.setProperty('max-height', '0px', 'important');
-              siteCat.style.setProperty('overflow', 'hidden', 'important');
-              siteCat.classList.remove('show');
-              siteCat.classList.add('collapsed');
-              catMenu.classList.remove('open');
-            } else {
-              siteCat.style.setProperty('display', 'flex', 'important');
-              siteCat.style.setProperty('height', currentH + 'px', 'important');
-              siteCat.style.setProperty('max-height', currentH + 'px', 'important');
-              siteCat.style.setProperty('overflow', 'hidden', 'important');
-              siteCat.style.removeProperty('box-shadow');
-              siteCat.classList.add('show');
-              siteCat.classList.remove('collapsed');
-            }
-          }
+          updateShopSidebarHeight();
         }
 
         function onScroll() {
           if (!ticking) {
             ticking = true;
             window.requestAnimationFrame(() => {
-              handleStickyAndCategories();
+              handleStickyHeader();
               ticking = false;
             });
           }
         }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', updateShopSidebarHeight, { passive: true });
+
+        // Initial alignment
+        updateShopSidebarHeight();
+        setTimeout(updateShopSidebarHeight, 100);
+        setTimeout(updateShopSidebarHeight, 500);
 
         // Toggle button click listener
         toggle.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
 
-          // Close header user dropdown
-          document.querySelectorAll('.header-user-dropdown').forEach(d => d.classList.remove('show'));
-
           const isDesktop = window.innerWidth >= 1200;
           if (!isDesktop) {
-            // Mobile toggle
             const isOpen = siteCat.classList.contains('show') || catMenu.classList.contains('open');
             if (isOpen) {
               catMenu.classList.remove('open');
@@ -3589,82 +3524,22 @@ ${document.getElementById('storefront-category-options')?.innerHTML || ''}
             return;
           }
 
-          // Desktop Toggle (matching Home page bundle.js behavior)
-          const anchor = document.querySelector('.shop-category-anchor-col');
-          const aRect = anchor ? anchor.getBoundingClientRect() : null;
-          const tRect = toggle.getBoundingClientRect();
-          const baseH = getSidebarHeight();
-          const remaining = aRect ? Math.round(aRect.bottom - tRect.bottom) : Math.max(0, baseH - (window.scrollY || window.pageYOffset));
-
-          // If scrolled past anchor or currently collapsed or in sticky header: toggle floating dropdown
-          const isSticky = Boolean(catMenu.closest('.sticky-header'));
-          if (isSticky || remaining <= 0 || siteCat.classList.contains('collapsed') || siteCat.style.display === 'none') {
-            manuallyOpened = !manuallyOpened;
-            if (manuallyOpened) {
-              manuallyClosed = false;
-              siteCat.style.setProperty('display', 'flex', 'important');
-              siteCat.style.setProperty('height', baseH + 'px', 'important');
-              siteCat.style.setProperty('max-height', baseH + 'px', 'important');
-              siteCat.style.setProperty('overflow-y', 'auto', 'important');
-              siteCat.style.setProperty('overflow-x', 'hidden', 'important');
-              siteCat.style.setProperty('overscroll-behavior-y', 'contain', 'important');
-              siteCat.style.setProperty('box-shadow', '0 15px 35px rgba(0,0,0,0.15)', 'important');
-              siteCat.classList.add('show');
-              siteCat.classList.remove('collapsed');
-              catMenu.classList.add('open');
-            } else {
-              siteCat.style.setProperty('display', 'none', 'important');
-              siteCat.style.setProperty('height', '0px', 'important');
-              siteCat.style.setProperty('max-height', '0px', 'important');
-              siteCat.style.setProperty('overflow', 'hidden', 'important');
-              siteCat.classList.remove('show');
-              siteCat.classList.add('collapsed');
-              catMenu.classList.remove('open');
-            }
+          const isCurrentlyCollapsed = siteCat.classList.contains('collapsed') || siteCat.style.display === 'none';
+          if (isCurrentlyCollapsed) {
+            siteCat.classList.remove('collapsed');
+            siteCat.classList.add('show');
+            catMenu.classList.add('open');
+            siteCat.style.setProperty('display', 'flex', 'important');
+            updateShopSidebarHeight();
           } else {
-            // At top: allow manual collapse/expand (matches Home page bundle.js)
-            const isCurrentlyVisible = siteCat.style.display !== 'none' && !siteCat.classList.contains('collapsed');
-            if (isCurrentlyVisible) {
-              manuallyClosed = true;
-              siteCat.style.setProperty('display', 'none', 'important');
-              siteCat.style.setProperty('height', '0px', 'important');
-              siteCat.style.setProperty('max-height', '0px', 'important');
-              siteCat.style.setProperty('overflow', 'hidden', 'important');
-              siteCat.classList.remove('show');
-              siteCat.classList.add('collapsed');
-              catMenu.classList.remove('open');
-            } else {
-              manuallyClosed = false;
-              siteCat.style.setProperty('display', 'flex', 'important');
-              siteCat.style.setProperty('height', baseH + 'px', 'important');
-              siteCat.style.setProperty('max-height', baseH + 'px', 'important');
-              siteCat.style.setProperty('overflow-y', 'auto', 'important');
-              siteCat.style.setProperty('overflow-x', 'hidden', 'important');
-              siteCat.style.setProperty('overscroll-behavior-y', 'contain', 'important');
-              siteCat.style.removeProperty('box-shadow');
-              siteCat.classList.add('show');
-              siteCat.classList.remove('collapsed');
-            }
+            siteCat.classList.add('collapsed');
+            siteCat.classList.remove('show');
+            catMenu.classList.remove('open');
+            siteCat.style.setProperty('display', 'none', 'important');
+            siteCat.style.setProperty('height', '0px', 'important');
+            siteCat.style.setProperty('max-height', '0px', 'important');
           }
         });
-
-        // Close manually opened dropdown on outside click (matching Home page bundle.js)
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.categories-menu')) {
-            if (manuallyOpened) {
-              manuallyOpened = false;
-              handleStickyAndCategories();
-            }
-          }
-        });
-
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', handleStickyAndCategories);
-
-        // Precision initial alignment (matching Home page bundle.js timeouts)
-        setTimeout(handleStickyAndCategories, 100);
-        setTimeout(handleStickyAndCategories, 500);
-        setTimeout(handleStickyAndCategories, 1200);
       }
       return;
     }
