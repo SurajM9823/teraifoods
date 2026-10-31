@@ -42,7 +42,7 @@ PUBLICATION_STATE = '''query IntegrationPublicationState($id: ID!, $publication:
  product(id: $id) { id status publishedOnPublication(publicationId: $publication) }
 }'''
 PRODUCT_ACTIVATE = '''mutation IntegrationActivate($product: ProductUpdateInput!) {
- productUpdate(product: $product) { product { id status } userErrors { field code } }
+ productUpdate(product: $product) { product { id status } userErrors { field } }
 }'''
 PUBLISH_PRODUCT = '''mutation IntegrationPublish($id: ID!, $input: [PublicationInput!]!) {
  publishablePublish(id: $id, input: $input) { userErrors { field } }

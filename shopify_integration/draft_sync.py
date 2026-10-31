@@ -4,6 +4,7 @@ from decimal import Decimal
 import logging
 import time
 import uuid
+from html.parser import HTMLParser
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -167,13 +168,41 @@ def build_input(report, remote, media_ids):
     return result
 
 
+def description_tokens(value):
+    """Compare HTML structure/text, allowing Shopify's entity serialization."""
+    class Parser(HTMLParser):
+        def __init__(self):
+            super().__init__(convert_charrefs=True)
+            self.tokens = []
+
+        def handle_starttag(self, tag, attrs):
+            self.tokens.append(('start', tag, tuple(sorted(attrs))))
+
+        def handle_startendtag(self, tag, attrs):
+            self.handle_starttag(tag, attrs)
+            if tag not in ('br', 'hr', 'img', 'input', 'meta', 'link'):
+                self.handle_endtag(tag)
+
+        def handle_endtag(self, tag):
+            self.tokens.append(('end', tag))
+
+        def handle_data(self, data):
+            if data.strip():
+                self.tokens.append(('text', data.replace('\r\n', '\n').replace('\r', '\n')))
+
+    parser = Parser()
+    parser.feed(value)
+    parser.close()
+    return parser.tokens
+
+
 def verify_result(report, remote, media_ids, *, allow_active=False):
     owned_draft(remote, report['product_id'], allow_active=allow_active)
     if not remote:
         raise ShopifyError('remote_product_missing_after_write')
     expected = report['payload']
-    if (remote['title'], remote['handle'], remote['descriptionHtml']) != (
-            expected['title'], expected['handle'], expected['descriptionHtml']):
+    if ((remote['title'], remote['handle']) != (expected['title'], expected['handle']) or
+            description_tokens(remote['descriptionHtml']) != description_tokens(expected['descriptionHtml'])):
         raise ShopifyError('remote_product_verification_failed')
     actual = {combination(v['selectedOptions']): v for v in remote['variant_nodes']}
     if len(actual) != len(expected['variants']):
